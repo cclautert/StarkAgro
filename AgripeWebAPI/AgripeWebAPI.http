@@ -1,0 +1,6 @@
+@AgripeWebAPI_HostAddress = http://localhost:5115
+
+GET {{AgripeWebAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
