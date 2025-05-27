@@ -1,57 +1,37 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using AgripeWebAPI.Configuration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .ConfigureApiBehaviorOptions(options =>
+    {
+        options.SuppressModelStateInvalidFilter = true;
+    });
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 // Adiciona o Swagger
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options => // Ensure SwaggerGen is properly configured
+
+builder.Services.AddDbContext<agpwebDbContext>(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Title = "AgripeWebAPI",
-        Version = "v1"
-    });
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-builder.Services.AddMediatR(cfg =>
-{
-    cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly());
-});
+builder.Services.AddApiConfiguration(builder.Configuration);
 
-// 👇 Adiciona política de CORS
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("PermitirTudo", policy =>
-    {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
-    });
-});
+builder.Services.AddSwaggerConfiguration();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
+app.UseSwaggerConfiguration();
 
-app.UseSwagger();
-app.UseSwaggerUI();
-app.UseCors("PermitirTudo");
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
+app.UseApiConfiguration(app.Environment);
 
 app.Run();
