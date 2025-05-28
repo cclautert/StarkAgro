@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AgripeWebAPI.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using System.Text.Json;
 
@@ -8,7 +9,7 @@ namespace AgripeWebAPI.Configuration
     {
         public static void AddApiConfiguration(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<agpwebDbContext>(options =>
+            services.AddDbContext<agpDBContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
             services.AddControllers()

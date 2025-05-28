@@ -1,4 +1,5 @@
 ﻿using AgripeWebAPI.Configuration;
+using AgripeWebAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
@@ -19,7 +20,7 @@ builder.Services.AddOpenApi();
 // Adiciona o Swagger
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddDbContext<agpwebDbContext>(options =>
+builder.Services.AddDbContext<agpDBContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });

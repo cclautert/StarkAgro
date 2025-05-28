@@ -3,17 +3,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AgripeWebAPI.Models.Entities
 {
-    public class Sensor
+    public class ReadSensor
     {
         [Key]
         public int Id { get; set; }
-        [ForeignKey("Pivo")]
-        public int PivoId { get; set; }
+        [ForeignKey("Sensor")]
+        public int SensorId { get; set; }
         [ForeignKey("User")]
         public int UserId { get; set; }
-        public int Quadrante { get; set; }
-        public string? Code { get; set; }
-
-        public ICollection<ReadSensor>? Leituras { get; set; }
+        public string? Name { get; set; }
+        public Decimal Value { get; set; }
+        public DateTime Date { get; set; }
     }
 }
