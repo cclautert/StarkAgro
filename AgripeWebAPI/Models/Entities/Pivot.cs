@@ -3,12 +3,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AgripeWebAPI.Models.Entities
 {
-    public class Pivo
-    {
-        [Key]
-        public int Id { get; set; }        
+    public class Pivot : Entity
+    {        
         public string? Name { get; set; }
-        [ForeignKey("User")]
-        public int UserId { get; set; }
+        
+        public ICollection<Sensor>? Reads { get; set; }
     }
 }

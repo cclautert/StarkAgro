@@ -12,8 +12,8 @@ namespace AgripeWebAPI.Models
 
         // DbSets para suas entidades
         public DbSet<ReadSensor> ReadSensors { get; set; }
-        public DbSet<Sensor> Sensores { get; set; }
-        public DbSet<Pivo> Pivos { get; set; }        
+        public DbSet<Sensor> Sensors { get; set; }
+        public DbSet<Pivot> Pivots { get; set; }        
         public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -45,7 +45,7 @@ namespace AgripeWebAPI.Models
                 entity.Property(e => e.Date).IsRequired();
             });
 
-            modelBuilder.Entity<Pivo>(entity =>
+            modelBuilder.Entity<Pivot>(entity =>
             {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Id).ValueGeneratedOnAdd(); // Makes it an identity column

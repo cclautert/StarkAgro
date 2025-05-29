@@ -1,8 +1,8 @@
-﻿using AgripeWebAPI.Domain.Commands.Requests;
-using AgripeWebAPI.Domain.Commands.Responses;
+﻿using AgripeWebAPI.Domain.Commands.Requests.Sensor;
+using AgripeWebAPI.Domain.Commands.Responses.Sensor;
 using MediatR;
 
-namespace AgripeWebAPI.Domain.Handlers
+namespace AgripeWebAPI.Domain.Handlers.Sensor
 {
     public class GetSensorHandler : IRequestHandler<GetSensorRequest, GetSensorResponse>
     {
