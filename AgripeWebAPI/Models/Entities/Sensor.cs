@@ -14,6 +14,6 @@ namespace AgripeWebAPI.Models.Entities
 
         public Pivot? Pivot { get; set; }
         public User? User { get; set; }
-        public ICollection<ReadSensor>? Leituras { get; set; }
+        public ICollection<ReadSensor>? Reads { get; set; }
     }
 }

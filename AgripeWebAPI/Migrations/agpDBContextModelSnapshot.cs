@@ -26,7 +26,8 @@ namespace AgripeWebAPI.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("id");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
@@ -34,6 +35,9 @@ namespace AgripeWebAPI.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -44,7 +48,8 @@ namespace AgripeWebAPI.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("id");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
@@ -68,7 +73,8 @@ namespace AgripeWebAPI.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("id");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
@@ -99,7 +105,8 @@ namespace AgripeWebAPI.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("id");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
@@ -129,7 +136,7 @@ namespace AgripeWebAPI.Migrations
             modelBuilder.Entity("AgripeWebAPI.Models.Entities.ReadSensor", b =>
                 {
                     b.HasOne("AgripeWebAPI.Models.Entities.Sensor", "Sensor")
-                        .WithMany("Leituras")
+                        .WithMany("Reads")
                         .HasForeignKey("SensorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -140,7 +147,7 @@ namespace AgripeWebAPI.Migrations
             modelBuilder.Entity("AgripeWebAPI.Models.Entities.Sensor", b =>
                 {
                     b.HasOne("AgripeWebAPI.Models.Entities.Pivot", "Pivot")
-                        .WithMany("Reads")
+                        .WithMany("Sensors")
                         .HasForeignKey("PivoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -158,12 +165,12 @@ namespace AgripeWebAPI.Migrations
 
             modelBuilder.Entity("AgripeWebAPI.Models.Entities.Pivot", b =>
                 {
-                    b.Navigation("Reads");
+                    b.Navigation("Sensors");
                 });
 
             modelBuilder.Entity("AgripeWebAPI.Models.Entities.Sensor", b =>
                 {
-                    b.Navigation("Leituras");
+                    b.Navigation("Reads");
                 });
 #pragma warning restore 612, 618
         }

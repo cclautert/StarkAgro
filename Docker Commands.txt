@@ -1,0 +1,19 @@
+docker login
+
+#Build Api
+docker build -t cclautert/agripewebapi -f .\AgripeWebAPI\Dockerfile --force-rm .
+
+@Push Image
+docker push cclautert/agripewebapi:latest
+
+#Pull image
+docker pull cclautert/agripewebapi:latest
+
+#Verify images
+docker images
+
+#start agp Container
+docker run -p 8089:8080 -e ASPNETCORE_ENVIRONMENT=Development cclautert/agripewebapi --name agripewebapi
+
+#Start Database
+docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=SQL_SERVER_PASSWORD_REDACTED" -p 1433:1433 --name sqlserver -d mcr.microsoft.com/mssql/server

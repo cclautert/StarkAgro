@@ -1,5 +1,5 @@
-﻿using AgripeWebAPI.Domain.Commands.Requests.Sensor;
-using AgripeWebAPI.Domain.Commands.Responses.Sensor;
+﻿using AgripeWebAPI.Domain.Commands.Requests.Sensors;
+using AgripeWebAPI.Domain.Commands.Responses.Sensors;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,9 +9,9 @@ namespace AgripeWebAPI.Controllers
     [Route("v1/sensor")]
     public class SensorController : ControllerBase
     {              
-        [Route("get")]
+        [Route("getById")]
         [HttpGet]
-        public async Task<GetSensorResponse> Get(
+        public async Task<GetSensorResponse> GetById(
             [FromServices] IMediator mediator,
             [FromQuery] GetSensorRequest command
         )
@@ -19,9 +19,9 @@ namespace AgripeWebAPI.Controllers
             return await mediator.Send(command);
         }
 
-        [Route("getAll")]
+        [Route("getAllbyUserId")]
         [HttpGet]
-        public async Task<IList<GetSensorResponse>> Get(
+        public async Task<IList<GetSensorResponse>> getAllbyUserId(
             [FromServices] IMediator mediator,
             [FromQuery] GetListSensorByUserIdRequest command
         )

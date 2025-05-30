@@ -1,0 +1,22 @@
+#Verify file
+docker-compose config
+
+#Exec
+docker-compose up -d
+docker-compose -f Docker/docker-compose.yml up --build
+
+#Logs
+docker-compose logs
+
+#start Container
+docker run -p 8089:8080 -e ASPNETCORE_ENVIRONMENT=Development cclautert/agripewebapi --name agp cclautert/agripewebapi
+
+#Commands
+#To Remove container
+docker-compose stop
+
+#Remove network
+docker-compose down
+
+#Remove All
+docker-compose down -v

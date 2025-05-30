@@ -11,6 +11,6 @@ namespace AgripeWebAPI.Models.Entities
 
         [Key]
         [Column("id")]
-        public virtual int Id { get; private set; }
+        public virtual int Id { get; set; }
     }
 }
