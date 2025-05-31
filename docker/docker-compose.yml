@@ -5,7 +5,7 @@ services:
       context: ../AgripeWebAPI  # Navigate up to C:\Users\Cristiano\source\repos\cclautert\AgripeWeb\AgripeWebAPI
       dockerfile: Dockerfile  # Assumes Dockerfile is in AgripeWebAPI folder
     ports:
-      - "8080:8089"  # Map port 8080 (host) to 80 (container)
+      - "8080:8080"  # Map port 8080 (host) to 80 (container)
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     depends_on:

@@ -55,11 +55,11 @@ namespace AgripeWebAPI.Configuration
 
         public static void UseApiConfiguration(this IApplicationBuilder app, IWebHostEnvironment env)
         {
-            using (var scope = app.ApplicationServices.CreateScope())
-            {
-                var dbContext = scope.ServiceProvider.GetRequiredService<agpDBContext>();
-                dbContext.Database.Migrate();
-            }
+            //using (var scope = app.ApplicationServices.CreateScope())
+            //{
+            //    var dbContext = scope.ServiceProvider.GetRequiredService<agpDBContext>();
+            //    dbContext.Database.Migrate();
+            //}
 
             if (env.IsDevelopment())
             {
