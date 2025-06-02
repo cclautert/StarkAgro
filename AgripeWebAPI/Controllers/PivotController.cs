@@ -1,8 +1,5 @@
 ﻿using AgripeWebAPI.Domain.Commands.Requests.Pivots;
-using AgripeWebAPI.Domain.Commands.Requests.Reads;
-using AgripeWebAPI.Domain.Commands.Requests.Sensors;
 using AgripeWebAPI.Domain.Commands.Responses.Pivots;
-using AgripeWebAPI.Domain.Commands.Responses.Reads;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
