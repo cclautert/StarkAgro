@@ -15,12 +15,20 @@ export class ApiService {
 
   constructor(private http: HttpClient) { }
 
+  login(email: string, Password: string): Observable<Read[]> {
+    const params = new HttpParams()
+    .set('Email', email.toString())
+    .set('Password', Password.toString());
+
+    return this.http.get<Read[]>(`${this.baseUrl}reads/getall`, { params });
+  }
+
   getReads(userId: number, numberOfReads: number): Observable<Read[]> {
     const params = new HttpParams()
     .set('UserId', userId.toString())
     .set('NumberOfReads', numberOfReads.toString());
 
-    return this.http.get<Read[]>(`${this.baseUrl}reads/getall`, { params });    
+    return this.http.get<Read[]>(`${this.baseUrl}reads/getall`, { params });
   }
 
   addPivot(pivot: Pivot): Observable<any> {

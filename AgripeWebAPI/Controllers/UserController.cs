@@ -28,5 +28,15 @@ namespace AgripeWebAPI.Controllers
         { 
             return await mediator.Send(command);
         }
+
+        [Route("update")]
+        [HttpPut]
+        public async Task<EditUserResponse> Update(
+            [FromServices] IMediator mediator,
+            [FromBody] EditUserRequest command
+        )
+        { 
+            return await mediator.Send(command);
+        }
     }
 }

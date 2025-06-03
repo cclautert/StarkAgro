@@ -12,6 +12,18 @@ services:
       - db  # Ensure SQL Server starts first
     networks:
       - app-network
+      
+  agripewebui:
+    build:
+      context: ../AgripeWebUI
+      dockerfile: Dockerfile
+    ports:
+      - "4200:80"  # SPA acessível em http://localhost:4200
+    depends_on:
+      - agripewebapi
+    networks:
+      - app-network
+
 
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest  # SQL Server 2022

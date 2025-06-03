@@ -30,15 +30,7 @@ namespace AgripeWebAPI.Controllers
             [FromBody] CreateReadRequest command
         )
         { 
-            try
-            {
-                return await mediator.Send(command);
-            }
-            catch(Exception ex){
-                // Log the exception (not implemented here)
-                // Return a bad request with the error message
-                return new CreateReadResponse { Id = -1, Content = ex.Message }; // Indicating an error occurred
-            }
+            return await mediator.Send(command);
         }
     }    
 }

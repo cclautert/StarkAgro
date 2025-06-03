@@ -21,8 +21,8 @@
         <mat-error *ngIf="userForm.get('password')?.hasError('required')">Password is required</mat-error>
         <mat-error *ngIf="userForm.get('password')?.hasError('minlength')">Password must be at least 6 characters</mat-error>
       </mat-form-field>
-      <mat-checkbox formControlName="active">Active</mat-checkbox>
       <button mat-raised-button color="primary" type="submit" [disabled]="userForm.invalid">Submit</button>
+      <button mat-raised-button color="warn" type="button" class="ml-2" (click)="onCancel()">Cancel</button>
     </form>
   </mat-card-content>
 </mat-card>

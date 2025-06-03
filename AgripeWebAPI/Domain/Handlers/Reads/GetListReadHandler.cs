@@ -3,6 +3,7 @@ using AgripeWebAPI.Domain.Commands.Responses.Reads;
 using AgripeWebAPI.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace AgripeWebAPI.Domain.Handlers.Sensors
 {
@@ -17,13 +18,21 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
         }
 
         public async Task<IList<GetReadResponse>> Handle(GetListReadRequest request, CancellationToken cancellationToken)
-        {           
-            return await _dbContext.ReadSensors.Where(x => x.Sensor.UserId == request.UserId).Select(x => new GetReadResponse
+        {
+            var startDate = DateTime.UtcNow.AddDays(-request.NumberOfReads);
+
+            return await _dbContext.ReadSensors
+                .Where(x => x.Sensor.UserId == request.UserId && x.Date >= startDate)
+                .OrderByDescending(x => x.Date)
+                .Select(x => new GetReadResponse
                 {
                     Id = x.Id,
                     SensorId = x.SensorId,
-                    Value = x.Value
-                }).ToListAsync();
+                    Value = x.Value,
+                    Date = x.Date
+                })
+                .ToListAsync();
+
         }
     }
 }

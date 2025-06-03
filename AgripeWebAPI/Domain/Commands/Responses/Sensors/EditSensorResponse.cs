@@ -2,5 +2,6 @@
 {
     public class EditSensorResponse
     {
+        public int Id { get; set; }
     }
 }

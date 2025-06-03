@@ -38,5 +38,15 @@ namespace AgripeWebAPI.Controllers
         { 
             return await mediator.Send(command);
         }
+
+        [Route("update")]
+        [HttpPut]
+        public async Task<EditSensorResponse> Update(
+            [FromServices] IMediator mediator,
+            [FromBody] EditSensorRequest command
+        )
+        { 
+            return await mediator.Send(command);
+        }
     }
 }

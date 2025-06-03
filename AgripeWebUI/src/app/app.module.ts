@@ -22,7 +22,7 @@ import { SensorFormComponent } from './components/sensor-form/sensor-form.compon
 import { CommonModule } from '@angular/common';
 
 @NgModule({
-  declarations: [    
+  declarations: [
     DashboardComponent,
     PivotFormComponent,
     UserFormComponent,
@@ -30,7 +30,7 @@ import { CommonModule } from '@angular/common';
   ],
   imports: [
     AppComponent,
-    CommonModule,    
+    CommonModule,
     BrowserModule,
     HttpClientModule,
     ReactiveFormsModule,
@@ -45,7 +45,7 @@ import { CommonModule } from '@angular/common';
     MatListModule,
     MatIconModule,
     BaseChartDirective,
-    AppRoutingModule,    
+    AppRoutingModule,
   ],
   providers: [provideCharts(withDefaultRegisterables())],
   bootstrap: [AppComponent]

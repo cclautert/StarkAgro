@@ -38,5 +38,15 @@ namespace AgripeWebAPI.Controllers
         { 
             return await mediator.Send(command);
         }
+
+        [Route("update")]
+        [HttpPut]
+        public async Task<EditPivotResponse> Update(
+            [FromServices] IMediator mediator,
+            [FromBody] EditPivotRequest command
+        )
+        { 
+            return await mediator.Send(command);
+        }
     }
 }

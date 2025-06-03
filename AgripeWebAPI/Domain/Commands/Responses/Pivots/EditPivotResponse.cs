@@ -2,5 +2,6 @@
 {
     public class EditPivotResponse
     {
+        public int Id { get; set; }
     }
 }
