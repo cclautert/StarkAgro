@@ -3,7 +3,7 @@
     <mat-sidenav mode="side" opened class="sidenav">
       <div class="profile">
         <img src="../../../assets/avatar.ico" alt="User" class="avatar" />
-        <button mat-stroked-button color="primary">Logout</button>
+        <button mat-stroked-button color="primary" (click)="logout()">Logout</button>
       </div>
       <mat-nav-list>
         <a mat-list-item routerLink="/">Início</a>

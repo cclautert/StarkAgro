@@ -1,62 +1,9 @@
-// import { Component, OnInit, ViewChild } from '@angular/core';
-// import { ApiService } from '../../services/api.service';
-// import { BaseChartDirective } from 'ng2-charts';
-// import { ChartConfiguration } from 'chart.js';
-
-// @Component({
-//   selector: 'app-dashboard',
-//   templateUrl: './dashboard.component.html',
-//   styleUrls: ['./dashboard.component.css'],
-//   standalone: false,
-// })
-// export class DashboardComponent implements OnInit {
-  
-//   @ViewChild(BaseChartDirective) chart?: BaseChartDirective;
-
-//   public lineChartData: ChartConfiguration['data'] = {
-//     datasets: [
-//       {
-//         data: [],
-//         label: 'Sensor Values',
-//         borderColor: 'blue',
-//         pointBackgroundColor: 'blue',
-//         pointBorderColor: 'blue',
-//         fill: false
-//       }
-//     ],
-//     labels: []
-//   };
-
-//   public lineChartOptions: ChartConfiguration['options'] = {
-//     responsive: true,
-//     scales: {
-//       x: {
-//         title: { display: true, text: 'Date' }
-//       },
-//       y: {
-//         title: { display: true, text: 'Value' }
-//       }
-//     }
-//   };
-
-//   constructor(private apiService: ApiService) {}
-
-//   ngOnInit(): void {
-//     this.apiService.getReads(1,15).subscribe(reads => {      
-//       this.lineChartData.datasets[0].data = reads.map(read => read.value);
-//       this.lineChartData.labels = reads.map(read =>
-//         new Date(read.date).toLocaleTimeString()
-//       );
-//       this.chart?.update();
-//     });
-//   }
-// }
-
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { ChartConfiguration } from 'chart.js';
 import { ApiService } from '../../services/api.service';
 import { Subscription, interval } from 'rxjs';
 import { BaseChartDirective } from 'ng2-charts';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -65,7 +12,7 @@ import { BaseChartDirective } from 'ng2-charts';
   standalone: false,
 })
 export class DashboardComponent implements OnInit, OnDestroy {
-  
+
   @ViewChild(BaseChartDirective) chart?: BaseChartDirective;
 
   userId = 1;
@@ -96,7 +43,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   };
 
-  constructor(private apiService: ApiService) {}
+  constructor(private apiService: ApiService, private router: Router) {}
 
   ngOnInit(): void {
     this.loadReads();
@@ -118,5 +65,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
   setDays(days: number): void {
     this.numberOfReads = days;
     this.loadReads();
+  }
+
+  logout(): void {
+    // Aqui você pode limpar o token, se houver
+    localStorage.removeItem('token');  // opcional
+
+    // Redirecionar para a rota de login
+    this.router.navigate(['/login']);
   }
 }

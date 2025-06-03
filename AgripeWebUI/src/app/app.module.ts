@@ -20,9 +20,12 @@ import { PivotFormComponent } from './components/pivot-form/pivot-form.component
 import { UserFormComponent } from './components/user-form/user-form.component';
 import { SensorFormComponent } from './components/sensor-form/sensor-form.component';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { LoginComponent } from './components/login/login.component';
 
 @NgModule({
   declarations: [
+    LoginComponent,
     DashboardComponent,
     PivotFormComponent,
     UserFormComponent,
@@ -46,6 +49,7 @@ import { CommonModule } from '@angular/common';
     MatIconModule,
     BaseChartDirective,
     AppRoutingModule,
+    FormsModule,
   ],
   providers: [provideCharts(withDefaultRegisterables())],
   bootstrap: [AppComponent]
