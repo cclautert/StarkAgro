@@ -17,3 +17,8 @@ docker run -p 8089:8080 -e ASPNETCORE_ENVIRONMENT=Development cclautert/agripewe
 
 #Start Database
 docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=SQL_SERVER_PASSWORD_REDACTED" -p 1433:1433 --name sqlserver -d mcr.microsoft.com/mssql/server
+
+
+######################################################
+docker-compose -f Docker/docker-compose.yml up --build
+######################################################

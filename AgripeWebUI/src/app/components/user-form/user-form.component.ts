@@ -30,6 +30,6 @@ export class UserFormComponent {
     }
   };
   onCancel(): void {
-    this.router.navigate(['/']);
+    this.router.navigate(['/dashboard']);
   }
 }

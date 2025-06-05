@@ -18,7 +18,7 @@ namespace AgripeWebAPI.Domain.Handlers.Users
         public async Task<GetUserResponse?> Handle(GetUserRequest request, CancellationToken cancellationToken)
         {
             return await _dbContext.Users
-                .Where(x => x.Id == request.Id)
+                .Where(x => x.Email == request.Email)
                 .Select(x => new GetUserResponse
                 {
                     Id = x.Id,

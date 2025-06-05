@@ -15,12 +15,26 @@ export class LoginComponent {
 
   constructor(private fb: FormsModule, private apiService: ApiService, private router: Router) {}
 
-  onSubmit() {
-    if (this.apiService.login(this.email, this.password)) {
-      localStorage.setItem('token', 'usuario-logado');
-      this.router.navigate(['/']);
-    } else {
-      alert('Usuário ou senha inválidos');
-    }
+  /**
+   * Authenticates the user using the provided email and password.
+   * If authentication is successful, stores a token in local storage and navigates to the dashboard.
+   * If authentication fails, displays an error alert.
+   */
+
+  login() {
+    this.apiService.login(this.email, this.password).subscribe({
+      next: (response: any) => {
+        const token = response?.token;
+        if (token) {
+          localStorage.setItem('token', token);
+          this.router.navigate(['/dashboard']);
+        } else {
+          alert('Token inválido');
+        }
+      },
+      error: (err) => {
+        alert('Usuário ou senha inválidos');
+      }
+    });
   }
 }

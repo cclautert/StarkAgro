@@ -13,40 +13,44 @@ namespace AgripeWebAPI.Controllers
         [HttpGet]
         public async Task<GetSensorResponse> GetById(
             [FromServices] IMediator mediator,
-            [FromQuery] GetSensorRequest command
+            [FromQuery] GetSensorRequest command,
+            CancellationToken cancellationToken
         )
         { 
-            return await mediator.Send(command);
+            return await mediator.Send(command, cancellationToken);
         }
 
         [Route("getAllbyUserId")]
         [HttpGet]
         public async Task<IList<GetSensorResponse>> getAllbyUserId(
             [FromServices] IMediator mediator,
-            [FromQuery] GetListSensorByUserIdRequest command
+            [FromQuery] GetListSensorByUserIdRequest command,
+            CancellationToken cancellationToken
         )
         { 
-            return await mediator.Send(command);
+            return await mediator.Send(command, cancellationToken);
         }
 
         [Route("add")]
         [HttpPost]
         public async Task<CreateSensorResponse> Add(
             [FromServices] IMediator mediator,
-            [FromBody] CreateSensorRequest command
+            [FromBody] CreateSensorRequest command,
+            CancellationToken cancellationToken
         )
         { 
-            return await mediator.Send(command);
+            return await mediator.Send(command, cancellationToken);
         }
 
         [Route("update")]
         [HttpPut]
         public async Task<EditSensorResponse> Update(
             [FromServices] IMediator mediator,
-            [FromBody] EditSensorRequest command
+            [FromBody] EditSensorRequest command,
+            CancellationToken cancellationToken
         )
         { 
-            return await mediator.Send(command);
+            return await mediator.Send(command, cancellationToken);
         }
     }
 }

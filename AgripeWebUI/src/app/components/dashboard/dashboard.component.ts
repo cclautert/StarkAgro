@@ -4,7 +4,7 @@ import { ApiService } from '../../services/api.service';
 import { Subscription, interval } from 'rxjs';
 import { BaseChartDirective } from 'ng2-charts';
 import { Router } from '@angular/router';
-
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
@@ -19,6 +19,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   numberOfReads = 15;
   intervalSub!: Subscription;
   sidebarOpened = true;
+  isMobile = false;
 
   public lineChartData: ChartConfiguration<'line'>['data'] = {
     datasets: [
@@ -43,7 +44,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   };
 
-  constructor(private apiService: ApiService, private router: Router) {}
+  constructor(private apiService: ApiService, private router: Router, private breakpointObserver: BreakpointObserver) {
+    this.breakpointObserver.observe([Breakpoints.Handset]).subscribe(result => {
+      this.isMobile = result.matches;
+    });
+  }
 
   ngOnInit(): void {
     this.loadReads();

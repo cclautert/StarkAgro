@@ -13,40 +13,44 @@ namespace AgripeWebAPI.Controllers
         [HttpGet]
         public async Task<GetPivotResponse> GetById(
             [FromServices] IMediator mediator,
-            [FromQuery] GetPivotRequest command
+            [FromQuery] GetPivotRequest command,
+            CancellationToken cancellationToken
         )
         { 
-            return await mediator.Send(command);
+            return await mediator.Send(command, cancellationToken);
         }
 
         [Route("getAllbyUserId")]
         [HttpGet]
         public async Task<IList<GetPivotResponse>> getAllbyUserId(
             [FromServices] IMediator mediator,
-            [FromQuery] GetListPivotByUserIdRequest command
+            [FromQuery] GetListPivotByUserIdRequest command,
+            CancellationToken cancellationToken
         )
         { 
-            return await mediator.Send(command);
+            return await mediator.Send(command, cancellationToken);
         }
 
         [Route("add")]
         [HttpPost]
         public async Task<CreatePivotResponse> Add(
             [FromServices] IMediator mediator,
-            [FromBody] CreatePivotRequest command
+            [FromBody] CreatePivotRequest command,
+            CancellationToken cancellationToken
         )
         { 
-            return await mediator.Send(command);
+            return await mediator.Send(command, cancellationToken);
         }
 
         [Route("update")]
         [HttpPut]
         public async Task<EditPivotResponse> Update(
             [FromServices] IMediator mediator,
-            [FromBody] EditPivotRequest command
+            [FromBody] EditPivotRequest command,
+            CancellationToken cancellationToken
         )
         { 
-            return await mediator.Send(command);
+            return await mediator.Send(command, cancellationToken);
         }
     }
 }

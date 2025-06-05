@@ -15,12 +15,10 @@ export class ApiService {
 
   constructor(private http: HttpClient) { }
 
-  login(email: string, Password: string): Observable<Read[]> {
-    const params = new HttpParams()
-    .set('Email', email.toString())
-    .set('Password', Password.toString());
+  login(email: string, password: string): Observable<{ token: string }> {
+    const body = { email, password };
 
-    return this.http.get<Read[]>(`${this.baseUrl}reads/getall`, { params });
+    return this.http.post<{ token: string }>(`${this.baseUrl}Auth/LogIn`, body);
   }
 
   getReads(userId: number, numberOfReads: number): Observable<Read[]> {

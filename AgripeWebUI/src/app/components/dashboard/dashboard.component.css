@@ -2,6 +2,7 @@ mat-card {
   max-width: 800px;
   margin: 20px auto;
 }
+
 .dashboard-container {
   height: 100vh;
 }
@@ -31,8 +32,26 @@ mat-card {
 
 .buttons {
   margin: 10px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 canvas {
   max-width: 100%;
+}
+
+/* MEDIA QUERIES PARA CELULARES */
+@media (max-width: 768px) {
+  .sidenav {
+    width: 100%;
+  }
+
+  .buttons {
+    justify-content: center;
+  }
+
+  .main {
+    padding: 10px;
+  }
 }

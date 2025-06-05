@@ -1,6 +1,6 @@
 <div class="dashboard-container">
-  <mat-sidenav-container>
-    <mat-sidenav mode="side" opened class="sidenav">
+  <mat-sidenav-container autosize>
+    <mat-sidenav #sidenav class="sidenav" [mode]="'side'" [opened]="!isMobile">
       <div class="profile">
         <img src="../../../assets/avatar.ico" alt="User" class="avatar" />
         <button mat-stroked-button color="primary" (click)="logout()">Logout</button>
@@ -14,6 +14,13 @@
     </mat-sidenav>
 
     <mat-sidenav-content>
+      <mat-toolbar color="primary" class="mat-elevation-z2">
+        <button mat-icon-button (click)="sidenav.toggle()" *ngIf="isMobile">
+          <mat-icon>menu</mat-icon>
+        </button>
+        <span>Dashboard</span>
+      </mat-toolbar>
+
       <div class="main">
         <h2>Reads</h2>
         <div class="buttons">

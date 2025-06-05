@@ -20,6 +20,10 @@ builder.Services.AddApiConfiguration(builder.Configuration);
 
 builder.Services.AddSwaggerConfiguration();
 
+var jwtSettingsSection = builder.Configuration.GetSection("JwtSettings");
+builder.Services.Configure<JwtSettings>(jwtSettingsSection);
+builder.Services.ResolveDependencies(jwtSettingsSection.Get<JwtSettings>());
+
 var app = builder.Build();
 
 app.UseSwaggerConfiguration();

@@ -13,30 +13,33 @@ namespace AgripeWebAPI.Controllers
         [HttpGet]
         public async Task<GetUserResponse> GetById(
             [FromServices] IMediator mediator,
-            [FromQuery] GetUserRequest command
+            [FromQuery] GetUserRequest command,
+            CancellationToken cancellationToken
         )
         { 
-            return await mediator.Send(command);
+            return await mediator.Send(command, cancellationToken);
         }
 
         [Route("add")]
         [HttpPost]
         public async Task<CreateUserResponse> Add(
             [FromServices] IMediator mediator,
-            [FromBody] CreateUserRequest command
+            [FromBody] CreateUserRequest command,
+            CancellationToken cancellationToken
         )
         { 
-            return await mediator.Send(command);
+            return await mediator.Send(command, cancellationToken);
         }
 
         [Route("update")]
         [HttpPut]
         public async Task<EditUserResponse> Update(
             [FromServices] IMediator mediator,
-            [FromBody] EditUserRequest command
+            [FromBody] EditUserRequest command,
+            CancellationToken cancellationToken
         )
         { 
-            return await mediator.Send(command);
+            return await mediator.Send(command, cancellationToken);
         }
     }
 }

@@ -18,19 +18,21 @@ namespace AgripeWebAPI.Controllers
         [HttpGet("GetAll")]
         public async Task<IList<GetReadResponse>> GetAll(
             [FromServices] IMediator mediator,
-            [FromQuery] GetListReadRequest command
+            [FromQuery] GetListReadRequest command,
+            CancellationToken cancellationToken
         )
         { 
-            return await mediator.Send(command);
+            return await mediator.Send(command, cancellationToken);
         }
                 
         [HttpPost("Add")]
         public async Task<CreateReadResponse> Add(
             [FromServices] IMediator mediator,
-            [FromBody] CreateReadRequest command
+            [FromBody] CreateReadRequest command,
+            CancellationToken cancellationToken
         )
         { 
-            return await mediator.Send(command);
+            return await mediator.Send(command, cancellationToken);
         }
     }    
 }
