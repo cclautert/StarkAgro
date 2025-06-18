@@ -24,6 +24,19 @@ namespace AgripeWebAPI.Controllers
             if (!ModelState.IsValid) return CustomResponse(ModelState);
 
             return await mediator.Send(command, cancellationToken);
-        }    
+        }
+        
+        [Route("addUser")]
+        [HttpPost]
+        public async Task<ActionResult<CreateUserResponse>> AddUser(
+            [FromServices] IMediator mediator,
+            [FromBody] CreateUserRequest command,
+            CancellationToken cancellationToken
+        )
+        { 
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
+
+            return await mediator.Send(command, cancellationToken);
+        }
     }
 }

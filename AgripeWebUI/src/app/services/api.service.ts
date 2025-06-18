@@ -11,7 +11,7 @@ import { HttpParams } from '@angular/common/http';
   providedIn: 'root'
 })
 export class ApiService {
-  private baseUrl = 'http://192.168.68.33:8080/v1/';
+  private baseUrl = 'http://localhost:8080/v1/';
 
   constructor(private http: HttpClient) { }
 

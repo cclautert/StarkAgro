@@ -1,22 +1,30 @@
 ﻿using AgripeWebAPI.Domain.Commands.Requests.Sensors;
 using AgripeWebAPI.Domain.Commands.Responses.Sensors;
+using AgripeWebAPI.Models.Interfaces;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AgripeWebAPI.Controllers
 {
-   [ApiController]
+    [Authorize]
     [Route("v1/sensor")]
-    public class SensorController : ControllerBase
-    {              
+    public class SensorController : MainController
+    {   
+        public SensorController(INotifier notificador) : base(notificador)
+        {
+        }
+
         [Route("getById")]
         [HttpGet]
-        public async Task<GetSensorResponse> GetById(
+        public async Task<ActionResult<GetSensorResponse>> GetById(
             [FromServices] IMediator mediator,
             [FromQuery] GetSensorRequest command,
             CancellationToken cancellationToken
         )
         { 
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
+
             return await mediator.Send(command, cancellationToken);
         }
 
@@ -28,28 +36,35 @@ namespace AgripeWebAPI.Controllers
             CancellationToken cancellationToken
         )
         { 
+            //if (!ModelState.IsValid) return CustomResponse(ModelState);
+
             return await mediator.Send(command, cancellationToken);
         }
 
         [Route("add")]
         [HttpPost]
-        public async Task<CreateSensorResponse> Add(
+        public async Task<ActionResult<CreateSensorResponse>> Add(
             [FromServices] IMediator mediator,
             [FromBody] CreateSensorRequest command,
             CancellationToken cancellationToken
         )
         { 
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
+
+            command.UserId = GetCurrentUserId();
             return await mediator.Send(command, cancellationToken);
         }
 
         [Route("update")]
         [HttpPut]
-        public async Task<EditSensorResponse> Update(
+        public async Task<ActionResult<EditSensorResponse>> Update(
             [FromServices] IMediator mediator,
             [FromBody] EditSensorRequest command,
             CancellationToken cancellationToken
         )
         { 
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
+
             return await mediator.Send(command, cancellationToken);
         }
     }

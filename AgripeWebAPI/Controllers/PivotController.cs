@@ -1,22 +1,30 @@
 ﻿using AgripeWebAPI.Domain.Commands.Requests.Pivots;
 using AgripeWebAPI.Domain.Commands.Responses.Pivots;
+using AgripeWebAPI.Models.Interfaces;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AgripeWebAPI.Controllers
 {
-   [ApiController]
+    [Authorize]
     [Route("v1/pivot")]
-    public class PivotController : ControllerBase
-    {              
+    public class PivotController : MainController
+    {
+        public PivotController(INotifier notificador) : base(notificador)
+        {
+        }
+
         [Route("getById")]
         [HttpGet]
-        public async Task<GetPivotResponse> GetById(
+        public async Task<ActionResult<GetPivotResponse>> GetById(
             [FromServices] IMediator mediator,
             [FromQuery] GetPivotRequest command,
             CancellationToken cancellationToken
         )
         { 
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
+
             return await mediator.Send(command, cancellationToken);
         }
 
@@ -27,29 +35,36 @@ namespace AgripeWebAPI.Controllers
             [FromQuery] GetListPivotByUserIdRequest command,
             CancellationToken cancellationToken
         )
-        { 
+        {
+            //if (!ModelState.IsValid) return CustomResponse(ModelState);
+
             return await mediator.Send(command, cancellationToken);
         }
 
         [Route("add")]
         [HttpPost]
-        public async Task<CreatePivotResponse> Add(
+        public async Task<ActionResult<CreatePivotResponse>> Add(
             [FromServices] IMediator mediator,
             [FromBody] CreatePivotRequest command,
             CancellationToken cancellationToken
         )
         { 
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
+
+            command.UserId = GetCurrentUserId();
             return await mediator.Send(command, cancellationToken);
         }
 
         [Route("update")]
         [HttpPut]
-        public async Task<EditPivotResponse> Update(
+        public async Task<ActionResult<EditPivotResponse>> Update(
             [FromServices] IMediator mediator,
             [FromBody] EditPivotRequest command,
             CancellationToken cancellationToken
         )
         { 
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
+
             return await mediator.Send(command, cancellationToken);
         }
     }

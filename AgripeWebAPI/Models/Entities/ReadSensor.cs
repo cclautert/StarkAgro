@@ -8,6 +8,8 @@ namespace AgripeWebAPI.Models.Entities
     {
         [ForeignKey("Sensor")]
         public int SensorId { get; set; }
+        [ForeignKey("User")]
+        public int UserId { get; set; }
         public Decimal Value { get; set; }
         public DateTime Date { get; set; }
 

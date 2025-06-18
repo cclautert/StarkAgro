@@ -45,7 +45,7 @@ namespace AgripeWebAPI.Controllers
             });
         }
 
-        protected string GetCurrentAttuid()
+        protected int GetCurrentUserId()
         {
             var userClaim = getUserClaim();
             if (!string.IsNullOrEmpty(userClaim))
@@ -53,27 +53,23 @@ namespace AgripeWebAPI.Controllers
                 using (JsonDocument doc = JsonDocument.Parse(userClaim))
                 {
                     var root = doc.RootElement;
-                    if (root.TryGetProperty("attuid", out JsonElement attuidElement))
+                    if (root.TryGetProperty("userId", out JsonElement attuidElement))
                     {
-                        string attuid = attuidElement.GetString();
-                        return attuid;
+                        int userId = attuidElement.GetString() != null ? int.Parse(attuidElement.GetString()) : 0;
+                        return userId;
                     }
                 }
             }
-            return string.Empty;
+            return 0;
         }
 
         private string getUserClaim()
         {
-            var realUserClaim = User?.Claims?.FirstOrDefault(c => c.Type == "realUser")?.Value;
-            var effectiveUserClaim = User?.Claims?.FirstOrDefault(c => c.Type == "effectiveUser")?.Value;
-            if (!string.IsNullOrEmpty(effectiveUserClaim))
+            var userClaim = User?.Claims?.FirstOrDefault(c => c.Type == "User")?.Value;
+            
+            if (!string.IsNullOrEmpty(userClaim))
             {
-                return effectiveUserClaim;
-            }
-            if (!string.IsNullOrEmpty(realUserClaim))
-            {
-                return realUserClaim;
+                return userClaim;
             }
 
             return string.Empty;
@@ -93,27 +89,6 @@ namespace AgripeWebAPI.Controllers
                         if (!string.IsNullOrEmpty(teamIdElementString) && int.TryParse(teamIdElementString, out int teamId))
                         {
                             return teamId;
-                        }
-                    }
-                }
-            }
-            return null;
-        }
-
-        protected int? GetCurrentCenterNameId()
-        {
-            var userClaim = getUserClaim();
-            if (!string.IsNullOrEmpty(userClaim))
-            {
-                using (JsonDocument doc = JsonDocument.Parse(userClaim))
-                {
-                    var root = doc.RootElement;
-                    if (root.TryGetProperty("sfmCenterNameId", out JsonElement sfmCenterNameIdElement))
-                    {
-                        var sfmCenterNameIdString = sfmCenterNameIdElement.GetString();
-                        if (!string.IsNullOrEmpty(sfmCenterNameIdString) && int.TryParse(sfmCenterNameIdString, out int sfmCenterNameId))
-                        {
-                            return sfmCenterNameId;
                         }
                     }
                 }

@@ -22,7 +22,7 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
             var startDate = DateTime.UtcNow.AddDays(-request.NumberOfReads);
 
             return await _dbContext.ReadSensors
-                .Where(x => x.Sensor.UserId == request.UserId && x.Date >= startDate)
+                .Where(x => x.UserId == request.UserId && x.Date >= startDate)
                 .OrderByDescending(x => x.Date)
                 .Select(x => new GetReadResponse
                 {

@@ -17,7 +17,7 @@ namespace AgripeWebAPI.Domain.Handlers.Pivots
 
         public Task<CreatePivotResponse> Handle(CreatePivotRequest request, CancellationToken cancellationToken)
         {
-            var pivot = _dbContext.Pivots.Add(new Pivot { Name = request.Name });
+            var pivot = _dbContext.Pivots.Add(new Pivot { Name = request.Name, UserId = request.UserId });
             _dbContext.SaveChanges();
 
             return Task.FromResult(new CreatePivotResponse  { Id = pivot.Entity.Id });

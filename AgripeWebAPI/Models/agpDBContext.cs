@@ -35,6 +35,11 @@ namespace AgripeWebAPI.Models
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Id).ValueGeneratedOnAdd(); // Makes it an identity column
                 entity.Property(e => e.Code).IsRequired().HasMaxLength(17);
+
+                entity.HasOne<User>()
+                      .WithMany()
+                      .HasForeignKey("UserId")
+                      .OnDelete(DeleteBehavior.NoAction);
             });
 
             modelBuilder.Entity<ReadSensor>(entity =>
@@ -44,6 +49,11 @@ namespace AgripeWebAPI.Models
                 entity.Property(e => e.Value).IsRequired();
                 entity.Property(e => e.Value).HasPrecision(18, 2);
                 entity.Property(e => e.Date).IsRequired();
+
+                entity.HasOne<User>()
+                      .WithMany()
+                      .HasForeignKey("UserId")
+                      .OnDelete(DeleteBehavior.NoAction);
             });
 
             modelBuilder.Entity<Pivot>(entity =>
@@ -51,6 +61,11 @@ namespace AgripeWebAPI.Models
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Id).ValueGeneratedOnAdd(); // Makes it an identity column
                 entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+
+                entity.HasOne<User>()
+                      .WithMany()
+                      .HasForeignKey("UserId")
+                      .OnDelete(DeleteBehavior.NoAction);
             });
         }
     }
