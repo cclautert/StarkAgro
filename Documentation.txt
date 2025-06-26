@@ -1,0 +1,7 @@
+Email:IOT_EMAIL_REDACTED
+Password:IOT_PASS_REDACTED
+
+Email:admin@agripeweb.com
+Password:admin@@
+
+MAC:5C:CF:7F:3A:54:29

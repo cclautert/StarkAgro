@@ -1,9 +1,11 @@
+dotnet ef database update
+
 #Verify file
 docker-compose config
 
 #Exec
 docker-compose up -d
-docker-compose -f Docker/docker-compose.yml up --build
+docker-compose -f docker/docker-compose.yml up --build -d
 
 #Logs
 docker-compose logs
@@ -21,6 +23,29 @@ docker-compose down
 #Remove All
 docker-compose down -v
 
+####Executar dentro do contêiner via docker exec
+Suba os contêineres:
+docker-compose up -d
+
+Acesse o container onde está sua aplicação:
+docker exec -it nome-do-container bash
+
+Dentro do contêiner, execute:
+dotnet ef database update
+####Executar dentro do contêiner via docker exec
+
+
+#PUSH to Azure/AWS
+docker-compose -f Docker/docker-compose.yml push
+
+#LOGIN
+az acr login --name agripeweb
+
+#Creating CONTEXT
+docker context create aci agripeweb --resource-group agripeweb-rg --location brazilsouth --subscription-id 0d4b2ec6-8a33-4693-994d-022fac93ecca
+
+
+az login --tenant 6e571638-bce8-45c6-b38f-9b49a3994cec
 
 ######################################################
 docker-compose -f Docker/docker-compose.yml up --build

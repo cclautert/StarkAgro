@@ -11,7 +11,7 @@ import { HttpParams } from '@angular/common/http';
   providedIn: 'root'
 })
 export class ApiService {
-  private baseUrl = 'http://localhost:8080/v1/';
+  private baseUrl = 'http://agripewebapi:8080/v1/';
 
   constructor(private http: HttpClient) { }
 
