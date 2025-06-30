@@ -28,16 +28,16 @@ namespace AgripeWebAPI.Controllers
             return await mediator.Send(command, cancellationToken);
         }
 
-        [Route("getAllbyUserId")]
+        [Route("getAll")]
         [HttpGet]
-        public async Task<IList<GetPivotResponse>> getAllbyUserId(
+        public async Task<IList<GetPivotResponse>> GetAll(
             [FromServices] IMediator mediator,
             [FromQuery] GetListPivotByUserIdRequest command,
             CancellationToken cancellationToken
         )
         {
             //if (!ModelState.IsValid) return CustomResponse(ModelState);
-
+            command.UserId = GetCurrentUserId();
             return await mediator.Send(command, cancellationToken);
         }
 
@@ -60,6 +60,19 @@ namespace AgripeWebAPI.Controllers
         public async Task<ActionResult<EditPivotResponse>> Update(
             [FromServices] IMediator mediator,
             [FromBody] EditPivotRequest command,
+            CancellationToken cancellationToken
+        )
+        { 
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
+
+            return await mediator.Send(command, cancellationToken);
+        }
+
+        [Route("delete")]
+        [HttpDelete]
+        public async Task<ActionResult<DeletePivotResponse>> Delete(
+            [FromServices] IMediator mediator,
+            [FromQuery] DeletePivotRequest command,
             CancellationToken cancellationToken
         )
         { 

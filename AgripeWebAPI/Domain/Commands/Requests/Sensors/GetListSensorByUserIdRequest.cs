@@ -5,6 +5,6 @@ namespace AgripeWebAPI.Domain.Commands.Requests.Sensors
 {
     public class GetListSensorByUserIdRequest : IRequest<IList<GetSensorResponse>>
     {
-        public int UserId { get; set; }
+        public int? UserId { get; set; }
     }
 }

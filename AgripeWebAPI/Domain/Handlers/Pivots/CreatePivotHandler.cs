@@ -17,10 +17,15 @@ namespace AgripeWebAPI.Domain.Handlers.Pivots
 
         public Task<CreatePivotResponse> Handle(CreatePivotRequest request, CancellationToken cancellationToken)
         {
-            var pivot = _dbContext.Pivots.Add(new Pivot { Name = request.Name, UserId = request.UserId });
+            if (!request.UserId.HasValue)
+            {
+                throw new ArgumentNullException(nameof(request.UserId), "UserId cannot be null.");
+            }
+
+            var pivot = _dbContext.Pivots.Add(new Pivot { Name = request.Name, UserId = request.UserId.Value });
             _dbContext.SaveChanges();
 
-            return Task.FromResult(new CreatePivotResponse  { Id = pivot.Entity.Id });
+            return Task.FromResult(new CreatePivotResponse { Id = pivot.Entity.Id });
         }
     }
 }

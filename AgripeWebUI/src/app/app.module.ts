@@ -18,20 +18,18 @@ import { AppComponent } from './app.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { PivotFormComponent } from './components/pivot-form/pivot-form.component';
 import { UserFormComponent } from './components/user-form/user-form.component';
-import { SensorFormComponent } from './components/sensor-form/sensor-form.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LoginComponent } from './components/login/login.component';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './guards/auth.interceptor';
+import { PivotListComponent } from './components/pivot-list/pivot-list.component';
 
 @NgModule({
   declarations: [
     LoginComponent,
     DashboardComponent,
-    PivotFormComponent,
-    UserFormComponent,
-    SensorFormComponent
+    UserFormComponent
   ],
   imports: [
     AppComponent,

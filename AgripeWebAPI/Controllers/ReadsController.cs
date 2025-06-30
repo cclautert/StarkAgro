@@ -1,5 +1,6 @@
 ﻿using AgripeWebAPI.Domain.Commands.Requests.Reads;
 using AgripeWebAPI.Domain.Commands.Responses.Reads;
+using AgripeWebAPI.Models.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,8 +8,12 @@ namespace AgripeWebAPI.Controllers
 {
     [ApiController]
     [Route("v1/reads")]
-    public class ReadsController : ControllerBase
+    public class ReadsController : MainController
     {
+        public ReadsController(INotifier notificador) : base(notificador)
+        {
+        }
+
         [HttpGet("GetActive")]
         public async Task<IActionResult> GetActive(CancellationToken cancellationToken)
         {
@@ -21,7 +26,8 @@ namespace AgripeWebAPI.Controllers
             [FromQuery] GetListReadRequest command,
             CancellationToken cancellationToken
         )
-        { 
+        {
+            command.UserId = GetCurrentUserId();
             return await mediator.Send(command, cancellationToken);
         }
                 
@@ -32,6 +38,7 @@ namespace AgripeWebAPI.Controllers
             CancellationToken cancellationToken
         )
         { 
+            command.UserId = GetCurrentUserId();
             return await mediator.Send(command, cancellationToken);
         }
     }    

@@ -21,7 +21,7 @@ services:
       context: ../AgripeWebUI
       dockerfile: Dockerfile
     ports:
-      - "4200:80"  # SPA acessível em http://localhost:4200
+      - "80:80"  # SPA acessível em http://localhost:4200
     depends_on:
       - agripewebapi
     networks:

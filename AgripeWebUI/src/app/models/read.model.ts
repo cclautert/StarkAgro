@@ -1,5 +1,5 @@
 export interface Read {
-  id: number;
+  //id: number;
   sensorId: number;
   value: number;
   date: Date;

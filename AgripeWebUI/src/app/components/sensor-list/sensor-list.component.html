@@ -1,0 +1,34 @@
+<div class="container">
+  <h1>Lista de Sensores</h1>
+  <button class="btn btn-primary" [routerLink]="['/sensores/novo']">Novo Sensor</button>
+
+  <table class="table-sensores" *ngIf="sensores$ | async as sensores; else loading">
+    <thead>
+      <tr>
+        <th>ID do Pivô</th>
+        <th>Quadrante</th>
+        <th>Código</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let sensor of sensores">
+        <td>{{ sensor.pivotId }}</td>
+        <td>{{ sensor.quadrante }}</td>
+        <td>{{ sensor.code }}</td>
+        <td>
+          <!-- Passamos o pivotId para as funções de editar e excluir -->
+          <button class="btn btn-secondary" (click)="editarSensor(sensor.pivotId)">Editar</button>
+          <button class="btn btn-danger" (click)="excluirSensor(sensor.pivotId)">Excluir</button>
+        </td>
+      </tr>
+      <tr *ngIf="sensores.length === 0">
+        <td colspan="4">Nenhum sensor encontrado.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <ng-template #loading>
+    <p>Carregando sensores...</p>
+  </ng-template>
+</div>

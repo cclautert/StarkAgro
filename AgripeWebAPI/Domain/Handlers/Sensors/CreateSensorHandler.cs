@@ -16,10 +16,18 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
 
         public Task<CreateSensorResponse> Handle(CreateSensorRequest request, CancellationToken cancellationToken)
         {
+            if (!request.UserId.HasValue)
+            {
+                throw new ArgumentNullException(nameof(request.UserId), "UserId cannot be null.");
+            }
+            if (!request.PivoId.HasValue)
+            {
+                throw new ArgumentNullException(nameof(request.PivoId), "PivoId cannot be null.");
+            }
             var sensor = new Models.Entities.Sensor
             {
-                PivoId = request.PivoId,
-                UserId = request.UserId,
+                PivoId = request.PivoId.Value,
+                UserId = request.UserId.Value,
                 Code = request.Code,
                 Quadrante = request.Quadrante
             };

@@ -28,11 +28,25 @@ namespace AgripeWebAPI.Controllers
             return await mediator.Send(command, cancellationToken);
         }
 
-        [Route("getAllbyUserId")]
+        [Route("getAll")]
         [HttpGet]
-        public async Task<IList<GetSensorResponse>> getAllbyUserId(
+        public async Task<IList<GetSensorResponse>> getAll(
             [FromServices] IMediator mediator,
             [FromQuery] GetListSensorByUserIdRequest command,
+            CancellationToken cancellationToken
+        )
+        { 
+            //if (!ModelState.IsValid) return CustomResponse(ModelState);
+
+            command.UserId = GetCurrentUserId();
+            return await mediator.Send(command, cancellationToken);
+        }
+
+        [Route("getAllByPivotId")]
+        [HttpGet]
+        public async Task<IList<GetSensorResponse>> getAllByPivotId(
+            [FromServices] IMediator mediator,
+            [FromQuery] GetListSensorRequest command,
             CancellationToken cancellationToken
         )
         { 

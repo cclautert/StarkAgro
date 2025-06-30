@@ -1,6 +1,7 @@
 export interface Sensor {
-  pivotId: string;
-  userId: number;
+  id?: number;
+  pivotId: number;
+  //userId: number;
   quadrante: number;
   code: string;
 }

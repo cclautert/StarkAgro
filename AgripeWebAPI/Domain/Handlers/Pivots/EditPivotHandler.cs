@@ -14,7 +14,7 @@ namespace AgripeWebAPI.Domain.Handlers.Pivots
         }
         public Task<EditPivotResponse> Handle(EditPivotRequest request, CancellationToken cancellationToken)
         {
-            var pivot = _dbContext.Pivots.FirstOrDefault(p => p.Name == request.Name);
+            var pivot = _dbContext.Pivots.FirstOrDefault(p => p.Id == request.Id);
             if (pivot == null)
             {
                 throw new KeyNotFoundException("Pivot not found");

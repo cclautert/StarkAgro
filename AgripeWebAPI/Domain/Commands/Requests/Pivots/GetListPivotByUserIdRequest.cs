@@ -5,6 +5,6 @@ namespace AgripeWebAPI.Domain.Commands.Requests.Pivots
 {
     public class GetListPivotByUserIdRequest : IRequest<IList<GetPivotResponse>>
     {
-        public int UserId { get; set; }
+        public int? UserId { get; set; }
     }
 }

@@ -11,7 +11,8 @@ import { HttpParams } from '@angular/common/http';
   providedIn: 'root'
 })
 export class ApiService {
-  private baseUrl = 'http://agripewebapi:8080/v1/';
+  //private baseUrl = 'https://localhost:7162/v1/';//local
+  private baseUrl = 'http://localhost:8080/v1/';
 
   constructor(private http: HttpClient) { }
 
@@ -23,21 +24,20 @@ export class ApiService {
 
   getReads(userId: number, numberOfReads: number): Observable<Read[]> {
     const params = new HttpParams()
-    .set('UserId', userId.toString())
     .set('NumberOfReads', numberOfReads.toString());
 
     return this.http.get<Read[]>(`${this.baseUrl}reads/getall`, { params });
   }
 
-  addPivot(pivot: Pivot): Observable<any> {
-    return this.http.post(`${this.baseUrl}pivot/add`, pivot);
-  }
+  // addPivot(pivot: Pivot): Observable<any> {
+  //   return this.http.post(`${this.baseUrl}pivot/add`, pivot);
+  // }
 
   addUser(user: User): Observable<any> {
     return this.http.post(`${this.baseUrl}user/add`, user);
   }
 
-  addSensor(sensor: Sensor): Observable<any> {
-    return this.http.post(`${this.baseUrl}sensor/add`, sensor);
-  }
+  // addSensor(sensor: Sensor): Observable<any> {
+  //   return this.http.post(`${this.baseUrl}sensor/add`, sensor);
+  // }
 }
