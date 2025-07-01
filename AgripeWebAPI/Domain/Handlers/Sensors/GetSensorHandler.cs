@@ -18,13 +18,12 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
         public async Task<GetSensorResponse?> Handle(GetSensorRequest request, CancellationToken cancellationToken)
         {
             return await _dbContext.Sensors
-                .Where(x => x.Code == request.Code)
+                .Where(x => x.Id == request.Id)
                 .Select(x => new GetSensorResponse
                 {
-                    Id = x.Id,
-                    UserId = x.UserId,
+                    Id = x.Id,                    
                     Code = x.Code,
-                    PivoId = x.PivoId,
+                    Pivot = x.Pivot,
                     Quadrante = x.Quadrante
                 })
                 .FirstOrDefaultAsync(cancellationToken);

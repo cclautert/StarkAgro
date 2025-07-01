@@ -21,6 +21,18 @@
   box-sizing: border-box;
 }
 
+.form-group select {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.form-group input[type="number"] {
+  width: 30%;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
 .form-group-checkbox {
     display: flex;
     align-items: center;

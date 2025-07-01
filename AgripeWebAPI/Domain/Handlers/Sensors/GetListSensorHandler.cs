@@ -22,9 +22,8 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
                 .Select(x => new GetSensorResponse
                 {
                     Id = x.Id,
-                    UserId = x.UserId,
                     Code = x.Code,
-                    PivoId = x.PivoId,
+                    Pivot = x.Pivot,
                     Quadrante = x.Quadrante
                 }).ToListAsync(cancellationToken);
         }

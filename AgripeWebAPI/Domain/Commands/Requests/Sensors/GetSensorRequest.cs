@@ -5,6 +5,6 @@ namespace AgripeWebAPI.Domain.Commands.Requests.Sensors
 {
     public class GetSensorRequest : IRequest<GetSensorResponse>
     {
-        public string Code { get; set; }
+        public int Id { get; set; }
     }
 }

@@ -29,7 +29,7 @@ const routes: Routes = [
   { path: 'sensores/editar/:id', component: SensorFormComponent, canActivate: [AuthGuard] },
 
   // Opcional: Redirecionar rotas não encontradas
-  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: '**', redirectTo: 'login' }, // rota fallback
 ];
 

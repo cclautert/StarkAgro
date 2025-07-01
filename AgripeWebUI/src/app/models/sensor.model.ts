@@ -1,7 +1,8 @@
+import { Pivot } from "./pivot.model";
+
 export interface Sensor {
-  id?: number;
-  pivotId: number;
-  //userId: number;
+  id: number;
+  pivot: Pivot;
   quadrante: number;
   code: string;
 }

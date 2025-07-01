@@ -43,6 +43,13 @@ export class PivotFormComponent implements OnInit {
         }
       });
     }
+
+    // Atualiza a definição do formulário para incluir o campo 'pivot'
+    this.pivotForm = this.fb.group({
+      // O valor inicial de um objeto deve ser null
+      id: [null, Validators.required],
+      name: ['', Validators.required]
+    });
   }
 
   onSubmit(): void {

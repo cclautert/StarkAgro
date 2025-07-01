@@ -14,13 +14,14 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
         }
         public async Task<EditSensorResponse> Handle(EditSensorRequest request, CancellationToken cancellationToken)
         {
-            var sensor = await _dbContext.Sensors.FindAsync(request.PivoId, request.UserId);
+            var sensor = await _dbContext.Sensors.FindAsync(request.Id);
             if (sensor == null)
             {
                 throw new KeyNotFoundException("Sensor not found.");
             }
             sensor.Code = request.Code;
             sensor.Quadrante = request.Quadrante;
+            sensor.PivoId = request.Pivot.Id;
             await _dbContext.SaveChangesAsync(cancellationToken);
             return new EditSensorResponse { Id = sensor.Id };
         }

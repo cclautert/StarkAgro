@@ -9,8 +9,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
   providedIn: 'root'
 })
 export class PivotService {
-  //private baseUrl = 'https://localhost:7162/v1/';
-  private baseUrl = 'http://localhost:8080/v1/';
+  private baseUrl = 'https://localhost:7162/v1/';
+  //private baseUrl = 'http://localhost:8080/v1/';
 
   constructor(private http: HttpClient) { }
 

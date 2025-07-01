@@ -2,20 +2,39 @@
   <h1>{{ isEditMode ? 'Editar Sensor' : 'Novo Sensor' }}</h1>
 
   <form [formGroup]="sensorForm" (ngSubmit)="onSubmit()" novalidate>
+
+    <!-- NOVO CAMPO PARA O PIVÔ -->
     <div class="form-group">
-      <label for="quadrante">Quadrante</label>
-      <input id="quadrante" type="number" formControlName="quadrante" required>
-      <div *ngIf="quadrante?.invalid && (quadrante?.dirty || quadrante?.touched)" class="error">
-        <div *ngIf="quadrante?.errors?.['required']">Quadrante é obrigatório.</div>
-        <div *ngIf="quadrante?.errors?.['min']">O quadrante deve ser no mínimo 1.</div>
+      <label for="pivot">Pivô</label>
+      <!-- Usamos um <select> para escolher um objeto Pivot -->
+      <select id="pivot" formControlName="pivot" required [compareWith]="comparePivots">
+        <!-- Opção padrão desabilitada -->
+        <option [ngValue]="null" disabled>Selecione um Pivô</option>
+        <!-- Itera sobre a lista de pivôs disponíveis no componente -->
+        <option *ngFor="let p of pivotsDisponiveis" [ngValue]="p">
+          {{ p.name }}
+        </option>
+      </select>
+      <!-- Validação para o campo de pivô -->
+      <div *ngIf="pivot?.invalid && (pivot?.dirty || pivot?.touched)" class="error">
+        A seleção de um pivô é obrigatória.
       </div>
     </div>
 
     <div class="form-group">
-      <label for="code">Código</label>
+      <label for="code">Código do Sensor</label>
       <input id="code" type="text" formControlName="code" required>
       <div *ngIf="code?.invalid && (code?.dirty || code?.touched)" class="error">
         Código é obrigatório.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="quadrante">Quadrante</label>
+      <input id="quadrante" type="number" formControlName="quadrante" required min="1" max="4">
+      <div *ngIf="quadrante?.invalid && (quadrante?.dirty || quadrante?.touched)" class="error">
+        <div *ngIf="quadrante?.errors?.['required']">Quadrante é obrigatório.</div>
+        <div *ngIf="quadrante?.errors?.['min']">O quadrante deve ser no mínimo 1.</div>
       </div>
     </div>
 

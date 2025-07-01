@@ -4,8 +4,8 @@
   <form [formGroup]="pivotForm" (ngSubmit)="onSubmit()" class="form-fields">
 
     <div class="form-group">
-      <label for="nome">Nome</label>
-      <input id="nome" type="text" formControlName="nome" required>
+      <label for="name">Nome</label>
+      <input id="name" type="text" formControlName="name" required>
       <div *ngIf="pivotForm?.invalid && (pivotForm?.dirty || pivotForm?.touched)" class="error">
         <div *ngIf="pivotForm?.errors?.['required']">Nome é obrigatório.</div>
         <div *ngIf="pivotForm?.errors?.['min']">O nome deve ser no mínimo 3 caracteres.</div>

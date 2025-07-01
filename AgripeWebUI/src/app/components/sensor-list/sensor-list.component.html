@@ -5,7 +5,7 @@
   <table class="table-sensores" *ngIf="sensores$ | async as sensores; else loading">
     <thead>
       <tr>
-        <th>ID do Pivô</th>
+        <th>Pivô</th>
         <th>Quadrante</th>
         <th>Código</th>
         <th>Ações</th>
@@ -13,13 +13,13 @@
     </thead>
     <tbody>
       <tr *ngFor="let sensor of sensores">
-        <td>{{ sensor.pivotId }}</td>
+        <td>{{ sensor.pivot.name }}</td>
         <td>{{ sensor.quadrante }}</td>
         <td>{{ sensor.code }}</td>
         <td>
           <!-- Passamos o pivotId para as funções de editar e excluir -->
-          <button class="btn btn-secondary" (click)="editarSensor(sensor.pivotId)">Editar</button>
-          <button class="btn btn-danger" (click)="excluirSensor(sensor.pivotId)">Excluir</button>
+          <button class="btn btn-secondary" (click)="editarSensor(sensor.id!)">Editar</button>
+          <button class="btn btn-danger" (click)="excluirSensor(sensor.id!)">Excluir</button>
         </td>
       </tr>
       <tr *ngIf="sensores.length === 0">
