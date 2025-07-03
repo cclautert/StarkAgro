@@ -53,7 +53,7 @@ export class SensorFormComponent implements OnInit {
     // Atualiza a definição do formulário para incluir o campo 'pivot'
     this.sensorForm = this.fb.group({
       // O valor inicial de um objeto deve ser null
-      id: [null, Validators.required],
+      id: [null],
       pivot: [null, Validators.required],
       code: ['', Validators.required],
       quadrante: [null, [Validators.required, Validators.min(1)]]

@@ -1,0 +1,32 @@
+.sidenav-container {
+  height: 100vh; /* Ocupa a altura total da tela */
+}
+
+.sidenav {
+  width: 230px;
+  background-color: #f4f4f4;
+}
+
+.sidenav .mat-toolbar {
+  background: inherit;
+  border-bottom: 1px solid rgba(0,0,0,.1);
+}
+
+.mat-nav-list a {
+  display: flex;
+  align-items: center;
+  gap: 15px; /* Espaço entre o ícone e o texto */
+  text-decoration: none;
+  color: #333;
+}
+
+/* Estilo para o link ativo */
+.active-link {
+  background-color: rgba(63, 81, 181, 0.1); /* Cor primária com transparência */
+  color: #3F51B5; /* Cor primária do tema Indigo/Pink */
+  font-weight: bold;
+}
+
+.main-content {
+  padding: 20px;
+}

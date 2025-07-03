@@ -8,6 +8,7 @@
   width: 100%;
   margin-top: 1rem;
   border-collapse: collapse;
+  table-layout: fixed;
 }
 
 .table-sensores th, .table-sensores td {
@@ -40,4 +41,22 @@
 .status-inativo {
   color: red;
   font-weight: bold;
+}
+
+.col-pivot {
+  width: 35%;
+}
+
+.col-quadrante {
+  width: 15%;
+}
+
+.col-codigo {
+  width: 35%;
+}
+
+.col-acoes {
+  width: 15%;
+  /* Também é uma boa prática centralizar os botões de ação */
+  text-align: center;
 }

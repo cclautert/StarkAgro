@@ -25,8 +25,8 @@ export class PivotFormComponent implements OnInit {
   constructor() {
     // Definindo o novo formulário com os campos 'quadrante' e 'code'
     this.pivotForm = this.fb.group({
-      quadrante: [null, [Validators.required, Validators.min(1)]],
-      code: ['', Validators.required]
+      id: [null], // O 'id' pode ser null para novos pivôs
+      name: ['', Validators.required]
     });
   }
 
@@ -43,13 +43,6 @@ export class PivotFormComponent implements OnInit {
         }
       });
     }
-
-    // Atualiza a definição do formulário para incluir o campo 'pivot'
-    this.pivotForm = this.fb.group({
-      // O valor inicial de um objeto deve ser null
-      id: [null, Validators.required],
-      name: ['', Validators.required]
-    });
   }
 
   onSubmit(): void {

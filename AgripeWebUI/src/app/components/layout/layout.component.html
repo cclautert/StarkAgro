@@ -1,0 +1,39 @@
+<mat-sidenav-container class="sidenav-container">
+
+  <!-- SIDENAV (Menu Lateral) -->
+  <mat-sidenav #sidenav class="sidenav" mode="side" opened>
+    <mat-toolbar>Menu</mat-toolbar>
+    <mat-nav-list>
+      <a mat-list-item routerLink="/dashboard" routerLinkActive="active-link">
+        <mat-icon>home</mat-icon> Home
+      </a>
+      <a mat-list-item routerLink="/sensores" routerLinkActive="active-link">
+        <mat-icon>sensors</mat-icon> Sensors
+      </a>
+      <a mat-list-item routerLink="/pivots" routerLinkActive="active-link">
+        <mat-icon>pivot_table_chart</mat-icon> Pivots
+      </a>
+      <a mat-list-item routerLink="/user" routerLinkActive="active-link">
+        <mat-icon>person</mat-icon> User
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <!-- CONTEÚDO PRINCIPAL -->
+  <mat-sidenav-content>
+    <mat-toolbar color="primary">
+      <!-- Você pode adicionar um botão para abrir/fechar o menu em telas pequenas -->
+      <button mat-icon-button (click)="sidenav.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span>AgripeWeb</span>
+    </mat-toolbar>
+
+    <!-- O conteúdo da página atual (Home, Pivots, etc.) será renderizado aqui -->
+    <main class="main-content">
+      <router-outlet></router-outlet>
+    </main>
+
+  </mat-sidenav-content>
+
+</mat-sidenav-container>

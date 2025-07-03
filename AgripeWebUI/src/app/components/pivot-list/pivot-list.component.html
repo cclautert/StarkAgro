@@ -5,16 +5,16 @@
   <table class="table-pivots" *ngIf="pivots$ | async as pivots; else loading">
     <thead>
       <tr>
-        <th>Nome</th>
-        <th>Ações</th>
+        <th class="col-nome">Nome</th>
+        <th class="col-acoes">Ações</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let pivot of pivots">
         <td>{{ pivot.name }}</td>
         <td>
-          <button class="btn-secondary" (click)="updatePivot(pivot.id!)">Editar</button>
-          <button class="btn-danger" (click)="deletePivot(pivot.id!)">Excluir</button>
+          <button class="btn btn-secondary" (click)="updatePivot(pivot.id!)">Editar</button>
+          <button class="btn btn-danger" (click)="deletePivot(pivot.id!)">Excluir</button>
         </td>
       </tr>
       <tr *ngIf="pivots.length === 0">

@@ -1,26 +1,7 @@
 <div class="dashboard-container">
   <mat-sidenav-container autosize>
-    <mat-sidenav #sidenav class="sidenav" [mode]="'side'" [opened]="!isMobile">
-      <div class="profile">
-        <img src="../../../assets/avatar.ico" alt="User" class="avatar" />
-        <button mat-stroked-button color="primary" (click)="logout()">Logout</button>
-      </div>
-      <mat-nav-list>
-        <a mat-list-item routerLink="/">Home</a>
-        <a mat-list-item routerLink="/pivots">Pivot</a>
-        <a mat-list-item routerLink="/sensores">Sensor</a>
-        <a mat-list-item routerLink="/user">User</a>
-      </mat-nav-list>
-    </mat-sidenav>
 
     <mat-sidenav-content>
-      <mat-toolbar color="primary" class="mat-elevation-z2">
-        <button mat-icon-button (click)="sidenav.toggle()" *ngIf="isMobile">
-          <mat-icon>menu</mat-icon>
-        </button>
-        <span>Home</span>
-      </mat-toolbar>
-
       <div class="main">
         <h2>Reads</h2>
         <div class="buttons">

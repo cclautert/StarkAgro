@@ -1,5 +1,4 @@
 export interface Pivot {
-  id?: number;
-  userId?: number;
+  id: number;
   name: string;
 }

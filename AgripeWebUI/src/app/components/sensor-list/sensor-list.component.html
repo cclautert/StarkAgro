@@ -5,10 +5,10 @@
   <table class="table-sensores" *ngIf="sensores$ | async as sensores; else loading">
     <thead>
       <tr>
-        <th>Pivô</th>
-        <th>Quadrante</th>
-        <th>Código</th>
-        <th>Ações</th>
+        <th class="col-pivot">Pivô</th>
+        <th class="col-quadrante">Quadrante</th>
+        <th class="col-codigo">Código</th>
+        <th class="col-acoes">Ações</th>
       </tr>
     </thead>
     <tbody>
