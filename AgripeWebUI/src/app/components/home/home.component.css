@@ -1,0 +1,50 @@
+.container {
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  max-width: 700px;
+  margin: 40px auto;
+}
+
+.selector-box {
+  margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.selector-box label {
+  margin-bottom: 8px;
+  font-size: 1.1em;
+  color: #333;
+}
+
+.pivot-selector {
+  padding: 10px;
+  font-size: 1em;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  min-width: 250px;
+}
+
+.circle-container {
+  width: 100%;
+  max-width: 600px; /* Define o tamanho máximo do círculo */
+}
+
+.quadrant-circle path {
+  /* Adiciona uma borda sutil para separar os quadrantes */
+  stroke: #ffffff;
+  stroke-width: 2px;
+  transition: fill 0.3s ease-in-out; /* Animação suave na troca de cor */
+}
+
+.quadrant-circle path:hover {
+  opacity: 0.85; /* Efeito visual ao passar o mouse */
+  cursor: pointer;
+}

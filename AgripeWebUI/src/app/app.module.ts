@@ -22,12 +22,14 @@ import { FormsModule } from '@angular/forms';
 import { LoginComponent } from './components/login/login.component';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './guards/auth.interceptor';
+import { HomeComponent } from './components/home/home.component';
 
 @NgModule({
   declarations: [
     LoginComponent,
     DashboardComponent,
-    UserFormComponent
+    UserFormComponent,
+    HomeComponent,
   ],
   imports: [
     AppComponent,
