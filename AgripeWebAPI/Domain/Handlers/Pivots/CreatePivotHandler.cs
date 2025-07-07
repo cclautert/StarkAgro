@@ -22,10 +22,20 @@ namespace AgripeWebAPI.Domain.Handlers.Pivots
                 throw new ArgumentNullException(nameof(request.UserId), "UserId cannot be null.");
             }
 
-            var pivot = _dbContext.Pivots.Add(new Pivot { Name = request.Name, UserId = request.UserId.Value });
-            _dbContext.SaveChanges();
+            var pivot = new Pivot
+            {
+                Name = request.Name,
+                UserId = request.UserId.Value
+            };
 
-            return Task.FromResult(new CreatePivotResponse { Id = pivot.Entity.Id });
+            _dbContext.Pivots.Add(pivot);
+            _dbContext.SaveChanges(); // EF Core salva e preenche o Id automaticamente
+
+            return Task.FromResult(new CreatePivotResponse
+            {
+                Id = pivot.Id // <-- Aqui o Id já estará preenchido
+            });
+
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using AgripeWebAPI.Domain.Commands.Requests.Reads;
+using AgripeWebAPI.Domain.Commands.Responses.Pivots;
 using AgripeWebAPI.Domain.Commands.Responses.Reads;
 using AgripeWebAPI.Models;
 using MediatR;
@@ -7,7 +8,7 @@ using System.Linq;
 
 namespace AgripeWebAPI.Domain.Handlers.Sensors
 {
-    public class GetListReadHandler : IRequestHandler<GetListReadRequest, IList<GetReadResponse>>
+    public class GetListReadHandler : IRequestHandler<GetListReadRequest, IAsyncEnumerable<GetReadResponse>>
     {
         private readonly agpDBContext _dbContext;
 
@@ -17,11 +18,11 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }
 
-        public async Task<IList<GetReadResponse>> Handle(GetListReadRequest request, CancellationToken cancellationToken)
+        public async Task<IAsyncEnumerable<GetReadResponse>> Handle(GetListReadRequest request, CancellationToken cancellationToken)
         {
             var startDate = DateTime.UtcNow.AddDays(-request.NumberOfReads);
 
-            return await _dbContext.ReadSensors
+            IQueryable<GetReadResponse> query = _dbContext.ReadSensors
                 .Where(x => x.UserId == request.UserId && x.Date >= startDate)
                 .OrderByDescending(x => x.Date)
                 .Select(x => new GetReadResponse
@@ -30,9 +31,9 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
                     SensorId = x.SensorId,
                     Value = x.Value,
                     Date = x.Date
-                })
-                .ToListAsync();
+                });
 
+            return query.AsAsyncEnumerable();
         }
     }
 }

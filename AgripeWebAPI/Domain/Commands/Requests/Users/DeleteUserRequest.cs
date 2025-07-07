@@ -1,6 +1,10 @@
-﻿namespace AgripeWebAPI.Domain.Commands.Requests.Users
+﻿using AgripeWebAPI.Domain.Commands.Responses.Users;
+using MediatR;
+
+namespace AgripeWebAPI.Domain.Commands.Requests.Users
 {
-    public class DeleteUserRequest
+    public class DeleteUserRequest : IRequest<DeleteUserResponse>
     {
+        public int Id { get; set; }
     }
 }

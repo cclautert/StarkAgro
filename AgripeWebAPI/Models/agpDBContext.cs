@@ -11,10 +11,10 @@ namespace AgripeWebAPI.Models
         }
 
         // DbSets para suas entidades
-        public DbSet<ReadSensor> ReadSensors { get; set; }
-        public DbSet<Sensor> Sensors { get; set; }
-        public DbSet<Pivot> Pivots { get; set; }        
-        public DbSet<User> Users { get; set; }
+        public virtual DbSet<ReadSensor> ReadSensors { get; set; }
+        public virtual DbSet<Sensor> Sensors { get; set; }
+        public virtual DbSet<Pivot> Pivots { get; set; }        
+        public virtual DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

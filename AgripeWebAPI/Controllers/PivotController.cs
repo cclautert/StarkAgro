@@ -30,15 +30,18 @@ namespace AgripeWebAPI.Controllers
 
         [Route("getAll")]
         [HttpGet]
-        public async Task<IList<GetPivotResponse>> GetAll(
+        public async Task<IActionResult> GetAll(
             [FromServices] IMediator mediator,
             [FromQuery] GetListPivotByUserIdRequest command,
             CancellationToken cancellationToken
         )
         {
-            //if (!ModelState.IsValid) return CustomResponse(ModelState);
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
+
             command.UserId = GetCurrentUserId();
-            return await mediator.Send(command, cancellationToken);
+            IAsyncEnumerable<GetPivotResponse> lstPivots = await mediator.Send(command, cancellationToken);
+            
+            return CustomResponse(lstPivots);
         }
 
         [Route("add")]

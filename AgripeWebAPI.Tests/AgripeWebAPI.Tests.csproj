@@ -23,4 +23,15 @@
     <ProjectReference Include="..\AgripeWebAPI\AgripeWebAPI.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Domain\Commands\Responses\User\" />
+    <Folder Include="Domain\Commands\Responses\Pivot\" />
+    <Folder Include="Domain\Handlers\Users\" />
+    <Folder Include="Models\Entities\" />
+    <Folder Include="Models\Interfaces\" />
+    <Folder Include="Controllers\" />
+    <Folder Include="Configuration\" />
+    <Folder Include="Notifications\" />
+  </ItemGroup>
+
 </Project>
