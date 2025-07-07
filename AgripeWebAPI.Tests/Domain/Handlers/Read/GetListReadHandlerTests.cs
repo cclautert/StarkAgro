@@ -1,5 +1,6 @@
-using AgripeWebAPI.Domain.Commands.Requests.Sensor;
-using AgripeWebAPI.Domain.Handlers.Sensor;
+using AgripeWebAPI.Domain.Commands.Requests.Reads;
+using AgripeWebAPI.Domain.Commands.Requests.Sensors;
+using AgripeWebAPI.Domain.Handlers.Sensors;
 using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Entities;
 using Microsoft.EntityFrameworkCore;

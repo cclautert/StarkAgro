@@ -1,4 +1,4 @@
-﻿using AgripeWebAPI.Domain.Commands.Requests.Sensor;
+﻿using AgripeWebAPI.Domain.Commands.Requests.Sensors;
 
 namespace AgripeWebAPI.Tests.Domain.Commands.Requests.Sensor
 {
@@ -11,10 +11,10 @@ namespace AgripeWebAPI.Tests.Domain.Commands.Requests.Sensor
             var request = new GetSensorRequest();
 
             // Act
-            request.Code = "ABC123";
+            request.Id = 1;
 
             // Assert
-            Assert.Equal("ABC123", request.Code);
+            Assert.Equal(1, request.Id);
         }
 
         [Fact]
@@ -24,7 +24,7 @@ namespace AgripeWebAPI.Tests.Domain.Commands.Requests.Sensor
             var request = new GetSensorRequest();
 
             // Assert
-            Assert.Null(request.Code);
+            Assert.Equal(0, request.Id);
         }
     }
 }

@@ -1,4 +1,4 @@
-using AgripeWebAPI.Domain.Commands.Requests.Read;
+using AgripeWebAPI.Domain.Commands.Requests.Reads;
 
 namespace AgripeWebAPI.Tests.Domain.Commands.Requests.Read
 {
@@ -8,7 +8,7 @@ namespace AgripeWebAPI.Tests.Domain.Commands.Requests.Read
         public void Can_Set_And_Get_Properties()
         {
             // Arrange
-            var request = new CreatePivotRequest();
+            var request = new CreateReadRequest();
 
             // Act
             request.Code = "SENSOR-XYZ";
@@ -23,7 +23,7 @@ namespace AgripeWebAPI.Tests.Domain.Commands.Requests.Read
         public void Default_Values_Are_Correct()
         {
             // Arrange & Act
-            var request = new CreatePivotRequest();
+            var request = new CreateReadRequest();
 
             // Assert
             Assert.Null(request.Code);

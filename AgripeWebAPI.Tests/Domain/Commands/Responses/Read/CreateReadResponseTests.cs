@@ -1,4 +1,4 @@
-using AgripeWebAPI.Domain.Commands.Responses.Read;
+using AgripeWebAPI.Domain.Commands.Responses.Reads;
 using Xunit;
 
 namespace AgripeWebAPI.Tests.Domain.Commands.Responses.Read
@@ -9,7 +9,7 @@ namespace AgripeWebAPI.Tests.Domain.Commands.Responses.Read
         public void Can_Set_And_Get_Id()
         {
             // Arrange
-            var response = new CreatePivotResponse();
+            var response = new CreateReadResponse();
 
             // Act
             response.Id = 100;
@@ -22,7 +22,7 @@ namespace AgripeWebAPI.Tests.Domain.Commands.Responses.Read
         public void Default_Id_Is_Zero()
         {
             // Arrange & Act
-            var response = new CreatePivotResponse();
+            var response = new CreateReadResponse();
 
             // Assert
             Assert.Equal(0, response.Id);

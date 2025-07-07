@@ -1,5 +1,5 @@
-using AgripeWebAPI.Domain.Commands.Requests.Sensor;
-using AgripeWebAPI.Domain.Handlers.Sensor;
+using AgripeWebAPI.Domain.Commands.Requests.Sensors;
+using AgripeWebAPI.Domain.Handlers.Sensors;
 using AgripeWebAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -23,9 +23,10 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Sensors
         {
             // Arrange
             var code = "SENSOR-123";
+            var sensorId = 123;
             var sensors = new List<Models.Entities.Sensor>
             {
-                new Models.Entities.Sensor { Id = 1, PivoId = 2, UserId = 3, Quadrante = 4, Code = code }
+                new Models.Entities.Sensor { Id = sensorId, PivoId = 2, UserId = 3, Quadrante = 4, Code = code }
             }.AsQueryable();
 
             var mockSensors = CreateMockDbSet(sensors);
@@ -34,7 +35,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Sensors
             mockContext.Setup(c => c.Sensors).Returns(mockSensors.Object);
 
             var handler = new GetSensorHandler(mockContext.Object);
-            var request = new GetSensorRequest { Code = code };
+            var request = new GetSensorRequest { Id = sensorId };
 
             // Act
             var result = await handler.Handle(request, CancellationToken.None);
@@ -42,8 +43,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Sensors
             // Assert
             Assert.NotNull(result);
             Assert.Equal(1, result.Id);
-            Assert.Equal(2, result.PivoId);
-            Assert.Equal(3, result.UserId);
+            Assert.Equal(2, result.Pivot.Id);            
             Assert.Equal(4, result.Quadrante);
             Assert.Equal(code, result.Code);
         }
@@ -63,7 +63,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Sensors
             mockContext.Setup(c => c.Sensors).Returns(mockSensors.Object);
 
             var handler = new GetSensorHandler(mockContext.Object);
-            var request = new GetSensorRequest { Code = "NOT-FOUND" };
+            var request = new GetSensorRequest { Id = 0 };
 
             // Act
             var result = await handler.Handle(request, CancellationToken.None);

@@ -1,5 +1,5 @@
-using AgripeWebAPI.Domain.Commands.Requests.Sensor;
-using AgripeWebAPI.Domain.Handlers.Sensor;
+using AgripeWebAPI.Domain.Commands.Requests.Sensors;
+using AgripeWebAPI.Domain.Handlers.Sensors;
 using AgripeWebAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -36,7 +36,6 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Sensors
             var handler = new CreateSensorHandler(mockContext.Object);
             var request = new CreateSensorRequest
             {
-                PivoId = 1,
                 UserId = 2,
                 Code = "CODE-001",
                 Quadrante = 3
@@ -46,8 +45,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Sensors
             var result = await handler.Handle(request, CancellationToken.None);
 
             // Assert
-            mockSensors.Verify(m => m.Add(It.Is<Models.Entities.Sensor>(s =>
-                s.PivoId == 1 &&
+            mockSensors.Verify(m => m.Add(It.Is<Models.Entities.Sensor>(s =>               
                 s.UserId == 2 &&
                 s.Code == "CODE-001" &&
                 s.Quadrante == 3

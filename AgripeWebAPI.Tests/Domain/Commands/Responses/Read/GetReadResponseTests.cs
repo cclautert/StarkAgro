@@ -1,4 +1,4 @@
-using AgripeWebAPI.Domain.Commands.Responses.Sensor;
+using AgripeWebAPI.Domain.Commands.Responses.Reads;
 using System;
 using Xunit;
 

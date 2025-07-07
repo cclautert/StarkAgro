@@ -1,4 +1,4 @@
-﻿using AgripeWebAPI.Domain.Commands.Requests.Sensor;
+﻿using AgripeWebAPI.Domain.Commands.Requests.Sensors;
 
 namespace AgripeWebAPI.Tests.Domain.Commands.Requests.Sensor
 {

@@ -1,6 +1,7 @@
-using AgripeWebAPI.Domain.Commands.Requests.Sensor;
-using AgripeWebAPI.Domain.Handlers.Sensor;
+using AgripeWebAPI.Domain.Commands.Requests.Sensors;
+using AgripeWebAPI.Domain.Handlers.Sensors;
 using AgripeWebAPI.Models;
+using AgripeWebAPI.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 
@@ -23,6 +24,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Sensors
         {
             // Arrange
             var pivotId = 5;
+            var userId = 5;
             var sensors = new List<Models.Entities.Sensor>
             {
                 new Models.Entities.Sensor { Id = 1, PivoId = pivotId, UserId = 10, Code = "A", Quadrante = 1 },
@@ -35,7 +37,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Sensors
             mockContext.Setup(c => c.Sensors).Returns(mockSensors.Object);
 
             var handler = new GetListSensorHandler(mockContext.Object);
-            var request = new GetListSensorRequest { PivotId = pivotId };
+            var request = new GetListSensorByUserIdRequest { UserId = userId };
 
             // Act
             var result = await handler.Handle(request, CancellationToken.None);
@@ -43,8 +45,8 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Sensors
             // Assert
             Assert.NotNull(result);
             Assert.Equal(2, result.Count);
-            Assert.Contains(result, s => s.Id == 1 && s.PivoId == pivotId && s.UserId == 10 && s.Code == "A" && s.Quadrante == 1);
-            Assert.Contains(result, s => s.Id == 2 && s.PivoId == pivotId && s.UserId == 11 && s.Code == "B" && s.Quadrante == 2);
+            Assert.Contains(result, s => s.Id == 1 && s.Code == "A" && s.Quadrante == 1);
+            Assert.Contains(result, s => s.Id == 2 && s.Code == "B" && s.Quadrante == 2);
         }
 
         [Fact(Skip = "Temporarily disabled features")]
@@ -52,6 +54,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Sensors
         {
             // Arrange
             var pivotId = 99;
+            var userId = 99;
             var sensors = new List<Models.Entities.Sensor>
             {
                 new Models.Entities.Sensor { Id = 1, PivoId = 1, UserId = 10, Code = "A", Quadrante = 1 }
@@ -63,7 +66,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Sensors
             mockContext.Setup(c => c.Sensors).Returns(mockSensors.Object);
 
             var handler = new GetListSensorHandler(mockContext.Object);
-            var request = new GetListSensorRequest { PivotId = pivotId };
+            var request = new GetListSensorByUserIdRequest { UserId = userId };
 
             // Act
             var result = await handler.Handle(request, CancellationToken.None);

@@ -1,4 +1,4 @@
-using AgripeWebAPI.Domain.Commands.Responses.Sensor;
+using AgripeWebAPI.Domain.Commands.Responses.Sensors;
 using Xunit;
 
 namespace AgripeWebAPI.Tests.Domain.Commands.Responses.Sensor

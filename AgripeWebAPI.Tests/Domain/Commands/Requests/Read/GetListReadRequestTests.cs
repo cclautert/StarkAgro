@@ -1,4 +1,4 @@
-﻿using AgripeWebAPI.Domain.Commands.Requests.Sensor;
+﻿using AgripeWebAPI.Domain.Commands.Requests.Reads;
 using Xunit;
 
 namespace AgripeWebAPI.Tests.Domain.Commands.Requests.Read
@@ -27,7 +27,7 @@ namespace AgripeWebAPI.Tests.Domain.Commands.Requests.Read
             var request = new GetListReadRequest();
 
             // Assert
-            Assert.Equal(0, request.UserId);
+            Assert.Null(request.UserId);
             Assert.Equal(10, request.NumberOfReads);
         }
     }

@@ -1,6 +1,6 @@
-using AgripeWebAPI.Domain.Commands.Requests.Read;
-using AgripeWebAPI.Domain.Commands.Responses.Read;
-using AgripeWebAPI.Domain.Handlers.Read;
+using AgripeWebAPI.Domain.Commands.Requests.Reads;
+using AgripeWebAPI.Domain.Commands.Responses.Reads;
+using AgripeWebAPI.Domain.Handlers.Reads;
 using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -41,7 +41,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Read
                 .Callback<ReadSensor>(rs => { /* Optionally verify properties here */ });
 
             var handler = new CreateReadHandler(mockContext.Object);
-            var request = new CreatePivotRequest { Code = "SENSOR-1", Value = 42.5m };
+            var request = new CreateReadRequest { Code = "SENSOR-1", Value = 42.5m };
 
             // Act
             var result = await handler.Handle(request, CancellationToken.None);
@@ -54,7 +54,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Read
 
             mockContext.Verify(c => c.SaveChanges(), Times.Once);
             Assert.NotNull(result);
-            Assert.IsType<CreatePivotResponse>(result);
+            Assert.IsType<CreateReadResponse>(result);
         }
 
         [Fact(Skip = "Temporarily disabled features")]
@@ -71,7 +71,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Read
             mockContext.Setup(c => c.ReadSensors).Returns(mockReadSensors.Object);
 
             var handler = new CreateReadHandler(mockContext.Object);
-            var request = new CreatePivotRequest { Code = "NOT-FOUND", Value = 10m };
+            var request = new CreateReadRequest { Code = "NOT-FOUND", Value = 10m };
 
             // Act & Assert
             await Assert.ThrowsAsync<ArgumentException>(() => handler.Handle(request, CancellationToken.None));

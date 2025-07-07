@@ -1,4 +1,4 @@
-﻿using AgripeWebAPI.Domain.Commands.Requests.Sensor;
+﻿using AgripeWebAPI.Domain.Commands.Requests.Sensors;
 
 namespace AgripeWebAPI.Tests.Domain.Commands.Requests.Sensor
 {
@@ -8,7 +8,7 @@ namespace AgripeWebAPI.Tests.Domain.Commands.Requests.Sensor
         public void Can_Set_And_Get_UserId()
         {
             // Arrange
-            var request = new GetListPivotByUserIdRequest();
+            var request = new GetListSensorByUserIdRequest();
 
             // Act
             request.UserId = 123;
@@ -21,10 +21,10 @@ namespace AgripeWebAPI.Tests.Domain.Commands.Requests.Sensor
         public void Default_UserId_Is_Zero()
         {
             // Arrange & Act
-            var request = new GetListPivotByUserIdRequest();
+            var request = new GetListSensorByUserIdRequest();
 
             // Assert
-            Assert.Equal(0, request.UserId);
+            Assert.Null(request.UserId);
         }
     }
 }

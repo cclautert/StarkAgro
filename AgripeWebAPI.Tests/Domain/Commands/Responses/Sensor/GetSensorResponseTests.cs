@@ -1,4 +1,4 @@
-using AgripeWebAPI.Domain.Commands.Responses.Sensor;
+using AgripeWebAPI.Domain.Commands.Responses.Sensors;
 using Xunit;
 
 namespace AgripeWebAPI.Tests.Domain.Commands.Responses.Sensor
@@ -13,16 +13,12 @@ namespace AgripeWebAPI.Tests.Domain.Commands.Responses.Sensor
 
             // Act
             response.Id = 1;
-            response.PivoId = 2;
-            response.UserId = 3;
-            response.Quadrante = 4;
+            response.Quadrante = 3;
             response.Code = "CODE-123";
 
             // Assert
             Assert.Equal(1, response.Id);
-            Assert.Equal(2, response.PivoId);
-            Assert.Equal(3, response.UserId);
-            Assert.Equal(4, response.Quadrante);
+            Assert.Equal(3, response.Quadrante);
             Assert.Equal("CODE-123", response.Code);
         }
 
@@ -34,8 +30,6 @@ namespace AgripeWebAPI.Tests.Domain.Commands.Responses.Sensor
 
             // Assert
             Assert.Equal(0, response.Id);
-            Assert.Equal(0, response.PivoId);
-            Assert.Equal(0, response.UserId);
             Assert.Equal(0, response.Quadrante);
             Assert.Null(response.Code);
         }
