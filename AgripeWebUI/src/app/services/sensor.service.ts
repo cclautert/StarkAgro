@@ -27,6 +27,13 @@ export class SensorService {
     return sensor;
   }
 
+  getAllByPivotId(id: number, quadrante: number): Observable<Sensor[]> {
+    const params = new HttpParams()
+    .set('PivotId', id.toString())
+    .set('Quadrante', quadrante.toString());
+    return this.http.get<Sensor[]>(`${this.baseUrl}sensor/getAllByPivotId`, { params });
+  }
+
   // CREATE
   addSensor(sensor: Sensor): Observable<any> {
     return this.http.post(`${this.baseUrl}sensor/add`, sensor);

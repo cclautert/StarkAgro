@@ -55,3 +55,25 @@ canvas {
     padding: 10px;
   }
 }
+
+
+.selector-box {
+  margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.selector-box label {
+  margin-bottom: 8px;
+  font-size: 1.1em;
+  color: #333;
+}
+
+.sensor-selector {
+  padding: 10px;
+  font-size: 1em;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  min-width: 250px;
+}

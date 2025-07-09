@@ -29,15 +29,22 @@ export class ApiService {
     return this.http.get<Read[]>(`${this.baseUrl}reads/getall`, { params });
   }
 
-  // addPivot(pivot: Pivot): Observable<any> {
-  //   return this.http.post(`${this.baseUrl}pivot/add`, pivot);
-  // }
+  getAllReadsByPivotId(sensorId: number, quadrante: number, numberOfReads: number): Observable<Read[]> {
+    const params = new HttpParams()
+    .set('NumberOfReads', numberOfReads.toString())
+    .set('Quadrante', quadrante.toString())
+    .set('SensorId', sensorId.toString());
+    return this.http.get<Read[]>(`${this.baseUrl}reads/GetAllByPivotId`, { params });
+  }
+  getReadsByPivotId(pivotId: number, numberOfReads: number): Observable<Pivot> {
+    const params = new HttpParams()
+    .set('PivotId', pivotId.toString())
+    .set('NumberOfReads', numberOfReads.toString());
+
+    return this.http.get<Pivot>(`${this.baseUrl}reads/GetByPivotId`, { params });
+  }
 
   addUser(user: User): Observable<any> {
     return this.http.post(`${this.baseUrl}user/add`, user);
   }
-
-  // addSensor(sensor: Sensor): Observable<any> {
-  //   return this.http.post(`${this.baseUrl}sensor/add`, sensor);
-  // }
 }

@@ -14,40 +14,67 @@
     </select>
   </div>
 
-  <!-- Círculo com Quadrantes (SVG) -->
   <div class="circle-container" *ngIf="currentColors">
     <svg class="quadrant-circle" viewBox="0 0 100 100">
-      <!--
-        Como funciona o SVG Path:
-        M = Mover para (x y) - Ponto inicial
-        L = Linha para (x y) - Desenha uma linha reta
-        A = Arco elíptico (rx ry x-axis-rotation large-arc-flag sweep-flag x y)
-        Z = Fechar o caminho (desenha uma linha de volta ao ponto inicial)
-      -->
+      <!-- Agrupando Path e Text para cada quadrante -->
+      <!-- Usamos <g> para agrupar elementos. É bom para organização. -->
 
-      <!-- Quadrante Superior Esquerdo -->
-      <path
-        [attr.fill]="currentColors.topLeft"
-        d="M 50,50 L 0,50 A 50,50 0 0,1 50,0 Z">
-      </path>
+      <!-- Quadrante Superior Esquerdo (TopLeft / Quadrante 4) -->
+      <g class="clickable-quadrant" (click)="onQuadrantClick('TopLeft')">
+        <path
+          [attr.fill]="currentColors.topLeft"
+          d="M 50,50 L 0,50 A 50,50 0 0,1 50,0 Z">
+        </path>
+        <!-- Texto com a Média -->
+        <text
+          *ngIf="currentColors.topLeftAvg !== null"
+          x="25" y="25"
+          class="quadrant-text">
+          {{ currentColors.topLeftAvg | number:'1.0-0' }} kpa
+        </text>
+      </g>
 
-      <!-- Quadrante Superior Direito -->
-      <path
-        [attr.fill]="currentColors.topRight"
-        d="M 50,50 L 50,0 A 50,50 0 0,1 100,50 Z">
-      </path>
+      <!-- Quadrante Superior Direito (TopRight / Quadrante 1) -->
+      <g class="clickable-quadrant" (click)="onQuadrantClick('TopRight')">
+        <path
+          [attr.fill]="currentColors.topRight"
+          d="M 50,50 L 50,0 A 50,50 0 0,1 100,50 Z">
+        </path>
+        <text
+          *ngIf="currentColors.topRightAvg !== null"
+          x="75" y="25"
+          class="quadrant-text">
+           {{ currentColors.topRightAvg | number:'1.0-0' }} kpa
+        </text>
+      </g>
 
-      <!-- Quadrante Inferior Direito -->
-      <path
-        [attr.fill]="currentColors.bottomRight"
-        d="M 50,50 L 100,50 A 50,50 0 0,1 50,100 Z">
-      </path>
+      <!-- Quadrante Inferior Direito (BottomRight / Quadrante 2) -->
+      <g class="clickable-quadrant" (click)="onQuadrantClick('BottomRight')">
+        <path
+          [attr.fill]="currentColors.bottomRight"
+          d="M 50,50 L 100,50 A 50,50 0 0,1 50,100 Z">
+        </path>
+        <text
+          *ngIf="currentColors.bottomRightAvg !== null"
+          x="75" y="75"
+          class="quadrant-text">
+          {{ currentColors.bottomRightAvg | number:'1.0-0' }} kpa
+        </text>
+      </g>
 
-      <!-- Quadrante Inferior Esquerdo -->
-      <path
-        [attr.fill]="currentColors.bottomLeft"
-        d="M 50,50 L 50,100 A 50,50 0 0,1 0,50 Z">
-      </path>
+      <!-- Quadrante Inferior Esquerdo (BottomLeft / Quadrante 3) -->
+      <g class="clickable-quadrant" (click)="onQuadrantClick('BottomLeft')">
+        <path
+          [attr.fill]="currentColors.bottomLeft"
+          d="M 50,50 L 50,100 A 50,50 0 0,1 0,50 Z">
+        </path>
+        <text
+          *ngIf="currentColors.bottomLeftAvg !== null"
+          x="25" y="75"
+          class="quadrant-text">
+          {{ currentColors.bottomLeftAvg | number:'1.0-0' }} kpa
+        </text>
+      </g>
     </svg>
   </div>
 </div>

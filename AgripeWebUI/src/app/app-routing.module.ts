@@ -41,7 +41,7 @@ const routes: Routes = [
     component: LayoutComponent,
     children: [
       { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
-      { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
+      { path: 'dashboard/:pivoId/:quadrante', component: DashboardComponent, canActivate: [AuthGuard] },
       { path: 'user', component: UserFormComponent, canActivate: [AuthGuard] },
 
       // Rota para listar todos os Pivots (READ)

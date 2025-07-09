@@ -2,6 +2,18 @@
   <mat-sidenav-container autosize>
 
     <mat-sidenav-content>
+      <div class="selector-box">
+        <label for="sensor-select">Selecione um Sensor:</label>
+        <select
+          id="sensor-select"
+          class="sensor-selector"
+          [(ngModel)]="selectedSensorId"
+          (ngModelChange)="onSensorChange()">
+          <option *ngFor="let sensor of sensors" [ngValue]="sensor.id">
+            {{ sensor.code }}
+          </option>
+        </select>
+      </div>
       <div class="main">
         <h2>Reads</h2>
         <div class="buttons">

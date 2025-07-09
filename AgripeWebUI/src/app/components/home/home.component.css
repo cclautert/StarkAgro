@@ -48,3 +48,30 @@
   opacity: 0.85; /* Efeito visual ao passar o mouse */
   cursor: pointer;
 }
+
+/* Estilo para o grupo clicável (path + text) */
+.clickable-quadrant {
+  cursor: pointer;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.clickable-quadrant:hover {
+  opacity: 0.85;
+}
+
+/* Estilo para o texto da média */
+.quadrant-text {
+  /* Posicionamento e Alinhamento */
+  text-anchor: middle; /* Centraliza o texto horizontalmente na coordenada X */
+  dominant-baseline: middle; /* Centraliza o texto verticalmente na coordenada Y */
+
+  /* Aparência */
+  font-family: Arial, sans-serif;
+  font-size: 4px; /* Ajuste o tamanho conforme necessário */
+  font-weight: bold;
+  fill: white; /* Cor do texto, branco geralmente funciona bem */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7); /* Sombra para melhorar o contraste */
+
+  /* ESSENCIAL: Impede que o texto capture eventos de mouse */
+  pointer-events: none;
+}

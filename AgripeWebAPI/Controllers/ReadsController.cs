@@ -21,13 +21,33 @@ namespace AgripeWebAPI.Controllers
         }
         
         [HttpGet("GetAll")]
-        public async Task<IList<GetReadResponse>> GetAll(
+        public async Task<IAsyncEnumerable<GetReadResponse>> GetAll(
             [FromServices] IMediator mediator,
             [FromQuery] GetListReadRequest command,
             CancellationToken cancellationToken
         )
         {
             command.UserId = GetCurrentUserId();
+            return await mediator.Send(command, cancellationToken);
+        }
+
+        [HttpGet("GetAllByPivotId")]
+        public async Task<IAsyncEnumerable<GetAllReadByPivotIdResponse>> GetAllByPivotId(
+            [FromServices] IMediator mediator,
+            [FromQuery] GetAllListReadByPivotIdRequest command,
+            CancellationToken cancellationToken
+        )
+        {
+            return await mediator.Send(command, cancellationToken);
+        }
+
+        [HttpGet("GetByPivotId")]
+        public async Task<GetReadByPivotIdResponse> GetByPivotId(
+            [FromServices] IMediator mediator,
+            [FromQuery] GetListReadByPivotIdRequest command,
+            CancellationToken cancellationToken
+        )
+        {
             return await mediator.Send(command, cancellationToken);
         }
                 

@@ -18,7 +18,7 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
         public async Task<IList<GetSensorResponse>> Handle(GetListSensorRequest request, CancellationToken cancellationToken)
         {
             return await _dbContext.Sensors
-                .Where(x => x.PivoId == request.PivotId)
+                .Where(x => x.PivoId == request.PivotId && x.Quadrante == request.Quadrante)
                 .Select(x => new GetSensorResponse
                 {
                     Id = x.Id,

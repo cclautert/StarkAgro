@@ -1,6 +1,10 @@
 export interface Quadrante {
-  quadrante1: string;
-  quadrante2: string;
-  quadrante3: string;
-  quadrante4: string;
+  topLeft: string;
+  topLeftAvg?: number;
+  topRight: string;
+  topRightAvg?: number;
+  bottomLeft: string;
+  bottomLeftAvg?: number;
+  bottomRight: string;
+  bottomRightAvg?: number;
 }

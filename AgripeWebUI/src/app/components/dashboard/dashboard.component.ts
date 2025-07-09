@@ -3,8 +3,10 @@ import { ChartConfiguration } from 'chart.js';
 import { ApiService } from '../../services/api.service';
 import { Subscription, interval } from 'rxjs';
 import { BaseChartDirective } from 'ng2-charts';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { Sensor } from '../../models/sensor.model';
+import { SensorService } from '../../services/sensor.service';
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
@@ -20,6 +22,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
   intervalSub!: Subscription;
   sidebarOpened = true;
   isMobile = false;
+  public pivoId: number | null = null;
+  public quadranteNome: string | null = null;
+  sensor: Sensor | undefined;
+  sensors: Sensor[] | undefined;
+  public selectedSensorId: number = 1;
+  public quadrante: number | undefined;// 0 | 1 | 2 | 3 | 4 = 0;
 
   public lineChartData: ChartConfiguration<'line'>['data'] = {
     datasets: [
@@ -44,15 +52,56 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   };
 
-  constructor(private apiService: ApiService, private router: Router, private breakpointObserver: BreakpointObserver) {
+  constructor(
+    private route: ActivatedRoute,
+     private apiService: ApiService,
+     private sensorService: SensorService,
+     private router: Router,
+     private breakpointObserver: BreakpointObserver) {
     this.breakpointObserver.observe([Breakpoints.Handset]).subscribe(result => {
       this.isMobile = result.matches;
     });
   }
 
   ngOnInit(): void {
+    // Usar paramMap é a forma recomendada, pois reage a mudanças na URL
+    this.route.paramMap.subscribe(params => {
+      // Obtém o 'pivoId' da URL e converte para número
+      const id = params.get('pivoId');
+      this.pivoId = id ? +id : null; // O '+' é um atalho para converter string em número
+
+      // Obtém o 'quadranteNome' da URL
+      this.quadranteNome = params.get('quadrante');
+
+      console.log(`Dashboard carregado para Pivô ID: ${this.pivoId}`);
+      console.log(`Exibindo detalhes do Quadrante: ${this.quadranteNome}`);
+    });
+
+    switch(this.quadranteNome) {
+      case 'TopLeft':
+        this.quadrante = 4;
+        break;
+      case 'TopRight':
+        this.quadrante = 1;
+        break;
+      case 'BottomLeft':
+        this.quadrante = 3;
+        break;
+      case 'BottomRight':
+        this.quadrante = 2;
+        break;
+    }
+
+    this.sensorService.getAllByPivotId(this.pivoId!, this.quadrante!).subscribe((sensors) => {
+      this.sensors = sensors;
+    });
+
     this.loadReads();
     this.intervalSub = interval(60000).subscribe(() => this.loadReads()); // A cada 60 segundos
+  }
+
+  onSensorChange(): void {
+    this.loadReads();
   }
 
   ngOnDestroy(): void {
@@ -60,7 +109,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   loadReads(): void {
-    this.apiService.getReads(this.userId, this.numberOfReads).subscribe(reads => {
+    this.apiService.getAllReadsByPivotId(this.selectedSensorId, this.quadrante!, this.numberOfReads).subscribe(reads => {
       this.lineChartData.labels = reads.map(r => new Date(r.date).toLocaleString());
       this.lineChartData.datasets[0].data = reads.map(r => r.value);
       this.chart?.update();
