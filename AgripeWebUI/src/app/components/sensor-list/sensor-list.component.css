@@ -44,7 +44,7 @@
 }
 
 .col-pivot {
-  width: 35%;
+  width: 30%;
 }
 
 .col-quadrante {
@@ -52,11 +52,11 @@
 }
 
 .col-codigo {
-  width: 35%;
+  width: 30%;
 }
 
 .col-acoes {
-  width: 15%;
+  width: 25%;
   /* Também é uma boa prática centralizar os botões de ação */
   text-align: center;
 }

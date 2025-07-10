@@ -34,9 +34,11 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     this.pivotService.getPivots().subscribe(pivots => {
       this.pivots = pivots;
+      this.selectedPivotId = this.pivots && this.pivots.length > 0 ? this.pivots[0].id : 1;
+
+      // Ao iniciar o componente, carregamos as cores do primeiro pivô da lista
+      this.updateCircleColors();
     });
-    // Ao iniciar o componente, carregamos as cores do primeiro pivô da lista
-    this.updateCircleColors();
   }
 
   // Método chamado quando o usuário muda a seleção no dropdown

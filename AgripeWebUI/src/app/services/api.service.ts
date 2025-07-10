@@ -11,8 +11,9 @@ import { HttpParams } from '@angular/common/http';
   providedIn: 'root'
 })
 export class ApiService {
-  private baseUrl = 'https://localhost:7162/v1/';//local
-  //private baseUrl = 'http://localhost:8080/v1/';
+  //private baseUrl = 'https://localhost:7162/v1/';//local
+  private baseUrl = 'http://localhost:8080/v1/';
+  //private baseUrl = 'http://agripewebapi:8080/v1/'; // Azure | AWS
 
   constructor(private http: HttpClient) { }
 

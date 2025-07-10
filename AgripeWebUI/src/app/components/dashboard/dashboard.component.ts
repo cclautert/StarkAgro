@@ -94,9 +94,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     this.sensorService.getAllByPivotId(this.pivoId!, this.quadrante!).subscribe((sensors) => {
       this.sensors = sensors;
+      this.selectedSensorId = this.sensors && this.sensors.length > 0 ? this.sensors[0].id : 1;
+      this.loadReads();
     });
 
-    this.loadReads();
     this.intervalSub = interval(60000).subscribe(() => this.loadReads()); // A cada 60 segundos
   }
 

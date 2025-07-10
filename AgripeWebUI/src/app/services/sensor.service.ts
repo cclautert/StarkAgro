@@ -11,8 +11,9 @@ export class SensorService {
   private http = inject(HttpClient);
 
   // URL base da sua API
-  private baseUrl = 'https://localhost:7162/v1/'; //localhost URL para desenvolvimento
-  //private readonly baseUrl = 'http://localhost:8080/v1/';
+  //private baseUrl = 'https://localhost:7162/v1/'; //localhost URL para desenvolvimento
+  private readonly baseUrl = 'http://localhost:8080/v1/';
+  //private baseUrl = 'http://agripewebapi:8080/v1/'; // Azure | AWS
 
   // READ (All)
   getSensores(): Observable<Sensor[]> {

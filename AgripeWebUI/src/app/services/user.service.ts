@@ -9,8 +9,9 @@ import { User } from '../models/user.model';
 export class UserService {
   private http = inject(HttpClient);
 
-  private baseUrl = 'https://localhost:7162/v1/'; //localhost URL para desenvolvimento
-  //private readonly baseUrl = 'http://localhost:8080/v1/';
+  //private baseUrl = 'https://localhost:7162/v1/'; //localhost URL para desenvolvimento
+  private readonly baseUrl = 'http://localhost:8080/v1/';
+  //private baseUrl = 'http://agripewebapi:8080/v1/'; // Azure | AWS
 
   // READ (by ID)
   getUserById(id: number): Observable<User> {

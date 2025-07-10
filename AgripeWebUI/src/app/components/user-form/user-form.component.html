@@ -28,11 +28,16 @@
     <div class="form-group">
       <label for="password">Password</label>
       <input id="password" type="password" formControlName="password">
-      <div class="error" *ngIf="userForm.get('password')?.touched && userForm.get('password')?.hasError('required')">
-        Password is required
-      </div>
-      <div class="error" *ngIf="userForm.get('password')?.touched && userForm.get('password')?.hasError('minlength')">
-        Password must be at least 6 characters
+      <!-- ... erros do password ... -->
+    </div>
+
+    <!-- NOVO CAMPO: Confirmar Password -->
+    <div class="form-group">
+      <label for="confirmPassword">Confirm Password</label>
+      <input id="confirmPassword" type="password" formControlName="confirmPassword">
+      <!-- A mensagem de erro é ativada se as senhas não baterem -->
+      <div class="error" *ngIf="userForm.get('confirmPassword')?.touched && userForm.get('confirmPassword')?.hasError('mustMatch')">
+        Passwords do not match
       </div>
     </div>
 

@@ -54,6 +54,7 @@ export class SensorFormComponent implements OnInit {
     this.sensorForm = this.fb.group({
       // O valor inicial de um objeto deve ser null
       id: [null],
+      name: ['', Validators.required],
       pivot: [null, Validators.required],
       code: ['', Validators.required],
       quadrante: [null, [Validators.required, Validators.min(1)]]
@@ -119,6 +120,7 @@ export class SensorFormComponent implements OnInit {
 
         // 2. AGORA, com a lista já carregada, preenche o formulário
         this.sensorForm.patchValue({
+          name: sensor.name,
           pivot: sensor.pivot, // O objeto pivot inteiro
           code: sensor.code,
           quadrante: sensor.quadrante
@@ -148,6 +150,7 @@ export class SensorFormComponent implements OnInit {
   }
 
   // Getters para facilitar o acesso aos controles no template
+  get name() { return this.sensorForm.get('name'); }
   get pivot() { return this.sensorForm.get('pivot'); }
   get code() { return this.sensorForm.get('code'); }
   get quadrante() { return this.sensorForm.get('quadrante'); }

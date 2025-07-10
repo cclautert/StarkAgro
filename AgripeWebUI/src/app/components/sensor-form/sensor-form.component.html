@@ -22,6 +22,14 @@
     </div>
 
     <div class="form-group">
+      <label for="name">Nome do Sensor</label>
+      <input id="name" type="text" formControlName="name" required>
+      <div *ngIf="name?.invalid && (name?.dirty || name?.touched)" class="error">
+        Nome é obrigatório.
+      </div>
+    </div>
+
+    <div class="form-group">
       <label for="code">Código do Sensor</label>
       <input id="code" type="text" formControlName="code" required>
       <div *ngIf="code?.invalid && (code?.dirty || code?.touched)" class="error">

@@ -1,7 +1,7 @@
 <mat-sidenav-container class="sidenav-container">
 
   <!-- SIDENAV (Menu Lateral) -->
-  <mat-sidenav #sidenav class="sidenav" mode="side" opened>
+  <mat-sidenav [opened]="showLayout" #sidenav class="sidenav" mode="side">
     <mat-toolbar>Menu</mat-toolbar>
     <mat-nav-list>
       <a mat-list-item routerLink="/home" routerLinkActive="active-link">
@@ -21,13 +21,12 @@
 
   <!-- CONTEÚDO PRINCIPAL -->
   <mat-sidenav-content>
-    <mat-toolbar color="primary">
-      <!-- Você pode adicionar um botão para abrir/fechar o menu em telas pequenas -->
+    <!-- <mat-toolbar color="primary">
       <button mat-icon-button (click)="sidenav.toggle()">
         <mat-icon>menu</mat-icon>
       </button>
       <span>AgripeWeb</span>
-    </mat-toolbar>
+    </mat-toolbar> -->
 
     <!-- O conteúdo da página atual (Home, Pivots, etc.) será renderizado aqui -->
     <main class="main-content">
