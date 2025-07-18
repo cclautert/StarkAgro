@@ -7,9 +7,10 @@ namespace AgripeWebAPI.Domain.Commands.Requests.Sensors
     public class EditSensorRequest : IRequest<EditSensorResponse>
     {
         public int Id { get; set; }
-        public Pivot Pivot { get; set; }
+        public string? Name { get; set; }
+        public Pivot? Pivot { get; set; }
         public int? UserId { get; set; }
-        public string Code { get; set; }
+        public string? Code { get; set; }
         public int Quadrante { get; set; }
     }
 }

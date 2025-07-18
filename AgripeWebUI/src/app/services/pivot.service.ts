@@ -10,8 +10,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 })
 export class PivotService {
   //private baseUrl = 'https://localhost:7162/v1/'; //DEBUG
-  private baseUrl = 'http://localhost:8080/v1/';
-  //private baseUrl = 'http://agripewebapi:8080/v1/'; // Azure | AWS
+  //private baseUrl = 'http://localhost:8080/v1/';
+  private baseUrl = 'http://15.229.6.106:8080/v1/'; // Azure | AWS
 
   constructor(private http: HttpClient) { }
 

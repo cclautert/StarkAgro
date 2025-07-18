@@ -47,7 +47,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
   public lineChartOptions: ChartConfiguration['options'] = {
     responsive: true,
     scales: {
-      x: { title: { display: true, text: 'Data' } },
+      x: {
+        title: { display: true, text: 'Data' },
+        ticks: {
+          callback: function(value, index, ticks) {
+            const label = this.getLabelForValue(value as number);
+            const date = new Date(label);
+            return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${(date.getMinutes()).toString().padStart(2, '0')}`;
+          },
+          maxRotation: 45,
+          minRotation: 45
+        }
+      },
       y: { title: { display: true, text: 'Valor' } }
     }
   };

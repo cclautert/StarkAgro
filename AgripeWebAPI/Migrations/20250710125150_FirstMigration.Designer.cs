@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AgripeWebAPI.Migrations
 {
     [DbContext(typeof(agpDBContext))]
-    [Migration("20250612171527_FirstMigration")]
+    [Migration("20250710125150_FirstMigration")]
     partial class FirstMigration
     {
         /// <inheritdoc />
@@ -25,7 +25,7 @@ namespace AgripeWebAPI.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Pivot", b =>
+            modelBuilder.Entity("AgripeWebAPI.Models.Entities.Pivot", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -49,7 +49,7 @@ namespace AgripeWebAPI.Migrations
                     b.ToTable("Pivots");
                 });
 
-            modelBuilder.Entity("ReadSensor", b =>
+            modelBuilder.Entity("AgripeWebAPI.Models.Entities.ReadSensor", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -80,7 +80,7 @@ namespace AgripeWebAPI.Migrations
                     b.ToTable("ReadSensors");
                 });
 
-            modelBuilder.Entity("Sensor", b =>
+            modelBuilder.Entity("AgripeWebAPI.Models.Entities.Sensor", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -93,6 +93,9 @@ namespace AgripeWebAPI.Migrations
                         .IsRequired()
                         .HasMaxLength(17)
                         .HasColumnType("nvarchar(17)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PivoId")
                         .HasColumnType("int");
@@ -117,7 +120,7 @@ namespace AgripeWebAPI.Migrations
                     b.ToTable("Sensors");
                 });
 
-            modelBuilder.Entity("User", b =>
+            modelBuilder.Entity("AgripeWebAPI.Models.Entities.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -149,24 +152,24 @@ namespace AgripeWebAPI.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Pivot", b =>
+            modelBuilder.Entity("AgripeWebAPI.Models.Entities.Pivot", b =>
                 {
-                    b.HasOne("User", null)
+                    b.HasOne("AgripeWebAPI.Models.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ReadSensor", b =>
+            modelBuilder.Entity("AgripeWebAPI.Models.Entities.ReadSensor", b =>
                 {
-                    b.HasOne("Sensor", "Sensor")
+                    b.HasOne("AgripeWebAPI.Models.Entities.Sensor", "Sensor")
                         .WithMany("Reads")
                         .HasForeignKey("SensorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("User", null)
+                    b.HasOne("AgripeWebAPI.Models.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -175,21 +178,21 @@ namespace AgripeWebAPI.Migrations
                     b.Navigation("Sensor");
                 });
 
-            modelBuilder.Entity("Sensor", b =>
+            modelBuilder.Entity("AgripeWebAPI.Models.Entities.Sensor", b =>
                 {
-                    b.HasOne("Pivot", "Pivot")
+                    b.HasOne("AgripeWebAPI.Models.Entities.Pivot", "Pivot")
                         .WithMany("Sensors")
                         .HasForeignKey("PivoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("User", null)
+                    b.HasOne("AgripeWebAPI.Models.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("User", "User")
+                    b.HasOne("AgripeWebAPI.Models.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId1");
 
@@ -198,12 +201,12 @@ namespace AgripeWebAPI.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Pivot", b =>
+            modelBuilder.Entity("AgripeWebAPI.Models.Entities.Pivot", b =>
                 {
                     b.Navigation("Sensors");
                 });
 
-            modelBuilder.Entity("Sensor", b =>
+            modelBuilder.Entity("AgripeWebAPI.Models.Entities.Sensor", b =>
                 {
                     b.Navigation("Reads");
                 });

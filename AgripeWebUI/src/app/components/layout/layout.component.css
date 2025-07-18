@@ -3,7 +3,7 @@
 }
 
 .sidenav {
-  width: 230px;
+  width: 220px;
   background-color: #f4f4f4;
 }
 
@@ -29,4 +29,20 @@
 
 .main-content {
   padding: 20px;
+}
+
+
+/* MEDIA QUERIES PARA CELULARES */
+@media (max-width: 768px) {
+  .sidenav {
+     width: 130px;
+  }
+
+  .buttons {
+    justify-content: center;
+  }
+
+  .main {
+    padding: 10px;
+  }
 }

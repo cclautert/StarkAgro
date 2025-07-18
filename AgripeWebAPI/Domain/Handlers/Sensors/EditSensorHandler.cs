@@ -19,6 +19,7 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
             {
                 throw new KeyNotFoundException("Sensor not found.");
             }
+            sensor.Name = request.Name;
             sensor.Code = request.Code;
             sensor.Quadrante = request.Quadrante;
             sensor.PivoId = request.Pivot.Id;

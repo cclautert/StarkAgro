@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormsModule } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { interval, Observable, Subscription } from 'rxjs';
 import { Pivot } from '../../models/pivot.model';
 import { PivotService } from '../../services/pivot.service';
 import { ApiService } from '../../services/api.service';
@@ -25,6 +25,7 @@ export class HomeComponent implements OnInit {
 
   // Objeto que armazena as cores do pivô selecionado para o binding no template
   public currentColors: Quadrante | undefined;
+ intervalSub!: Subscription;
 
   constructor(
     private pivotService: PivotService,
@@ -38,6 +39,7 @@ export class HomeComponent implements OnInit {
 
       // Ao iniciar o componente, carregamos as cores do primeiro pivô da lista
       this.updateCircleColors();
+      this.intervalSub = interval(60000).subscribe(() => this.updateCircleColors()); // A cada 60 segundos
     });
   }
 

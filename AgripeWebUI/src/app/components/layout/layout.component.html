@@ -21,12 +21,12 @@
 
   <!-- CONTEÚDO PRINCIPAL -->
   <mat-sidenav-content>
-    <!-- <mat-toolbar color="primary">
-      <button mat-icon-button (click)="sidenav.toggle()">
+    <mat-toolbar class="main-toolbar" *ngIf="showLayout">
+      <button mat-icon-button (click)="sidenav.toggle()" [hidden]="!showLayout">
         <mat-icon>menu</mat-icon>
       </button>
-      <span>AgripeWeb</span>
-    </mat-toolbar> -->
+      <span></span>
+    </mat-toolbar>
 
     <!-- O conteúdo da página atual (Home, Pivots, etc.) será renderizado aqui -->
     <main class="main-content">

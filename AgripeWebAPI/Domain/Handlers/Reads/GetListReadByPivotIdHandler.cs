@@ -24,7 +24,7 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
 
             IQueryable<GetAllReadByPivotIdResponse> query = _dbContext.ReadSensors
                 .Where(x => x.SensorId == request.SensorId && x.Sensor.Quadrante == request.Quadrante && x.Date >= startDate)
-                .OrderByDescending(x => x.Date)
+                .OrderBy(x => x.Date)
                 .Select(x => new GetAllReadByPivotIdResponse
                 {
                     Id = x.Id,

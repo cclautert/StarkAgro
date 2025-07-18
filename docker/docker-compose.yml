@@ -2,7 +2,7 @@ version: '3.8'
 name: agripeweb
 services:
   agripewebapi:
-    container_name: agripewebapi  # Optional: specify a container name
+    container_name: agripewebapi  # Optional: specify a container name    
     build:
       context: ../AgripeWebAPI  # Navigate up to C:\Users\Cristiano\source\repos\cclautert\AgripeWeb\AgripeWebAPI
       dockerfile: Dockerfile  # Assumes Dockerfile is in AgripeWebAPI folder

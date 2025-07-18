@@ -55,6 +55,7 @@ namespace AgripeWebAPI.Migrations
                     PivoId = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     Quadrante = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Code = table.Column<string>(type: "nvarchar(17)", maxLength: 17, nullable: false),
                     UserId1 = table.Column<int>(type: "int", nullable: true)
                 },

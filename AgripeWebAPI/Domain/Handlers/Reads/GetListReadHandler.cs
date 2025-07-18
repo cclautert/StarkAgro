@@ -24,7 +24,7 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
 
             IQueryable<GetReadResponse> query = _dbContext.ReadSensors
                 .Where(x => x.UserId == request.UserId && x.Date >= startDate)
-                .OrderByDescending(x => x.Date)
+                .OrderBy(x => x.Date)
                 .Select(x => new GetReadResponse
                 {
                     Id = x.Id,

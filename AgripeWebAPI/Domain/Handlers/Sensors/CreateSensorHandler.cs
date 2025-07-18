@@ -1,6 +1,7 @@
 ﻿using AgripeWebAPI.Domain.Commands.Requests.Sensors;
 using AgripeWebAPI.Domain.Commands.Responses.Sensors;
 using AgripeWebAPI.Models;
+using AgripeWebAPI.Models.Entities;
 using MediatR;
 
 namespace AgripeWebAPI.Domain.Handlers.Sensors
@@ -24,8 +25,9 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
             {
                 throw new ArgumentNullException(nameof(request.Pivot.Id), "PivoId cannot be null.");
             }
-            var sensor = new Models.Entities.Sensor
+            var sensor = new Sensor
             {
+                Name = request.Name,
                 PivoId = request.Pivot.Id,
                 UserId = request.UserId.Value,
                 Code = request.Code,

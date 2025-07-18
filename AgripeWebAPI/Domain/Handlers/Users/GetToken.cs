@@ -46,7 +46,10 @@ namespace AgripeWebAPI.Domain.Handlers.Users
 
             var claims = new List<Claim>
             {
-                new Claim("User", JsonSerializer.Serialize(realUser, new JsonSerializerOptions  { PropertyNamingPolicy = JsonNamingPolicy.CamelCase })),
+                //new Claim("User", JsonSerializer.Serialize(realUser, new JsonSerializerOptions  { PropertyNamingPolicy = JsonNamingPolicy.CamelCase })),
+                new Claim("id", user.Id.ToString()),
+                new Claim("name", user.Name.ToString()),
+                new Claim("email", user.Email.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 

@@ -14,13 +14,6 @@ mat-card {
   padding-top: 20px;
 }
 
-.avatar {
-  width: 100px;
-  border-radius: 50%;
-  margin: 10px auto;
-  display: block;
-}
-
 .profile {
   text-align: center;
   padding: 10px;
@@ -39,23 +32,8 @@ mat-card {
 
 canvas {
   max-width: 100%;
+  max-height: 80%;
 }
-
-/* MEDIA QUERIES PARA CELULARES */
-@media (max-width: 768px) {
-  .sidenav {
-    width: 100%;
-  }
-
-  .buttons {
-    justify-content: center;
-  }
-
-  .main {
-    padding: 10px;
-  }
-}
-
 
 .selector-box {
   margin-bottom: 30px;
@@ -76,4 +54,12 @@ canvas {
   border-radius: 5px;
   border: 1px solid #ddd;
   min-width: 250px;
+}
+
+/* MEDIA QUERIES PARA CELULARES */
+@media (max-width: 768px) {
+  canvas {
+    max-width: 100%;
+    max-height: 100%;
+  }
 }

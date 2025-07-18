@@ -5,7 +5,6 @@ namespace AgripeWebAPI.Domain.Commands.Requests.Users
 {
     public class GetUserRequest : IRequest<GetUserResponse>
     {
-        public string Email { get; set; }
-        public string Password { get; set; }
+        public int Id { get; set; }
     }
 }

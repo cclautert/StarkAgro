@@ -7,6 +7,9 @@ docker-compose config
 docker-compose up -d
 docker-compose -f docker/docker-compose.yml up --build -d
 
+# Remove containers, networks, volumes e imagens que não estão em uso
+docker system prune -a --volumes -f
+
 #Logs
 docker-compose logs
 
@@ -35,7 +38,7 @@ dotnet ef database update
 ####Executar dentro do contêiner via docker exec
 
 
-#PUSH to Azure/AWS
+#PUSH to Azure
 docker-compose -f Docker/docker-compose.yml push
 
 #LOGIN
@@ -50,3 +53,18 @@ az login --tenant 6e571638-bce8-45c6-b38f-9b49a3994cec
 ######################################################
 docker-compose -f Docker/docker-compose.yml up --build
 ######################################################
+
+
+###AWS
+
+#Login
+ssh -i "agripeweb-key.pem" ec2-15-229-6-106.sa-east-1.compute.amazonaws.com
+
+#Copiar para a maquina Linux
+scp -i agripeweb-key.pem agripeweb.zip ec2-user@ec2-15-229-6-106.sa-east-1.compute.amazonaws.com:/home/ec2-user/
+
+
+#No Server
+Install UNZIP
+sudo yum install unzip
+unzip agripeweb.zip

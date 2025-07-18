@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AgripeWebAPI.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a341b0f99e7cfd477674dd9c0acbcc4b25ecf33d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e1b2dedc99dbd6ea92c35822c1316f01fefb9c93")]
 [assembly: System.Reflection.AssemblyProductAttribute("AgripeWebAPI.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AgripeWebAPI.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

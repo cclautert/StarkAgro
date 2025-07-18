@@ -17,10 +17,21 @@ namespace AgripeWebAPI.Domain.Handlers.Users
 
         public async Task<EditUserResponse> Handle(EditUserRequest request, CancellationToken cancellationToken)
         {
-            var user = _dbContext.Users.Update(new User { Name = request.Name, Email = request.Email, Password = request.Password });
+            var user = _dbContext.Users.Where(x => x.Email == request.Email).FirstOrDefault();
+
+            if (user == null)
+            {
+                throw new Exception("Email não encontrado.");
+            }
+
+            user.Name = request.Name;
+            user.Email = request.Email;
+            user.Password = request.Password;
+                
+            var userUpdated = _dbContext.Users.Update(user);
             await _dbContext.SaveChangesAsync();
 
-            return new EditUserResponse { Id = user.Entity.Id, Name = user.Entity.Name, Email = user.Entity.Email };
+            return new EditUserResponse { Id = userUpdated.Entity.Id, Name = userUpdated.Entity.Name, Email = userUpdated.Entity.Email };
         }
     }
 }

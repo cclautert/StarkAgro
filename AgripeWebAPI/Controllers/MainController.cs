@@ -47,25 +47,17 @@ namespace AgripeWebAPI.Controllers
 
         protected int GetCurrentUserId()
         {
-            var userClaim = getUserClaim();
-            if (!string.IsNullOrEmpty(userClaim))
+            var userId = getUserIdFromClaim();
+            if (!string.IsNullOrEmpty(userId))
             {
-                using (JsonDocument doc = JsonDocument.Parse(userClaim))
-                {
-                    var root = doc.RootElement;
-                    if (root.TryGetProperty("userId", out JsonElement attuidElement))
-                    {
-                        int userId = attuidElement.GetString() != null ? int.Parse(attuidElement.GetString()) : 0;
-                        return userId;
-                    }
-                }
+                return Convert.ToInt32(userId);
             }
             return 0;
         }
 
-        private string getUserClaim()
+        private string getUserIdFromClaim()
         {
-            var userClaim = User?.Claims?.FirstOrDefault(c => c.Type == "User")?.Value;
+            var userClaim = User?.Claims?.FirstOrDefault(c => c.Type == "id")?.Value;
             
             if (!string.IsNullOrEmpty(userClaim))
             {
@@ -73,27 +65,6 @@ namespace AgripeWebAPI.Controllers
             }
 
             return string.Empty;
-        }
-
-        protected int? GetCurrentTeamId()
-        {
-            var userClaim = getUserClaim();
-            if (!string.IsNullOrEmpty(userClaim))
-            {
-                using (JsonDocument doc = JsonDocument.Parse(userClaim))
-                {
-                    var root = doc.RootElement;
-                    if (root.TryGetProperty("teamId", out JsonElement teamIdElement))
-                    {
-                        var teamIdElementString = teamIdElement.GetString();
-                        if (!string.IsNullOrEmpty(teamIdElementString) && int.TryParse(teamIdElementString, out int teamId))
-                        {
-                            return teamId;
-                        }
-                    }
-                }
-            }
-            return null;
         }
 
         protected ActionResult CustomResponse(ModelStateDictionary modelState)

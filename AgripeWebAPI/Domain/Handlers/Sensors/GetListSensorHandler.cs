@@ -22,6 +22,7 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
                 .Select(x => new GetSensorResponse
                 {
                     Id = x.Id,
+                    Name = x.Name,
                     Code = x.Code,
                     Pivot = x.Pivot,
                     Quadrante = x.Quadrante

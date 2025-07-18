@@ -21,7 +21,8 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
                 .Where(x => x.PivoId == request.PivotId && x.Quadrante == request.Quadrante)
                 .Select(x => new GetSensorResponse
                 {
-                    Id = x.Id,
+                    Id = x.Id, 
+                    Name = x.Name,
                     Code = x.Code,
                     Pivot = x.Pivot,
                     Quadrante = x.Quadrante
