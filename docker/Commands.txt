@@ -58,7 +58,7 @@ docker-compose -f Docker/docker-compose.yml up --build
 ###AWS
 
 #Login
-ssh -i "agripeweb-key.pem" ec2-15-229-6-106.sa-east-1.compute.amazonaws.com
+ssh -i "agripeweb-key.pem" ec2-user@ec2-15-229-6-106.sa-east-1.compute.amazonaws.com
 
 #Copiar para a maquina Linux
 scp -i agripeweb-key.pem agripeweb.zip ec2-user@ec2-15-229-6-106.sa-east-1.compute.amazonaws.com:/home/ec2-user/

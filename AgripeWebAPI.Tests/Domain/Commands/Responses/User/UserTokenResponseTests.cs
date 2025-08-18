@@ -10,10 +10,8 @@ namespace AgripeWebAPI.Tests.Domain.Commands.Responses.User
         {
             var response = new UserTokenResponse();
             response.Token = "jwt-token";
-            response.Expiration = DateTime.UtcNow.AddHours(1);
 
             Assert.Equal("jwt-token", response.Token);
-            Assert.True(response.Expiration > DateTime.UtcNow);
         }
 
         [Fact]
@@ -21,7 +19,6 @@ namespace AgripeWebAPI.Tests.Domain.Commands.Responses.User
         {
             var response = new UserTokenResponse();
             Assert.Null(response.Token);
-            Assert.Equal(default, response.Expiration);
         }
     }
 }

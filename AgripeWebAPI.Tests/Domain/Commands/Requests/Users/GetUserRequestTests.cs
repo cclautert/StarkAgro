@@ -9,15 +9,15 @@ namespace AgripeWebAPI.Tests.Domain.Commands.Requests.Users
         public void Can_Set_And_Get_Email()
         {
             var request = new GetUserRequest();
-            request.Email = "get@example.com";
-            Assert.Equal("get@example.com", request.Email);
+            request.Id = 1;
+            Assert.Equal(1, request.Id);
         }
 
         [Fact]
         public void Default_Email_Is_Null()
         {
             var request = new GetUserRequest();
-            Assert.Null(request.Email);
+            Assert.Null(request.Id);
         }
     }
 }

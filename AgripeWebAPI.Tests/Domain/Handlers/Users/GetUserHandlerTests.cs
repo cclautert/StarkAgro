@@ -26,7 +26,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Users
             mockContext.Setup(c => c.Users).Returns(mockSet.Object);
 
             var handler = new GetUserHandler(mockContext.Object);
-            var request = new GetUserRequest { Email = "user2@example.com" };
+            var request = new GetUserRequest { Id = 1 };
 
             var result = await handler.Handle(request, default);
 

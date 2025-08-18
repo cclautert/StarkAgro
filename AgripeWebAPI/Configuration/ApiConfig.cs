@@ -1,4 +1,5 @@
 ﻿using AgripeWebAPI.Models;
+using AgripeWebAPI.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using System.Text.Json;
@@ -9,8 +10,23 @@ namespace AgripeWebAPI.Configuration
     {
         public static void AddApiConfiguration(this IServiceCollection services, IConfiguration configuration)
         {
+            //services.AddDbContext<agpDBContext>(options =>
+            //    options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+
             services.AddDbContext<agpDBContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+                options
+                    .UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
+                    .UseAsyncSeeding(async (dbContext, _, cancellationToken) =>
+                    {
+                        if (!await dbContext.Set<User>().AnyAsync(cancellationToken))
+                        {
+                            var users = GenerateUsers();
+
+                            dbContext.Set<User>().AddRange(users);
+
+                            await dbContext.SaveChangesAsync(cancellationToken);
+                        }
+                    }));
 
             services.AddControllers()
                 .AddJsonOptions(options =>
@@ -53,14 +69,24 @@ namespace AgripeWebAPI.Configuration
             });
         }
 
+        private static List<User> GenerateUsers()
+        {
+            var users = new List<User>
+            {
+                new User
+                {
+                    Name = "iot",
+                    Email = "IOT_EMAIL_REDACTED",
+                    Password = "IOT_PASS_REDACTED",
+                    Active = true
+                }
+            };
+
+            return users;
+        }
+
         public static void UseApiConfiguration(this IApplicationBuilder app, IWebHostEnvironment env)
         {
-            //using (var scope = app.ApplicationServices.CreateScope())
-            //{
-            //    var dbContext = scope.ServiceProvider.GetRequiredService<agpDBContext>();
-            //    dbContext.Database.Migrate();
-            //}
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
