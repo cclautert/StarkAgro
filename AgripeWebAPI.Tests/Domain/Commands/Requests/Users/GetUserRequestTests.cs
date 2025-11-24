@@ -14,10 +14,10 @@ namespace AgripeWebAPI.Tests.Domain.Commands.Requests.Users
         }
 
         [Fact]
-        public void Default_Email_Is_Null()
+        public void Default_Id_Is_Zero()
         {
             var request = new GetUserRequest();
-            Assert.Null(request.Id);
+            Assert.Equal(0, request.Id);
         }
     }
 }

@@ -14,7 +14,16 @@ namespace AgripeWebAPI.Domain.Handlers.Users
         }
         public Task<DeleteUserResponse> Handle(DeleteUserRequest request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var user = _dbContext.Users.FirstOrDefault(u => u.Id == request.Id);
+            if (user == null)
+            {
+                throw new KeyNotFoundException($"User with ID {request.Id} not found.");
+            }
+
+            _dbContext.Users.Remove(user);
+            _dbContext.SaveChanges();
+
+            return Task.FromResult(new DeleteUserResponse { Success = true });
         }
     }
 }

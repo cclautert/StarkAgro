@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AgripeWebAPI.Domain.Handlers.Pivots
 {
-    public class GetListPivotHandler : IRequestHandler<GetListPivotByUserIdRequest, IAsyncEnumerable<GetPivotResponse>>
+    public class GetListPivotHandler : IRequestHandler<GetListPivotByUserIdRequest, List<GetPivotResponse>>
     {
         private readonly agpDBContext _dbContext;
 
@@ -15,9 +15,9 @@ namespace AgripeWebAPI.Domain.Handlers.Pivots
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }
 
-        public async Task<IAsyncEnumerable<GetPivotResponse>> Handle(GetListPivotByUserIdRequest request, CancellationToken cancellationToken)
+        public async Task<List<GetPivotResponse>> Handle(GetListPivotByUserIdRequest request, CancellationToken cancellationToken)
         {
-            IQueryable<GetPivotResponse> query = _dbContext.Pivots
+            var query = _dbContext.Pivots
                 .Where(x => x.UserId == request.UserId)
                 .Select(x => new GetPivotResponse
                 {
@@ -25,7 +25,7 @@ namespace AgripeWebAPI.Domain.Handlers.Pivots
                     Name = x.Name
                 });
 
-            return query.AsAsyncEnumerable();
+            return await query.ToListAsync(cancellationToken);
         }
     }
 }

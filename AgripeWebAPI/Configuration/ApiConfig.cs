@@ -1,5 +1,6 @@
 ﻿using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Entities;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using System.Text.Json;
@@ -10,15 +11,12 @@ namespace AgripeWebAPI.Configuration
     {
         public static void AddApiConfiguration(this IServiceCollection services, IConfiguration configuration)
         {
-            //services.AddDbContext<agpDBContext>(options =>
-            //    options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
-
             services.AddDbContext<agpDBContext>(options =>
                 options
-                    .UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
-                    .UseAsyncSeeding(async (dbContext, _, cancellationToken) =>
+                    .UseSqlServer(configuration.GetConnectionString("DefaultConnection"))                    
+                    .UseSeeding(async (dbContext, cancellationToken) =>
                     {
-                        if (!await dbContext.Set<User>().AnyAsync(cancellationToken))
+                        if (dbContext.Set<User>().Any())
                         {
                             var users = GenerateUsers();
 
@@ -67,6 +65,16 @@ namespace AgripeWebAPI.Configuration
             {
                 cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly());
             });
+
+            services.AddRateLimiter(options =>
+            {
+                options.AddFixedWindowLimiter("default", limiterOptions =>
+                {
+                    limiterOptions.PermitLimit = 100;
+                    limiterOptions.Window = TimeSpan.FromSeconds(10);
+                    limiterOptions.QueueLimit = 0;
+                });
+            });
         }
 
         private static List<User> GenerateUsers()
@@ -105,6 +113,8 @@ namespace AgripeWebAPI.Configuration
             app.UseAuthentication();
 
             app.UseAuthorization();
+
+            app.UseRateLimiter();
 
             app.UseEndpoints(endpoints =>
             {

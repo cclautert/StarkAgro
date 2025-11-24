@@ -19,6 +19,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.0-preview.4.24266.19" />
   </ItemGroup>
 
   <ItemGroup>
@@ -35,8 +36,6 @@
     <Folder Include="Domain\Handlers\Users\" />
     <Folder Include="Models\Entities\" />
     <Folder Include="Models\Interfaces\" />
-    <Folder Include="Controllers\" />
-    <Folder Include="Configuration\" />
     <Folder Include="Notifications\" />
   </ItemGroup>
 

@@ -2,5 +2,6 @@
 {
     public class DeleteSensorResponse
     {
+        public bool Success { get; set; }
     }
 }

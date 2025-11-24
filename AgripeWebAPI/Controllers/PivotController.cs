@@ -39,8 +39,8 @@ namespace AgripeWebAPI.Controllers
             if (!ModelState.IsValid) return CustomResponse(ModelState);
 
             command.UserId = GetCurrentUserId();
-            IAsyncEnumerable<GetPivotResponse> lstPivots = await mediator.Send(command, cancellationToken);
-            
+            List<GetPivotResponse> lstPivots = await mediator.Send(command, cancellationToken);
+
             return CustomResponse(lstPivots);
         }
 

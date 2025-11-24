@@ -21,9 +21,13 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
             {
                 throw new ArgumentNullException(nameof(request.UserId), "UserId cannot be null.");
             }
-            if (request?.Pivot?.Id <= 0)
+            if (request.Pivot == null)
             {
-                throw new ArgumentNullException(nameof(request.Pivot.Id), "PivoId cannot be null.");
+                throw new ArgumentNullException(nameof(request.Pivot), "Pivot cannot be null.");
+            }
+            if (request.Pivot.Id <= 0)
+            {
+                throw new ArgumentNullException(nameof(request.Pivot.Id), "PivotId must be greater than zero.");
             }
             var sensor = new Sensor
             {

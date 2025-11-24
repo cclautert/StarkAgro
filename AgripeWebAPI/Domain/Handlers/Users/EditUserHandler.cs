@@ -27,11 +27,16 @@ namespace AgripeWebAPI.Domain.Handlers.Users
             user.Name = request.Name;
             user.Email = request.Email;
             user.Password = request.Password;
-                
-            var userUpdated = _dbContext.Users.Update(user);
-            await _dbContext.SaveChangesAsync();
 
-            return new EditUserResponse { Id = userUpdated.Entity.Id, Name = userUpdated.Entity.Name, Email = userUpdated.Entity.Email };
+            _dbContext.Users.Update(user);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+
+            return new EditUserResponse
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Email = user.Email
+            };
         }
     }
 }

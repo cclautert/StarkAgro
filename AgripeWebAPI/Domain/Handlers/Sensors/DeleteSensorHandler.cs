@@ -14,7 +14,16 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
         }
         public Task<DeleteSensorResponse> Handle(DeleteSensorRequest request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var sensor = _dbContext.Sensors.FirstOrDefault(s => s.Id == request.Id);
+            if (sensor == null)
+            {
+                throw new KeyNotFoundException($"Sensor with ID {request.Id} not found.");
+            }
+
+            _dbContext.Sensors.Remove(sensor);
+            _dbContext.SaveChanges();
+
+            return Task.FromResult(new DeleteSensorResponse { Success = true });
         }
     }
 }

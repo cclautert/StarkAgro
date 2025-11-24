@@ -21,25 +21,27 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Users
             mockSet.As<IQueryable<User>>().Setup(m => m.Expression).Returns(users.Expression);
             mockSet.As<IQueryable<User>>().Setup(m => m.ElementType).Returns(users.ElementType);
             mockSet.As<IQueryable<User>>().Setup(m => m.GetEnumerator()).Returns(users.GetEnumerator());
-            mockSet.Setup(m => m.Update(It.IsAny<User>())).Callback<User>(u =>
-            {
-                user.Name = u.Name;
-                user.Email = u.Email;
-                user.Password = u.Password;
-            }).Returns((User u) => null);
 
             var mockContext = new Mock<agpDBContext>(new DbContextOptions<agpDBContext>());
             mockContext.Setup(c => c.Users).Returns(mockSet.Object);
             mockContext.Setup(c => c.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
 
+            // Simplify Update mock to directly modify the user object
+            mockSet.Setup(m => m.Update(It.IsAny<User>())).Callback<User>(u =>
+            {
+                user.Name = u.Name;
+                user.Email = u.Email;
+                user.Password = u.Password;
+            });
+
             var handler = new EditUserHandler(mockContext.Object);
-            var request = new EditUserRequest { Name = "New", Email = "new@example.com", Password = "newpass" };
+            var request = new EditUserRequest { Name = "New", Email = "old@example.com", Password = "newpass" };
 
             var result = await handler.Handle(request, default);
 
             Assert.NotNull(result);
             Assert.Equal("New", result.Name);
-            Assert.Equal("new@example.com", result.Email);
+            Assert.Equal("old@example.com", result.Email);
         }
     }
 }
