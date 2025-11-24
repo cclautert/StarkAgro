@@ -1,0 +1,9 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/.vscode
+/AgripeWebAPI/bin/Debug/net9.0
+/AgripeWebAPI.Tests/bin/Debug
+/AgripeWebAPI.Tests/obj
