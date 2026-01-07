@@ -3,8 +3,6 @@ using AgripeWebAPI.Domain.Commands.Responses.Users;
 using AgripeWebAPI.Models.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
-using System.Xml.Linq;
 
 namespace AgripeWebAPI.Controllers
 {
@@ -23,7 +21,15 @@ namespace AgripeWebAPI.Controllers
         {
             if (!ModelState.IsValid) return CustomResponse(ModelState);
 
-            return await mediator.Send(command, cancellationToken);
+            var result = await mediator.Send(command, cancellationToken);
+
+            if (result == null)
+            {
+                NotifyError("Email ou senha inválidos.");
+                return CustomResponse(null, System.Net.HttpStatusCode.Unauthorized);
+            }
+
+            return Ok(result);
         }
         
         [Route("addUser")]

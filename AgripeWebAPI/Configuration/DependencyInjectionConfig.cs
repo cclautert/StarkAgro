@@ -1,5 +1,6 @@
 ﻿using AgripeWebAPI.Models.Interfaces;
 using AgripeWebAPI.Notifications;
+using AgripeWebAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -13,6 +14,7 @@ namespace AgripeWebAPI.Configuration
             // Repositories
 
             //Services
+            services.AddScoped<IPasswordHasher, PasswordHasherService>();
 
             // Business
             services.AddScoped<INotifier, Notificator>();
@@ -32,7 +34,7 @@ namespace AgripeWebAPI.Configuration
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = jwtSettings?.issuer,
                     ValidAudience = jwtSettings?.audience,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings?.secretkey)),
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings?.secretkey ?? Environment.GetEnvironmentVariable("JWT_SECRET_KEY") ?? throw new InvalidOperationException("JWT secret key must be configured"))),
                     ClockSkew = TimeSpan.Zero
                 };
             });

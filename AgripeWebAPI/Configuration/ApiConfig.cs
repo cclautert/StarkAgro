@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using System.Text.Json;
+using BCrypt.Net;
 
 namespace AgripeWebAPI.Configuration
 {
@@ -16,7 +17,7 @@ namespace AgripeWebAPI.Configuration
                     .UseSqlServer(configuration.GetConnectionString("DefaultConnection"))                    
                     .UseSeeding(async (dbContext, cancellationToken) =>
                     {
-                        if (dbContext.Set<User>().Any())
+                        if (!dbContext.Set<User>().Any())
                         {
                             var users = GenerateUsers();
 
@@ -39,16 +40,21 @@ namespace AgripeWebAPI.Configuration
                 options.AddPolicy("Development",
                     builder =>
                         builder
-                            .AllowAnyOrigin()
+                            .WithOrigins(
+                                "http://localhost:4200",
+                                "https://localhost:4200"
+                            )
                             .AllowAnyMethod()
-                            .AllowAnyHeader());
+                            .AllowAnyHeader()
+                            .AllowCredentials());
 
                 options.AddPolicy("Production",
                     builder =>
                         builder
-                            .WithOrigins("https://www.agripeweb.com/")
+                            .WithOrigins("https://www.agripeweb.com", "https://agripeweb.com")
                             .AllowAnyMethod()
-                            .AllowAnyHeader());
+                            .AllowAnyHeader()
+                            .AllowCredentials());
             });
 
             //Security
@@ -79,13 +85,17 @@ namespace AgripeWebAPI.Configuration
 
         private static List<User> GenerateUsers()
         {
+            // Hash the default password using BCrypt
+            var defaultPassword = "IOT_PASS_REDACTED";
+            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(defaultPassword, BCrypt.Net.BCrypt.GenerateSalt(12));
+
             var users = new List<User>
             {
                 new User
                 {
                     Name = "iot",
                     Email = "IOT_EMAIL_REDACTED",
-                    Password = "IOT_PASS_REDACTED",
+                    Password = hashedPassword,
                     Active = true
                 }
             };
@@ -98,12 +108,16 @@ namespace AgripeWebAPI.Configuration
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+            }
+
+            // CORS must be before UseRouting and UseHttpsRedirection
+            if (env.IsDevelopment())
+            {
                 app.UseCors("Development");
             }
             else
             {
-                //app.UseCors("Production");
-                app.UseCors("Development");
+                app.UseCors("Production");
             }
 
             app.UseHttpsRedirection();

@@ -25,7 +25,9 @@ namespace AgripeWebAPI.Controllers
         { 
             if (!ModelState.IsValid) return CustomResponse(ModelState);
 
-            return await mediator.Send(command, cancellationToken);
+            command.CurrentUserId = GetCurrentUserId();
+            var result = await mediator.Send(command, cancellationToken);
+            return CustomResponse(result);
         }
 
         [Route("add")]
@@ -51,7 +53,9 @@ namespace AgripeWebAPI.Controllers
         { 
             if (!ModelState.IsValid) return CustomResponse(ModelState);
 
-            return await mediator.Send(command, cancellationToken);
+            command.CurrentUserId = GetCurrentUserId();
+            var result = await mediator.Send(command, cancellationToken);
+            return CustomResponse(result);
         }
     }
 }

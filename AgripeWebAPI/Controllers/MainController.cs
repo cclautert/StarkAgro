@@ -35,7 +35,7 @@ namespace AgripeWebAPI.Controllers
                 }
                 else
                 {
-                    return new StatusCodeResult((int)HttpStatusCode.NotFound);
+                    return new StatusCodeResult((int)statusCode);
                 }
             }
 

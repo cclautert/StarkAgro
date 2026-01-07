@@ -2,6 +2,9 @@
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add environment variables to configuration
+builder.Configuration.AddEnvironmentVariables();
+
 // Add services to the container.
 
 builder.Services.AddControllers()
