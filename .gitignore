@@ -1,4 +1,4 @@
-﻿## .NET
+## .NET
 bin/
 obj/
 *.user
@@ -62,6 +62,9 @@ publish/
 docker/certs/*.pfx
 docker/certs/*.pem
 docker/certs/*.key
+
+## Terraform
+.terraform/
 
 ## Node
 node_modules/
