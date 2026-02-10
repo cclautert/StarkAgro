@@ -34,7 +34,6 @@ import { HomeComponent } from './components/home/home.component';
     HomeComponent,
   ],
   imports: [
-    AppComponent,
     CommonModule,
     BrowserModule,
     HttpClientModule,
@@ -53,13 +52,13 @@ import { HomeComponent } from './components/home/home.component';
     AppRoutingModule,
     FormsModule,
   ],
-  providers: [provideCharts(withDefaultRegisterables()),
+  providers: [
+    provideCharts(withDefaultRegisterables()),
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true
     }
-  ],
-  bootstrap: [AppComponent]
+  ]
 })
 export class AppModule { }

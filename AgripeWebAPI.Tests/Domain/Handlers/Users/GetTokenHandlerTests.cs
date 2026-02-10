@@ -28,11 +28,14 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Users
         {
             // Arrange
             var context = CreateInMemoryContext();
-            context.Users.Add(new User { Id = 1, Name = "Test", Email = "test@example.com", Password = "hashed-pass", Active = true });
+            // Use a password that already looks like a BCrypt hash so the handler
+            // does not try to re-hash and update the user (which would conflict with tracking).
+            var existingHash = "$2b$10$ABCDEFGHIJKLMNOPQRSTUVabcdefghijklmno";
+            context.Users.Add(new User { Id = 1, Name = "Test", Email = "test@example.com", Password = existingHash, Active = true });
             context.SaveChanges();
 
             var passwordHasher = new Mock<IPasswordHasher>();
-            passwordHasher.Setup(p => p.VerifyPassword("pass", "hashed-pass")).Returns(true);
+            passwordHasher.Setup(p => p.VerifyPassword("pass", existingHash)).Returns(true);
 
             var jwtService = new Mock<IJwtTokenService>();
             jwtService.Setup(j => j.GenerateTokenAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()))

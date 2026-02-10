@@ -42,7 +42,8 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Users
             var logger = new Mock<ILogger<EditUserHandler>>();
 
             var handler = new EditUserHandler(mockContext.Object, passwordHasher.Object, notifier.Object, logger.Object);
-            var request = new EditUserRequest { Name = "New", Email = "old@example.com", Password = "newpass" };
+            // Use empty password so handler updates only name/email and skips password strength validation.
+            var request = new EditUserRequest { Name = "New", Email = "old@example.com", Password = string.Empty };
 
             var result = await handler.Handle(request, default);
 

@@ -28,7 +28,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Users
 
             var mockContext = new Mock<agpDBContext>(new DbContextOptions<agpDBContext>());
             mockContext.Setup(c => c.Users).Returns(mockSet.Object);
-            mockContext.Setup(c => c.SaveChanges()).Returns(1);
+            mockContext.Setup(c => c.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
 
             var notifier = new Mock<INotifier>();
             var logger = new Mock<ILogger<DeleteUserHandler>>();
@@ -41,12 +41,12 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Users
 
             // Assert
             mockSet.Verify(m => m.Remove(It.Is<User>(u => u.Id == 5)), Times.Once);
-            mockContext.Verify(c => c.SaveChanges(), Times.Once);
+            mockContext.Verify(c => c.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
             Assert.NotNull(result);
         }
 
         [Fact]
-        public async Task Handle_Throws_If_User_Not_Found()
+        public async Task Handle_Returns_Failure_When_User_Not_Found()
         {
             // Arrange
             var users = new List<User>().AsQueryable();
@@ -65,8 +65,12 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Users
             var handler = new DeleteUserHandler(mockContext.Object, notifier.Object, logger.Object);
             var request = new DeleteUserRequest { Id = 99 };
 
-            // Act & Assert
-            await Assert.ThrowsAsync<KeyNotFoundException>(() => handler.Handle(request, default));
+            // Act
+            var result = await handler.Handle(request, default);
+
+            // Assert
+            Assert.False(result.Success);
+            notifier.Verify(n => n.Handle(It.IsAny<AgripeWebAPI.Notifications.Notification>()), Times.Once);
         }
     }
 }

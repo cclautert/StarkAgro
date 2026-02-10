@@ -4,6 +4,7 @@ using System.Reflection;
 using AgripeWebAPI.Configuration;
 using AgripeWebAPI.Controllers;
 using AgripeWebAPI.Models.Entities;
+using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Interfaces;
 using AgripeWebAPI.Notifications;
 using MediatR;
@@ -62,6 +63,12 @@ namespace AgripeWebAPI.Tests.Configuration
             });
             builder.Configuration["ConnectionStrings:DefaultConnection"] = "Server=(localdb)\\MSSQLLocalDB;Database=TestDb;Trusted_Connection=True;";
             builder.Services.AddApiConfiguration(builder.Configuration);
+            builder.Services.ResolveDependencies(new JwtSettings
+            {
+                secretkey = "test-secret-key-12345678901234567890",
+                issuer = "test-issuer",
+                audience = "test-audience"
+            });
             var app = builder.Build();
 
             // Act
@@ -81,6 +88,12 @@ namespace AgripeWebAPI.Tests.Configuration
             });
             builder.Configuration["ConnectionStrings:DefaultConnection"] = "Server=(localdb)\\MSSQLLocalDB;Database=TestDb;Trusted_Connection=True;";
             builder.Services.AddApiConfiguration(builder.Configuration);
+            builder.Services.ResolveDependencies(new JwtSettings
+            {
+                secretkey = "test-secret-key-12345678901234567890",
+                issuer = "test-issuer",
+                audience = "test-audience"
+            });
             var app = builder.Build();
 
             // Act
@@ -104,7 +117,10 @@ namespace AgripeWebAPI.Tests.Configuration
             Assert.Single(users);
             Assert.Equal("iot", users[0].Name);
             Assert.Equal("IOT_EMAIL_REDACTED", users[0].Email);
-            Assert.Equal("IOT_PASS_REDACTED", users[0].Password);
+            Assert.NotNull(users[0].Password);
+            Assert.NotEmpty(users[0].Password);
+            // Password should now be stored as a hash, not in plain text.
+            Assert.NotEqual("IOT_PASS_REDACTED", users[0].Password);
             Assert.True(users[0].Active);
         }
     }
