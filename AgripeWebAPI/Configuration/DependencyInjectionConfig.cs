@@ -1,4 +1,4 @@
-﻿using AgripeWebAPI.Models.Interfaces;
+using AgripeWebAPI.Models.Interfaces;
 using AgripeWebAPI.Notifications;
 using AgripeWebAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -15,6 +15,7 @@ namespace AgripeWebAPI.Configuration
 
             //Services
             services.AddScoped<IPasswordHasher, PasswordHasherService>();
+            services.AddScoped<IJwtTokenService, JwtTokenService>();
 
             // Business
             services.AddScoped<INotifier, Notificator>();

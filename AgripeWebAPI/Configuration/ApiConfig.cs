@@ -1,4 +1,4 @@
-﻿using AgripeWebAPI.Models;
+using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Entities;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
@@ -65,6 +65,8 @@ namespace AgripeWebAPI.Configuration
                 options.HeaderName = "X-CSRF-TOKEN-HEADERNAME";
                 options.SuppressXFrameOptionsHeader = false;
             });
+
+            services.AddHttpClient();
 
             //Add MediatR
             services.AddMediatR(cfg =>

@@ -1,0 +1,14 @@
+.auth-callback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  gap: 1rem;
+}
+.auth-callback .error {
+  color: #c62828;
+}
+.auth-callback a {
+  color: #1976d2;
+}

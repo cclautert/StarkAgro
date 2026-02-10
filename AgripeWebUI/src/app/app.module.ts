@@ -20,6 +20,7 @@ import { UserFormComponent } from './components/user-form/user-form.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LoginComponent } from './components/login/login.component';
+import { AuthCallbackComponent } from './components/login/auth-callback.component';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './guards/auth.interceptor';
 import { HomeComponent } from './components/home/home.component';
@@ -27,6 +28,7 @@ import { HomeComponent } from './components/home/home.component';
 @NgModule({
   declarations: [
     LoginComponent,
+    AuthCallbackComponent,
     DashboardComponent,
     UserFormComponent,
     HomeComponent,

@@ -5,6 +5,7 @@ import { PivotFormComponent } from './components/pivot-form/pivot-form.component
 import { UserFormComponent } from './components/user-form/user-form.component';
 import { SensorFormComponent } from './components/sensor-form/sensor-form.component';
 import { LoginComponent } from './components/login/login.component';
+import { AuthCallbackComponent } from './components/login/auth-callback.component';
 import { AuthGuard} from './guards/auth.guard';
 import { PivotListComponent } from './components/pivot-list/pivot-list.component';
 import { SensorListComponent } from './components/sensor-list/sensor-list.component';
@@ -14,6 +15,7 @@ import { HomeComponent } from './components/home/home.component';
 const routes: Routes = [
   // Rota de login fora do layout
   { path: 'login', component: LoginComponent },
+  { path: 'login/callback', component: AuthCallbackComponent },
 
   // Rota com layout (rotas protegidas)
   {

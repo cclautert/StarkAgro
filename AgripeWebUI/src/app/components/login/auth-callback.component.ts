@@ -1,0 +1,68 @@
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ApiService } from '../../services/api.service';
+import { jwtDecode } from 'jwt-decode';
+
+interface DecodedToken {
+  id: number;
+  name: string;
+  email: string;
+}
+
+@Component({
+  selector: 'app-auth-callback',
+  templateUrl: './auth-callback.component.html',
+  styleUrls: ['./auth-callback.component.css'],
+  standalone: false
+})
+export class AuthCallbackComponent implements OnInit {
+  errorMessage = '';
+
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private apiService: ApiService
+  ) {}
+
+  ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      const code = params['code'];
+      const error = params['error'];
+
+      if (error) {
+        this.errorMessage = error === 'access_denied' ? 'Login cancelado.' : `Erro: ${error}`;
+        return;
+      }
+
+      if (!code) {
+        this.errorMessage = 'Código de autorização não recebido.';
+        return;
+      }
+
+      const redirectUri = window.location.origin + window.location.pathname;
+      this.apiService.externalLogin('Google', code, redirectUri).subscribe({
+        next: (response: { token: string }) => {
+          const token = response?.token;
+          if (token) {
+            localStorage.setItem('token', token);
+            try {
+              const decoded = jwtDecode(token) as DecodedToken;
+              const userId = decoded.id;
+              if (userId != null) {
+                localStorage.setItem('userId', String(userId));
+              }
+            } catch {
+              // optional: userId from token
+            }
+            this.router.navigate(['/home']);
+          } else {
+            this.errorMessage = 'Token inválido.';
+          }
+        },
+        error: () => {
+          this.errorMessage = 'Falha no login com Google. Tente novamente.';
+        }
+      });
+    });
+  }
+}

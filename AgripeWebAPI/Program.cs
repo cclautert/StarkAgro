@@ -1,4 +1,4 @@
-﻿using AgripeWebAPI.Configuration;
+using AgripeWebAPI.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,9 +13,6 @@ builder.Services.AddControllers()
         options.SuppressModelStateInvalidFilter = true;
     });
 
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-
 // Adiciona o Swagger
 builder.Services.AddEndpointsApiExplorer();
 
@@ -25,6 +22,7 @@ builder.Services.AddSwaggerConfiguration();
 
 var jwtSettingsSection = builder.Configuration.GetSection("JwtSettings");
 builder.Services.Configure<JwtSettings>(jwtSettingsSection);
+builder.Services.Configure<OAuthSettings>(builder.Configuration.GetSection(OAuthSettings.SectionName));
 builder.Services.ResolveDependencies(jwtSettingsSection.Get<JwtSettings>());
 
 var app = builder.Build();

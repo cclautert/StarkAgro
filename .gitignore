@@ -39,6 +39,9 @@ bld/
 .idea/
 *.sln.iml
 
+## VS Code
+.vscode/
+
 ## User-specific files
 *.rsuser
 *.suo
@@ -65,6 +68,9 @@ docker/certs/*.key
 
 ## Terraform
 .terraform/
+
+## DBHub (may contain DB credentials)
+dbhub.toml
 
 ## Node
 node_modules/

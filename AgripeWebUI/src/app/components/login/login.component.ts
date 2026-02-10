@@ -2,13 +2,17 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { FormsModule } from '@angular/forms';
-import { jwtDecode } from 'jwt-decode'; // 1. IMPORTE A BIBLIOTECA
+import { jwtDecode } from 'jwt-decode';
+import { environment } from '../../../environments/environment';
 
 interface DecodedToken {
   id: number;
   name: string;
   email: string;
 }
+
+/** Google OAuth 2.0 authorization endpoint */
+const GOOGLE_AUTH_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
 
 @Component({
   selector: 'app-login',
@@ -20,7 +24,23 @@ export class LoginComponent {
   email = '';
   password = '';
 
+  get googleLoginEnabled(): boolean {
+    return !!environment.googleClientId?.trim();
+  }
+
   constructor(private fb: FormsModule, private apiService: ApiService, private router: Router) {}
+
+  loginWithGoogle(): void {
+    if (!this.googleLoginEnabled) return;
+    const redirectUri = `${window.location.origin}/login/callback`;
+    const params = new URLSearchParams({
+      client_id: environment.googleClientId,
+      redirect_uri: redirectUri,
+      response_type: 'code',
+      scope: 'email profile openid'
+    });
+    window.location.href = `${GOOGLE_AUTH_URL}?${params.toString()}`;
+  }
 
   login() {
     this.apiService.login(this.email, this.password).subscribe({

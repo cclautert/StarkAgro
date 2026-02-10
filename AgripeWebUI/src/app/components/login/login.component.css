@@ -49,3 +49,14 @@ button {
 button:hover {
   background-color: #0878ad;
 }
+
+.google-btn {
+  margin-top: 0.75rem;
+  background-color: #fff;
+  color: #333;
+  border: 1px solid #dadce0;
+}
+.google-btn:hover {
+  background-color: #f8f9fa;
+  border-color: #dadce0;
+}

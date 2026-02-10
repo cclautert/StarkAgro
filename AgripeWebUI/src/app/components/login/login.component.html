@@ -8,6 +8,9 @@
       <input type="text" name="email" [(ngModel)]="email" placeholder="Email" required />
       <input type="password" name="password" [(ngModel)]="password" placeholder="Password" required />
       <button type="submit">Login</button>
+      <button *ngIf="googleLoginEnabled" type="button" class="google-btn" (click)="loginWithGoogle()">
+        Entrar com Google
+      </button>
     </form>
   </div>
 </div>

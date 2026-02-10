@@ -1,4 +1,4 @@
-﻿using AgripeWebAPI.Domain.Commands.Requests.Users;
+using AgripeWebAPI.Domain.Commands.Requests.Users;
 using AgripeWebAPI.Domain.Commands.Responses.Users;
 using AgripeWebAPI.Models.Interfaces;
 using MediatR;
@@ -25,9 +25,7 @@ namespace AgripeWebAPI.Controllers
         { 
             if (!ModelState.IsValid) return CustomResponse(ModelState);
 
-            command.CurrentUserId = GetCurrentUserId();
-            var result = await mediator.Send(command, cancellationToken);
-            return CustomResponse(result);
+            return await mediator.Send(command, cancellationToken);
         }
 
         [Route("add")]
@@ -53,9 +51,7 @@ namespace AgripeWebAPI.Controllers
         { 
             if (!ModelState.IsValid) return CustomResponse(ModelState);
 
-            command.CurrentUserId = GetCurrentUserId();
-            var result = await mediator.Send(command, cancellationToken);
-            return CustomResponse(result);
+            return await mediator.Send(command, cancellationToken);
         }
     }
 }

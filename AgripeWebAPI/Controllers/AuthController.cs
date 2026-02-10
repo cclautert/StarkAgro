@@ -1,4 +1,4 @@
-﻿using AgripeWebAPI.Domain.Commands.Requests.Users;
+using AgripeWebAPI.Domain.Commands.Requests.Users;
 using AgripeWebAPI.Domain.Commands.Responses.Users;
 using AgripeWebAPI.Models.Interfaces;
 using MediatR;
@@ -26,6 +26,33 @@ namespace AgripeWebAPI.Controllers
             if (result == null)
             {
                 NotifyError("Email ou senha inválidos.");
+                return CustomResponse(null, System.Net.HttpStatusCode.Unauthorized);
+            }
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// OAuth 2.0: exchange authorization code (e.g. from Google) for a JWT.
+        /// Body: { "provider": "Google", "code": "...", "redirectUri": "https://localhost:4200/login/callback" }
+        /// </summary>
+        [HttpPost("external-login")]
+        public async Task<ActionResult<UserTokenResponse>> ExternalLogin(
+            [FromServices] IMediator mediator,
+            [FromBody] ExternalLoginRequest command,
+            CancellationToken cancellationToken)
+        {
+            if (command == null || string.IsNullOrWhiteSpace(command.Code))
+            {
+                NotifyError("Código de autorização inválido.");
+                return CustomResponse(null, System.Net.HttpStatusCode.BadRequest);
+            }
+
+            var result = await mediator.Send(command, cancellationToken);
+
+            if (result == null)
+            {
+                NotifyError("Falha no login com o provedor externo.");
                 return CustomResponse(null, System.Net.HttpStatusCode.Unauthorized);
             }
 

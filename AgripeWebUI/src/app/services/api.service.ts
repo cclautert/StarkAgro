@@ -11,9 +11,9 @@ import { HttpParams } from '@angular/common/http';
   providedIn: 'root'
 })
 export class ApiService {
-  private baseUrl = 'https://localhost:7162/v1/';//local
-  //private baseUrl = 'http://localhost:8080/v1/';
-  //private baseUrl = 'http://15.229.6.106:8080/v1/'; // Azure | AWS
+  /** In dev, use relative URL so ng serve proxy forwards /api to the API (avoids CORS). */
+  private baseUrl = '/api/v1/';
+  // For production or when not using proxy: 'https://localhost:7162/v1/' or your API origin
 
   constructor(private http: HttpClient) { }
 
@@ -21,6 +21,14 @@ export class ApiService {
     const body = { email, password };
 
     return this.http.post<{ token: string }>(`${this.baseUrl}Auth/LogIn`, body);
+  }
+
+  /**
+   * OAuth 2.0: exchange authorization code from external provider (e.g. Google) for our JWT.
+   */
+  externalLogin(provider: string, code: string, redirectUri: string): Observable<{ token: string }> {
+    const body = { provider, code, redirectUri };
+    return this.http.post<{ token: string }>(`${this.baseUrl}Auth/external-login`, body);
   }
 
   getReads(userId: number, numberOfReads: number): Observable<Read[]> {

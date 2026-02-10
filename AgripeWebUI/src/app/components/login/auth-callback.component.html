@@ -1,0 +1,5 @@
+<div class="auth-callback">
+  <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+  <p *ngIf="!errorMessage">Conectando...</p>
+  <a *ngIf="errorMessage" routerLink="/login">Voltar ao login</a>
+</div>

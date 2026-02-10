@@ -1,4 +1,4 @@
-﻿using AgripeWebAPI.Domain.Commands.Requests.Users;
+using AgripeWebAPI.Domain.Commands.Requests.Users;
 using AgripeWebAPI.Domain.Commands.Responses.Users;
 using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Entities;
@@ -6,26 +6,21 @@ using AgripeWebAPI.Models.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using System.Text.Json;
 
 namespace AgripeWebAPI.Domain.Handlers.Users
 {
     public class GetToken : IRequestHandler<UserTokenRequest, UserTokenResponse>
     {
         private readonly agpDBContext _dbContext;
-        private readonly IConfiguration _configuration;
         private readonly IPasswordHasher _passwordHasher;
+        private readonly IJwtTokenService _jwtTokenService;
         private readonly ILogger<GetToken> _logger;
 
-        public GetToken(agpDBContext dbContext, IConfiguration configuration, IPasswordHasher passwordHasher, ILogger<GetToken> logger)
+        public GetToken(agpDBContext dbContext, IPasswordHasher passwordHasher, IJwtTokenService jwtTokenService, ILogger<GetToken> logger)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
-            _configuration = configuration;
             _passwordHasher = passwordHasher ?? throw new ArgumentNullException(nameof(passwordHasher));
+            _jwtTokenService = jwtTokenService ?? throw new ArgumentNullException(nameof(jwtTokenService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -71,45 +66,7 @@ namespace AgripeWebAPI.Domain.Handlers.Users
 
             _logger.LogInformation("Successful login for user: {UserId}, {Email}", user.Id, request.Email);
 
-            return new UserTokenResponse { Token = await GenerateToken(user, cancellationToken) };
-        }
-
-        private async Task<string> GenerateToken(User user, CancellationToken cancellationToken)
-        {
-            var realUser = setUserData(user);
-
-            var claims = new List<Claim>
-            {
-                //new Claim("User", JsonSerializer.Serialize(realUser, new JsonSerializerOptions  { PropertyNamingPolicy = JsonNamingPolicy.CamelCase })),
-                new Claim("id", user.Id.ToString()),
-                new Claim("name", user.Name.ToString()),
-                new Claim("email", user.Email.ToString()),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            };
-
-            var privateKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:secretkey"]));
-            var credentials = new SigningCredentials(privateKey, SecurityAlgorithms.HmacSha256);
-            var expiration = DateTime.UtcNow.AddHours(8);
-
-            JwtSecurityToken token = new JwtSecurityToken(
-                issuer: _configuration["JwtSettings:Issuer"],
-                audience: _configuration["JwtSettings:Audience"],
-                claims: claims,
-                expires: expiration,
-                signingCredentials: credentials
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
-
-        private object setUserData(User user)
-        {
-            return new
-            {
-                userId = user?.Id.ToString() ?? String.Empty,
-                name = user?.Name ?? String.Empty,
-                email = user?.Email ?? String.Empty
-            };
+            return new UserTokenResponse { Token = await _jwtTokenService.GenerateTokenAsync(user, cancellationToken) };
         }
 
         /// <summary>
