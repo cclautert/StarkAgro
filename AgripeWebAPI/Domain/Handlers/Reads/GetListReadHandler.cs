@@ -1,9 +1,9 @@
-﻿using AgripeWebAPI.Domain.Commands.Requests.Reads;
+using AgripeWebAPI.Domain.Commands.Requests.Reads;
 using AgripeWebAPI.Domain.Commands.Responses.Pivots;
 using AgripeWebAPI.Domain.Commands.Responses.Reads;
 using AgripeWebAPI.Models;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
 using System.Linq;
 
 namespace AgripeWebAPI.Domain.Handlers.Sensors
@@ -22,18 +22,31 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
         {
             var startDate = DateTime.UtcNow.AddDays(-request.NumberOfReads);
 
-            IQueryable<GetReadResponse> query = _dbContext.ReadSensors
-                .Where(x => x.UserId == request.UserId && x.Date >= startDate)
-                .OrderBy(x => x.Date)
-                .Select(x => new GetReadResponse
+            var reads = await _dbContext.ReadSensors
+                .Find(x => x.UserId == request.UserId && x.Date >= startDate)
+                .SortBy(x => x.Date)
+                .Project(x => new GetReadResponse
                 {
                     Id = x.Id,
                     SensorId = x.SensorId,
                     Value = x.Value,
                     Date = x.Date
-                });
+                })
+                .ToListAsync(cancellationToken);
 
-            return query.AsAsyncEnumerable();
+            return ToAsyncEnumerable(reads, cancellationToken);
+        }
+
+        private static async IAsyncEnumerable<GetReadResponse> ToAsyncEnumerable(
+            IEnumerable<GetReadResponse> reads,
+            [System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken cancellationToken)
+        {
+            foreach (var read in reads)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                yield return read;
+                await Task.CompletedTask;
+            }
         }
     }
 }

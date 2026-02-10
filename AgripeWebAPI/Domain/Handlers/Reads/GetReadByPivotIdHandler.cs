@@ -1,9 +1,9 @@
-﻿using AgripeWebAPI.Domain.Commands.Requests.Reads;
+using AgripeWebAPI.Domain.Commands.Requests.Reads;
 using AgripeWebAPI.Domain.Commands.Responses.Pivots;
 using AgripeWebAPI.Domain.Commands.Responses.Reads;
 using AgripeWebAPI.Models;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
 using System.Linq;
 
 namespace AgripeWebAPI.Domain.Handlers.Sensors
@@ -22,34 +22,44 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
         {
             var startDate = DateTime.UtcNow.AddDays(-request.NumberOfReads);
 
-            var quadranteDataMap = await _dbContext.ReadSensors
-            .Where(r => r.Sensor.PivoId == request.PivotId && r.Date >= startDate)
-            .GroupBy(r => r.Sensor.Quadrante) // Agrupa pelo 'int' do quadrante
-            .Select(group => new
-            {
-                NumeroQuadrante = group.Key,
-                // É importante garantir que a divisão seja de ponto flutuante.
-                // Se 'r.Value' for int, converta para double ou decimal.
-                Media = group.Average(r => (double)r.Value) 
-            })
-            .ToDictionaryAsync(
-                // A chave do dicionário é o número do quadrante
-                keySelector: result => result.NumeroQuadrante, 
-                // O valor é uma tupla com a média e a cor calculada
-                elementSelector: result => (
-                    Average: (decimal)result.Media, // Converte a média para decimal
-                    Color: (result.Media < 15) ? "#2196F3" :    //Azul
-                           (result.Media < 40) ? "#4CAF50" :    //verde
-                           (result.Media < 65) ? "#FFC107" :    //Amarelo
-                           "#F44336"    //Vermelho
-                )
-            );
+            var sensors = await _dbContext.Sensors
+                .Find(s => s.PivoId == request.PivotId)
+                .Project(s => new { s.Id, s.Quadrante })
+                .ToListAsync(cancellationToken);
+
+            var sensorsById = sensors.ToDictionary(s => s.Id, s => s.Quadrante);
+            var sensorIds = sensorsById.Keys.ToList();
+
+            var reads = sensorIds.Count == 0
+                ? new List<Models.Entities.ReadSensor>()
+                : await _dbContext.ReadSensors
+                    .Find(r => sensorIds.Contains(r.SensorId) && r.Date >= startDate)
+                    .ToListAsync(cancellationToken);
+
+            var quadranteDataMap = reads
+                .Where(read => sensorsById.ContainsKey(read.SensorId))
+                .GroupBy(read => sensorsById[read.SensorId])
+                .Select(group => new
+                {
+                    NumeroQuadrante = group.Key,
+                    Media = group.Average(read => (double)read.Value)
+                })
+                .ToDictionary(
+                    result => result.NumeroQuadrante,
+                    result => (
+                        Average: (decimal)result.Media,
+                        Color: (result.Media < 15) ? "#2196F3" :
+                               (result.Media < 40) ? "#4CAF50" :
+                               (result.Media < 65) ? "#FFC107" :
+                               "#F44336"
+                    )
+                );
 
             // Opcional: buscar o nome do pivô
             var pivotName = await _dbContext.Pivots
-                                            .Where(p => p.Id == request.PivotId)
-                                            .Select(p => p.Name)
-                                            .FirstOrDefaultAsync();
+                .Find(p => p.Id == request.PivotId)
+                .Project(p => p.Name)
+                .FirstOrDefaultAsync(cancellationToken);
 
             // --- Etapa 2: Construir o objeto de resposta final ---
             var response = new GetReadByPivotIdResponse

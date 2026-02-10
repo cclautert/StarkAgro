@@ -1,8 +1,9 @@
-﻿using AgripeWebAPI.Domain.Commands.Requests.Reads;
+using AgripeWebAPI.Domain.Commands.Requests.Reads;
 using AgripeWebAPI.Domain.Commands.Responses.Reads;
 using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Entities;
 using MediatR;
+using MongoDB.Driver;
 
 namespace AgripeWebAPI.Domain.Handlers.Reads
 {
@@ -20,7 +21,7 @@ namespace AgripeWebAPI.Domain.Handlers.Reads
             _dbContext = dbContext;
         }
 
-        public Task<CreateReadResponse> Handle(CreateReadRequest request, CancellationToken cancellationToken)
+        public async Task<CreateReadResponse> Handle(CreateReadRequest request, CancellationToken cancellationToken)
         {
             double voltage = ((int)request.Value / 1023.0f) * V_REF; // Convert to voltage
             double pressure = P_MIN + ((voltage - V_MIN) / (V_MAX - V_MIN)) * (P_MAX - P_MIN); // Convert to kPa
@@ -28,11 +29,24 @@ namespace AgripeWebAPI.Domain.Handlers.Reads
             // Ensure pressure is within valid range
             pressure = Math.Abs(Math.Clamp(pressure, P_MIN, P_MAX));
 
-            var sensor = _dbContext.Sensors.FirstOrDefault(s => s.Code == request.Code);
-            _dbContext.ReadSensors.Add(new ReadSensor { SensorId = sensor.Id, UserId = sensor.UserId, Value = (decimal)pressure, Date = DateTime.Now });
-            _dbContext.SaveChanges();
+            var sensor = await _dbContext.Sensors.Find(s => s.Code == request.Code).FirstOrDefaultAsync(cancellationToken);
+            if (sensor == null)
+            {
+                throw new KeyNotFoundException($"Sensor with code '{request.Code}' not found.");
+            }
 
-            return Task.FromResult(new CreateReadResponse());
+            var read = new ReadSensor
+            {
+                Id = await _dbContext.GetNextIdAsync(nameof(ReadSensor), cancellationToken),
+                SensorId = sensor.Id,
+                UserId = sensor.UserId,
+                Value = (decimal)pressure,
+                Date = DateTime.UtcNow
+            };
+
+            await _dbContext.ReadSensors.InsertOneAsync(read, cancellationToken: cancellationToken);
+
+            return new CreateReadResponse();
         }
     }
 }

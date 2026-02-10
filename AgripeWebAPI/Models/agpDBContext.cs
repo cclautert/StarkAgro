@@ -1,72 +1,75 @@
-﻿using AgripeWebAPI.Models.Entities;
-using Microsoft.EntityFrameworkCore;
+using AgripeWebAPI.Configuration;
+using AgripeWebAPI.Models.Entities;
+using Microsoft.Extensions.Options;
+using MongoDB.Driver;
 
 namespace AgripeWebAPI.Models
 {
-    public class agpDBContext : DbContext
+    public class agpDBContext
     {
-        public agpDBContext(DbContextOptions<agpDBContext> options)
-            : base(options)
+        private readonly IMongoCollection<CounterDocument> _counters;
+
+        public agpDBContext(IOptions<MongoDbSettings> settings)
         {
+            if (settings?.Value == null)
+            {
+                throw new InvalidOperationException("MongoDB settings are not configured.");
+            }
+
+            if (string.IsNullOrWhiteSpace(settings.Value.ConnectionString))
+            {
+                throw new InvalidOperationException("MongoDB connection string is not configured.");
+            }
+
+            if (string.IsNullOrWhiteSpace(settings.Value.DatabaseName))
+            {
+                throw new InvalidOperationException("MongoDB database name is not configured.");
+            }
+
+            var client = new MongoClient(settings.Value.ConnectionString);
+            var database = client.GetDatabase(settings.Value.DatabaseName);
+
+            Users = database.GetCollection<User>("users");
+            Pivots = database.GetCollection<Pivot>("pivots");
+            Sensors = database.GetCollection<Sensor>("sensors");
+            ReadSensors = database.GetCollection<ReadSensor>("read_sensors");
+            _counters = database.GetCollection<CounterDocument>("counters");
         }
 
-        // DbSets para suas entidades
-        public virtual DbSet<ReadSensor> ReadSensors { get; set; }
-        public virtual DbSet<Sensor> Sensors { get; set; }
-        public virtual DbSet<Pivot> Pivots { get; set; }        
-        public virtual DbSet<User> Users { get; set; }
+        public IMongoCollection<User> Users { get; }
+        public IMongoCollection<Pivot> Pivots { get; }
+        public IMongoCollection<Sensor> Sensors { get; }
+        public IMongoCollection<ReadSensor> ReadSensors { get; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        public async Task<int> GetNextIdAsync(string entityName, CancellationToken cancellationToken = default)
         {
-            base.OnModelCreating(modelBuilder);
+            var filter = Builders<CounterDocument>.Filter.Eq(x => x.Id, entityName.ToLowerInvariant());
+            var update = Builders<CounterDocument>.Update.Inc(x => x.Sequence, 1);
 
-            // Configurações com Fluent API (opcional)
-            modelBuilder.Entity<User>(entity =>
+            var options = new FindOneAndUpdateOptions<CounterDocument>
             {
-                entity.HasKey(e => e.Id);
-                entity.Property(e => e.Id).ValueGeneratedOnAdd(); // Makes it an identity column
-                entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
-                entity.Property(e => e.Email).IsRequired().HasMaxLength(50);
-                entity.Property(e => e.Password).IsRequired().HasMaxLength(100);
-            });
+                IsUpsert = true,
+                ReturnDocument = ReturnDocument.After
+            };
 
-            modelBuilder.Entity<Sensor>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-                entity.Property(e => e.Id).ValueGeneratedOnAdd(); // Makes it an identity column
-                entity.Property(e => e.Code).IsRequired().HasMaxLength(17);
+            var counter = await _counters.FindOneAndUpdateAsync(filter, update, options, cancellationToken);
+            return counter.Sequence;
+        }
 
-                entity.HasOne<User>()
-                      .WithMany()
-                      .HasForeignKey("UserId")
-                      .OnDelete(DeleteBehavior.NoAction);
-            });
+        public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(0);
+        }
 
-            modelBuilder.Entity<ReadSensor>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-                entity.Property(e => e.Id).ValueGeneratedOnAdd(); // Makes it an identity column
-                entity.Property(e => e.Value).IsRequired();
-                entity.Property(e => e.Value).HasPrecision(18, 2);
-                entity.Property(e => e.Date).IsRequired();
+        public int SaveChanges()
+        {
+            return 0;
+        }
 
-                entity.HasOne<User>()
-                      .WithMany()
-                      .HasForeignKey("UserId")
-                      .OnDelete(DeleteBehavior.NoAction);
-            });
-
-            modelBuilder.Entity<Pivot>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-                entity.Property(e => e.Id).ValueGeneratedOnAdd(); // Makes it an identity column
-                entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
-
-                entity.HasOne<User>()
-                      .WithMany()
-                      .HasForeignKey("UserId")
-                      .OnDelete(DeleteBehavior.NoAction);
-            });
+        private sealed class CounterDocument
+        {
+            public string Id { get; set; } = string.Empty;
+            public int Sequence { get; set; }
         }
     }
 }

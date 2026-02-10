@@ -27,6 +27,10 @@
   font-weight: bold;
 }
 
+.mat-nav-list a.logout-link {
+  cursor: pointer;
+}
+
 .main-content {
   padding: 20px;
 }

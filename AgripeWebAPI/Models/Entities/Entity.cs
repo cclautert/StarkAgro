@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace AgripeWebAPI.Models.Entities
 {
@@ -9,8 +8,7 @@ namespace AgripeWebAPI.Models.Entities
         {
         }
 
-        [Key]
-        [Column("id")]
+        [BsonId]
         public virtual int Id { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿using AgripeWebAPI.Domain.Commands.Requests.Users;
+using AgripeWebAPI.Domain.Commands.Requests.Users;
 using AgripeWebAPI.Domain.Commands.Responses.Users;
 using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Entities;
@@ -7,6 +7,7 @@ using AgripeWebAPI.Notifications;
 using AgripeWebAPI.Validators;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using MongoDB.Driver;
 using System.ComponentModel.DataAnnotations;
 
 namespace AgripeWebAPI.Domain.Handlers.Users
@@ -29,7 +30,9 @@ namespace AgripeWebAPI.Domain.Handlers.Users
 
         public async Task<EditUserResponse> Handle(EditUserRequest request, CancellationToken cancellationToken)
         {
-            var user = _dbContext.Users.Where(x => x.Email == request.Email).FirstOrDefault();
+            var user = await _dbContext.Users
+                .Find(x => x.Email == request.Email)
+                .FirstOrDefaultAsync(cancellationToken);
 
             if (user == null)
             {
@@ -67,8 +70,7 @@ namespace AgripeWebAPI.Domain.Handlers.Users
                     _logger.LogInformation("Password change initiated for user: {UserId}, {Email}", user.Id, request.Email);
                 }
 
-                _dbContext.Users.Update(user);
-                await _dbContext.SaveChangesAsync(cancellationToken);
+                await _dbContext.Users.ReplaceOneAsync(x => x.Id == user.Id, user, cancellationToken: cancellationToken);
 
                 if (passwordChanged)
                 {

@@ -1,8 +1,8 @@
-﻿using AgripeWebAPI.Domain.Commands.Requests.Pivots;
+using AgripeWebAPI.Domain.Commands.Requests.Pivots;
 using AgripeWebAPI.Domain.Commands.Responses.Pivots;
 using AgripeWebAPI.Models;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
 
 namespace AgripeWebAPI.Domain.Handlers.Pivots
 {
@@ -17,15 +17,14 @@ namespace AgripeWebAPI.Domain.Handlers.Pivots
 
         public async Task<List<GetPivotResponse>> Handle(GetListPivotByUserIdRequest request, CancellationToken cancellationToken)
         {
-            var query = _dbContext.Pivots
-                .Where(x => x.UserId == request.UserId)
-                .Select(x => new GetPivotResponse
+            return await _dbContext.Pivots
+                .Find(x => x.UserId == request.UserId)
+                .Project(x => new GetPivotResponse
                 {
                     Id = x.Id,
                     Name = x.Name
-                });
-
-            return await query.ToListAsync(cancellationToken);
+                })
+                .ToListAsync(cancellationToken);
         }
     }
 }

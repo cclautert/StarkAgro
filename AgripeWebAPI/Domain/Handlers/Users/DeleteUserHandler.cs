@@ -1,10 +1,11 @@
-﻿using AgripeWebAPI.Domain.Commands.Requests.Users;
+using AgripeWebAPI.Domain.Commands.Requests.Users;
 using AgripeWebAPI.Domain.Commands.Responses.Users;
 using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Interfaces;
 using AgripeWebAPI.Notifications;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using MongoDB.Driver;
 
 namespace AgripeWebAPI.Domain.Handlers.Users
 {
@@ -23,7 +24,7 @@ namespace AgripeWebAPI.Domain.Handlers.Users
 
         public async Task<DeleteUserResponse> Handle(DeleteUserRequest request, CancellationToken cancellationToken)
         {
-            var user = _dbContext.Users.FirstOrDefault(u => u.Id == request.Id);
+            var user = await _dbContext.Users.Find(u => u.Id == request.Id).FirstOrDefaultAsync(cancellationToken);
             if (user == null)
             {
                 _logger.LogWarning("Attempt to delete non-existent user: {UserId}", request.Id);
@@ -41,8 +42,7 @@ namespace AgripeWebAPI.Domain.Handlers.Users
 
             try
             {
-                _dbContext.Users.Remove(user);
-                await _dbContext.SaveChangesAsync(cancellationToken);
+                await _dbContext.Users.DeleteOneAsync(x => x.Id == user.Id, cancellationToken);
 
                 _logger.LogInformation("User deleted successfully: {UserId}, {Email}", user.Id, user.Email);
 

@@ -1,8 +1,9 @@
-﻿using AgripeWebAPI.Domain.Commands.Requests.Sensors;
+using AgripeWebAPI.Domain.Commands.Requests.Sensors;
 using AgripeWebAPI.Domain.Commands.Responses.Sensors;
 using AgripeWebAPI.Models;
+using AgripeWebAPI.Models.Entities;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
 
 namespace AgripeWebAPI.Domain.Handlers.Sensors
 {
@@ -17,17 +18,27 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
 
         public async Task<GetSensorResponse?> Handle(GetSensorRequest request, CancellationToken cancellationToken)
         {
-            return await _dbContext.Sensors
-                .Where(x => x.Id == request.Id)
-                .Select(x => new GetSensorResponse
-                {
-                    Id = x.Id,
-                    Name = x.Name,
-                    Code = x.Code,
-                    Pivot = x.Pivot,
-                    Quadrante = x.Quadrante
-                })
+            var sensor = await _dbContext.Sensors
+                .Find(x => x.Id == request.Id)
                 .FirstOrDefaultAsync(cancellationToken);
+
+            if (sensor == null)
+            {
+                return null;
+            }
+
+            var pivot = await _dbContext.Pivots
+                .Find(x => x.Id == sensor.PivoId)
+                .FirstOrDefaultAsync(cancellationToken) ?? new Pivot { Id = sensor.PivoId };
+
+            return new GetSensorResponse
+            {
+                Id = sensor.Id,
+                Name = sensor.Name,
+                Code = sensor.Code,
+                Pivot = pivot,
+                Quadrante = sensor.Quadrante
+            };
         }
     }
 }

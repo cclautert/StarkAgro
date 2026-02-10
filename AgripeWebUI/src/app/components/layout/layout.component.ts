@@ -50,4 +50,11 @@ export class LayoutComponent implements OnInit {
         this.showLayout = !event.urlAfterRedirects.startsWith('/login');
       });
   }
+
+  logout(): void {
+    if (typeof window !== 'undefined' && typeof window.localStorage !== 'undefined') {
+      localStorage.removeItem('token');
+    }
+    this.router.navigate(['/login']);
+  }
 }

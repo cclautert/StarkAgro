@@ -1,8 +1,9 @@
-﻿using AgripeWebAPI.Domain.Commands.Requests.Sensors;
+using AgripeWebAPI.Domain.Commands.Requests.Sensors;
 using AgripeWebAPI.Domain.Commands.Responses.Sensors;
 using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Entities;
 using MediatR;
+using MongoDB.Driver;
 
 namespace AgripeWebAPI.Domain.Handlers.Sensors
 {
@@ -15,7 +16,7 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }
 
-        public Task<CreateSensorResponse> Handle(CreateSensorRequest request, CancellationToken cancellationToken)
+        public async Task<CreateSensorResponse> Handle(CreateSensorRequest request, CancellationToken cancellationToken)
         {
             if (!request.UserId.HasValue)
             {
@@ -31,6 +32,7 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
             }
             var sensor = new Sensor
             {
+                Id = await _dbContext.GetNextIdAsync(nameof(Sensor), cancellationToken),
                 Name = request.Name,
                 PivoId = request.Pivot.Id,
                 UserId = request.UserId.Value,
@@ -38,10 +40,9 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
                 Quadrante = request.Quadrante
             };
 
-            _dbContext.Sensors.Add(sensor);
-            _dbContext.SaveChanges();
+            await _dbContext.Sensors.InsertOneAsync(sensor, cancellationToken: cancellationToken);
 
-            return Task.FromResult(new CreateSensorResponse { Id = sensor.Id });
+            return new CreateSensorResponse { Id = sensor.Id };
         }
     }
 }

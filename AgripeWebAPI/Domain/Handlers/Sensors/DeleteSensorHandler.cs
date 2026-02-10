@@ -1,7 +1,8 @@
-﻿using AgripeWebAPI.Domain.Commands.Requests.Sensors;
+using AgripeWebAPI.Domain.Commands.Requests.Sensors;
 using AgripeWebAPI.Domain.Commands.Responses.Sensors;
 using AgripeWebAPI.Models;
 using MediatR;
+using MongoDB.Driver;
 
 namespace AgripeWebAPI.Domain.Handlers.Sensors
 {
@@ -12,18 +13,16 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
         {
             _dbContext = dbContext;
         }
-        public Task<DeleteSensorResponse> Handle(DeleteSensorRequest request, CancellationToken cancellationToken)
+        public async Task<DeleteSensorResponse> Handle(DeleteSensorRequest request, CancellationToken cancellationToken)
         {
-            var sensor = _dbContext.Sensors.FirstOrDefault(s => s.Id == request.Id);
-            if (sensor == null)
+            var result = await _dbContext.Sensors.DeleteOneAsync(s => s.Id == request.Id, cancellationToken);
+            if (result.DeletedCount == 0)
             {
                 throw new KeyNotFoundException($"Sensor with ID {request.Id} not found.");
             }
 
-            _dbContext.Sensors.Remove(sensor);
-            _dbContext.SaveChanges();
-
-            return Task.FromResult(new DeleteSensorResponse { Success = true });
+            await _dbContext.ReadSensors.DeleteManyAsync(r => r.SensorId == request.Id, cancellationToken);
+            return new DeleteSensorResponse { Success = true };
         }
     }
 }

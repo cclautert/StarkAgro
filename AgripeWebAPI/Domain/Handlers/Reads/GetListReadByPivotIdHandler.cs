@@ -1,9 +1,9 @@
-﻿using AgripeWebAPI.Domain.Commands.Requests.Reads;
+using AgripeWebAPI.Domain.Commands.Requests.Reads;
 using AgripeWebAPI.Domain.Commands.Responses.Pivots;
 using AgripeWebAPI.Domain.Commands.Responses.Reads;
 using AgripeWebAPI.Models;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
 using System.Linq;
 
 namespace AgripeWebAPI.Domain.Handlers.Sensors
@@ -21,19 +21,40 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
         public async Task<IAsyncEnumerable<GetAllReadByPivotIdResponse>> Handle(GetAllListReadByPivotIdRequest request, CancellationToken cancellationToken)
         {
             var startDate = DateTime.UtcNow.AddDays(-request.NumberOfReads);
+            var sensor = await _dbContext.Sensors
+                .Find(x => x.Id == request.SensorId && x.Quadrante == request.Quadrante)
+                .FirstOrDefaultAsync(cancellationToken);
 
-            IQueryable<GetAllReadByPivotIdResponse> query = _dbContext.ReadSensors
-                .Where(x => x.SensorId == request.SensorId && x.Sensor.Quadrante == request.Quadrante && x.Date >= startDate)
-                .OrderBy(x => x.Date)
-                .Select(x => new GetAllReadByPivotIdResponse
+            if (sensor == null)
+            {
+                return ToAsyncEnumerable(Array.Empty<GetAllReadByPivotIdResponse>(), cancellationToken);
+            }
+
+            var reads = await _dbContext.ReadSensors
+                .Find(x => x.SensorId == request.SensorId && x.Date >= startDate)
+                .SortBy(x => x.Date)
+                .Project(x => new GetAllReadByPivotIdResponse
                 {
                     Id = x.Id,
                     SensorId = x.SensorId,
                     Value = x.Value,
                     Date = x.Date
-                });
+                })
+                .ToListAsync(cancellationToken);
 
-            return query.AsAsyncEnumerable();
+            return ToAsyncEnumerable(reads, cancellationToken);
+        }
+
+        private static async IAsyncEnumerable<GetAllReadByPivotIdResponse> ToAsyncEnumerable(
+            IEnumerable<GetAllReadByPivotIdResponse> reads,
+            [System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken cancellationToken)
+        {
+            foreach (var read in reads)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                yield return read;
+                await Task.CompletedTask;
+            }
         }
     }
 }

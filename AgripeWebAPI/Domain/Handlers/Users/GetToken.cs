@@ -4,8 +4,8 @@ using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Entities;
 using AgripeWebAPI.Models.Interfaces;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using MongoDB.Driver;
 
 namespace AgripeWebAPI.Domain.Handlers.Users
 {
@@ -27,15 +27,8 @@ namespace AgripeWebAPI.Domain.Handlers.Users
         public async Task<UserTokenResponse> Handle(UserTokenRequest request, CancellationToken cancellationToken)
         {
             User? user = await _dbContext.Users
-                .Where(x => x.Email == request.Email)
-                .Select(x => new User
-                {
-                    Id = x.Id,
-                    Name = x.Name,
-                    Email = x.Email,
-                    Password = x.Password,
-                    Active = x.Active
-                }).SingleOrDefaultAsync(cancellationToken);
+                .Find(x => x.Email == request.Email)
+                .FirstOrDefaultAsync(cancellationToken);
 
             if (user == null)
             {
@@ -60,8 +53,7 @@ namespace AgripeWebAPI.Domain.Handlers.Users
             {
                 _logger.LogInformation("Migrating plain text password to BCrypt for user: {UserId}, {Email}", user.Id, request.Email);
                 user.Password = _passwordHasher.HashPassword(request.Password);
-                _dbContext.Users.Update(user);
-                await _dbContext.SaveChangesAsync(cancellationToken);
+                await _dbContext.Users.ReplaceOneAsync(x => x.Id == user.Id, user, cancellationToken: cancellationToken);
             }
 
             _logger.LogInformation("Successful login for user: {UserId}, {Email}", user.Id, request.Email);

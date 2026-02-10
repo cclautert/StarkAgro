@@ -1,7 +1,8 @@
-﻿using AgripeWebAPI.Domain.Commands.Requests.Pivots;
+using AgripeWebAPI.Domain.Commands.Requests.Pivots;
 using AgripeWebAPI.Domain.Commands.Responses.Pivots;
 using AgripeWebAPI.Models;
 using MediatR;
+using MongoDB.Driver;
 
 namespace AgripeWebAPI.Domain.Handlers.Pivots
 {
@@ -12,16 +13,16 @@ namespace AgripeWebAPI.Domain.Handlers.Pivots
         {
             _dbContext = dbContext;
         }
-        public Task<EditPivotResponse> Handle(EditPivotRequest request, CancellationToken cancellationToken)
+        public async Task<EditPivotResponse> Handle(EditPivotRequest request, CancellationToken cancellationToken)
         {
-            var pivot = _dbContext.Pivots.FirstOrDefault(p => p.Id == request.Id);
+            var pivot = await _dbContext.Pivots.Find(p => p.Id == request.Id).FirstOrDefaultAsync(cancellationToken);
             if (pivot == null)
             {
                 throw new KeyNotFoundException("Pivot not found");
             }
             pivot.Name = request.Name;
-            _dbContext.SaveChanges();
-            return Task.FromResult(new EditPivotResponse { Id = pivot.Id });
+            await _dbContext.Pivots.ReplaceOneAsync(x => x.Id == pivot.Id, pivot, cancellationToken: cancellationToken);
+            return new EditPivotResponse { Id = pivot.Id };
         }
     }
 }

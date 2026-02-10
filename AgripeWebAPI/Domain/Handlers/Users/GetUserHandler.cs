@@ -1,11 +1,11 @@
-﻿using AgripeWebAPI.Domain.Commands.Requests.Users;
+using AgripeWebAPI.Domain.Commands.Requests.Users;
 using AgripeWebAPI.Domain.Commands.Responses.Users;
 using AgripeWebAPI.Models;
 using AgripeWebAPI.Notifications;
 using AgripeWebAPI.Models.Interfaces;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using MongoDB.Driver;
 
 namespace AgripeWebAPI.Domain.Handlers.Users
 {
@@ -33,8 +33,8 @@ namespace AgripeWebAPI.Domain.Handlers.Users
             }
 
             var user = await _dbContext.Users
-                .Where(x => x.Id == request.Id)
-                .Select(x => new GetUserResponse
+                .Find(x => x.Id == request.Id)
+                .Project(x => new GetUserResponse
                 {
                     Id = x.Id,
                     Name = x.Name,

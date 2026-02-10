@@ -1,10 +1,9 @@
 using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Entities;
 using Microsoft.AspNetCore.RateLimiting;
-using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
 using System.Reflection;
 using System.Text.Json;
-using BCrypt.Net;
 
 namespace AgripeWebAPI.Configuration
 {
@@ -12,20 +11,8 @@ namespace AgripeWebAPI.Configuration
     {
         public static void AddApiConfiguration(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<agpDBContext>(options =>
-                options
-                    .UseSqlServer(configuration.GetConnectionString("DefaultConnection"))                    
-                    .UseSeeding(async (dbContext, cancellationToken) =>
-                    {
-                        if (!dbContext.Set<User>().Any())
-                        {
-                            var users = GenerateUsers();
-
-                            dbContext.Set<User>().AddRange(users);
-
-                            await dbContext.SaveChangesAsync(cancellationToken);
-                        }
-                    }));
+            services.Configure<MongoDbSettings>(configuration.GetSection(MongoDbSettings.SectionName));
+            services.AddScoped<agpDBContext>();
 
             services.AddControllers()
                 .AddJsonOptions(options =>
@@ -136,6 +123,28 @@ namespace AgripeWebAPI.Configuration
             {
                 endpoints.MapControllers();
             });
+
+            SeedMongoDatabase(app.ApplicationServices).GetAwaiter().GetResult();
+        }
+
+        private static async Task SeedMongoDatabase(IServiceProvider serviceProvider)
+        {
+            using var scope = serviceProvider.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<agpDBContext>();
+
+            var hasUsers = await dbContext.Users.Find(_ => true).AnyAsync();
+            if (hasUsers)
+            {
+                return;
+            }
+
+            var users = GenerateUsers();
+            foreach (var user in users)
+            {
+                user.Id = await dbContext.GetNextIdAsync(nameof(User));
+            }
+
+            await dbContext.Users.InsertManyAsync(users);
         }
     }
 }

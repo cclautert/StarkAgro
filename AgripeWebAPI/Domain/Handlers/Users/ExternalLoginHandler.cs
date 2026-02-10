@@ -5,9 +5,9 @@ using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Entities;
 using AgripeWebAPI.Models.Interfaces;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using MongoDB.Driver;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 
@@ -141,23 +141,21 @@ namespace AgripeWebAPI.Domain.Handlers.Users
             }
 
             var user = await _dbContext.Users
-                .AsNoTracking()
-                .Where(x => x.Email == userInfo.Email)
-                .Select(x => new User { Id = x.Id, Name = x.Name, Email = x.Email, Password = x.Password, Active = x.Active })
-                .SingleOrDefaultAsync(cancellationToken);
+                .Find(x => x.Email == userInfo.Email)
+                .FirstOrDefaultAsync(cancellationToken);
 
             if (user == null)
             {
                 // Create new user for OAuth (password not used for login)
                 user = new User
                 {
+                    Id = await _dbContext.GetNextIdAsync(nameof(User), cancellationToken),
                     Name = userInfo.Name ?? userInfo.Email,
                     Email = userInfo.Email,
                     Password = _passwordHasher.HashPassword(Guid.NewGuid().ToString("N")),
                     Active = true
                 };
-                _dbContext.Users.Add(user);
-                await _dbContext.SaveChangesAsync(cancellationToken);
+                await _dbContext.Users.InsertOneAsync(user, cancellationToken: cancellationToken);
                 _logger.LogInformation("Created user from Google OAuth: {Email}", user.Email);
             }
             else if (!user.Active)

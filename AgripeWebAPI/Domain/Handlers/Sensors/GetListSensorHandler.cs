@@ -1,8 +1,9 @@
-﻿using AgripeWebAPI.Domain.Commands.Requests.Sensors;
+using AgripeWebAPI.Domain.Commands.Requests.Sensors;
 using AgripeWebAPI.Domain.Commands.Responses.Sensors;
 using AgripeWebAPI.Models;
+using AgripeWebAPI.Models.Entities;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
 
 namespace AgripeWebAPI.Domain.Handlers.Sensors
 {
@@ -17,16 +18,25 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
         
         public async Task<IList<GetSensorResponse>> Handle(GetListSensorByUserIdRequest request, CancellationToken cancellationToken)
         {
-            return await _dbContext.Sensors
-                .Where(x => x.UserId == request.UserId)
-                .Select(x => new GetSensorResponse
-                {
-                    Id = x.Id,
-                    Name = x.Name,
-                    Code = x.Code,
-                    Pivot = x.Pivot,
-                    Quadrante = x.Quadrante
-                }).ToListAsync(cancellationToken);
+            var sensors = await _dbContext.Sensors
+                .Find(x => x.UserId == request.UserId)
+                .ToListAsync(cancellationToken);
+
+            var pivotIds = sensors.Select(x => x.PivoId).Distinct().ToList();
+            var pivots = pivotIds.Count == 0
+                ? new List<Pivot>()
+                : await _dbContext.Pivots.Find(x => pivotIds.Contains(x.Id)).ToListAsync(cancellationToken);
+
+            var pivotsById = pivots.ToDictionary(x => x.Id, x => x);
+
+            return sensors.Select(sensor => new GetSensorResponse
+            {
+                Id = sensor.Id,
+                Name = sensor.Name,
+                Code = sensor.Code,
+                Pivot = pivotsById.TryGetValue(sensor.PivoId, out var pivot) ? pivot : new Pivot { Id = sensor.PivoId },
+                Quadrante = sensor.Quadrante
+            }).ToList();
         }
     }
 }

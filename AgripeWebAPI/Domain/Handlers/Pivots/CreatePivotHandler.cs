@@ -1,8 +1,9 @@
-﻿using AgripeWebAPI.Domain.Commands.Requests.Pivots;
+using AgripeWebAPI.Domain.Commands.Requests.Pivots;
 using AgripeWebAPI.Domain.Commands.Responses.Pivots;
 using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Entities;
 using MediatR;
+using MongoDB.Driver;
 
 namespace AgripeWebAPI.Domain.Handlers.Pivots
 {
@@ -15,7 +16,7 @@ namespace AgripeWebAPI.Domain.Handlers.Pivots
             _dbContext = dbContext;
         }
 
-        public Task<CreatePivotResponse> Handle(CreatePivotRequest request, CancellationToken cancellationToken)
+        public async Task<CreatePivotResponse> Handle(CreatePivotRequest request, CancellationToken cancellationToken)
         {
             if (!request.UserId.HasValue)
             {
@@ -24,17 +25,17 @@ namespace AgripeWebAPI.Domain.Handlers.Pivots
 
             var pivot = new Pivot
             {
+                Id = await _dbContext.GetNextIdAsync(nameof(Pivot), cancellationToken),
                 Name = request.Name,
                 UserId = request.UserId.Value
             };
 
-            _dbContext.Pivots.Add(pivot);
-            _dbContext.SaveChanges(); // EF Core salva e preenche o Id automaticamente
+            await _dbContext.Pivots.InsertOneAsync(pivot, cancellationToken: cancellationToken);
 
-            return Task.FromResult(new CreatePivotResponse
+            return new CreatePivotResponse
             {
-                Id = pivot.Id // <-- Aqui o Id já estará preenchido
-            });
+                Id = pivot.Id
+            };
 
         }
     }

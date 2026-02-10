@@ -1,4 +1,4 @@
-﻿using AgripeWebAPI.Domain.Commands.Requests.Users;
+using AgripeWebAPI.Domain.Commands.Requests.Users;
 using AgripeWebAPI.Domain.Commands.Responses.Users;
 using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Entities;
@@ -6,6 +6,7 @@ using AgripeWebAPI.Models.Interfaces;
 using AgripeWebAPI.Notifications;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using MongoDB.Driver;
 
 namespace AgripeWebAPI.Domain.Handlers.Users
 {
@@ -26,7 +27,9 @@ namespace AgripeWebAPI.Domain.Handlers.Users
 
         public async Task<CreateUserResponse> Handle(CreateUserRequest request, CancellationToken cancellationToken)
         {
-            var user = _dbContext.Users.Where(x => x.Email == request.Email).FirstOrDefault();
+            var user = await _dbContext.Users
+                .Find(x => x.Email == request.Email)
+                .FirstOrDefaultAsync(cancellationToken);
 
             if (user != null)
             {
@@ -38,12 +41,20 @@ namespace AgripeWebAPI.Domain.Handlers.Users
             try
             {
                 var hashedPassword = _passwordHasher.HashPassword(request.Password);
-                var userUpdated = _dbContext.Users.Add(new User { Name = request.Name, Email = request.Email, Password = hashedPassword, Active = true });
-                await _dbContext.SaveChangesAsync(cancellationToken);
+                var userUpdated = new User
+                {
+                    Id = await _dbContext.GetNextIdAsync(nameof(User), cancellationToken),
+                    Name = request.Name,
+                    Email = request.Email,
+                    Password = hashedPassword,
+                    Active = true
+                };
 
-                _logger.LogInformation("User created successfully: {UserId}, {Email}", userUpdated.Entity.Id, request.Email);
+                await _dbContext.Users.InsertOneAsync(userUpdated, cancellationToken: cancellationToken);
 
-                return new CreateUserResponse { Id = userUpdated.Entity.Id, Name = userUpdated.Entity.Name, Email = userUpdated.Entity.Email };
+                _logger.LogInformation("User created successfully: {UserId}, {Email}", userUpdated.Id, request.Email);
+
+                return new CreateUserResponse { Id = userUpdated.Id, Name = userUpdated.Name, Email = userUpdated.Email };
             }
             catch (Exception ex)
             {

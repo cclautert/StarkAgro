@@ -1,8 +1,9 @@
-﻿using AgripeWebAPI.Domain.Commands.Requests.Pivots;
+using AgripeWebAPI.Domain.Commands.Requests.Pivots;
 using AgripeWebAPI.Domain.Commands.Responses.Pivots;
 using AgripeWebAPI.Models;
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
+using MongoDB.Driver;
 
 namespace AgripeWebAPI.Domain.Handlers.Pivots
 {
@@ -13,12 +14,16 @@ namespace AgripeWebAPI.Domain.Handlers.Pivots
         {
             _dbContext = dbContext;
         }
-        public Task<DeletePivotResponse> Handle(DeletePivotRequest request, CancellationToken cancellationToken)
+        public async Task<DeletePivotResponse> Handle(DeletePivotRequest request, CancellationToken cancellationToken)
         {
-            var pivot = _dbContext.Pivots.FirstOrDefault(p => p.Id == request.Id);
-            _dbContext.Pivots.Remove(pivot);
-            _dbContext.SaveChanges();
-            return Task.FromResult(new DeletePivotResponse());
+            var deletePivotResult = await _dbContext.Pivots.DeleteOneAsync(p => p.Id == request.Id, cancellationToken);
+            if (deletePivotResult.DeletedCount == 0)
+            {
+                throw new KeyNotFoundException("Pivot not found");
+            }
+
+            await _dbContext.Sensors.DeleteManyAsync(s => s.PivoId == request.Id, cancellationToken);
+            return new DeletePivotResponse();
         }
     }
 }
