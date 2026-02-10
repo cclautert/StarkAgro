@@ -42,6 +42,9 @@ bld/
 ## VS Code
 .vscode/
 
+## Cursor workspace metadata
+.cursor/
+
 ## User-specific files
 *.rsuser
 *.suo
