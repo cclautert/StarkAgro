@@ -10,6 +10,7 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-layout',
+  standalone: true,
   imports: [
     CommonModule,
     MatSidenavModule,
@@ -21,7 +22,6 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.css'
 })
-
 export class LayoutComponent implements OnInit {
   showLayout: boolean = false;
   @ViewChild('sidenav') sidenav!: MatSidenav;
@@ -40,10 +40,13 @@ export class LayoutComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Set initial state from current URL so menu shows on first load (e.g. /home)
+    const url = this.router.url.replace(/^\//, '') || '';
+    this.showLayout = !url.startsWith('login');
+
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
-        // Define se deve mostrar layout com base na rota
         this.showLayout = !event.urlAfterRedirects.startsWith('/login');
       });
   }

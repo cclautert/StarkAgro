@@ -9,7 +9,9 @@ export class AuthGuard implements CanActivate {
   constructor(private router: Router) {}
 
   canActivate(): boolean {
-    const isAuthenticated = !!localStorage.getItem('token'); // ou outro critério
+    // In SSR/prerender there is no window/localStorage; treat as unauthenticated
+    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+    const isAuthenticated = isBrowser ? !!localStorage.getItem('token') : false;
 
     if (!isAuthenticated) {
       this.router.navigate(['/login']);

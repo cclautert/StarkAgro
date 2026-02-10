@@ -13,12 +13,12 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { BaseChartDirective, provideCharts, withDefaultRegisterables } from 'ng2-charts';
-import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { UserFormComponent } from './components/user-form/user-form.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { LoginComponent } from './components/login/login.component';
 import { AuthCallbackComponent } from './components/login/auth-callback.component';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -49,7 +49,7 @@ import { HomeComponent } from './components/home/home.component';
     MatListModule,
     MatIconModule,
     BaseChartDirective,
-    AppRoutingModule,
+    RouterModule,
     FormsModule,
   ],
   providers: [
