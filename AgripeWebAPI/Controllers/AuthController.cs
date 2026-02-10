@@ -58,7 +58,7 @@ namespace AgripeWebAPI.Controllers
 
             return Ok(result);
         }
-        
+
         [Route("addUser")]
         [HttpPost]
         public async Task<ActionResult<CreateUserResponse>> AddUser(

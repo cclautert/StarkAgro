@@ -2,9 +2,11 @@ using AgripeWebAPI.Domain.Commands.Requests.Users;
 using AgripeWebAPI.Domain.Commands.Responses.Users;
 using AgripeWebAPI.Domain.Handlers.Users;
 using AgripeWebAPI.Models;
+using AgripeWebAPI.Models.Interfaces;
 using AgripeWebAPI.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 using Moq;
+using Microsoft.Extensions.Logging;
 using Xunit;
 
 namespace AgripeWebAPI.Tests.Domain.Handlers.Users
@@ -34,7 +36,12 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Users
                 user.Password = u.Password;
             });
 
-            var handler = new EditUserHandler(mockContext.Object);
+            var passwordHasher = new Mock<IPasswordHasher>();
+            passwordHasher.Setup(p => p.HashPassword(It.IsAny<string>())).Returns<string>(p => "hashed_" + p);
+            var notifier = new Mock<INotifier>();
+            var logger = new Mock<ILogger<EditUserHandler>>();
+
+            var handler = new EditUserHandler(mockContext.Object, passwordHasher.Object, notifier.Object, logger.Object);
             var request = new EditUserRequest { Name = "New", Email = "old@example.com", Password = "newpass" };
 
             var result = await handler.Handle(request, default);

@@ -2,7 +2,10 @@ using AgripeWebAPI.Domain.Commands.Requests.Users;
 using AgripeWebAPI.Domain.Commands.Responses.Users;
 using AgripeWebAPI.Domain.Handlers.Users;
 using AgripeWebAPI.Models;
+using AgripeWebAPI.Models.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Moq;
 using Xunit;
 
 namespace AgripeWebAPI.Tests.Domain.Handlers.Users
@@ -18,7 +21,12 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Users
                 .Options;
             var context = new agpDBContext(options);
 
-            var handler = new CreateUserHandler(context);
+            var passwordHasher = new Mock<IPasswordHasher>();
+            passwordHasher.Setup(p => p.HashPassword(It.IsAny<string>())).Returns<string>(p => "hashed_" + p);
+            var notifier = new Mock<INotifier>();
+            var logger = new Mock<ILogger<CreateUserHandler>>();
+
+            var handler = new CreateUserHandler(context, passwordHasher.Object, notifier.Object, logger.Object);
             var request = new CreateUserRequest { Name = "Test", Email = "test@example.com", Password = "pass" };
 
             // Act

@@ -2,8 +2,11 @@ using AgripeWebAPI.Domain.Commands.Requests.Users;
 using AgripeWebAPI.Domain.Commands.Responses.Users;
 using AgripeWebAPI.Domain.Handlers.Users;
 using AgripeWebAPI.Models;
+using AgripeWebAPI.Models.Interfaces;
 using AgripeWebAPI.Models.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Moq;
 using Xunit;
 
 namespace AgripeWebAPI.Tests.Domain.Handlers.Users
@@ -25,7 +28,10 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Users
             context.Users.Add(new User { Id = 2, Name = "User2", Email = "user2@example.com", Password = "pass" });
             context.SaveChanges();
 
-            var handler = new GetUserHandler(context);
+            var notifier = new Mock<INotifier>();
+            var logger = new Mock<ILogger<GetUserHandler>>();
+
+            var handler = new GetUserHandler(context, notifier.Object, logger.Object);
             var request = new GetUserRequest { Id = 2 };
 
             var result = await handler.Handle(request, default);

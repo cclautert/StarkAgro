@@ -1,9 +1,11 @@
 using AgripeWebAPI.Domain.Commands.Requests.Users;
 using AgripeWebAPI.Domain.Handlers.Users;
 using AgripeWebAPI.Models;
+using AgripeWebAPI.Models.Interfaces;
 using AgripeWebAPI.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 using Moq;
+using Microsoft.Extensions.Logging;
 using Xunit;
 
 namespace AgripeWebAPI.Tests.Domain.Handlers.Users
@@ -28,7 +30,10 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Users
             mockContext.Setup(c => c.Users).Returns(mockSet.Object);
             mockContext.Setup(c => c.SaveChanges()).Returns(1);
 
-            var handler = new DeleteUserHandler(mockContext.Object);
+            var notifier = new Mock<INotifier>();
+            var logger = new Mock<ILogger<DeleteUserHandler>>();
+
+            var handler = new DeleteUserHandler(mockContext.Object, notifier.Object, logger.Object);
             var request = new DeleteUserRequest { Id = 5 };
 
             // Act
@@ -54,7 +59,10 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Users
             var mockContext = new Mock<agpDBContext>(new DbContextOptions<agpDBContext>());
             mockContext.Setup(c => c.Users).Returns(mockSet.Object);
 
-            var handler = new DeleteUserHandler(mockContext.Object);
+            var notifier = new Mock<INotifier>();
+            var logger = new Mock<ILogger<DeleteUserHandler>>();
+
+            var handler = new DeleteUserHandler(mockContext.Object, notifier.Object, logger.Object);
             var request = new DeleteUserRequest { Id = 99 };
 
             // Act & Assert

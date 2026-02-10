@@ -3,8 +3,9 @@ using AgripeWebAPI.Domain.Commands.Responses.Users;
 using AgripeWebAPI.Domain.Handlers.Users;
 using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Entities;
+using AgripeWebAPI.Models.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Moq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -27,15 +28,19 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Users
         {
             // Arrange
             var context = CreateInMemoryContext();
-            context.Users.Add(new User { Id = 1, Name = "Test", Email = "test@example.com", Password = "pass" });
+            context.Users.Add(new User { Id = 1, Name = "Test", Email = "test@example.com", Password = "hashed-pass", Active = true });
             context.SaveChanges();
 
-            var mockConfig = new Mock<IConfiguration>();
-            mockConfig.Setup(c => c["JwtSettings:secretkey"]).Returns("supersecretkeysupersecretkeysupersecretkey12");
-            mockConfig.Setup(c => c["JwtSettings:Issuer"]).Returns("issuer");
-            mockConfig.Setup(c => c["JwtSettings:Audience"]).Returns("audience");
+            var passwordHasher = new Mock<IPasswordHasher>();
+            passwordHasher.Setup(p => p.VerifyPassword("pass", "hashed-pass")).Returns(true);
 
-            var handler = new GetToken(context, mockConfig.Object);
+            var jwtService = new Mock<IJwtTokenService>();
+            jwtService.Setup(j => j.GenerateTokenAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()))
+                      .ReturnsAsync("dummy-token");
+
+            var logger = new Mock<ILogger<GetToken>>();
+
+            var handler = new GetToken(context, passwordHasher.Object, jwtService.Object, logger.Object);
             var request = new UserTokenRequest { Email = "test@example.com", Password = "pass" };
 
             // Act
@@ -51,12 +56,14 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Users
         {
             // Arrange
             var context = CreateInMemoryContext();
-            var mockConfig = new Mock<IConfiguration>();
-            mockConfig.Setup(c => c["JwtSettings:secretkey"]).Returns("supersecretkeysupersecretkeysupersecretkey12");
-            mockConfig.Setup(c => c["JwtSettings:Issuer"]).Returns("issuer");
-            mockConfig.Setup(c => c["JwtSettings:Audience"]).Returns("audience");
 
-            var handler = new GetToken(context, mockConfig.Object);
+            var passwordHasher = new Mock<IPasswordHasher>();
+            passwordHasher.Setup(p => p.VerifyPassword(It.IsAny<string>(), It.IsAny<string>())).Returns(false);
+
+            var jwtService = new Mock<IJwtTokenService>();
+            var logger = new Mock<ILogger<GetToken>>();
+
+            var handler = new GetToken(context, passwordHasher.Object, jwtService.Object, logger.Object);
             var request = new UserTokenRequest { Email = "notfound@example.com", Password = "wrong" };
 
             // Act
