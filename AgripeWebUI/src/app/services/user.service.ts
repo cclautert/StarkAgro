@@ -9,9 +9,8 @@ import { User } from '../models/user.model';
 export class UserService {
   private http = inject(HttpClient);
 
-  private baseUrl = 'https://localhost:7162/v1/'; //localhost URL para desenvolvimento
-  //private readonly baseUrl = 'http://localhost:8080/v1/';
-  //private baseUrl = 'http://15.229.6.106:8080/v1/'; // Azure | AWS
+  /** In dev, use relative URL so ng serve proxy forwards /api to the API (avoids CORS). */
+  private baseUrl = '/api/v1/';
 
   // READ (by ID)
   getUserById(id: number): Observable<User> {

@@ -9,9 +9,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
   providedIn: 'root'
 })
 export class PivotService {
-  private baseUrl = 'https://localhost:7162/v1/'; //DEBUG
-  //private baseUrl = 'http://localhost:8080/v1/';
-  //private baseUrl = 'http://15.229.6.106:8080/v1/'; // Azure | AWS
+  /** In dev, use relative URL so ng serve proxy forwards /api to the API (avoids CORS). */
+  private baseUrl = '/api/v1/';
 
   constructor(private http: HttpClient) { }
 
