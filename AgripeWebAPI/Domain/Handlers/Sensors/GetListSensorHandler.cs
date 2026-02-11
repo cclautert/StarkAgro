@@ -2,6 +2,7 @@ using AgripeWebAPI.Domain.Commands.Requests.Sensors;
 using AgripeWebAPI.Domain.Commands.Responses.Sensors;
 using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Entities;
+using AgripeWebAPI.Models.Interfaces;
 using MediatR;
 using MongoDB.Driver;
 
@@ -10,16 +11,21 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
     public class GetListSensorHandler : IRequestHandler<GetListSensorByUserIdRequest, IList<GetSensorResponse>>
     {
         private readonly agpDBContext _dbContext;
+        private readonly ICurrentUserContext _currentUser;
 
-        public GetListSensorHandler(agpDBContext dbContext)
+        public GetListSensorHandler(agpDBContext dbContext, ICurrentUserContext currentUser)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+            _currentUser = currentUser ?? throw new ArgumentNullException(nameof(currentUser));
         }
         
         public async Task<IList<GetSensorResponse>> Handle(GetListSensorByUserIdRequest request, CancellationToken cancellationToken)
         {
+            var userId = _currentUser.UserId
+                ?? throw new InvalidOperationException("Authenticated user is required to list sensors.");
+
             var sensors = await _dbContext.Sensors
-                .Find(x => x.UserId == request.UserId)
+                .Find(x => x.UserId == userId)
                 .ToListAsync(cancellationToken);
 
             var pivotIds = sensors.Select(x => x.PivoId).Distinct().ToList();

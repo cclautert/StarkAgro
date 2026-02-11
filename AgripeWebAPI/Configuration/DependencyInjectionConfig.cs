@@ -16,6 +16,8 @@ namespace AgripeWebAPI.Configuration
             //Services
             services.AddScoped<IPasswordHasher, PasswordHasherService>();
             services.AddScoped<IJwtTokenService, JwtTokenService>();
+            services.AddHttpContextAccessor();
+            services.AddScoped<ICurrentUserContext, CurrentUserContext>();
 
             // Business
             services.AddScoped<INotifier, Notificator>();

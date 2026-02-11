@@ -26,6 +26,13 @@ export class AuthCallbackComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
+      const isBrowser = typeof window !== 'undefined' && typeof window.location !== 'undefined';
+
+      // Em SSR/prerender não há window nem localStorage; apenas ignora o callback.
+      if (!isBrowser) {
+        return;
+      }
+
       const code = params['code'];
       const error = params['error'];
 
@@ -44,12 +51,16 @@ export class AuthCallbackComponent implements OnInit {
         next: (response: { token: string }) => {
           const token = response?.token;
           if (token) {
-            localStorage.setItem('token', token);
+            if (typeof localStorage !== 'undefined') {
+              localStorage.setItem('token', token);
+            }
             try {
               const decoded = jwtDecode(token) as DecodedToken;
               const userId = decoded.id;
               if (userId != null) {
-                localStorage.setItem('userId', String(userId));
+                if (typeof localStorage !== 'undefined') {
+                  localStorage.setItem('userId', String(userId));
+                }
               }
             } catch {
               // optional: userId from token
