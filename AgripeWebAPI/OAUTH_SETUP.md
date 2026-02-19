@@ -10,6 +10,7 @@ The API supports OAuth 2.0 **Authorization Code** flow with **Google** as an ext
    - Add **Authorized redirect URIs** (must match exactly what the frontend uses), e.g.:
      - `https://localhost:4200/login/callback`
      - `http://localhost:4200/login/callback`
+     - `http://localhost/login/callback` (when UI is served on port 80, e.g. Docker)
    - Copy the **Client ID** and **Client secret**.
 
 2. **Configuration**
@@ -19,7 +20,7 @@ The API supports OAuth 2.0 **Authorization Code** flow with **Google** as an ext
      "Google": {
        "ClientId": "YOUR_GOOGLE_CLIENT_ID",
        "ClientSecret": "YOUR_GOOGLE_CLIENT_SECRET",
-       "AllowedRedirectUris": "https://localhost:4200/login/callback,http://localhost:4200/login/callback"
+       "AllowedRedirectUris": "https://localhost:4200/login/callback,http://localhost:4200/login/callback,http://localhost/login/callback"
      }
    }
    ```

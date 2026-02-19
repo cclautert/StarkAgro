@@ -1,43 +1,44 @@
-version: '3.8'
-name: agripeweb
+# AgripeWeb – API (MongoDB), UI (Angular), MongoDB
+# Run from repo root: docker compose -f docker/docker-compose.yml up -d
+# API: http://localhost:8080  |  UI: http://localhost (port 80)  |  MongoDB: localhost:27017
+
 services:
   agripewebapi:
-    container_name: agripewebapi  # Optional: specify a container name    
+    container_name: agripewebapi
     build:
-      context: ../AgripeWebAPI  # Navigate up to C:\Users\Cristiano\source\repos\cclautert\AgripeWeb\AgripeWebAPI
-      dockerfile: Dockerfile  # Assumes Dockerfile is in AgripeWebAPI folder
+      context: ../AgripeWebAPI
+      dockerfile: Dockerfile
     ports:
-      - "8080:8080"  # Map port 8080 (host) to 80 (container)
+      - "8080:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - MongoDb__ConnectionString=mongodb://db:27017
+      - MongoDb__DatabaseName=agripeweb
     depends_on:
-      - db  # Ensure SQL Server starts first
+      - db
     networks:
       - app-network
-      
+
   agripewebui:
-    container_name: agripewebui  # Optional
+    container_name: agripewebui
     build:
       context: ../AgripeWebUI
       dockerfile: Dockerfile
     ports:
-      - "80:80"  # SPA acessível em http://localhost:4200
+      - "80:80"
     depends_on:
       - agripewebapi
     networks:
       - app-network
 
   db:
-    image: mcr.microsoft.com/mssql/server:2022-latest  # SQL Server 2022
+    image: mongo:8
     container_name: agripewebdb
-    environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=SQL_SERVER_PASSWORD_REDACTED  # Must meet complexity requirements
-      - MSSQL_PID=Express
     ports:
-      - "1433:1433"  # Map SQL Server port
+      - "27017:27017"
     volumes:
-      - sql-data:/var/opt/mssql  # Persist database data
+      - mongo-data:/data/db
     networks:
       - app-network
 
@@ -46,4 +47,4 @@ networks:
     driver: bridge
 
 volumes:
-  sql-data:
+  mongo-data:

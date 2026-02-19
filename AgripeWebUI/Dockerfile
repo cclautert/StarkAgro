@@ -1,23 +1,21 @@
-# Build Angular
-FROM node:20-alpine as builder
+# Build Angular (browser bundle only; SSR server output not used in this image)
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 COPY . .
-RUN npm run build --configuration=production
+RUN npm run build -- --configuration=production
 
-# Serve com Nginx
+# Serve with Nginx
 FROM nginx:alpine
 
 RUN rm -rf /usr/share/nginx/html/*
-
-# Ajuste o caminho conforme necessário
 COPY --from=builder /app/dist/agripe-web-ui/browser /usr/share/nginx/html
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-RUN chmod -R 755 /usr/share/nginx/html
+RUN chown -R nginx:nginx /usr/share/nginx/html && chmod -R 755 /usr/share/nginx/html
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
