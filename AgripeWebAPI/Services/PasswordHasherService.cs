@@ -21,44 +21,14 @@ namespace AgripeWebAPI.Services
             if (string.IsNullOrWhiteSpace(hashedPassword))
                 return false;
 
-            // Check if the stored password is a BCrypt hash (starts with $2a$, $2b$, $2x$, or $2y$)
-            if (IsBcryptHash(hashedPassword))
+            try
             {
-                try
-                {
-                    return BCrypt.Net.BCrypt.Verify(password, hashedPassword);
-                }
-                catch (SaltParseException)
-                {
-                    // Invalid BCrypt hash format
-                    return false;
-                }
-                catch
-                {
-                    return false;
-                }
+                return BCrypt.Net.BCrypt.Verify(password, hashedPassword);
             }
-            else
+            catch
             {
-                // Legacy plain text password - compare directly
-                // This allows migration from plain text to hashed passwords
-                return password == hashedPassword;
-            }
-        }
-
-        /// <summary>
-        /// Checks if a string is a valid BCrypt hash format
-        /// </summary>
-        private bool IsBcryptHash(string hash)
-        {
-            if (string.IsNullOrWhiteSpace(hash))
                 return false;
-
-            // BCrypt hashes start with $2a$, $2b$, $2x$, or $2y$ followed by $ and cost parameter
-            return hash.StartsWith("$2a$") || 
-                   hash.StartsWith("$2b$") || 
-                   hash.StartsWith("$2x$") || 
-                   hash.StartsWith("$2y$");
+            }
         }
     }
 }
