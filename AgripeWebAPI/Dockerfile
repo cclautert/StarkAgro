@@ -1,14 +1,14 @@
-# Build stage
+# Build stage (context: repo root)
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
-COPY ["AgripeWebAPI.csproj", "."]
-RUN dotnet restore "AgripeWebAPI.csproj"
-COPY . .
-RUN dotnet build "AgripeWebAPI.csproj" -c Release -o /app/build
+COPY ["AgripeWebAPI/AgripeWebAPI.csproj", "AgripeWebAPI/"]
+RUN dotnet restore "AgripeWebAPI/AgripeWebAPI.csproj"
+COPY ["AgripeWebAPI/", "AgripeWebAPI/"]
+RUN dotnet build "AgripeWebAPI/AgripeWebAPI.csproj" -c Release -o /app/build
 
 # Publish stage
 FROM build AS publish
-RUN dotnet publish "AgripeWebAPI.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "AgripeWebAPI/AgripeWebAPI.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final

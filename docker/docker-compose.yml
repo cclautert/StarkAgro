@@ -2,6 +2,7 @@
 # Run from repo root: docker compose -f docker/docker-compose.yml up -d
 # API: http://localhost:8080  |  UI: http://localhost (port 80)  |  MongoDB: localhost:27017
 
+name: agripeweb
 services:
   agripewebapi:
     container_name: agripewebapi
@@ -27,6 +28,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "80:80"
+    environment:
+      - API_BASE_URL=http://agripewebapi:8080
     depends_on:
       - agripewebapi
     networks:

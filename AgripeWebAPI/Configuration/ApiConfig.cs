@@ -99,6 +99,13 @@ namespace AgripeWebAPI.Configuration
                 app.UseDeveloperExceptionPage();
             }
 
+            // Path base when behind ALB (e.g. /api) so routes like v1/Auth match /api/v1/Auth
+            var pathBase = Environment.GetEnvironmentVariable("ASPNETCORE_PATHBASE");
+            if (!string.IsNullOrEmpty(pathBase))
+            {
+                app.UsePathBase(pathBase);
+            }
+
             // CORS must be before UseRouting and UseHttpsRedirection
             if (env.IsDevelopment())
             {
@@ -124,27 +131,35 @@ namespace AgripeWebAPI.Configuration
                 endpoints.MapControllers();
             });
 
-            SeedMongoDatabase(app.ApplicationServices).GetAwaiter().GetResult();
+            _ = Task.Run(() => SeedMongoDatabase(app.ApplicationServices));
         }
 
         private static async Task SeedMongoDatabase(IServiceProvider serviceProvider)
         {
-            using var scope = serviceProvider.CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<agpDBContext>();
-
-            var hasUsers = await dbContext.Users.Find(_ => true).AnyAsync();
-            if (hasUsers)
+            try
             {
-                return;
-            }
+                using var scope = serviceProvider.CreateScope();
+                var dbContext = scope.ServiceProvider.GetRequiredService<agpDBContext>();
 
-            var users = GenerateUsers();
-            foreach (var user in users)
+                var hasUsers = await dbContext.Users.Find(_ => true).AnyAsync();
+                if (hasUsers)
+                {
+                    return;
+                }
+
+                var users = GenerateUsers();
+                foreach (var user in users)
+                {
+                    user.Id = await dbContext.GetNextIdAsync(nameof(User));
+                }
+
+                await dbContext.Users.InsertManyAsync(users);
+            }
+            catch (Exception ex)
             {
-                user.Id = await dbContext.GetNextIdAsync(nameof(User));
+                // MongoDB indisponível (ex.: ECS com localhost) - app inicia; seed pode ser feito depois
+                Console.WriteLine($"Seed MongoDB ignorado: {ex.Message}");
             }
-
-            await dbContext.Users.InsertManyAsync(users);
         }
     }
 }

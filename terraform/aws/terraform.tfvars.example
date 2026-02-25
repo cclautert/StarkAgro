@@ -1,0 +1,17 @@
+# Copy to terraform.tfvars and set real values. Do not commit terraform.tfvars.
+
+aws_region = "us-east-1"
+# aws_profile = "myprofile"   # optional
+
+environment = "dev"
+
+# Required: MongoDB connection string (e.g. Atlas)
+# mongodb_connection_string = "mongodb+srv://agripeweb_db_user:PASSWORD@agripeweb-cluster.n3dmu9p.mongodb.net/?appName=AgripeWeb-Cluster"
+
+mongodb_database_name = "agripeweb"
+
+api_image_tag = "latest"
+ui_image_tag  = "latest"
+
+# Optional: for regions where default VPC has only 1 subnet (e.g. sa-east-1), pass 2 subnet IDs for the ALB
+# alb_subnet_ids = ["subnet-xxx", "subnet-yyy"]

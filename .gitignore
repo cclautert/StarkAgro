@@ -71,6 +71,11 @@ docker/certs/*.key
 
 ## Terraform
 .terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+.terraform.lock.hcl
 
 ## DBHub (may contain DB credentials)
 dbhub.toml
