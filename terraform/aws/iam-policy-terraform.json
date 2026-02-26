@@ -9,6 +9,7 @@
         "ec2:DescribeVpcAttribute",
         "ec2:DescribeSubnets",
         "ec2:CreateSubnet",
+        "ec2:DeleteSubnet",
         "ec2:DescribeAvailabilityZones",
         "ec2:DescribeInternetGateways",
         "ec2:DescribeAccountAttributes"

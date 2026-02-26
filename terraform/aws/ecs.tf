@@ -30,7 +30,9 @@ resource "aws_ecs_task_definition" "api" {
         { name = "ASPNETCORE_HTTP_PORTS", value = "8080" },
         { name = "ASPNETCORE_PATHBASE", value = "/api" },
         { name = "MongoDb__ConnectionString", value = var.mongodb_connection_string },
-        { name = "MongoDb__DatabaseName", value = var.mongodb_database_name }
+        { name = "MongoDb__DatabaseName", value = var.mongodb_database_name },
+        # OAuth: allow redirect_uri from the ALB so Google login works when UI is accessed via app_url
+        { name = "OAuth__Google__AllowedRedirectUris", value = "http://${aws_lb.main.dns_name}/login/callback" }
       ]
 
       logConfiguration = {

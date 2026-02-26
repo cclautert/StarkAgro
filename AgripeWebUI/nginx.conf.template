@@ -6,7 +6,7 @@ server {
   index index.csr.html;
 
   location / {
-    try_files $uri $uri/ /index.csr.html;
+    try_files $uri /index.csr.html;
   }
 
   # Proxy API calls (UI uses /api/v1/...). API_BASE_URL substituído no startup (ex.: http://agripewebapi:8080 ou https://agripeweb-api.azurewebsites.net).
