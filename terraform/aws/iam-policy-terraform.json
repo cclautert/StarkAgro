@@ -87,7 +87,8 @@
         "elasticloadbalancing:DescribeTargetGroupAttributes",
         "elasticloadbalancing:DescribeTags",
         "elasticloadbalancing:DescribeLoadBalancerAttributes",
-        "elasticloadbalancing:DescribeListenerAttributes"
+        "elasticloadbalancing:DescribeListenerAttributes",
+        "elasticloadbalancing:SetSubnets"
       ],
       "Resource": "*"
     },
