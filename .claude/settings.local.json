@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find /d/Source/Repos/cclautert/AgripeWeb -type f -name \"*.cs\" | xargs grep -l \"mqtt\\\\|MQTT\\\\|queue\\\\|Queue\\\\|rabbitmq\\\\|RabbitMQ\" | head -10)",
+      "Bash(head -50 \"D:/Source/Repos/cclautert/AgripeWeb/AgripeWebAPI/Controllers\"/*.cs 2>/dev/null | head -100)",
+      "Bash(find /d/Source/Repos/cclautert/AgripeWeb -type f -name \"*.cs\" | xargs grep -i \"iot\\\\|sensor.*data\\\\|telemetry\" | head -20)",
+      "Bash(find /d/Source/Repos/cclautert/AgripeWeb -type f \\\\\\( -name \"*.csproj\" -o -name \"*.cs\" \\\\\\) | xargs grep -l \"EventBus\\\\|ServiceBus\\\\|MessageQueue\\\\|BackgroundService\\\\|HostedService\" | head -10)"
+    ]
+  }
+}

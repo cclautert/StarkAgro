@@ -1,0 +1,22 @@
+# Copy to terraform.tfvars and fill in values. Do not commit terraform.tfvars.
+
+aws_region  = "sa-east-1"
+aws_profile = null # or "your-aws-profile"
+
+environment = "dev"
+
+# Required: MongoDB connection (use TF_VAR_mongodb_connection_string or -var)
+# mongodb_connection_string = "mongodb+srv://user:pass@cluster.mongodb.net/agripeweb?retryWrites=true&w=majority"
+# mongodb_database_name     = "agripeweb"
+
+api_image_tag = "latest"
+ui_image_tag  = "latest"
+
+# Node group scaling (t2.micro = Free Tier, 1 node = ~730h/month within 750h free)
+node_instance_types = ["t2.micro"]
+node_desired_size   = 1
+node_min_size       = 1
+node_max_size       = 2
+
+# Set after first apply when ALB is provisioned (from ingress status)
+# app_base_url = "http://k8s-agripe-xxxxx.elb.sa-east-1.amazonaws.com"

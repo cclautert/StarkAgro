@@ -17,6 +17,18 @@
       "Resource": "*"
     },
     {
+      "Sid": "EC2Instances",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:DescribeInstances",
+        "ec2:DescribeInstanceStatus",
+        "ec2:TerminateInstances",
+        "ec2:StopInstances",
+        "ec2:StartInstances"
+      ],
+      "Resource": "*"
+    },
+    {
       "Sid": "EC2SecurityGroups",
       "Effect": "Allow",
       "Action": [
