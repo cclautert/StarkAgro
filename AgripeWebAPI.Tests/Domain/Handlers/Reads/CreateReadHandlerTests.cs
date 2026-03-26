@@ -3,78 +3,115 @@ using AgripeWebAPI.Domain.Commands.Responses.Reads;
 using AgripeWebAPI.Domain.Handlers.Reads;
 using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Entities;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using AgripeWebAPI.Models.Interfaces;
+using AgripeWebAPI.Tests.Helpers;
+using MongoDB.Driver;
 using Moq;
 
 namespace AgripeWebAPI.Tests.Domain.Handlers.Reads
 {
     public class CreateReadHandlerTests
     {
-        private static Mock<DbSet<T>> CreateMockDbSet<T>(IQueryable<T> data) where T : class
+        [Fact]
+        public async Task Handle_Should_Add_ReadSensor_When_Sensor_Exists()
         {
-            var mockSet = new Mock<DbSet<T>>();
-            mockSet.As<IQueryable<T>>().Setup(m => m.Provider).Returns(data.Provider);
-            mockSet.As<IQueryable<T>>().Setup(m => m.Expression).Returns(data.Expression);
-            mockSet.As<IQueryable<T>>().Setup(m => m.ElementType).Returns(data.ElementType);
-            mockSet.As<IQueryable<T>>().Setup(m => m.GetEnumerator()).Returns(data.GetEnumerator());
-            return mockSet;
-        }
+            var mockDbContext = new Mock<agpDBContext>();
+            var mockSensors = new Mock<IMongoCollection<Sensor>>();
+            var mockReadSensors = new Mock<IMongoCollection<ReadSensor>>();
+            var mockCurrentUser = new Mock<ICurrentUserContext>();
 
-        [Fact(Skip = "Temporarily disabled features")]
-        public async Task Handle_Should_Add_ReadSensor_And_Save_When_Sensor_Exists()
-        {
-            // Arrange
-            var sensor = new Sensor { Id = 1, Code = "SENSOR-1" }; // Ensure the correct 'Sensor' type is used
-            var sensors = new List<Sensor> { sensor }.AsQueryable(); // Correctly use the 'Sensor' type from the imported namespace
-            var mockSensors = CreateMockDbSet(sensors);
+            mockCurrentUser.Setup(u => u.UserId).Returns(1);
+            var sensor = new Sensor { Id = 1, Code = "SENSOR-1", UserId = 1 };
+            MongoMockHelper.SetupFind(mockSensors, sensor);
+            mockDbContext.Setup(c => c.Sensors).Returns(mockSensors.Object);
+            mockDbContext.Setup(c => c.ReadSensors).Returns(mockReadSensors.Object);
+            mockDbContext.Setup(c => c.GetNextIdAsync("ReadSensor", It.IsAny<CancellationToken>())).ReturnsAsync(42);
+            mockReadSensors.Setup(c => c.InsertOneAsync(It.IsAny<ReadSensor>(), It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
 
-            var readSensors = new List<ReadSensor>().AsQueryable();
-            var mockReadSensors = CreateMockDbSet(readSensors);
+            var handler = new CreateReadHandler(mockDbContext.Object, mockCurrentUser.Object);
+            var request = new CreateReadRequest { Code = "SENSOR-1", Value = 512 };
 
-            var mockContext = new Mock<agpDBContext>(new DbContextOptions<agpDBContext>());
-            mockContext.Setup(c => c.Sensors).Returns(mockSensors.Object);
-            mockContext.Setup(c => c.ReadSensors).Returns(mockReadSensors.Object);
-            mockContext.Setup(c => c.SaveChanges()).Returns(1);
-
-            mockReadSensors.Setup(m => m.Add(It.IsAny<ReadSensor>()))
-                .Callback<ReadSensor>(rs => { /* Optionally verify properties here */ });
-
-            var handler = new CreateReadHandler(mockContext.Object);
-            var request = new CreateReadRequest { Code = "SENSOR-1", Value = 42.5m };
-
-            // Act
             var result = await handler.Handle(request, CancellationToken.None);
 
-            // Assert
-            mockReadSensors.Verify(m => m.Add(It.Is<ReadSensor>(rs =>
-                rs.SensorId == 1 &&
-                rs.Value == 42.5m
-            )), Times.Once);
-
-            mockContext.Verify(c => c.SaveChanges(), Times.Once);
             Assert.NotNull(result);
             Assert.IsType<CreateReadResponse>(result);
+            mockReadSensors.Verify(c => c.InsertOneAsync(
+                It.Is<ReadSensor>(rs => rs.SensorId == 1),
+                It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
-        [Fact(Skip = "Temporarily disabled features")]
+        [Fact]
         public async Task Handle_Should_Throw_When_Sensor_Does_Not_Exist()
         {
-            // Arrange
-            var sensors = new List<Sensor>().AsQueryable(); // Ensure the correct 'Sensor' type is used
-            var mockSensors = CreateMockDbSet(sensors);
+            var mockDbContext = new Mock<agpDBContext>();
+            var mockSensors = new Mock<IMongoCollection<Sensor>>();
+            var mockCurrentUser = new Mock<ICurrentUserContext>();
 
-            var mockReadSensors = CreateMockDbSet(new List<ReadSensor>().AsQueryable());
+            mockCurrentUser.Setup(u => u.UserId).Returns(1);
+            MongoMockHelper.SetupFind<Sensor>(mockSensors, null);
+            mockDbContext.Setup(c => c.Sensors).Returns(mockSensors.Object);
 
-            var mockContext = new Mock<agpDBContext>(new DbContextOptions<agpDBContext>());
-            mockContext.Setup(c => c.Sensors).Returns(mockSensors.Object);
-            mockContext.Setup(c => c.ReadSensors).Returns(mockReadSensors.Object);
-
-            var handler = new CreateReadHandler(mockContext.Object);
+            var handler = new CreateReadHandler(mockDbContext.Object, mockCurrentUser.Object);
             var request = new CreateReadRequest { Code = "NOT-FOUND", Value = 10m };
 
-            // Act & Assert
-            await Assert.ThrowsAsync<ArgumentException>(() => handler.Handle(request, CancellationToken.None));
+            await Assert.ThrowsAsync<KeyNotFoundException>(() => handler.Handle(request, CancellationToken.None));
+        }
+
+        [Fact]
+        public async Task Handle_ConvertsVoltageToPressure()
+        {
+            var mockDbContext = new Mock<agpDBContext>();
+            var mockSensors = new Mock<IMongoCollection<Sensor>>();
+            var mockReadSensors = new Mock<IMongoCollection<ReadSensor>>();
+            var mockCurrentUser = new Mock<ICurrentUserContext>();
+
+            mockCurrentUser.Setup(u => u.UserId).Returns(1);
+            var sensor = new Sensor { Id = 1, Code = "SENSOR-1", UserId = 1 };
+            MongoMockHelper.SetupFind(mockSensors, sensor);
+            mockDbContext.Setup(c => c.Sensors).Returns(mockSensors.Object);
+            mockDbContext.Setup(c => c.ReadSensors).Returns(mockReadSensors.Object);
+            mockDbContext.Setup(c => c.GetNextIdAsync("ReadSensor", It.IsAny<CancellationToken>())).ReturnsAsync(100);
+            mockReadSensors.Setup(c => c.InsertOneAsync(It.IsAny<ReadSensor>(), It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
+
+            var handler = new CreateReadHandler(mockDbContext.Object, mockCurrentUser.Object);
+            var request = new CreateReadRequest { Code = "SENSOR-1", Value = 512 };
+
+            var result = await handler.Handle(request, CancellationToken.None);
+
+            Assert.NotNull(result);
+            mockReadSensors.Verify(c => c.InsertOneAsync(
+                It.Is<ReadSensor>(rs => rs.Value > 49 && rs.Value < 51),
+                It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task Handle_FallsBackToSensorUserId_WhenNoJwt()
+        {
+            var mockDbContext = new Mock<agpDBContext>();
+            var mockSensors = new Mock<IMongoCollection<Sensor>>();
+            var mockReadSensors = new Mock<IMongoCollection<ReadSensor>>();
+            var mockCurrentUser = new Mock<ICurrentUserContext>();
+
+            mockCurrentUser.Setup(u => u.UserId).Returns((int?)null);
+            var sensor = new Sensor { Id = 1, Code = "SENSOR-1", UserId = 5 };
+            MongoMockHelper.SetupFind(mockSensors, sensor);
+            mockDbContext.Setup(c => c.Sensors).Returns(mockSensors.Object);
+            mockDbContext.Setup(c => c.ReadSensors).Returns(mockReadSensors.Object);
+            mockDbContext.Setup(c => c.GetNextIdAsync("ReadSensor", It.IsAny<CancellationToken>())).ReturnsAsync(101);
+            mockReadSensors.Setup(c => c.InsertOneAsync(It.IsAny<ReadSensor>(), It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
+
+            var handler = new CreateReadHandler(mockDbContext.Object, mockCurrentUser.Object);
+            var request = new CreateReadRequest { Code = "SENSOR-1", Value = 512 };
+
+            var result = await handler.Handle(request, CancellationToken.None);
+
+            Assert.NotNull(result);
+            mockReadSensors.Verify(c => c.InsertOneAsync(
+                It.Is<ReadSensor>(rs => rs.UserId == 5),
+                It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()), Times.Once);
         }
     }
 }

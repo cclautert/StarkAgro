@@ -2,76 +2,57 @@ using AgripeWebAPI.Domain.Commands.Requests.Sensors;
 using AgripeWebAPI.Domain.Handlers.Sensors;
 using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Entities;
-using Microsoft.EntityFrameworkCore;
+using AgripeWebAPI.Models.Interfaces;
+using AgripeWebAPI.Tests.Helpers;
+using MongoDB.Driver;
 using Moq;
 
 namespace AgripeWebAPI.Tests.Domain.Handlers.Sensors
 {
     public class GetListSensorHandlerTests
     {
-        private static Mock<DbSet<T>> CreateMockDbSet<T>(IQueryable<T> data) where T : class
+        [Fact]
+        public async Task Handle_Returns_Sensors_For_User()
         {
-            var mockSet = new Mock<DbSet<T>>();
-            mockSet.As<IQueryable<T>>().Setup(m => m.Provider).Returns(data.Provider);
-            mockSet.As<IQueryable<T>>().Setup(m => m.Expression).Returns(data.Expression);
-            mockSet.As<IQueryable<T>>().Setup(m => m.ElementType).Returns(data.ElementType);
-            mockSet.As<IQueryable<T>>().Setup(m => m.GetEnumerator()).Returns(data.GetEnumerator());
-            return mockSet;
-        }
+            var mockDbContext = new Mock<agpDBContext>();
+            var mockSensors = new Mock<IMongoCollection<Sensor>>();
+            var mockPivots = new Mock<IMongoCollection<Pivot>>();
+            var mockCurrentUser = new Mock<ICurrentUserContext>();
 
-        [Fact(Skip = "Temporarily disabled features")]
-        public async Task Handle_Returns_Sensors_For_PivotId()
-        {
-            // Arrange
-            var pivotId = 5;
-            var userId = 5;
-            var sensors = new List<Models.Entities.Sensor>
+            mockCurrentUser.Setup(u => u.UserId).Returns(5);
+            var sensors = new List<Sensor>
             {
-                new Models.Entities.Sensor { Id = 1, PivoId = pivotId, UserId = 10, Code = "A", Quadrante = 1 },
-                new Models.Entities.Sensor { Id = 2, PivoId = pivotId, UserId = 11, Code = "B", Quadrante = 2 }
-            }.AsQueryable();
+                new Sensor { Id = 1, PivoId = 10, UserId = 5, Code = "A", Quadrante = 1 },
+                new Sensor { Id = 2, PivoId = 10, UserId = 5, Code = "B", Quadrante = 2 }
+            };
+            MongoMockHelper.SetupFindList(mockSensors, sensors);
+            MongoMockHelper.SetupFindList(mockPivots, new List<Pivot> { new Pivot { Id = 10, Name = "P1" } });
+            mockDbContext.Setup(c => c.Sensors).Returns(mockSensors.Object);
+            mockDbContext.Setup(c => c.Pivots).Returns(mockPivots.Object);
 
-            var mockSensors = CreateMockDbSet(sensors);
+            var handler = new GetListSensorHandler(mockDbContext.Object, mockCurrentUser.Object);
+            var result = await handler.Handle(new GetListSensorByUserIdRequest(), CancellationToken.None);
 
-            var mockContext = new Mock<agpDBContext>(new DbContextOptions<agpDBContext>());
-            mockContext.Setup(c => c.Sensors).Returns(mockSensors.Object);
-
-            var handler = new GetListSensorHandler(mockContext.Object);
-            var request = new GetListSensorByUserIdRequest { UserId = userId };
-
-            // Act
-            var result = await handler.Handle(request, CancellationToken.None);
-
-            // Assert
             Assert.NotNull(result);
             Assert.Equal(2, result.Count);
-            Assert.Contains(result, s => s.Id == 1 && s.Code == "A" && s.Quadrante == 1);
-            Assert.Contains(result, s => s.Id == 2 && s.Code == "B" && s.Quadrante == 2);
+            Assert.Contains(result, s => s.Id == 1 && s.Code == "A");
+            Assert.Contains(result, s => s.Id == 2 && s.Code == "B");
         }
 
-        [Fact(Skip = "Temporarily disabled features")]
-        public async Task Handle_Returns_EmptyList_When_No_Sensors_For_PivotId()
+        [Fact]
+        public async Task Handle_Returns_EmptyList_When_No_Sensors()
         {
-            // Arrange
-            var pivotId = 99;
-            var userId = 99;
-            var sensors = new List<Models.Entities.Sensor>
-            {
-                new Models.Entities.Sensor { Id = 1, PivoId = 1, UserId = 10, Code = "A", Quadrante = 1 }
-            }.AsQueryable();
+            var mockDbContext = new Mock<agpDBContext>();
+            var mockSensors = new Mock<IMongoCollection<Sensor>>();
+            var mockCurrentUser = new Mock<ICurrentUserContext>();
 
-            var mockSensors = CreateMockDbSet(sensors);
+            mockCurrentUser.Setup(u => u.UserId).Returns(99);
+            MongoMockHelper.SetupFindList(mockSensors, new List<Sensor>());
+            mockDbContext.Setup(c => c.Sensors).Returns(mockSensors.Object);
 
-            var mockContext = new Mock<agpDBContext>(new DbContextOptions<agpDBContext>());
-            mockContext.Setup(c => c.Sensors).Returns(mockSensors.Object);
+            var handler = new GetListSensorHandler(mockDbContext.Object, mockCurrentUser.Object);
+            var result = await handler.Handle(new GetListSensorByUserIdRequest(), CancellationToken.None);
 
-            var handler = new GetListSensorHandler(mockContext.Object);
-            var request = new GetListSensorByUserIdRequest { UserId = userId };
-
-            // Act
-            var result = await handler.Handle(request, CancellationToken.None);
-
-            // Assert
             Assert.NotNull(result);
             Assert.Empty(result);
         }
@@ -79,8 +60,8 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Sensors
         [Fact]
         public void Constructor_Throws_If_DbContext_Is_Null()
         {
-            // Act & Assert
-            Assert.Throws<ArgumentNullException>(() => new GetListSensorHandler(null));
+            var mockCurrentUser = new Mock<ICurrentUserContext>();
+            Assert.Throws<ArgumentNullException>(() => new GetListSensorHandler(null!, mockCurrentUser.Object));
         }
     }
 }

@@ -115,5 +115,29 @@ namespace AgripeWebAPI.Tests.Services
             // Assert
             Assert.False(result);
         }
+
+        [Fact]
+        public void VerifyPassword_InvalidHash_ReturnsFalse()
+        {
+            var result = _passwordHasher.VerifyPassword("password", "not-a-bcrypt-hash");
+
+            Assert.False(result);
+        }
+
+        [Fact]
+        public void VerifyPassword_EmptyPassword_ReturnsFalse()
+        {
+            var result = _passwordHasher.VerifyPassword("", "$2b$12$somehash");
+
+            Assert.False(result);
+        }
+
+        [Fact]
+        public void VerifyPassword_EmptyHash_ReturnsFalse()
+        {
+            var result = _passwordHasher.VerifyPassword("password", "");
+
+            Assert.False(result);
+        }
     }
 }

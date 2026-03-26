@@ -7,8 +7,8 @@ services:
   agripewebapi:
     container_name: agripewebapi
     build:
-      context: ../AgripeWebAPI
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: AgripeWebAPI/Dockerfile
     ports:
       - "8080:8080"
     environment:
@@ -45,9 +45,37 @@ services:
     networks:
       - app-network
 
+  mqtt:
+    image: eclipse-mosquitto:2
+    container_name: agripeweb-mqtt
+    ports:
+      - "1883:1883"
+    volumes:
+      - mosquitto-data:/mosquitto/data
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+    networks:
+      - app-network
+
+  agripwebworker:
+    container_name: agripwebworker
+    build:
+      context: ..
+      dockerfile: AgripeWebWorker/Dockerfile
+    environment:
+      - MongoDb__ConnectionString=mongodb://db:27017
+      - MongoDb__DatabaseName=agripeweb
+      - Mqtt__Host=mqtt
+      - Mqtt__Port=1883
+    depends_on:
+      - db
+      - mqtt
+    networks:
+      - app-network
+
 networks:
   app-network:
     driver: bridge
 
 volumes:
   mongo-data:
+  mosquitto-data:

@@ -2,8 +2,8 @@ using AgripeWebAPI.Domain.Commands.Requests.Pivots;
 using AgripeWebAPI.Domain.Handlers.Pivots;
 using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Entities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
+using AgripeWebAPI.Models.Interfaces;
+using MongoDB.Driver;
 using Moq;
 
 namespace AgripeWebAPI.Tests.Domain.Handlers.Pivots
@@ -13,22 +13,18 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Pivots
         [Fact]
         public async Task Handle_Creates_Pivot_And_Returns_Response()
         {
-            // Arrange
-            var pivots = new List<Pivot>().AsQueryable();
-            var mockSet = new Mock<DbSet<Pivot>>();
+            var mockDbContext = new Mock<agpDBContext>();
+            var mockPivots = new Mock<IMongoCollection<Pivot>>();
+            var mockCurrentUser = new Mock<ICurrentUserContext>();
 
-            mockSet.As<IQueryable<Pivot>>().Setup(m => m.Provider).Returns(pivots.Provider);
-            mockSet.As<IQueryable<Pivot>>().Setup(m => m.Expression).Returns(pivots.Expression);
-            mockSet.As<IQueryable<Pivot>>().Setup(m => m.ElementType).Returns(pivots.ElementType);
-            mockSet.As<IQueryable<Pivot>>().Setup(m => m.GetEnumerator()).Returns(pivots.GetEnumerator());
-            mockSet.Setup(m => m.Add(It.IsAny<Pivot>())).Callback<Pivot>(p => p.Id = 123).Returns((Pivot p) => new Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry<Pivot>(null));
+            mockCurrentUser.Setup(u => u.UserId).Returns(1);
+            mockDbContext.Setup(c => c.Pivots).Returns(mockPivots.Object);
+            mockDbContext.Setup(c => c.GetNextIdAsync("Pivot", It.IsAny<CancellationToken>())).ReturnsAsync(123);
+            mockPivots.Setup(c => c.InsertOneAsync(It.IsAny<Pivot>(), It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
 
-            var mockContext = new Mock<agpDBContext>(new DbContextOptions<agpDBContext>());
-            mockContext.Setup(c => c.Pivots).Returns(mockSet.Object);
-            mockContext.Setup(c => c.SaveChanges()).Returns(1);
-
-            var handler = new CreatePivotHandler(mockContext.Object);
-            var request = new CreatePivotRequest { UserId = 1, Name = "TestPivot" };
+            var handler = new CreatePivotHandler(mockDbContext.Object, mockCurrentUser.Object);
+            var request = new CreatePivotRequest { Name = "TestPivot" };
 
             var result = await handler.Handle(request, default);
 

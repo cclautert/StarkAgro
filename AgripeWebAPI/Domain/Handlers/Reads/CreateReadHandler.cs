@@ -26,8 +26,6 @@ namespace AgripeWebAPI.Domain.Handlers.Reads
 
         public async Task<CreateReadResponse> Handle(CreateReadRequest request, CancellationToken cancellationToken)
         {
-            var userId = _currentUser.UserId
-                ?? throw new InvalidOperationException("Authenticated user is required to create a read.");
             double voltage = ((int)request.Value / 1023.0f) * V_REF; // Convert to voltage
             double pressure = P_MIN + ((voltage - V_MIN) / (V_MAX - V_MIN)) * (P_MAX - P_MIN); // Convert to kPa
 
@@ -39,6 +37,9 @@ namespace AgripeWebAPI.Domain.Handlers.Reads
             {
                 throw new KeyNotFoundException($"Sensor with code '{request.Code}' not found.");
             }
+
+            // Use userId from JWT when available, otherwise fall back to sensor's owner (MQTT context)
+            var userId = _currentUser.UserId ?? sensor.UserId;
 
             var read = new ReadSensor
             {

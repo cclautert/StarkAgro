@@ -1,68 +1,58 @@
 using AgripeWebAPI.Domain.Commands.Requests.Pivots;
+using AgripeWebAPI.Domain.Commands.Responses.Pivots;
 using AgripeWebAPI.Domain.Handlers.Pivots;
 using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Entities;
-using Microsoft.EntityFrameworkCore;
-using Xunit;
+using AgripeWebAPI.Models.Interfaces;
+using AgripeWebAPI.Tests.Helpers;
+using MongoDB.Driver;
+using Moq;
 
 namespace AgripeWebAPI.Tests.Domain.Handlers.Pivots
 {
     public class GetListPivotHandlerTests
     {
-        private agpDBContext CreateInMemoryContext()
-        {
-            var options = new DbContextOptionsBuilder<agpDBContext>()
-                .UseInMemoryDatabase(databaseName: "TestDb_ListPivotHandler" + System.Guid.NewGuid())
-                .Options;
-            return new agpDBContext(options);
-        }
-
         [Fact]
         public async Task Handle_Returns_Pivots_For_UserId()
         {
-            // Arrange
-            var context = CreateInMemoryContext();
-            var userId = 5;
-            context.Pivots.AddRange(
-                new Pivot { Id = 1, Name = "Pivot A", UserId = userId },
-                new Pivot { Id = 2, Name = "Pivot B", UserId = userId },
-                new Pivot { Id = 3, Name = "Other", UserId = 99 }
-            );
-            context.SaveChanges();
+            var mockDbContext = new Mock<agpDBContext>();
+            var mockPivots = new Mock<IMongoCollection<Pivot>>();
+            var mockCurrentUser = new Mock<ICurrentUserContext>();
 
-            var handler = new GetListPivotHandler(context);
-            var request = new GetListPivotByUserIdRequest { UserId = userId };
+            mockCurrentUser.Setup(u => u.UserId).Returns(5);
+            var projected = new List<GetPivotResponse>
+            {
+                new GetPivotResponse { Id = 1, Name = "Pivot A" },
+                new GetPivotResponse { Id = 2, Name = "Pivot B" }
+            };
+            MongoMockHelper.SetupFindProjection<Pivot, GetPivotResponse>(mockPivots, projected);
+            mockDbContext.Setup(c => c.Pivots).Returns(mockPivots.Object);
 
-            // Act
-            var result = await handler.Handle(request, default);
-            var list = result.ToList(); // Materialize results
+            var handler = new GetListPivotHandler(mockDbContext.Object, mockCurrentUser.Object);
+            var result = await handler.Handle(new GetListPivotByUserIdRequest(), default);
 
-            // Assert
-            Assert.NotNull(list);
-            Assert.Equal(2, list.Count);
-            Assert.Contains(list, p => p.Id == 1 && p.Name == "Pivot A");
-            Assert.Contains(list, p => p.Id == 2 && p.Name == "Pivot B");
+            Assert.NotNull(result);
+            Assert.Equal(2, result.Count);
+            Assert.Contains(result, p => p.Id == 1 && p.Name == "Pivot A");
+            Assert.Contains(result, p => p.Id == 2 && p.Name == "Pivot B");
         }
 
         [Fact]
         public async Task Handle_Returns_EmptyList_When_No_Pivots_For_UserId()
         {
-            // Arrange
-            var context = CreateInMemoryContext();
-            var userId = 100;
-            context.Pivots.Add(new Pivot { Id = 1, Name = "Pivot A", UserId = 1 });
-            context.SaveChanges();
+            var mockDbContext = new Mock<agpDBContext>();
+            var mockPivots = new Mock<IMongoCollection<Pivot>>();
+            var mockCurrentUser = new Mock<ICurrentUserContext>();
 
-            var handler = new GetListPivotHandler(context);
-            var request = new GetListPivotByUserIdRequest { UserId = userId };
+            mockCurrentUser.Setup(u => u.UserId).Returns(100);
+            MongoMockHelper.SetupFindProjection<Pivot, GetPivotResponse>(mockPivots, new List<GetPivotResponse>());
+            mockDbContext.Setup(c => c.Pivots).Returns(mockPivots.Object);
 
-            // Act
-            var result = await handler.Handle(request, default);
-            var list = result.ToList(); // Materialize results
+            var handler = new GetListPivotHandler(mockDbContext.Object, mockCurrentUser.Object);
+            var result = await handler.Handle(new GetListPivotByUserIdRequest(), default);
 
-            // Assert
-            Assert.NotNull(list);
-            Assert.Empty(list);
+            Assert.NotNull(result);
+            Assert.Empty(result);
         }
     }
 }

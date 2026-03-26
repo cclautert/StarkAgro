@@ -2,7 +2,7 @@
 
 namespace AgripeWebAPI.Notifications
 {
-    internal class Notificator : INotifier
+    public class Notificator : INotifier
     {
         private readonly List<Notification> _notifications;
 

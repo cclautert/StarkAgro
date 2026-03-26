@@ -1,82 +1,57 @@
 using AgripeWebAPI.Domain.Commands.Requests.Sensors;
 using AgripeWebAPI.Domain.Handlers.Sensors;
 using AgripeWebAPI.Models;
-using Microsoft.EntityFrameworkCore;
+using AgripeWebAPI.Models.Entities;
+using AgripeWebAPI.Tests.Helpers;
+using MongoDB.Driver;
 using Moq;
 
 namespace AgripeWebAPI.Tests.Domain.Handlers.Sensors
 {
     public class GetSensorHandlerTests
     {
-        private static Mock<DbSet<T>> CreateMockDbSet<T>(IQueryable<T> data) where T : class
+        [Fact]
+        public async Task Handle_Returns_Sensor_When_Found()
         {
-            var mockSet = new Mock<DbSet<T>>();
-            mockSet.As<IQueryable<T>>().Setup(m => m.Provider).Returns(data.Provider);
-            mockSet.As<IQueryable<T>>().Setup(m => m.Expression).Returns(data.Expression);
-            mockSet.As<IQueryable<T>>().Setup(m => m.ElementType).Returns(data.ElementType);
-            mockSet.As<IQueryable<T>>().Setup(m => m.GetEnumerator()).Returns(data.GetEnumerator());
-            return mockSet;
-        }
+            var mockDbContext = new Mock<agpDBContext>();
+            var mockSensors = new Mock<IMongoCollection<Sensor>>();
+            var mockPivots = new Mock<IMongoCollection<Pivot>>();
 
-        [Fact(Skip = "Temporarily disabled features")]
-        public async Task Handle_Returns_Sensor_When_Code_Exists()
-        {
-            // Arrange
-            var code = "SENSOR-123";
-            var sensorId = 123;
-            var sensors = new List<Models.Entities.Sensor>
-            {
-                new Models.Entities.Sensor { Id = sensorId, PivoId = 2, UserId = 3, Quadrante = 4, Code = code }
-            }.AsQueryable();
+            var sensor = new Sensor { Id = 123, PivoId = 2, UserId = 3, Quadrante = 4, Code = "SENSOR-123" };
+            MongoMockHelper.SetupFind(mockSensors, sensor);
+            MongoMockHelper.SetupFind(mockPivots, new Pivot { Id = 2, Name = "Pivot2" });
+            mockDbContext.Setup(c => c.Sensors).Returns(mockSensors.Object);
+            mockDbContext.Setup(c => c.Pivots).Returns(mockPivots.Object);
 
-            var mockSensors = CreateMockDbSet(sensors);
+            var handler = new GetSensorHandler(mockDbContext.Object);
+            var result = await handler.Handle(new GetSensorRequest { Id = 123 }, CancellationToken.None);
 
-            var mockContext = new Mock<agpDBContext>(new DbContextOptions<agpDBContext>());
-            mockContext.Setup(c => c.Sensors).Returns(mockSensors.Object);
-
-            var handler = new GetSensorHandler(mockContext.Object);
-            var request = new GetSensorRequest { Id = sensorId };
-
-            // Act
-            var result = await handler.Handle(request, CancellationToken.None);
-
-            // Assert
             Assert.NotNull(result);
-            Assert.Equal(1, result.Id);
-            Assert.Equal(2, result.Pivot.Id);            
+            Assert.Equal(123, result!.Id);
+            Assert.Equal(2, result.Pivot.Id);
             Assert.Equal(4, result.Quadrante);
-            Assert.Equal(code, result.Code);
+            Assert.Equal("SENSOR-123", result.Code);
         }
 
-        [Fact(Skip = "Temporarily disabled features")]
-        public async Task Handle_Returns_Null_When_Code_Does_Not_Exist()
+        [Fact]
+        public async Task Handle_Returns_Null_When_Not_Found()
         {
-            // Arrange
-            var sensors = new List<Models.Entities.Sensor>
-            {
-                new Models.Entities.Sensor { Id = 1, PivoId = 2, UserId = 3, Quadrante = 4, Code = "OTHER" }
-            }.AsQueryable();
+            var mockDbContext = new Mock<agpDBContext>();
+            var mockSensors = new Mock<IMongoCollection<Sensor>>();
 
-            var mockSensors = CreateMockDbSet(sensors);
+            MongoMockHelper.SetupFind<Sensor>(mockSensors, null);
+            mockDbContext.Setup(c => c.Sensors).Returns(mockSensors.Object);
 
-            var mockContext = new Mock<agpDBContext>(new DbContextOptions<agpDBContext>());
-            mockContext.Setup(c => c.Sensors).Returns(mockSensors.Object);
+            var handler = new GetSensorHandler(mockDbContext.Object);
+            var result = await handler.Handle(new GetSensorRequest { Id = 0 }, CancellationToken.None);
 
-            var handler = new GetSensorHandler(mockContext.Object);
-            var request = new GetSensorRequest { Id = 0 };
-
-            // Act
-            var result = await handler.Handle(request, CancellationToken.None);
-
-            // Assert
             Assert.Null(result);
         }
 
         [Fact]
         public void Constructor_Throws_If_DbContext_Is_Null()
         {
-            // Act & Assert
-            Assert.Throws<ArgumentNullException>(() => new GetSensorHandler(null));
+            Assert.Throws<ArgumentNullException>(() => new GetSensorHandler(null!));
         }
     }
 }

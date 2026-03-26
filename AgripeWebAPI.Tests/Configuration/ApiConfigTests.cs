@@ -14,7 +14,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -31,15 +30,14 @@ namespace AgripeWebAPI.Tests.Configuration
             // Arrange
             var services = new ServiceCollection();
             var configMock = new Mock<IConfiguration>();
-            // Fix: Setup the indexer instead of the extension method
-            configMock.Setup(c => c["ConnectionStrings:DefaultConnection"])
-                .Returns("Server=(local);Database=TestDb;Trusted_Connection=True;");
+            var mongoSection = new Mock<IConfigurationSection>();
+            configMock.Setup(c => c.GetSection("MongoDb")).Returns(mongoSection.Object);
 
             // Act
             services.AddApiConfiguration(configMock.Object);
 
             // Assert
-            // Check DbContext registration
+            // Check agpDBContext registration
             var dbContextDescriptor = Assert.Single(services, s => s.ServiceType == typeof(AgripeWebAPI.Models.agpDBContext));
             Assert.Equal(ServiceLifetime.Scoped, dbContextDescriptor.Lifetime);
 
@@ -61,7 +59,8 @@ namespace AgripeWebAPI.Tests.Configuration
             {
                 EnvironmentName = Environments.Development
             });
-            builder.Configuration["ConnectionStrings:DefaultConnection"] = "Server=(localdb)\\MSSQLLocalDB;Database=TestDb;Trusted_Connection=True;";
+            builder.Configuration["MongoDb:ConnectionString"] = "mongodb://localhost:27017";
+            builder.Configuration["MongoDb:DatabaseName"] = "TestDb";
             builder.Services.AddApiConfiguration(builder.Configuration);
             builder.Services.ResolveDependencies(new JwtSettings
             {
@@ -86,7 +85,8 @@ namespace AgripeWebAPI.Tests.Configuration
             {
                 EnvironmentName = Environments.Production
             });
-            builder.Configuration["ConnectionStrings:DefaultConnection"] = "Server=(localdb)\\MSSQLLocalDB;Database=TestDb;Trusted_Connection=True;";
+            builder.Configuration["MongoDb:ConnectionString"] = "mongodb://localhost:27017";
+            builder.Configuration["MongoDb:DatabaseName"] = "TestDb";
             builder.Services.AddApiConfiguration(builder.Configuration);
             builder.Services.ResolveDependencies(new JwtSettings
             {
@@ -108,7 +108,7 @@ namespace AgripeWebAPI.Tests.Configuration
         {
             // Act
             var method = typeof(ApiConfig).GetMethod("GenerateUsers", BindingFlags.NonPublic | BindingFlags.Static);
-            Assert.NotNull(method); // Garante que o método existe
+            Assert.NotNull(method); // Garante que o mï¿½todo existe
 
             var users = method?.Invoke(null, null) as List<User>;
 

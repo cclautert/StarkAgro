@@ -27,5 +27,13 @@ namespace AgripeWebAPI.Tests.Domain.Commands.Responses.Read
             // Assert
             Assert.Equal(0, response.Id);
         }
+
+        [Fact]
+        public void Can_Set_And_Get_Content()
+        {
+            var response = new CreateReadResponse();
+            response.Content = "test content";
+            Assert.Equal("test content", response.Content);
+        }
     }
 }

@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <!-- AgripeWebAPI (ProjectReference) also has appsettings.json; let the Worker's copy win -->
+    <ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MQTTnet" Version="4.3.7.1207" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AgripeWebAPI\AgripeWebAPI.csproj" />
+  </ItemGroup>
+
+</Project>

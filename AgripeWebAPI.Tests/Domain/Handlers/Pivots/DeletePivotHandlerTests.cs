@@ -2,9 +2,9 @@ using AgripeWebAPI.Domain.Commands.Requests.Pivots;
 using AgripeWebAPI.Domain.Handlers.Pivots;
 using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Entities;
-using Microsoft.EntityFrameworkCore;
+using AgripeWebAPI.Tests.Helpers;
+using MongoDB.Driver;
 using Moq;
-using Xunit;
 
 namespace AgripeWebAPI.Tests.Domain.Handlers.Pivots
 {
@@ -13,25 +13,34 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Pivots
         [Fact]
         public async Task Handle_Deletes_Pivot_And_Returns_Response()
         {
-            var pivot = new Pivot { Id = 3, Name = "ToDelete" };
-            var pivots = new List<Pivot> { pivot }.AsQueryable();
-            var mockSet = new Mock<DbSet<Pivot>>();
-            mockSet.As<IQueryable<Pivot>>().Setup(m => m.Provider).Returns(pivots.Provider);
-            mockSet.As<IQueryable<Pivot>>().Setup(m => m.Expression).Returns(pivots.Expression);
-            mockSet.As<IQueryable<Pivot>>().Setup(m => m.ElementType).Returns(pivots.ElementType);
-            mockSet.As<IQueryable<Pivot>>().Setup(m => m.GetEnumerator()).Returns(pivots.GetEnumerator());
-            mockSet.Setup(m => m.Remove(It.IsAny<Pivot>())).Callback<Pivot>(p => pivots.ToList().Remove(p));
+            var mockDbContext = new Mock<agpDBContext>();
+            var mockPivots = new Mock<IMongoCollection<Pivot>>();
+            var mockSensors = new Mock<IMongoCollection<Sensor>>();
 
-            var mockContext = new Mock<agpDBContext>(new DbContextOptions<agpDBContext>());
-            mockContext.Setup(c => c.Pivots).Returns(mockSet.Object);
-            mockContext.Setup(c => c.SaveChanges()).Returns(1);
+            MongoMockHelper.SetupDeleteOne(mockPivots, 1);
+            MongoMockHelper.SetupDeleteMany(mockSensors);
+            mockDbContext.Setup(c => c.Pivots).Returns(mockPivots.Object);
+            mockDbContext.Setup(c => c.Sensors).Returns(mockSensors.Object);
 
-            var handler = new DeletePivotHandler(mockContext.Object);
-            var request = new DeletePivotRequest { Id = 3 };
-
-            var result = await handler.Handle(request, default);
+            var handler = new DeletePivotHandler(mockDbContext.Object);
+            var result = await handler.Handle(new DeletePivotRequest { Id = 3 }, default);
 
             Assert.NotNull(result);
+        }
+
+        [Fact]
+        public async Task Handle_Throws_When_Pivot_Not_Found()
+        {
+            var mockDbContext = new Mock<agpDBContext>();
+            var mockPivots = new Mock<IMongoCollection<Pivot>>();
+
+            MongoMockHelper.SetupDeleteOne(mockPivots, 0);
+            mockDbContext.Setup(c => c.Pivots).Returns(mockPivots.Object);
+
+            var handler = new DeletePivotHandler(mockDbContext.Object);
+
+            await Assert.ThrowsAsync<KeyNotFoundException>(() =>
+                handler.Handle(new DeletePivotRequest { Id = 999 }, default));
         }
     }
 }

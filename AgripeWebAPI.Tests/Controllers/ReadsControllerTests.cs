@@ -99,5 +99,82 @@ namespace AgripeWebAPI.Tests.Controllers
             Assert.NotNull(result);
             Assert.Equal(42, result.Id);
         }
+        [Fact]
+        public async Task GetActive_ReturnsOk()
+        {
+            // Arrange
+            var notifier = new Mock<INotifier>();
+            var controller = new ReadsController(notifier.Object);
+
+            // Act
+            var result = await controller.GetActive(CancellationToken.None);
+
+            // Assert
+            Assert.IsType<OkResult>(result);
+        }
+
+        [Fact]
+        public async Task GetAllByPivotId_ReturnsItems()
+        {
+            // Arrange
+            var notifier = new Mock<INotifier>();
+            var mediator = new Mock<IMediator>();
+            var controller = new ReadsController(notifier.Object);
+
+            var responses = new List<GetAllReadByPivotIdResponse>
+            {
+                new GetAllReadByPivotIdResponse { Id = 1, SensorId = 10, Value = 50m }
+            };
+
+            mediator.Setup(m => m.Send(It.IsAny<GetAllListReadByPivotIdRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(ToAsyncAll(responses));
+
+            var command = new GetAllListReadByPivotIdRequest { SensorId = 10, Quadrante = 1 };
+
+            // Act
+            var result = await controller.GetAllByPivotId(mediator.Object, command, CancellationToken.None);
+
+            // Assert
+            var list = new List<GetAllReadByPivotIdResponse>();
+            await foreach (var item in result)
+            {
+                list.Add(item);
+            }
+            Assert.Single(list);
+            Assert.Equal(1, list[0].Id);
+        }
+
+        [Fact]
+        public async Task GetByPivotId_ReturnsResponse()
+        {
+            // Arrange
+            var notifier = new Mock<INotifier>();
+            var mediator = new Mock<IMediator>();
+            var controller = new ReadsController(notifier.Object);
+
+            var response = new GetReadByPivotIdResponse { Id = 5, Name = "Pivot1" };
+
+            mediator.Setup(m => m.Send(It.IsAny<GetListReadByPivotIdRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(response);
+
+            var command = new GetListReadByPivotIdRequest { PivotId = 5 };
+
+            // Act
+            var result = await controller.GetByPivotId(mediator.Object, command, CancellationToken.None);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(5, result.Id);
+            Assert.Equal("Pivot1", result.Name);
+        }
+
+        private static async IAsyncEnumerable<GetAllReadByPivotIdResponse> ToAsyncAll(IEnumerable<GetAllReadByPivotIdResponse> items)
+        {
+            foreach (var i in items)
+            {
+                yield return i;
+                await Task.Yield();
+            }
+        }
     }
 }

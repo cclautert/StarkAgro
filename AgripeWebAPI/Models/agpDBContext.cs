@@ -7,7 +7,9 @@ namespace AgripeWebAPI.Models
 {
     public class agpDBContext
     {
-        private readonly IMongoCollection<CounterDocument> _counters;
+        private readonly IMongoCollection<CounterDocument>? _counters;
+
+        protected agpDBContext() { }
 
         public agpDBContext(IOptions<MongoDbSettings> settings)
         {
@@ -36,12 +38,12 @@ namespace AgripeWebAPI.Models
             _counters = database.GetCollection<CounterDocument>("counters");
         }
 
-        public IMongoCollection<User> Users { get; }
-        public IMongoCollection<Pivot> Pivots { get; }
-        public IMongoCollection<Sensor> Sensors { get; }
-        public IMongoCollection<ReadSensor> ReadSensors { get; }
+        public virtual IMongoCollection<User> Users { get; }
+        public virtual IMongoCollection<Pivot> Pivots { get; }
+        public virtual IMongoCollection<Sensor> Sensors { get; }
+        public virtual IMongoCollection<ReadSensor> ReadSensors { get; }
 
-        public async Task<int> GetNextIdAsync(string entityName, CancellationToken cancellationToken = default)
+        public virtual async Task<int> GetNextIdAsync(string entityName, CancellationToken cancellationToken = default)
         {
             var filter = Builders<CounterDocument>.Filter.Eq(x => x.Id, entityName.ToLowerInvariant());
             var update = Builders<CounterDocument>.Update.Inc(x => x.Sequence, 1);

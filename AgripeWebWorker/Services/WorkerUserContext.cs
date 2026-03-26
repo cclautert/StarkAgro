@@ -1,0 +1,14 @@
+using AgripeWebAPI.Models.Interfaces;
+
+namespace AgripeWebWorker.Services
+{
+    /// <summary>
+    /// ICurrentUserContext implementation for the worker process.
+    /// Returns null UserId since there is no HTTP/JWT context.
+    /// </summary>
+    public sealed class WorkerUserContext : ICurrentUserContext
+    {
+        public int? UserId => null;
+        public bool IsAuthenticated => false;
+    }
+}

@@ -1,11 +1,10 @@
 using AgripeWebAPI.Domain.Commands.Requests.Sensors;
-using AgripeWebAPI.Domain.Commands.Responses.Sensors;
 using AgripeWebAPI.Domain.Handlers.Sensors;
 using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Entities;
-using Microsoft.EntityFrameworkCore;
+using AgripeWebAPI.Tests.Helpers;
+using MongoDB.Driver;
 using Moq;
-using Xunit;
 
 namespace AgripeWebAPI.Tests.Domain.Handlers.Sensors
 {
@@ -14,16 +13,18 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Sensors
         [Fact]
         public async Task Handle_Updates_Sensor_And_Returns_Response()
         {
-            // Arrange
+            var mockDbContext = new Mock<agpDBContext>();
+            var mockSensors = new Mock<IMongoCollection<Sensor>>();
+
             var sensor = new Sensor { Id = 10, Code = "OLD", Quadrante = 1, PivoId = 2 };
-            var mockSet = new Mock<DbSet<Sensor>>();
-            mockSet.Setup(m => m.FindAsync(10)).ReturnsAsync(sensor);
+            MongoMockHelper.SetupFind(mockSensors, sensor);
+            mockSensors.Setup(c => c.ReplaceOneAsync(
+                    It.IsAny<FilterDefinition<Sensor>>(), It.IsAny<Sensor>(),
+                    It.IsAny<ReplaceOptions>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new ReplaceOneResult.Acknowledged(1, 1, null));
+            mockDbContext.Setup(c => c.Sensors).Returns(mockSensors.Object);
 
-            var mockContext = new Mock<agpDBContext>(new DbContextOptions<agpDBContext>());
-            mockContext.Setup(c => c.Sensors).Returns(mockSet.Object);
-            mockContext.Setup(c => c.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
-
-            var handler = new EditSensorHandler(mockContext.Object);
+            var handler = new EditSensorHandler(mockDbContext.Object);
             var request = new EditSensorRequest
             {
                 Id = 10,
@@ -32,39 +33,44 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Sensors
                 Pivot = new Pivot { Id = 7 }
             };
 
-            // Act
             var result = await handler.Handle(request, default);
 
-            // Assert
             Assert.NotNull(result);
             Assert.Equal(10, result.Id);
             Assert.Equal("NEW", sensor.Code);
             Assert.Equal(5, sensor.Quadrante);
             Assert.Equal(7, sensor.PivoId);
-            mockContext.Verify(c => c.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
         public async Task Handle_Throws_If_Sensor_Not_Found()
         {
-            // Arrange
-            var mockSet = new Mock<DbSet<Sensor>>();
-            mockSet.Setup(m => m.FindAsync(99)).ReturnsAsync((Sensor)null);
+            var mockDbContext = new Mock<agpDBContext>();
+            var mockSensors = new Mock<IMongoCollection<Sensor>>();
 
-            var mockContext = new Mock<agpDBContext>(new DbContextOptions<agpDBContext>());
-            mockContext.Setup(c => c.Sensors).Returns(mockSet.Object);
+            MongoMockHelper.SetupFind<Sensor>(mockSensors, null);
+            mockDbContext.Setup(c => c.Sensors).Returns(mockSensors.Object);
 
-            var handler = new EditSensorHandler(mockContext.Object);
-            var request = new EditSensorRequest
-            {
-                Id = 99,
-                Code = "ANY",
-                Quadrante = 1,
-                Pivot = new Pivot { Id = 1 }
-            };
+            var handler = new EditSensorHandler(mockDbContext.Object);
 
-            // Act & Assert
-            await Assert.ThrowsAsync<KeyNotFoundException>(() => handler.Handle(request, default));
+            await Assert.ThrowsAsync<KeyNotFoundException>(() =>
+                handler.Handle(new EditSensorRequest { Id = 99, Code = "ANY", Quadrante = 1, Pivot = new Pivot { Id = 1 } }, default));
+        }
+
+        [Fact]
+        public async Task Handle_NullPivot_ThrowsArgumentNullException()
+        {
+            var mockDbContext = new Mock<agpDBContext>();
+            var mockSensors = new Mock<IMongoCollection<Sensor>>();
+
+            var sensor = new Sensor { Id = 10, Code = "OLD", Quadrante = 1, PivoId = 2 };
+            MongoMockHelper.SetupFind(mockSensors, sensor);
+            mockDbContext.Setup(c => c.Sensors).Returns(mockSensors.Object);
+
+            var handler = new EditSensorHandler(mockDbContext.Object);
+
+            await Assert.ThrowsAsync<ArgumentNullException>(() =>
+                handler.Handle(new EditSensorRequest { Id = 10, Code = "NEW", Quadrante = 1, Pivot = null }, default));
         }
     }
 }
