@@ -83,7 +83,7 @@ namespace AgripeWebWorker.Services
                 if (stoppingToken.IsCancellationRequested) return;
 
                 _logger.LogWarning("MQTT client disconnected. Reconnecting in 5 seconds...");
-                await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
+                await Task.Delay(TimeSpan.FromSeconds(1), stoppingToken);
 
                 try
                 {
