@@ -38,12 +38,12 @@ export class ApiService {
     return this.http.get<Read[]>(`${this.baseUrl}reads/getall`, { params });
   }
 
-  getAllReadsByPivotId(sensorId: number, quadrante: number, numberOfReads: number): Observable<Read[]> {
+  getAllReadsBySensorId(sensorId: number, quadrante: number, numberOfReads: number): Observable<Read[]> {
     const params = new HttpParams()
     .set('NumberOfReads', numberOfReads.toString())
     .set('Quadrante', quadrante.toString())
     .set('SensorId', sensorId.toString());
-    return this.http.get<Read[]>(`${this.baseUrl}reads/GetAllByPivotId`, { params });
+    return this.http.get<Read[]>(`${this.baseUrl}reads/GetAllBySensorId`, { params });
   }
   getReadsByPivotId(pivotId: number, numberOfReads: number): Observable<Pivot> {
     const params = new HttpParams()

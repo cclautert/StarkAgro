@@ -52,6 +52,7 @@ namespace AgripeWebAPI.Controllers
         { 
             //if (!ModelState.IsValid) return CustomResponse(ModelState);
 
+            command.UserId = GetCurrentUserId();
             return await mediator.Send(command, cancellationToken);
         }
 

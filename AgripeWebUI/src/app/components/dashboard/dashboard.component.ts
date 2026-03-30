@@ -75,41 +75,26 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Usar paramMap é a forma recomendada, pois reage a mudanças na URL
     this.route.paramMap.subscribe(params => {
-      // Obtém o 'pivoId' da URL e converte para número
       const id = params.get('pivoId');
-      this.pivoId = id ? +id : null; // O '+' é um atalho para converter string em número
-
-      // Obtém o 'quadranteNome' da URL
+      this.pivoId = id ? +id : null;
       this.quadranteNome = params.get('quadrante');
 
-      console.log(`Dashboard carregado para Pivô ID: ${this.pivoId}`);
-      console.log(`Exibindo detalhes do Quadrante: ${this.quadranteNome}`);
+      switch (this.quadranteNome) {
+        case 'TopLeft':    this.quadrante = 4; break;
+        case 'TopRight':   this.quadrante = 1; break;
+        case 'BottomLeft': this.quadrante = 3; break;
+        case 'BottomRight':this.quadrante = 2; break;
+      }
+
+      this.sensorService.getAllByPivotId(this.pivoId!, this.quadrante!).subscribe((sensors) => {
+        this.sensors = sensors;
+        this.selectedSensorId = sensors?.length > 0 ? sensors[0].id : 1;
+        this.loadReads();
+      });
     });
 
-    switch(this.quadranteNome) {
-      case 'TopLeft':
-        this.quadrante = 4;
-        break;
-      case 'TopRight':
-        this.quadrante = 1;
-        break;
-      case 'BottomLeft':
-        this.quadrante = 3;
-        break;
-      case 'BottomRight':
-        this.quadrante = 2;
-        break;
-    }
-
-    this.sensorService.getAllByPivotId(this.pivoId!, this.quadrante!).subscribe((sensors) => {
-      this.sensors = sensors;
-      this.selectedSensorId = this.sensors && this.sensors.length > 0 ? this.sensors[0].id : 1;
-      this.loadReads();
-    });
-
-    this.intervalSub = interval(60000).subscribe(() => this.loadReads()); // A cada 60 segundos
+    this.intervalSub = interval(60000).subscribe(() => this.loadReads());
   }
 
   onSensorChange(): void {
@@ -121,7 +106,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   loadReads(): void {
-    this.apiService.getAllReadsByPivotId(this.selectedSensorId, this.quadrante!, this.numberOfReads).subscribe(reads => {
+    this.apiService.getAllReadsBySensorId(this.selectedSensorId, this.quadrante!, this.numberOfReads).subscribe(reads => {
       this.lineChartData.labels = reads.map(r => new Date(r.date).toLocaleString());
       this.lineChartData.datasets[0].data = reads.map(r => r.value);
       this.chart?.update();

@@ -1,0 +1,25 @@
+export const Colors = {
+  background: '#0A1628',
+  card: '#112240',
+  cardBorder: '#1E3A5F',
+  primary: '#4FC3F7',
+  primaryDark: '#0288D1',
+  success: '#22C55E',
+  successDark: '#16A34A',
+  warning: '#FBBF24',
+  danger: '#EF4444',
+  textPrimary: '#F1F5F9',
+  textSecondary: '#94A3B8',
+  tabBarBg: '#0A1628',
+  tabBarBorder: '#1E3A5F',
+  tabBarActive: '#4FC3F7',
+  tabBarInactive: '#94A3B8',
+  // Chart line colors per quadrant
+  q1: '#60A5FA',
+  q2: '#34D399',
+  q3: '#FBBF24',
+  q4: '#F87171',
+  // Reference line colors
+  limitUpper: '#EF4444',
+  limitLower: '#F97316',
+};

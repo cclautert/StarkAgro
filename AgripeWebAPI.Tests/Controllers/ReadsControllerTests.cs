@@ -69,36 +69,28 @@ namespace AgripeWebAPI.Tests.Controllers
         }
 
         [Fact]
-        public async Task Add_Sets_UserId_And_Invokes_Mediator()
+        public async Task Add_Invokes_Mediator_Without_UserId()
         {
-            // Arrange
+            // Arrange — Add is AllowAnonymous; UserId is resolved from the sensor inside the handler
             var notifier = new Mock<INotifier>();
             var mediator = new Mock<IMediator>();
             var controller = new ReadsController(notifier.Object);
 
-            controller.ControllerContext = new Microsoft.AspNetCore.Mvc.ControllerContext
-            {
-                HttpContext = new DefaultHttpContext
-                {
-                    User = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim("id", "10") }))
-                }
-            };
-
             var command = new CreateReadRequest { Code = "SENSOR-1", Value = 12.3m };
-
             var response = new CreateReadResponse { Id = 42 };
 
-            mediator.Setup(m => m.Send(It.Is<CreateReadRequest>(c => c.UserId == 10 && c.Code == "SENSOR-1"), It.IsAny<CancellationToken>()))
+            mediator.Setup(m => m.Send(It.Is<CreateReadRequest>(c => c.Code == "SENSOR-1"), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(response);
 
             // Act
             var result = await controller.Add(mediator.Object, command, CancellationToken.None);
 
             // Assert
-            mediator.Verify(m => m.Send(It.Is<CreateReadRequest>(c => c.UserId == 10 && c.Code == "SENSOR-1"), It.IsAny<CancellationToken>()), Times.Once);
+            mediator.Verify(m => m.Send(It.Is<CreateReadRequest>(c => c.Code == "SENSOR-1"), It.IsAny<CancellationToken>()), Times.Once);
             Assert.NotNull(result);
             Assert.Equal(42, result.Id);
         }
+
         [Fact]
         public async Task GetActive_ReturnsOk()
         {
@@ -114,28 +106,28 @@ namespace AgripeWebAPI.Tests.Controllers
         }
 
         [Fact]
-        public async Task GetAllByPivotId_ReturnsItems()
+        public async Task GetAllBySensorId_ReturnsItems()
         {
             // Arrange
             var notifier = new Mock<INotifier>();
             var mediator = new Mock<IMediator>();
             var controller = new ReadsController(notifier.Object);
 
-            var responses = new List<GetAllReadByPivotIdResponse>
+            var responses = new List<GetAllReadBySensorIdResponse>
             {
-                new GetAllReadByPivotIdResponse { Id = 1, SensorId = 10, Value = 50m }
+                new GetAllReadBySensorIdResponse { Id = 1, SensorId = 10, Value = 50m }
             };
 
-            mediator.Setup(m => m.Send(It.IsAny<GetAllListReadByPivotIdRequest>(), It.IsAny<CancellationToken>()))
+            mediator.Setup(m => m.Send(It.IsAny<GetAllListReadBySensorIdRequest>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(ToAsyncAll(responses));
 
-            var command = new GetAllListReadByPivotIdRequest { SensorId = 10, Quadrante = 1 };
+            var command = new GetAllListReadBySensorIdRequest { SensorId = 10, Quadrante = 1 };
 
             // Act
-            var result = await controller.GetAllByPivotId(mediator.Object, command, CancellationToken.None);
+            var result = await controller.GetAllBySensorId(mediator.Object, command, CancellationToken.None);
 
             // Assert
-            var list = new List<GetAllReadByPivotIdResponse>();
+            var list = new List<GetAllReadBySensorIdResponse>();
             await foreach (var item in result)
             {
                 list.Add(item);
@@ -168,7 +160,7 @@ namespace AgripeWebAPI.Tests.Controllers
             Assert.Equal("Pivot1", result.Name);
         }
 
-        private static async IAsyncEnumerable<GetAllReadByPivotIdResponse> ToAsyncAll(IEnumerable<GetAllReadByPivotIdResponse> items)
+        private static async IAsyncEnumerable<GetAllReadBySensorIdResponse> ToAsyncAll(IEnumerable<GetAllReadBySensorIdResponse> items)
         {
             foreach (var i in items)
             {

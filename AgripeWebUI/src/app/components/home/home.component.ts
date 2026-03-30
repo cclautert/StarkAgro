@@ -50,7 +50,7 @@ export class HomeComponent implements OnInit {
 
   private updateCircleColors(): void {
 
-    this.apiService.getReadsByPivotId(this.selectedPivotId, 1).subscribe(pivot => {
+    this.apiService.getReadsByPivotId(this.selectedPivotId, 30).subscribe(pivot => {
       this.pivot = pivot;
 
       // Encontra os dados do pivô selecionado na lista 'pivots'

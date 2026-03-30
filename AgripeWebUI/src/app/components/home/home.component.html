@@ -32,6 +32,7 @@
           class="quadrant-text">
           {{ currentColors.topLeftAvg | number:'1.0-0' }} kpa
         </text>
+        <text x="36" y="46" class="quadrant-number">4</text>
       </g>
 
       <!-- Quadrante Superior Direito (TopRight / Quadrante 1) -->
@@ -46,6 +47,7 @@
           class="quadrant-text">
            {{ currentColors.topRightAvg | number:'1.0-0' }} kpa
         </text>
+        <text x="64" y="46" class="quadrant-number">1</text>
       </g>
 
       <!-- Quadrante Inferior Direito (BottomRight / Quadrante 2) -->
@@ -60,6 +62,7 @@
           class="quadrant-text">
           {{ currentColors.bottomRightAvg | number:'1.0-0' }} kpa
         </text>
+        <text x="64" y="58" class="quadrant-number">2</text>
       </g>
 
       <!-- Quadrante Inferior Esquerdo (BottomLeft / Quadrante 3) -->
@@ -74,7 +77,24 @@
           class="quadrant-text">
           {{ currentColors.bottomLeftAvg | number:'1.0-0' }} kpa
         </text>
+        <text x="36" y="58" class="quadrant-number">3</text>
       </g>
+
+      <!-- Anéis concêntricos (zonas de irrigação) -->
+      <circle cx="50" cy="50" r="15" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="0.5" stroke-dasharray="2,2" pointer-events="none"/>
+      <circle cx="50" cy="50" r="30" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="0.5" stroke-dasharray="2,2" pointer-events="none"/>
+      <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="0.5" stroke-dasharray="2,2" pointer-events="none"/>
+
+      <!-- Braço do pivô (eixo central → borda direita) -->
+      <line x1="50" y1="50" x2="100" y2="50" stroke="rgba(255,255,255,0.7)" stroke-width="1.5" pointer-events="none"/>
+
+      <!-- Aspersores ao longo do braço -->
+      <circle cx="65" cy="50" r="1.5" fill="white" opacity="0.7" pointer-events="none"/>
+      <circle cx="80" cy="50" r="1.5" fill="white" opacity="0.7" pointer-events="none"/>
+      <circle cx="95" cy="50" r="1.5" fill="white" opacity="0.7" pointer-events="none"/>
+
+      <!-- Hub central -->
+      <circle cx="50" cy="50" r="3" fill="#333" stroke="white" stroke-width="0.8" pointer-events="none"/>
     </svg>
   </div>
 </div>

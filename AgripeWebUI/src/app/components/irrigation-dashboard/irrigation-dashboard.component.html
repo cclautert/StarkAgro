@@ -1,0 +1,57 @@
+<div class="irr-container">
+
+  <h1 class="irr-title">Controle de Irrigação{{ selectedPivotName ? ' - ' + selectedPivotName : '' }}</h1>
+
+  <!-- Pivot selector -->
+  <div class="filter-bar">
+    <label class="filter-label">Filtro:</label>
+    <select class="pivot-select" [(ngModel)]="selectedPivotId" (ngModelChange)="onPivotChange()">
+      <option *ngFor="let pivot of pivots" [ngValue]="pivot.id">{{ pivot.name }}</option>
+    </select>
+  </div>
+
+  <!-- Quadrant cards -->
+  <div class="quadrant-grid">
+    <div class="quadrant-card" *ngFor="let q of quadrants">
+      <h3 class="quadrant-title">{{ q.label }}</h3>
+      <div class="quadrant-body">
+        <span class="plant-icon">🌱</span>
+        <span class="humidity-label">
+          Umidade: <strong [class]="q.valueClass">{{ q.value !== null ? (q.value | number:'1.0-0') + '%' : 'N/A' }}</strong>
+        </span>
+      </div>
+      <div class="status-badge" [ngClass]="q.badgeClass">{{ q.statusLabel }}</div>
+    </div>
+  </div>
+
+  <!-- Time-series chart -->
+  <div class="chart-card">
+    <div class="chart-header">
+      <h2 class="chart-title">Níveis de Umidade do Solo</h2>
+      <div class="period-selector">
+        <button class="period-btn" [class.active]="numberOfDays === 7" (click)="setDays(7)">Últimos 7 Dias</button>
+        <button class="period-btn" [class.active]="numberOfDays === 14" (click)="setDays(14)">14 Dias</button>
+        <button class="period-btn" [class.active]="numberOfDays === 30" (click)="setDays(30)">30 Dias</button>
+      </div>
+    </div>
+    <div class="chart-wrapper">
+      <canvas baseChart
+        [data]="chartData"
+        [options]="chartOptions"
+        [type]="'line'">
+      </canvas>
+    </div>
+  </div>
+
+  <!-- Alert banners -->
+  <div class="alert-grid" *ngIf="alerts.length > 0">
+    <div class="alert-banner" *ngFor="let alert of alerts" [ngClass]="alert.type">
+      <span class="alert-icon">⚠️</span>
+      <div class="alert-text">
+        <strong>Alerta! {{ alert.title }}</strong>
+        <span>Enviando notificação...</span>
+      </div>
+    </div>
+  </div>
+
+</div>

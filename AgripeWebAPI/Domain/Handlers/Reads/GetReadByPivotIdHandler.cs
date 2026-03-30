@@ -36,6 +36,16 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
                     .Find(r => sensorIds.Contains(r.SensorId) && r.Date >= startDate)
                     .ToListAsync(cancellationToken);
 
+            var readsByQuadrant = reads
+                .Where(r => sensorsById.ContainsKey(r.SensorId))
+                .GroupBy(r => sensorsById[r.SensorId])
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.OrderBy(r => r.Date)
+                          .Select(r => new ReadEntry { Value = r.Value, Date = r.Date })
+                          .ToList()
+                );
+
             var quadranteDataMap = reads
                 .Where(read => sensorsById.ContainsKey(read.SensorId))
                 .GroupBy(read => sensorsById[read.SensorId])
@@ -82,6 +92,7 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
             {
                 response.Quadrante.TopRight = "#607D8B";
             }
+            response.Quadrante.TopRightReads = readsByQuadrant.GetValueOrDefault(1) ?? new();
 
             // Quadrante 2 (BottomRight)
             if (quadranteDataMap.TryGetValue(2, out var data2))
@@ -93,6 +104,7 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
             {
                 response.Quadrante.BottomRight = "#607D8B";
             }
+            response.Quadrante.BottomRightReads = readsByQuadrant.GetValueOrDefault(2) ?? new();
 
             // Quadrante 3 (BottomLeft)
             if (quadranteDataMap.TryGetValue(3, out var data3))
@@ -104,6 +116,7 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
             {
                 response.Quadrante.BottomLeft = "#607D8B";
             }
+            response.Quadrante.BottomLeftReads = readsByQuadrant.GetValueOrDefault(3) ?? new();
 
             // Quadrante 4 (TopLeft)
             if (quadranteDataMap.TryGetValue(4, out var data4))
@@ -115,6 +128,7 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
             {
                 response.Quadrante.TopLeft = "#607D8B";
             }
+            response.Quadrante.TopLeftReads = readsByQuadrant.GetValueOrDefault(4) ?? new();
 
             return response;
         }

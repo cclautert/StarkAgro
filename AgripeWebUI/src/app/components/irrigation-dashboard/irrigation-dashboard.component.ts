@@ -1,0 +1,228 @@
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { ChartConfiguration } from 'chart.js';
+import { interval, Subscription } from 'rxjs';
+import { BaseChartDirective } from 'ng2-charts';
+import { Pivot } from '../../models/pivot.model';
+import { ReadEntry } from '../../models/quadrante.model';
+import { ApiService } from '../../services/api.service';
+import { PivotService } from '../../services/pivot.service';
+
+interface QuadrantInfo {
+  label: string;
+  value: number | null;
+  statusLabel: string;
+  badgeClass: string;
+  valueClass: string;
+}
+
+interface AlertInfo {
+  title: string;
+  type: 'alert-low' | 'alert-high';
+}
+
+@Component({
+  selector: 'app-irrigation-dashboard',
+  templateUrl: './irrigation-dashboard.component.html',
+  styleUrls: ['./irrigation-dashboard.component.css'],
+  standalone: false,
+})
+export class IrrigationDashboardComponent implements OnInit, OnDestroy {
+
+  @ViewChild(BaseChartDirective) chart?: BaseChartDirective;
+
+  pivots: Pivot[] = [];
+  selectedPivotId: number = 0;
+  numberOfDays: number = 7;
+  quadrants: QuadrantInfo[] = [];
+  alerts: AlertInfo[] = [];
+  private intervalSub!: Subscription;
+
+  public chartData: ChartConfiguration<'line'>['data'] = {
+    datasets: [],
+    labels: []
+  };
+
+  public chartOptions: ChartConfiguration['options'] = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: {
+        ticks: { color: '#a0aec0' },
+        grid: { color: 'rgba(255,255,255,0.08)' }
+      },
+      y: {
+        suggestedMin: 0,
+        suggestedMax: 100,
+        ticks: { color: '#a0aec0', stepSize: 10 },
+        grid: { color: 'rgba(255,255,255,0.08)' }
+      }
+    },
+    plugins: {
+      legend: {
+        labels: { color: '#e2e8f0', usePointStyle: true }
+      }
+    }
+  };
+
+  private readonly QUADRANT_COLORS = ['#f97316', '#22c55e', '#3b82f6', '#ef4444'];
+  private readonly QUADRANT_LABELS = ['Quadrante 1', 'Quadrante 2', 'Quadrante 3', 'Quadrante 4'];
+
+  constructor(
+    private pivotService: PivotService,
+    private apiService: ApiService
+  ) {}
+
+  ngOnInit(): void {
+    this.pivotService.getPivots().subscribe(pivots => {
+      this.pivots = pivots;
+      if (pivots.length > 0) {
+        this.selectedPivotId = pivots[0].id;
+        this.loadDashboard();
+      }
+    });
+
+    this.intervalSub = interval(60000).subscribe(() => this.loadDashboard());
+  }
+
+  ngOnDestroy(): void {
+    this.intervalSub?.unsubscribe();
+  }
+
+  get selectedPivotName(): string {
+    return this.pivots.find(p => p.id === this.selectedPivotId)?.name ?? '';
+  }
+
+  onPivotChange(): void {
+    this.loadDashboard();
+  }
+
+  setDays(days: number): void {
+    this.numberOfDays = days;
+    this.loadDashboard();
+  }
+
+  loadDashboard(): void {
+    this.apiService.getReadsByPivotId(this.selectedPivotId, this.numberOfDays).subscribe(pivot => {
+      const q = pivot.quadrante;
+
+      // Build quadrant cards
+      const rawValues = [
+        q?.topRightAvg ?? null,    // Quadrante 1
+        q?.bottomRightAvg ?? null, // Quadrante 2
+        q?.bottomLeftAvg ?? null,  // Quadrante 3
+        q?.topLeftAvg ?? null      // Quadrante 4
+      ];
+      this.quadrants = rawValues.map((val, i) => this.buildQuadrantInfo(this.QUADRANT_LABELS[i], val));
+      this.alerts = this.buildAlerts();
+
+      // Build time-series chart from reads embedded in the response
+      const readGroups: ReadEntry[][] = [
+        q?.topRightReads ?? [],    // Quadrante 1
+        q?.bottomRightReads ?? [], // Quadrante 2
+        q?.bottomLeftReads ?? [],  // Quadrante 3
+        q?.topLeftReads ?? []      // Quadrante 4
+      ];
+      this.buildChart(readGroups);
+    });
+  }
+
+  private buildQuadrantInfo(label: string, value: number | null): QuadrantInfo {
+    if (value === null) {
+      return { label, value: null, statusLabel: 'Sem dados', badgeClass: 'badge-gray', valueClass: 'value-gray' };
+    }
+    if (value < 25) {
+      return { label, value, statusLabel: 'Alerta: Umidade Baixa!', badgeClass: 'badge-orange', valueClass: 'value-orange' };
+    }
+    if (value < 50) {
+      return { label, value, statusLabel: 'Normal', badgeClass: 'badge-green', valueClass: 'value-green' };
+    }
+    if (value <= 75) {
+      return { label, value, statusLabel: 'Ótimo', badgeClass: 'badge-blue', valueClass: 'value-blue' };
+    }
+    return { label, value, statusLabel: 'Alerta: Umidade Alta!', badgeClass: 'badge-red', valueClass: 'value-red' };
+  }
+
+  private buildAlerts(): AlertInfo[] {
+    const alerts: AlertInfo[] = [];
+    this.quadrants.forEach((q) => {
+      if (q.value !== null && q.value < 25) {
+        alerts.push({ title: `Umidade Baixa no ${q.label}!`, type: 'alert-low' });
+      } else if (q.value !== null && q.value > 75) {
+        alerts.push({ title: `Umidade Alta no ${q.label}!`, type: 'alert-high' });
+      }
+    });
+    return alerts;
+  }
+
+  private buildChart(readGroups: ReadEntry[][]): void {
+    // Collect all unique day labels sorted chronologically
+    const daySet = new Set<string>();
+    readGroups.forEach(reads => {
+      reads.forEach(r => daySet.add(this.toDayLabel(new Date(r.date))));
+    });
+    const labels = Array.from(daySet).sort((a, b) => {
+      const [da, ma] = a.split('/').map(Number);
+      const [db, mb] = b.split('/').map(Number);
+      return ma !== mb ? ma - mb : da - db;
+    });
+
+    // Build one dataset per quadrant
+    const quadrantDatasets = readGroups.map((reads, i) => {
+      const byDay = new Map<string, number[]>();
+      reads.forEach(r => {
+        const key = this.toDayLabel(new Date(r.date));
+        if (!byDay.has(key)) byDay.set(key, []);
+        byDay.get(key)!.push(Number(r.value));
+      });
+      const data = labels.map(lbl => {
+        const vals = byDay.get(lbl);
+        return vals && vals.length > 0 ? vals.reduce((s, v) => s + v, 0) / vals.length : null;
+      });
+      return {
+        data,
+        label: this.QUADRANT_LABELS[i],
+        borderColor: this.QUADRANT_COLORS[i],
+        backgroundColor: 'transparent',
+        fill: false,
+        tension: 0.4,
+        pointRadius: 4,
+        borderWidth: 2,
+        spanGaps: true
+      };
+    });
+
+    // Reference lines
+    const upperRef = {
+      data: labels.map(() => 75),
+      label: 'Limite Superior 75%',
+      borderColor: '#ef4444',
+      backgroundColor: 'transparent',
+      borderDash: [6, 4],
+      fill: false,
+      pointRadius: 0,
+      borderWidth: 2,
+      tension: 0
+    };
+    const lowerRef = {
+      data: labels.map(() => 25),
+      label: 'Limite Inferior 25%',
+      borderColor: '#eab308',
+      backgroundColor: 'transparent',
+      borderDash: [6, 4],
+      fill: false,
+      pointRadius: 0,
+      borderWidth: 2,
+      tension: 0
+    };
+
+    this.chartData = {
+      labels,
+      datasets: [...quadrantDatasets, upperRef, lowerRef] as ChartConfiguration<'line'>['data']['datasets']
+    };
+    this.chart?.update();
+  }
+
+  private toDayLabel(date: Date): string {
+    return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}`;
+  }
+}

@@ -9,7 +9,7 @@ namespace AgripeWebAPI.Tests.Domain.Commands.Responses.Reads
         {
             // Arrange
             var date = new DateTime(2025, 6, 15, 10, 30, 0, DateTimeKind.Utc);
-            var response = new GetAllReadByPivotIdResponse
+            var response = new GetAllReadBySensorIdResponse
             {
                 Id = 100,
                 SensorId = 5,
@@ -28,7 +28,7 @@ namespace AgripeWebAPI.Tests.Domain.Commands.Responses.Reads
         public void DefaultValues_AreCorrect()
         {
             // Arrange
-            var response = new GetAllReadByPivotIdResponse();
+            var response = new GetAllReadBySensorIdResponse();
 
             // Act & Assert
             Assert.Equal(0, response.Id);

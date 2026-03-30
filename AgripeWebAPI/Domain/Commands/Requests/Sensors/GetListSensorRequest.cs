@@ -7,5 +7,6 @@ namespace AgripeWebAPI.Domain.Commands.Requests.Sensors
     {
         public int PivotId { get; set; }
         public int Quadrante { get; set; }
+        public int? UserId { get; set; }
     }
 }

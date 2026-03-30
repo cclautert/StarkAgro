@@ -19,7 +19,9 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
         public async Task<IList<GetSensorResponse>> Handle(GetListSensorRequest request, CancellationToken cancellationToken)
         {
             var sensors = await _dbContext.Sensors
-                .Find(x => x.PivoId == request.PivotId && x.Quadrante == request.Quadrante)
+                .Find(x => x.PivoId == request.PivotId
+                        && x.Quadrante == request.Quadrante
+                        && (request.UserId == null || x.UserId == request.UserId))
                 .ToListAsync(cancellationToken);
 
             var pivot = await _dbContext.Pivots.Find(x => x.Id == request.PivotId).FirstOrDefaultAsync(cancellationToken)

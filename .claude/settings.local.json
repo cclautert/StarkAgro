@@ -35,7 +35,30 @@
       "Bash(dotnet publish:*)",
       "Bash(docker ps:*)",
       "Bash(curl:*)",
-      "Bash(docker exec:*)"
+      "Bash(docker exec:*)",
+      "Bash(npx create-expo-app@latest AgripeWebUI-Mobile --template blank-typescript)",
+      "Bash(npx expo:*)",
+      "Bash(npm install:*)",
+      "Bash(python -c \"import json,sys; d=json.load\\(sys.stdin\\); [print\\(k,v\\) for k,v in {**d.get\\(''''dependencies'''',{}\\), **d.get\\(''''devDependencies'''',{}\\)}.items\\(\\)]\")",
+      "Bash(npx tsc:*)",
+      "Bash(npm test:*)",
+      "Bash(node_modules/.bin/jest --version)",
+      "Bash(python -c \"import json,sys; p=json.load\\(sys.stdin\\); print\\(json.dumps\\(p.get\\(''''peerDependencies'''', {}\\), indent=2\\)\\)\")",
+      "Bash(python -c \"import json,sys; p=json.load\\(sys.stdin\\); print\\(''''peerDeps:'''', json.dumps\\(p.get\\(''''peerDependencies'''', {}\\), indent=2\\)\\); print\\(''''deps jest:'''', p.get\\(''''dependencies'''', {}\\).get\\(''''jest''''\\)\\)\")",
+      "Bash(npm run:*)",
+      "Bash(xargs grep:*)",
+      "Bash(mongosh:*)",
+      "Bash(where mongosh:*)",
+      "Bash(where mongo:*)",
+      "Read(//c/Program Files/MongoDB/**)",
+      "Read(//c/Users/Cristiano/AppData/Local/Programs//**)",
+      "Bash(find /c -name mongosh.exe)",
+      "Bash(cmd.exe /c \"mongosh mongodb://localhost:27017/agripeweb --eval \\\\\"var start = new Date\\('2026-03-30T00:00:00.000Z'\\); var end = new Date\\('2026-03-30T23:59:59.999Z'\\); var count = db.read_sensors.countDocuments\\({createdAt: {'\\\\$gte': start, '\\\\$lte': end}}\\); print\\('Total hoje: ' + count\\); db.read_sensors.find\\({createdAt: {'\\\\$gte': start, '\\\\$lte': end}}\\).sort\\({createdAt: -1}\\).limit\\(20\\).forEach\\(printjson\\);\\\\\"\" 2>&1)",
+      "Bash(cmd.exe /c \"where mongosh\")",
+      "Bash(cmd.exe /c \"where mongo\")",
+      "Bash(powershell -Command \"Get-Command mongosh -ErrorAction SilentlyContinue; Get-Command mongo -ErrorAction SilentlyContinue; Get-ChildItem 'C:\\\\Program Files\\\\MongoDB\\\\' -Recurse -Filter '*.exe' -ErrorAction SilentlyContinue | Select-Object FullName\" 2>&1)",
+      "Bash(powershell -Command \"\n\\\\$paths = @\\('C:\\\\Program Files\\\\MongoDB', 'C:\\\\Users\\\\Cristiano\\\\AppData\\\\Local\\\\Programs\\\\mongosh', 'C:\\\\tools'\\)\nforeach \\(\\\\$p in \\\\$paths\\) {\n  if \\(Test-Path \\\\$p\\) { Get-ChildItem \\\\$p -Recurse -Filter 'mongosh.exe' | Select FullName }\n}\n\" 2>&1)",
+      "Bash(docker compose:*)"
     ]
   }
 }

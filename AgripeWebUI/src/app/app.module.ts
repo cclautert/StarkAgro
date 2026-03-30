@@ -24,6 +24,7 @@ import { AuthCallbackComponent } from './components/login/auth-callback.componen
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './guards/auth.interceptor';
 import { HomeComponent } from './components/home/home.component';
+import { IrrigationDashboardComponent } from './components/irrigation-dashboard/irrigation-dashboard.component';
 
 @NgModule({
   declarations: [
@@ -32,6 +33,7 @@ import { HomeComponent } from './components/home/home.component';
     DashboardComponent,
     UserFormComponent,
     HomeComponent,
+    IrrigationDashboardComponent,
   ],
   imports: [
     CommonModule,
