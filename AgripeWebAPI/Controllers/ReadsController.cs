@@ -50,6 +50,7 @@ namespace AgripeWebAPI.Controllers
             CancellationToken cancellationToken
         )
         {
+            command.UserId = GetCurrentUserId();
             return await mediator.Send(command, cancellationToken);
         }
                 

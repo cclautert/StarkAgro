@@ -1,0 +1,23 @@
+<div class="form-container">
+  <h2>Configuração Global de Limites</h2>
+  <p class="subtitle">Estes valores são usados como padrão quando um pivô não tem limites configurados.</p>
+
+  <form [formGroup]="configForm" (ngSubmit)="onSubmit()" class="form-fields">
+
+    <div class="form-group">
+      <label for="limiteSuperior">Limite Superior (%)</label>
+      <input id="limiteSuperior" type="number" formControlName="limiteSuperior" step="1" min="0" max="100">
+    </div>
+
+    <div class="form-group">
+      <label for="limiteInferior">Limite Inferior (%)</label>
+      <input id="limiteInferior" type="number" formControlName="limiteInferior" step="1" min="0" max="100">
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary" [disabled]="configForm.invalid">Salvar</button>
+      <button type="button" class="btn btn-secondary" (click)="cancelar()">Cancelar</button>
+    </div>
+
+  </form>
+</div>

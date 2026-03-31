@@ -11,6 +11,8 @@ import { SensorListComponent } from './components/sensor-list/sensor-list.compon
 import { LayoutComponent } from './components/layout/layout.component';
 import { HomeComponent } from './components/home/home.component';
 import { IrrigationDashboardComponent } from './components/irrigation-dashboard/irrigation-dashboard.component';
+import { PivotConfigComponent } from './components/pivot-config/pivot-config.component';
+import { GlobalConfigComponent } from './components/global-config/global-config.component';
 
 export const routes: Routes = [
   // Login routes outside the main layout
@@ -24,6 +26,8 @@ export const routes: Routes = [
     children: [
       { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
       { path: 'dashboard/:pivoId/:quadrante', component: DashboardComponent, canActivate: [AuthGuard] },
+      { path: 'dashboard/:pivoId/:quadrante/config', component: PivotConfigComponent, canActivate: [AuthGuard] },
+      { path: 'config', component: GlobalConfigComponent, canActivate: [AuthGuard] },
       { path: 'irrigation-dashboard', component: IrrigationDashboardComponent, canActivate: [AuthGuard] },
       { path: 'user', component: UserFormComponent, canActivate: [AuthGuard] },
       { path: 'pivots', component: PivotListComponent, canActivate: [AuthGuard] },

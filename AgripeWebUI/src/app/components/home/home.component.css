@@ -11,6 +11,27 @@
   margin: 40px auto;
 }
 
+.config-button-box {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.btn-config {
+  padding: 8px 16px;
+  background-color: #607D8B;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+}
+
+.btn-config:hover {
+  background-color: #455A64;
+}
+
 .selector-box {
   margin-bottom: 30px;
   display: flex;

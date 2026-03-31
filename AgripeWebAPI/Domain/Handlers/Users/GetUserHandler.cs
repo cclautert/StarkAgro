@@ -38,7 +38,9 @@ namespace AgripeWebAPI.Domain.Handlers.Users
                 {
                     Id = x.Id,
                     Name = x.Name,
-                    Email = x.Email
+                    Email = x.Email,
+                    LimiteInferior = x.LimiteInferior,
+                    LimiteSuperior = x.LimiteSuperior
                 })
                 .FirstOrDefaultAsync(cancellationToken);
 

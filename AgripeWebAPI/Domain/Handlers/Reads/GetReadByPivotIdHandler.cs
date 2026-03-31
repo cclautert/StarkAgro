@@ -2,6 +2,7 @@ using AgripeWebAPI.Domain.Commands.Requests.Reads;
 using AgripeWebAPI.Domain.Commands.Responses.Pivots;
 using AgripeWebAPI.Domain.Commands.Responses.Reads;
 using AgripeWebAPI.Models;
+using AgripeWebAPI.Models.Entities;
 using MediatR;
 using MongoDB.Driver;
 using System.Linq;
@@ -23,7 +24,7 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
             var startDate = DateTime.UtcNow.AddDays(-request.NumberOfReads);
 
             var sensors = await _dbContext.Sensors
-                .Find(s => s.PivoId == request.PivotId)
+                .Find(s => s.PivoId == request.PivotId && s.UserId == request.UserId)
                 .Project(s => new { s.Id, s.Quadrante })
                 .ToListAsync(cancellationToken);
 
@@ -46,7 +47,19 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
                           .ToList()
                 );
 
-            var quadranteDataMap = reads
+            // Para a média do quadrante: usar apenas a leitura mais recente de cada sensor
+            var latestReads = new List<ReadSensor>();
+            foreach (var sensorId in sensorIds)
+            {
+                var latest = await _dbContext.ReadSensors
+                    .Find(r => r.SensorId == sensorId)
+                    .SortByDescending(r => r.Date)
+                    .Limit(1)
+                    .FirstOrDefaultAsync(cancellationToken);
+                if (latest != null) latestReads.Add(latest);
+            }
+
+            var quadranteDataMap = latestReads
                 .Where(read => sensorsById.ContainsKey(read.SensorId))
                 .GroupBy(read => sensorsById[read.SensorId])
                 .Select(group => new
@@ -58,25 +71,29 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
                     result => result.NumeroQuadrante,
                     result => (
                         Average: (decimal)result.Media,
-                        Color: (result.Media < 15) ? "#2196F3" :
-                               (result.Media < 40) ? "#4CAF50" :
-                               (result.Media < 65) ? "#FFC107" :
-                               "#F44336"
+                        Color: (result.Media < 25) ? "#F44336" :
+                               (result.Media < 85) ? "#4CAF50" :
+                               "#2196F3"
                     )
                 );
 
-            // Opcional: buscar o nome do pivô
-            var pivotName = await _dbContext.Pivots
+            // Buscar dados do pivô (nome e limites) e do usuário (limites padrão)
+            var pivot = await _dbContext.Pivots
                 .Find(p => p.Id == request.PivotId)
-                .Project(p => p.Name)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            var user = await _dbContext.Users
+                .Find(u => u.Id == request.UserId)
                 .FirstOrDefaultAsync(cancellationToken);
 
             // --- Etapa 2: Construir o objeto de resposta final ---
             var response = new GetReadByPivotIdResponse
             {
                 Id = request.PivotId,
-                Name = pivotName,
-                Quadrante = new Quadrante() // Inicializa o objeto Quadrante
+                Name = pivot?.Name,
+                LimiteInferior = pivot?.LimiteInferior ?? user?.LimiteInferior ?? 25m,
+                LimiteSuperior = pivot?.LimiteSuperior ?? user?.LimiteSuperior ?? 75m,
+                Quadrante = new Quadrante()
             };
 
             // Agora, populamos o objeto Quadrante usando o mapa.

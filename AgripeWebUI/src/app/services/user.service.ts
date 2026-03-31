@@ -30,6 +30,11 @@ export class UserService {
     return this.http.put(`${this.baseUrl}user/update`, updatedUser);
   }
 
+  // UPDATE LIMITS
+  updateLimits(limiteInferior: number, limiteSuperior: number): Observable<any> {
+    return this.http.put(`${this.baseUrl}user/updateLimits`, { limiteInferior, limiteSuperior });
+  }
+
   // DELETE
   deleteUser(id: number): Observable<{}> {
     const params = new HttpParams()

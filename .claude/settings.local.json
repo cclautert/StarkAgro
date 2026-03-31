@@ -58,7 +58,9 @@
       "Bash(cmd.exe /c \"where mongo\")",
       "Bash(powershell -Command \"Get-Command mongosh -ErrorAction SilentlyContinue; Get-Command mongo -ErrorAction SilentlyContinue; Get-ChildItem 'C:\\\\Program Files\\\\MongoDB\\\\' -Recurse -Filter '*.exe' -ErrorAction SilentlyContinue | Select-Object FullName\" 2>&1)",
       "Bash(powershell -Command \"\n\\\\$paths = @\\('C:\\\\Program Files\\\\MongoDB', 'C:\\\\Users\\\\Cristiano\\\\AppData\\\\Local\\\\Programs\\\\mongosh', 'C:\\\\tools'\\)\nforeach \\(\\\\$p in \\\\$paths\\) {\n  if \\(Test-Path \\\\$p\\) { Get-ChildItem \\\\$p -Recurse -Filter 'mongosh.exe' | Select FullName }\n}\n\" 2>&1)",
-      "Bash(docker compose:*)"
+      "Bash(docker compose:*)",
+      "Bash(grep -l 'standalone: true' D:/Source/Repos/cclautert/AgripeWeb/AgripeWebUI/src/app/components/**/*.ts)",
+      "Bash(npx ng:*)"
     ]
   }
 }

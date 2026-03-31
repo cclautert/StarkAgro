@@ -41,6 +41,20 @@ namespace AgripeWebAPI.Controllers
             return await mediator.Send(command, cancellationToken);
         }
 
+        [Route("updateLimits")]
+        [HttpPut]
+        public async Task<ActionResult<EditUserResponse>> UpdateLimits(
+            [FromServices] IMediator mediator,
+            [FromBody] EditUserLimitsRequest command,
+            CancellationToken cancellationToken
+        )
+        {
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
+
+            command.Id = GetCurrentUserId();
+            return await mediator.Send(command, cancellationToken);
+        }
+
         [Route("update")]
         [HttpPut]
         public async Task<ActionResult<EditUserResponse>> Update(

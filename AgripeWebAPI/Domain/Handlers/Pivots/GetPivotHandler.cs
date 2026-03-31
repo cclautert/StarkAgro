@@ -22,7 +22,9 @@ namespace AgripeWebAPI.Domain.Handlers.Pivots
                 .Project(x => new GetPivotResponse
                 {
                     Id = x.Id,
-                    Name = x.Name
+                    Name = x.Name,
+                    LimiteInferior = x.LimiteInferior,
+                    LimiteSuperior = x.LimiteSuperior
                 })
                 .FirstOrDefaultAsync(cancellationToken);
 

@@ -29,16 +29,58 @@ export class DashboardComponent implements OnInit, OnDestroy {
   public selectedSensorId: number = 1;
   public quadrante: number | undefined;// 0 | 1 | 2 | 3 | 4 = 0;
 
+  limiteSuperior: number | null = null;
+  limiteInferior: number | null = null;
+
   public lineChartData: ChartConfiguration<'line'>['data'] = {
     datasets: [
+      // [0] Linha da leitura do sensor
       {
         data: [],
         label: 'Sensor Values',
-        borderColor: 'blue',
-        backgroundColor: 'rgba(0,0,255,0.1)',
-        fill: true,
+        borderColor: 'rgba(0,0,0,0.8)',
+        backgroundColor: 'transparent',
+        fill: false,
         pointRadius: 3,
-        tension: 0.3
+        tension: 0.3,
+        order: 0
+      },
+      // [1] Limite Inferior — zona VERMELHA abaixo
+      {
+        data: [],
+        label: 'Limite Inferior',
+        borderColor: '#F44336',
+        borderDash: [5, 5],
+        borderWidth: 1.5,
+        pointRadius: 0,
+        fill: 'start',
+        backgroundColor: 'rgba(244,67,54,0.2)',
+        tension: 0,
+        order: 1
+      },
+      // [2] Zona VERDE entre limites (invisible border, fills to dataset[1])
+      {
+        data: [],
+        label: '',
+        borderWidth: 0,
+        pointRadius: 0,
+        fill: 1,
+        backgroundColor: 'rgba(76,175,80,0.2)',
+        tension: 0,
+        order: 2
+      },
+      // [3] Limite Superior — zona AZUL acima
+      {
+        data: [],
+        label: 'Limite Superior',
+        borderColor: '#2196F3',
+        borderDash: [5, 5],
+        borderWidth: 1.5,
+        pointRadius: 0,
+        fill: 'end',
+        backgroundColor: 'rgba(33,150,243,0.2)',
+        tension: 0,
+        order: 3
       }
     ],
     labels: []
@@ -87,10 +129,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
         case 'BottomRight':this.quadrante = 2; break;
       }
 
-      this.sensorService.getAllByPivotId(this.pivoId!, this.quadrante!).subscribe((sensors) => {
-        this.sensors = sensors;
-        this.selectedSensorId = sensors?.length > 0 ? sensors[0].id : 1;
-        this.loadReads();
+      this.apiService.getReadsByPivotId(this.pivoId!, 1).subscribe(pivot => {
+        this.limiteSuperior = pivot.limiteSuperior ?? null;
+        this.limiteInferior = pivot.limiteInferior ?? null;
+
+        this.sensorService.getAllByPivotId(this.pivoId!, this.quadrante!).subscribe((sensors) => {
+          this.sensors = sensors;
+          this.selectedSensorId = sensors?.length > 0 ? sensors[0].id : 1;
+          this.loadReads();
+        });
       });
     });
 
@@ -107,8 +154,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   loadReads(): void {
     this.apiService.getAllReadsBySensorId(this.selectedSensorId, this.quadrante!, this.numberOfReads).subscribe(reads => {
+      const n = reads.length;
       this.lineChartData.labels = reads.map(r => new Date(r.date).toLocaleString());
       this.lineChartData.datasets[0].data = reads.map(r => r.value);
+      this.lineChartData.datasets[1].data = new Array(n).fill(this.limiteInferior);
+      this.lineChartData.datasets[2].data = new Array(n).fill(this.limiteSuperior);
+      this.lineChartData.datasets[3].data = new Array(n).fill(this.limiteSuperior);
       this.chart?.update();
     });
   }
@@ -116,6 +167,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   setDays(days: number): void {
     this.numberOfReads = days;
     this.loadReads();
+  }
+
+  goToConfig(): void {
+    this.router.navigate(['/dashboard', this.pivoId, this.quadranteNome, 'config']);
   }
 
   logout(): void {

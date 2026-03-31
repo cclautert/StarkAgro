@@ -4,4 +4,6 @@ export interface User {
   email: string;
   password: string;
   active: boolean;
+  limiteInferior?: number;
+  limiteSuperior?: number;
 }

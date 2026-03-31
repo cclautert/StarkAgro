@@ -103,6 +103,10 @@ export class HomeComponent implements OnInit {
     alert(`Quadrante: ${quadranteName}\nCor: ${color}\nMédia: ${avgDisplay}`);
   }
 
+  public goToConfig(): void {
+    this.router.navigate(['/config']);
+  }
+
   public onQuadrantClick(quadranteName: 'TopLeft' | 'TopRight' | 'BottomLeft' | 'BottomRight'): void {
     if (!this.selectedPivotId) {
       console.error('ID do Pivô não está selecionado, não é possível navegar.');

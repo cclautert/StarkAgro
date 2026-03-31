@@ -7,5 +7,6 @@ namespace AgripeWebAPI.Domain.Commands.Requests.Reads
     {
         public int? PivotId { get; set; }
         public int NumberOfReads { get; set; } = 10;
+        public int UserId { get; set; }
     }
 }

@@ -104,6 +104,8 @@ export class IrrigationDashboardComponent implements OnInit, OnDestroy {
   loadDashboard(): void {
     this.apiService.getReadsByPivotId(this.selectedPivotId, this.numberOfDays).subscribe(pivot => {
       const q = pivot.quadrante;
+      const limInf = pivot.limiteInferior ?? 25;
+      const limSup = pivot.limiteSuperior ?? 75;
 
       // Build quadrant cards
       const rawValues = [
@@ -112,8 +114,8 @@ export class IrrigationDashboardComponent implements OnInit, OnDestroy {
         q?.bottomLeftAvg ?? null,  // Quadrante 3
         q?.topLeftAvg ?? null      // Quadrante 4
       ];
-      this.quadrants = rawValues.map((val, i) => this.buildQuadrantInfo(this.QUADRANT_LABELS[i], val));
-      this.alerts = this.buildAlerts();
+      this.quadrants = rawValues.map((val, i) => this.buildQuadrantInfo(this.QUADRANT_LABELS[i], val, limInf, limSup));
+      this.alerts = this.buildAlerts(limInf, limSup);
 
       // Build time-series chart from reads embedded in the response
       const readGroups: ReadEntry[][] = [
@@ -122,39 +124,40 @@ export class IrrigationDashboardComponent implements OnInit, OnDestroy {
         q?.bottomLeftReads ?? [],  // Quadrante 3
         q?.topLeftReads ?? []      // Quadrante 4
       ];
-      this.buildChart(readGroups);
+      this.buildChart(readGroups, limInf, limSup);
     });
   }
 
-  private buildQuadrantInfo(label: string, value: number | null): QuadrantInfo {
+  private buildQuadrantInfo(label: string, value: number | null, limInf: number, limSup: number): QuadrantInfo {
     if (value === null) {
       return { label, value: null, statusLabel: 'Sem dados', badgeClass: 'badge-gray', valueClass: 'value-gray' };
     }
-    if (value < 25) {
+    if (value < limInf) {
       return { label, value, statusLabel: 'Alerta: Umidade Baixa!', badgeClass: 'badge-orange', valueClass: 'value-orange' };
     }
-    if (value < 50) {
+    const midPoint = (limInf + limSup) / 2;
+    if (value < midPoint) {
       return { label, value, statusLabel: 'Normal', badgeClass: 'badge-green', valueClass: 'value-green' };
     }
-    if (value <= 75) {
+    if (value <= limSup) {
       return { label, value, statusLabel: 'Ótimo', badgeClass: 'badge-blue', valueClass: 'value-blue' };
     }
     return { label, value, statusLabel: 'Alerta: Umidade Alta!', badgeClass: 'badge-red', valueClass: 'value-red' };
   }
 
-  private buildAlerts(): AlertInfo[] {
+  private buildAlerts(limInf: number, limSup: number): AlertInfo[] {
     const alerts: AlertInfo[] = [];
     this.quadrants.forEach((q) => {
-      if (q.value !== null && q.value < 25) {
+      if (q.value !== null && q.value < limInf) {
         alerts.push({ title: `Umidade Baixa no ${q.label}!`, type: 'alert-low' });
-      } else if (q.value !== null && q.value > 75) {
+      } else if (q.value !== null && q.value > limSup) {
         alerts.push({ title: `Umidade Alta no ${q.label}!`, type: 'alert-high' });
       }
     });
     return alerts;
   }
 
-  private buildChart(readGroups: ReadEntry[][]): void {
+  private buildChart(readGroups: ReadEntry[][], limInf: number, limSup: number): void {
     // Collect all unique day labels sorted chronologically
     const daySet = new Set<string>();
     readGroups.forEach(reads => {
@@ -193,9 +196,9 @@ export class IrrigationDashboardComponent implements OnInit, OnDestroy {
 
     // Reference lines
     const upperRef = {
-      data: labels.map(() => 75),
-      label: 'Limite Superior 75%',
-      borderColor: '#ef4444',
+      data: labels.map(() => limSup),
+      label: `Limite Superior ${limSup}%`,
+      borderColor: '#2196F3',
       backgroundColor: 'transparent',
       borderDash: [6, 4],
       fill: false,
@@ -204,9 +207,9 @@ export class IrrigationDashboardComponent implements OnInit, OnDestroy {
       tension: 0
     };
     const lowerRef = {
-      data: labels.map(() => 25),
-      label: 'Limite Inferior 25%',
-      borderColor: '#eab308',
+      data: labels.map(() => limInf),
+      label: `Limite Inferior ${limInf}%`,
+      borderColor: '#F44336',
       backgroundColor: 'transparent',
       borderDash: [6, 4],
       fill: false,

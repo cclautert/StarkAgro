@@ -71,6 +71,19 @@ namespace AgripeWebAPI.Controllers
             return await mediator.Send(command, cancellationToken);
         }
 
+        [Route("updateLimits")]
+        [HttpPut]
+        public async Task<ActionResult<EditPivotResponse>> UpdateLimits(
+            [FromServices] IMediator mediator,
+            [FromBody] EditPivotLimitsRequest command,
+            CancellationToken cancellationToken
+        )
+        {
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
+
+            return await mediator.Send(command, cancellationToken);
+        }
+
         [Route("delete")]
         [HttpDelete]
         public async Task<ActionResult<DeletePivotResponse>> Delete(
