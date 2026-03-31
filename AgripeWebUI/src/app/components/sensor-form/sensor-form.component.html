@@ -31,7 +31,12 @@
 
     <div class="form-group">
       <label for="code">Código do Sensor</label>
-      <input id="code" type="text" formControlName="code" required>
+      <div class="input-with-button">
+        <input id="code" type="text" formControlName="code" required>
+        <button type="button" class="btn btn-icon" (click)="scanQrCode()" [disabled]="isScanning" title="Escanear QR Code">
+          <mat-icon>{{ isScanning ? 'hourglass_empty' : 'qr_code_scanner' }}</mat-icon>
+        </button>
+      </div>
       <div *ngIf="code?.invalid && (code?.dirty || code?.touched)" class="error">
         Código é obrigatório.
       </div>

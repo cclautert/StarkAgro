@@ -63,6 +63,31 @@
   cursor: not-allowed;
 }
 
+.input-with-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.input-with-button input {
+  flex: 1;
+}
+
+.btn-icon {
+  padding: 6px 10px;
+  background-color: #607D8B;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.btn-icon mat-icon {
+  font-size: 20px;
+  height: 20px;
+  width: 20px;
+}
+
 .error {
   color: red;
   font-size: 0.875em;

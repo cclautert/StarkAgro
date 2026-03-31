@@ -101,7 +101,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           minRotation: 45
         }
       },
-      y: { title: { display: true, text: 'Valor' } }
+      y: { title: { display: true, text: 'Valor' }, min: 0, max: 100 }
     }
   };
 
@@ -135,7 +135,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
         this.sensorService.getAllByPivotId(this.pivoId!, this.quadrante!).subscribe((sensors) => {
           this.sensors = sensors;
-          this.selectedSensorId = sensors?.length > 0 ? sensors[0].id : 1;
+          if (!sensors || sensors.length === 0) {
+            this.lineChartData.datasets.forEach(d => d.data = []);
+            this.lineChartData.labels = [];
+            this.chart?.update();
+            return;
+          }
+          this.selectedSensorId = sensors[0].id;
           this.loadReads();
         });
       });

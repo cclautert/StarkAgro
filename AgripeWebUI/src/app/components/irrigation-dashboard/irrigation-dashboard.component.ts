@@ -179,7 +179,7 @@ export class IrrigationDashboardComponent implements OnInit, OnDestroy {
       });
       const data = labels.map(lbl => {
         const vals = byDay.get(lbl);
-        return vals && vals.length > 0 ? vals.reduce((s, v) => s + v, 0) / vals.length : null;
+        return vals && vals.length > 0 ? vals[vals.length - 1] : null;
       });
       return {
         data,

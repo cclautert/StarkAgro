@@ -46,9 +46,9 @@ function SimpleLineChart({ readings }: { readings: ReadEntry[] }) {
   const chartWidth = width - 64;
   const chartHeight = 140;
   const values = readings.map((r) => r.value);
-  const minVal = Math.min(...values);
-  const maxVal = Math.max(...values);
-  const range = maxVal - minVal || 1;
+  const minVal = 0;
+  const maxVal = 100;
+  const range = 100;
 
   const points = readings.map((r, i) => ({
     x: (i / Math.max(readings.length - 1, 1)) * chartWidth,

@@ -29,16 +29,20 @@ export function HumidityChart({ chartData, humidityUpper, humidityLower }: Humid
   const innerWidth = chartWidth - paddingLeft;
   const innerHeight = chartHeight - paddingBottom;
 
-  // Gather all values to determine Y axis range
-  const allValues = useMemo(() => {
-    const vals = chartData.flatMap((d) => d.readings.map((r) => r.value));
-    vals.push(humidityUpper, humidityLower);
-    return vals;
-  }, [chartData, humidityUpper, humidityLower]);
+  const aggregatedData = useMemo(() => {
+    return chartData.map((qd) => {
+      const byDay = new Map<string, ReadEntry>();
+      for (const r of qd.readings) {
+        const key = formatDateShort(r.date as string);
+        byDay.set(key, r);
+      }
+      return { quadrante: qd.quadrante, readings: Array.from(byDay.values()) };
+    });
+  }, [chartData]);
 
-  const minVal = Math.max(0, Math.min(...allValues) - 5);
-  const maxVal = Math.min(100, Math.max(...allValues) + 5);
-  const range = maxVal - minVal || 1;
+  const minVal = 0;
+  const maxVal = 100;
+  const range = 100;
 
   function toY(val: number): number {
     return innerHeight - ((val - minVal) / range) * innerHeight;
@@ -54,7 +58,7 @@ export function HumidityChart({ chartData, humidityUpper, humidityLower }: Humid
 
   // Build SVG-less chart using View bars per quadrant
   // We'll render a simple layered line chart using absolute positioned Views
-  const hasData = chartData.some((d) => d.readings.length > 0);
+  const hasData = aggregatedData.some((d) => d.readings.length > 0);
 
   if (!hasData) {
     return (
@@ -125,7 +129,7 @@ export function HumidityChart({ chartData, humidityUpper, humidityLower }: Humid
           </Text>
 
           {/* Quadrant bar charts stacked */}
-          {chartData.map((qd, qi) => {
+          {aggregatedData.map((qd, qi) => {
             if (!qd.readings.length) return null;
             const color = QUADRANT_COLORS[qi] ?? Colors.primary;
             return (
@@ -157,7 +161,7 @@ export function HumidityChart({ chartData, humidityUpper, humidityLower }: Humid
       {/* X-axis labels */}
       <View style={{ flexDirection: 'row', marginLeft: paddingLeft, marginTop: 4 }}>
         {(() => {
-          const firstQ = chartData.find((d) => d.readings.length > 0);
+          const firstQ = aggregatedData.find((d) => d.readings.length > 0);
           if (!firstQ) return null;
           const r = firstQ.readings;
           return (

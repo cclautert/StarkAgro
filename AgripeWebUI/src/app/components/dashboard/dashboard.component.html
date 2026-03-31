@@ -10,7 +10,7 @@
           [(ngModel)]="selectedSensorId"
           (ngModelChange)="onSensorChange()">
           <option *ngFor="let sensor of sensors" [ngValue]="sensor.id">
-            {{ sensor.code }}
+            {{ sensor.name }}
           </option>
         </select>
       </div>

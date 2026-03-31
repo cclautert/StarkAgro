@@ -2,6 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { PivotService } from '../../services/pivot.service';
 import { Pivot } from '../../models/pivot.model';
 
@@ -10,13 +11,14 @@ import { Pivot } from '../../models/pivot.model';
   templateUrl: './pivot-form.component.html',
   styleUrl: './pivot-form.component.css', // O CSS pode ser o mesmo
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, MatSnackBarModule],
 })
 export class PivotFormComponent implements OnInit {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private pivotService = inject(PivotService);
+  private snackBar = inject(MatSnackBar);
 
   pivotForm: FormGroup;
   pivotId: number | null = null;
@@ -57,24 +59,24 @@ export class PivotFormComponent implements OnInit {
           // Para edição, enviamos o formulário para o método de atualização
           this.pivotService.updatePivot(formValue).subscribe({
             next: () => {
-              alert('Pivot atualizado com sucesso!');
+              this.snackBar.open('Pivot atualizado com sucesso!', 'OK', { duration: 3000 });
               this.router.navigate(['/pivots']);
             },
             error: (err) => {
                 console.error('Erro ao atualizar pivot', err);
-                alert('Erro ao atualizar o pivot.');
+                this.snackBar.open('Erro ao atualizar o pivot.', 'Fechar', { duration: 4000 });
             }
           });
         } else {
           // Para criação, enviamos para o método de criação
           this.pivotService.addPivot(formValue).subscribe({
             next: () => {
-              alert('Pivot criado com sucesso!');
+              this.snackBar.open('Pivot criado com sucesso!', 'OK', { duration: 3000 });
               this.router.navigate(['/pivots']);
             },
             error: (err) => {
                 console.error('Erro ao criar pivot', err);
-                alert('Erro ao criar o pivot.');
+                this.snackBar.open('Erro ao criar o pivot.', 'Fechar', { duration: 4000 });
             }
           });
         }

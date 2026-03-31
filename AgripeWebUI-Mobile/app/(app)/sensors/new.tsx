@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Alert, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, Alert, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Picker } from '@react-native-picker/picker';
+import { CameraView, useCameraPermissions } from 'expo-camera';
 import { sensorService } from '../../../services/sensorService';
 import { pivotService } from '../../../services/pivotService';
 import { Pivot } from '../../../types/api';
@@ -20,6 +21,8 @@ export default function NewSensorScreen() {
   const [name, setName] = useState('');
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
+  const [scanning, setScanning] = useState(false);
+  const [permission, requestPermission] = useCameraPermissions();
 
   useEffect(() => {
     pivotService.getAll().then((data) => {
@@ -27,6 +30,14 @@ export default function NewSensorScreen() {
       if (data.length > 0) setSelectedPivotId(data[0].id);
     });
   }, []);
+
+  const handleScanPress = async () => {
+    if (!permission?.granted) {
+      const { granted } = await requestPermission();
+      if (!granted) { Alert.alert('Permissão necessária', 'Câmera não autorizada'); return; }
+    }
+    setScanning(true);
+  };
 
   const handleSave = async () => {
     if (!code.trim()) { Alert.alert('Erro', 'Informe o código do sensor'); return; }
@@ -53,7 +64,14 @@ export default function NewSensorScreen() {
       </View>
       <ScrollView contentContainerStyle={{ padding: 16 }}>
         <LabeledInput label="Nome (opcional)" value={name} onChangeText={setName} placeholder="Ex: Sensor Norte" />
-        <LabeledInput label="Código *" value={code} onChangeText={setCode} placeholder="Ex: SNS-001" autoCapitalize="characters" />
+        <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 8 }}>
+          <View style={{ flex: 1 }}>
+            <LabeledInput label="Código *" value={code} onChangeText={setCode} placeholder="Ex: SNS-001" autoCapitalize="characters" />
+          </View>
+          <TouchableOpacity onPress={handleScanPress} style={styles.scanBtn}>
+            <Ionicons name="qr-code-outline" size={22} color="#fff" />
+          </TouchableOpacity>
+        </View>
 
         <Text style={{ color: Colors.textSecondary, fontSize: 13, marginBottom: 6 }}>Pivô</Text>
         <Card style={{ marginBottom: 16 }}>
@@ -71,6 +89,43 @@ export default function NewSensorScreen() {
 
         <Button title="Salvar" onPress={handleSave} loading={loading} />
       </ScrollView>
+
+      {scanning && (
+        <View style={StyleSheet.absoluteFill}>
+          <CameraView
+            style={StyleSheet.absoluteFill}
+            facing="back"
+            onBarcodeScanned={({ data }) => {
+              setCode(data);
+              setScanning(false);
+            }}
+            barcodeScannerSettings={{ barcodeTypes: ['qr'] }}
+          />
+          <TouchableOpacity onPress={() => setScanning(false)} style={styles.cancelScan}>
+            <Text style={{ color: '#fff', fontWeight: '700', fontSize: 16 }}>Cancelar</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  scanBtn: {
+    backgroundColor: '#607D8B',
+    padding: 10,
+    borderRadius: 8,
+    marginBottom: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cancelScan: {
+    position: 'absolute',
+    bottom: 48,
+    alignSelf: 'center',
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 24,
+  },
+});

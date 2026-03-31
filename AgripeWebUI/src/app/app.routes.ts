@@ -23,6 +23,7 @@ export const routes: Routes = [
   {
     path: '',
     component: LayoutComponent,
+    canActivate: [AuthGuard],
     children: [
       { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
       { path: 'dashboard/:pivoId/:quadrante', component: DashboardComponent, canActivate: [AuthGuard] },
@@ -43,6 +44,5 @@ export const routes: Routes = [
   },
 
   // Global redirects
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: '**', redirectTo: 'login' }
 ];

@@ -3,6 +3,8 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatIconModule } from '@angular/material/icon';
 import { SensorService } from '../../services/sensor.service';
 import { PivotService } from '../../services/pivot.service';
 import { Sensor } from '../../models/sensor.model';
@@ -12,7 +14,7 @@ import { forkJoin } from 'rxjs';
 @Component({
   selector: 'app-sensor-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, MatSnackBarModule, MatIconModule],
   templateUrl: './sensor-form.component.html',
   styleUrl: './sensor-form.component.css' // O CSS pode ser o mesmo
 })
@@ -22,6 +24,9 @@ export class SensorFormComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private sensorService = inject(SensorService);
   private pivotService = inject(PivotService);
+  private snackBar = inject(MatSnackBar);
+
+  isScanning = false;
 
   sensorForm: FormGroup;
   isEditMode = false;
@@ -85,24 +90,24 @@ export class SensorFormComponent implements OnInit {
       // Para edição, enviamos o formulário para o método de atualização
       this.sensorService.updateSensor(formValue).subscribe({
         next: () => {
-          alert('Sensor atualizado com sucesso!');
+          this.snackBar.open('Sensor atualizado com sucesso!', 'OK', { duration: 3000 });
           this.router.navigate(['/sensores']);
         },
         error: (err) => {
             console.error('Erro ao atualizar sensor', err);
-            alert('Erro ao atualizar o sensor.');
+            this.snackBar.open('Erro ao atualizar o sensor.', 'Fechar', { duration: 4000 });
         }
       });
     } else {
       // Para criação, enviamos para o método de criação
       this.sensorService.addSensor(formValue).subscribe({
         next: () => {
-          alert('Sensor criado com sucesso!');
+          this.snackBar.open('Sensor criado com sucesso!', 'OK', { duration: 3000 });
           this.router.navigate(['/sensores']);
         },
         error: (err) => {
             console.error('Erro ao criar sensor', err);
-            alert('Erro ao criar o sensor.');
+            this.snackBar.open('Erro ao criar o sensor.', 'Fechar', { duration: 4000 });
         }
       });
     }
@@ -154,4 +159,53 @@ export class SensorFormComponent implements OnInit {
   get pivot() { return this.sensorForm.get('pivot'); }
   get code() { return this.sensorForm.get('code'); }
   get quadrante() { return this.sensorForm.get('quadrante'); }
+
+  async scanQrCode(): Promise<void> {
+    if (this.isScanning) return;
+
+    if (!('BarcodeDetector' in window)) {
+      this.snackBar.open('Leitor de QR Code não suportado neste navegador.', 'Fechar', { duration: 4000 });
+      return;
+    }
+
+    let stream: MediaStream | null = null;
+    try {
+      this.isScanning = true;
+      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+
+      const video = document.createElement('video');
+      video.srcObject = stream;
+      video.setAttribute('playsinline', 'true');
+      await video.play();
+
+      const canvas = document.createElement('canvas');
+      // @ts-ignore
+      const detector = new BarcodeDetector({ formats: ['qr_code'] });
+
+      const result = await new Promise<string>((resolve, reject) => {
+        let attempts = 0;
+        const scan = async () => {
+          attempts++;
+          if (attempts > 100) { reject(new Error('QR code não encontrado.')); return; }
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          canvas.getContext('2d')!.drawImage(video, 0, 0);
+          try {
+            const barcodes = await detector.detect(canvas);
+            if (barcodes.length > 0) { resolve(barcodes[0].rawValue); }
+            else { setTimeout(scan, 150); }
+          } catch { setTimeout(scan, 150); }
+        };
+        scan();
+      });
+
+      this.sensorForm.patchValue({ code: result });
+      this.snackBar.open('QR Code lido com sucesso!', 'OK', { duration: 3000 });
+    } catch (err: any) {
+      this.snackBar.open(err?.message ?? 'Erro ao acessar a câmera.', 'Fechar', { duration: 4000 });
+    } finally {
+      stream?.getTracks().forEach(t => t.stop());
+      this.isScanning = false;
+    }
+  }
 }
