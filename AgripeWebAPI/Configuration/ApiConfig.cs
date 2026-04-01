@@ -69,6 +69,14 @@ namespace AgripeWebAPI.Configuration
                     limiterOptions.Window = TimeSpan.FromSeconds(10);
                     limiterOptions.QueueLimit = 0;
                 });
+
+                options.AddSlidingWindowLimiter("login", limiterOptions =>
+                {
+                    limiterOptions.PermitLimit = 10;
+                    limiterOptions.Window = TimeSpan.FromMinutes(1);
+                    limiterOptions.SegmentsPerWindow = 2;
+                    limiterOptions.QueueLimit = 0;
+                });
             });
         }
 

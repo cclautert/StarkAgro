@@ -3,6 +3,7 @@ using AgripeWebAPI.Domain.Commands.Responses.Users;
 using AgripeWebAPI.Models.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace AgripeWebAPI.Controllers
 {
@@ -14,6 +15,7 @@ namespace AgripeWebAPI.Controllers
         }
 
         [HttpPost("LogIn")]
+        [EnableRateLimiting("login")]
         public async Task<ActionResult<UserTokenResponse>> LogIn(
             [FromServices] IMediator mediator,
             [FromBody] UserTokenRequest command,
@@ -23,13 +25,16 @@ namespace AgripeWebAPI.Controllers
 
             var result = await mediator.Send(command, cancellationToken);
 
-            if (result == null)
+            return result.ErrorCode switch
             {
-                NotifyError("Email ou senha inválidos.");
-                return CustomResponse(null, System.Net.HttpStatusCode.Unauthorized);
-            }
-
-            return Ok(result);
+                LoginErrorCode.AccountInactive =>
+                    StatusCode(403, new { errors = new[] { "Conta desativada." } }),
+                LoginErrorCode.TooManyAttempts =>
+                    StatusCode(429, new { errors = new[] { "Muitas tentativas. Tente novamente em alguns minutos." } }),
+                LoginErrorCode.InvalidCredentials =>
+                    StatusCode(401, new { errors = new[] { "Email ou senha inválidos." } }),
+                _ => Ok(result)
+            };
         }
 
         /// <summary>
@@ -50,7 +55,10 @@ namespace AgripeWebAPI.Controllers
 
             var result = await mediator.Send(command, cancellationToken);
 
-            if (result == null)
+            if (result?.ErrorCode == LoginErrorCode.AccountInactive)
+                return StatusCode(403, new { errors = new[] { "Conta desativada." } });
+
+            if (result == null || result.ErrorCode != LoginErrorCode.None)
             {
                 NotifyError("Falha no login com o provedor externo.");
                 return CustomResponse(null, System.Net.HttpStatusCode.Unauthorized);

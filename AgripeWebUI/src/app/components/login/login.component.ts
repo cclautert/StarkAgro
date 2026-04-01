@@ -76,7 +76,13 @@ export class LoginComponent {
         }
       },
       error: (err) => {
-        this.snackBar.open('Usuário ou senha inválidos.', 'Fechar', { duration: 4000 });
+        if (err.status === 403) {
+          this.snackBar.open('Contate o suporte técnico.', 'Fechar', { duration: 0 });
+        } else if (err.status === 429) {
+          this.snackBar.open('Muitas tentativas. Tente novamente em alguns minutos.', 'Fechar', { duration: 6000 });
+        } else {
+          this.snackBar.open('Usuário ou senha inválidos.', 'Fechar', { duration: 4000 });
+        }
       }
     });
   }

@@ -3,6 +3,7 @@ using AgripeWebAPI.Domain.Commands.Responses.Users;
 using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Entities;
 using AgripeWebAPI.Models.Interfaces;
+using AgripeWebAPI.Services;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
@@ -15,17 +16,25 @@ namespace AgripeWebAPI.Domain.Handlers.Users
         private readonly IPasswordHasher _passwordHasher;
         private readonly IJwtTokenService _jwtTokenService;
         private readonly ILogger<GetToken> _logger;
+        private readonly ILoginAttemptService _loginAttemptService;
 
-        public GetToken(agpDBContext dbContext, IPasswordHasher passwordHasher, IJwtTokenService jwtTokenService, ILogger<GetToken> logger)
+        public GetToken(agpDBContext dbContext, IPasswordHasher passwordHasher, IJwtTokenService jwtTokenService, ILogger<GetToken> logger, ILoginAttemptService loginAttemptService)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             _passwordHasher = passwordHasher ?? throw new ArgumentNullException(nameof(passwordHasher));
             _jwtTokenService = jwtTokenService ?? throw new ArgumentNullException(nameof(jwtTokenService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _loginAttemptService = loginAttemptService ?? throw new ArgumentNullException(nameof(loginAttemptService));
         }
 
         public async Task<UserTokenResponse> Handle(UserTokenRequest request, CancellationToken cancellationToken)
         {
+            if (_loginAttemptService.IsLockedOut(request.Email))
+            {
+                _logger.LogWarning("Login blocked - too many attempts for email: {Email}", request.Email);
+                return new UserTokenResponse { ErrorCode = LoginErrorCode.TooManyAttempts };
+            }
+
             User? user = await _dbContext.Users
                 .Find(x => x.Email == request.Email)
                 .FirstOrDefaultAsync(cancellationToken);
@@ -33,19 +42,21 @@ namespace AgripeWebAPI.Domain.Handlers.Users
             if (user == null)
             {
                 _logger.LogWarning("Login attempt with non-existent email: {Email}", request.Email);
-                return null!;
+                _loginAttemptService.RecordFailure(request.Email);
+                return new UserTokenResponse { ErrorCode = LoginErrorCode.InvalidCredentials };
             }
 
             if (!user.Active)
             {
                 _logger.LogWarning("Login attempt for inactive user: {UserId}, {Email}", user.Id, request.Email);
-                return null!;
+                return new UserTokenResponse { ErrorCode = LoginErrorCode.AccountInactive };
             }
 
             if (!_passwordHasher.VerifyPassword(request.Password, user.Password))
             {
                 _logger.LogWarning("Failed login attempt - invalid password for user: {UserId}, {Email}", user.Id, request.Email);
-                return null!;
+                _loginAttemptService.RecordFailure(request.Email);
+                return new UserTokenResponse { ErrorCode = LoginErrorCode.InvalidCredentials };
             }
 
             // If password was plain text (legacy), hash it now for future logins
@@ -56,6 +67,7 @@ namespace AgripeWebAPI.Domain.Handlers.Users
                 await _dbContext.Users.ReplaceOneAsync(x => x.Id == user.Id, user, cancellationToken: cancellationToken);
             }
 
+            _loginAttemptService.ResetFailures(request.Email);
             _logger.LogInformation("Successful login for user: {UserId}, {Email}", user.Id, request.Email);
 
             return new UserTokenResponse { Token = await _jwtTokenService.GenerateTokenAsync(user, cancellationToken) };

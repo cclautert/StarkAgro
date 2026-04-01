@@ -41,7 +41,7 @@
   <mat-sidenav-content>
     <mat-toolbar class="main-toolbar" *ngIf="showLayout">
       <button mat-icon-button (click)="sidenav.toggle()">
-        <mat-icon>menu</mat-icon>
+        <mat-icon>{{ sidenav.opened ? 'menu_open' : 'menu' }}</mat-icon>
       </button>
       <span class="toolbar-title">AgripeWeb</span>
       <span class="toolbar-subtitle">Monitoramento de Irrigação</span>

@@ -18,6 +18,8 @@ namespace AgripeWebAPI.Configuration
             services.AddScoped<IJwtTokenService, JwtTokenService>();
             services.AddHttpContextAccessor();
             services.AddScoped<ICurrentUserContext, CurrentUserContext>();
+            services.AddMemoryCache();
+            services.AddSingleton<ILoginAttemptService, LoginAttemptService>();
 
             // Business
             services.AddScoped<INotifier, Notificator>();

@@ -161,7 +161,7 @@ namespace AgripeWebAPI.Domain.Handlers.Users
             else if (!user.Active)
             {
                 _logger.LogWarning("Inactive user attempted Google login: {Email}", user.Email);
-                return null;
+                return new UserTokenResponse { ErrorCode = LoginErrorCode.AccountInactive };
             }
 
             var token = await _jwtTokenService.GenerateTokenAsync(user, cancellationToken);
