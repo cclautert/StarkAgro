@@ -1,9 +1,47 @@
 @import '@angular/material/prebuilt-themes/indigo-pink.css';
 
-body {
+/* ── CSS Variables ── */
+:root {
+  --bg-primary:   #0f1729;
+  --bg-surface:   #1a2540;
+  --bg-elevated:  #253152;
+  --border:       #2d3f5e;
+  --border-light: #3a4f75;
+  --text-primary: #e2e8f0;
+  --text-muted:   #a0aec0;
+  --accent:       #2563eb;
+  --accent-hover: #1d4ed8;
+  --success:      #22c55e;
+  --warning:      #f97316;
+  --danger:       #ef4444;
+}
+
+/* ── Base Reset ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
   margin: 0;
+  overflow-x: hidden;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
   font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+/* ── Material Overrides ── */
+.mat-toolbar {
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+.mat-sidenav {
+  background-color: var(--bg-surface) !important;
+  color: var(--text-primary) !important;
+  border-right: 1px solid var(--border) !important;
+}
+
+.mat-sidenav-content {
+  background-color: var(--bg-primary) !important;
+}

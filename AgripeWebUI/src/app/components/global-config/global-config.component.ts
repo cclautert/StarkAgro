@@ -3,18 +3,20 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-global-config',
   templateUrl: './global-config.component.html',
   styleUrl: './global-config.component.css',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, MatSnackBarModule],
 })
 export class GlobalConfigComponent implements OnInit {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private userService = inject(UserService);
+  private snackBar = inject(MatSnackBar);
 
   configForm: FormGroup;
 
@@ -46,12 +48,12 @@ export class GlobalConfigComponent implements OnInit {
 
     this.userService.updateLimits(limiteInferior, limiteSuperior).subscribe({
       next: () => {
-        alert('Configuração salva com sucesso!');
+        this.snackBar.open('Configuração salva com sucesso!', 'OK', { duration: 3000 });
         this.router.navigate(['/home']);
       },
       error: (err) => {
         console.error('Erro ao salvar configuração', err);
-        alert('Erro ao salvar a configuração.');
+        this.snackBar.open('Erro ao salvar a configuração.', 'Fechar', { duration: 4000 });
       }
     });
   }

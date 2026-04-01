@@ -1,76 +1,88 @@
 .container {
-  font-family: Arial, sans-serif;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #f9f9f9;
+  padding: 24px 16px;
   max-width: 700px;
-  margin: 40px auto;
+  margin: 0 auto;
 }
 
 .config-button-box {
   width: 100%;
   display: flex;
   justify-content: flex-end;
-  margin-bottom: 10px;
+  margin-bottom: 16px;
 }
 
 .btn-config {
-  padding: 8px 16px;
-  background-color: #607D8B;
-  color: white;
-  border: none;
-  border-radius: 4px;
+  padding: 8px 18px;
+  background-color: #253152;
+  color: #e2e8f0;
+  border: 1px solid #3a4f75;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 0.9em;
+  font-size: 0.9rem;
+  transition: background-color 0.15s;
 }
 
 .btn-config:hover {
-  background-color: #455A64;
+  background-color: #2563eb;
+  border-color: #2563eb;
 }
 
 .selector-box {
-  margin-bottom: 30px;
+  margin-bottom: 28px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
 }
 
 .selector-box label {
   margin-bottom: 8px;
-  font-size: 1.1em;
-  color: #333;
+  font-size: 1rem;
+  color: #a0aec0;
 }
 
 .pivot-selector {
-  padding: 10px;
-  font-size: 1em;
-  border-radius: 5px;
-  border: 1px solid #ddd;
+  padding: 10px 14px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #3a4f75;
+  background: #253152;
+  color: #e2e8f0;
   min-width: 250px;
+  width: 100%;
+  max-width: 360px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.pivot-selector:focus {
+  border-color: #2563eb;
 }
 
 .circle-container {
   width: 100%;
-  max-width: 600px; /* Define o tamanho máximo do círculo */
+  max-width: 560px;
+  background: #1a2540;
+  border: 1px solid #2d3f5e;
+  border-radius: 16px;
+  padding: 16px;
 }
 
 .quadrant-circle path {
-  /* Adiciona uma borda sutil para separar os quadrantes */
-  stroke: #ffffff;
+  stroke: #0f1729;
   stroke-width: 2px;
-  transition: fill 0.3s ease-in-out; /* Animação suave na troca de cor */
+  transition: fill 0.3s ease-in-out;
 }
 
 .quadrant-circle path:hover {
-  opacity: 0.85; /* Efeito visual ao passar o mouse */
+  opacity: 0.85;
   cursor: pointer;
 }
 
-/* Estilo para o grupo clicável (path + text) */
 .clickable-quadrant {
   cursor: pointer;
   transition: opacity 0.2s ease-in-out;
@@ -80,7 +92,6 @@
   opacity: 0.85;
 }
 
-/* Número do quadrante próximo ao centro */
 .quadrant-number {
   font-size: 7px;
   fill: rgba(255,255,255,0.9);
@@ -91,19 +102,18 @@
   pointer-events: none;
 }
 
-/* Estilo para o texto da média */
 .quadrant-text {
-  /* Posicionamento e Alinhamento */
-  text-anchor: middle; /* Centraliza o texto horizontalmente na coordenada X */
-  dominant-baseline: middle; /* Centraliza o texto verticalmente na coordenada Y */
-
-  /* Aparência */
+  text-anchor: middle;
+  dominant-baseline: middle;
   font-family: Arial, sans-serif;
-  font-size: 4px; /* Ajuste o tamanho conforme necessário */
+  font-size: 4px;
   font-weight: bold;
-  fill: white; /* Cor do texto, branco geralmente funciona bem */
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7); /* Sombra para melhorar o contraste */
-
-  /* ESSENCIAL: Impede que o texto capture eventos de mouse */
+  fill: white;
   pointer-events: none;
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 16px 8px;
+  }
 }

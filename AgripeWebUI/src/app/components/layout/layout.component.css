@@ -1,52 +1,133 @@
 .sidenav-container {
-  height: 100vh; /* Ocupa a altura total da tela */
+  height: 100vh;
 }
 
+/* ── Sidebar ── */
 .sidenav {
   width: 220px;
-  background-color: #f4f4f4;
+  background-color: #1a2540;
+  border-right: 1px solid #2d3f5e !important;
 }
 
-.sidenav .mat-toolbar {
-  background: inherit;
-  border-bottom: 1px solid rgba(0,0,0,.1);
-}
-
-.mat-nav-list a {
+.sidenav-header {
   display: flex;
   align-items: center;
-  gap: 15px; /* Espaço entre o ícone e o texto */
+  gap: 10px;
+  padding: 20px 16px 16px;
+  border-bottom: 1px solid #2d3f5e;
+}
+
+.sidenav-logo {
+  font-size: 1.6rem;
+}
+
+.sidenav-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #e2e8f0;
+  letter-spacing: 0.5px;
+}
+
+/* ── Nav Links ── */
+.sidenav-nav {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 16px;
+  margin: 2px 8px;
+  border-radius: 8px;
+  color: #e2e8f0;
   text-decoration: none;
-  color: #333;
-}
-
-/* Estilo para o link ativo */
-.active-link {
-  background-color: rgba(63, 81, 181, 0.1); /* Cor primária com transparência */
-  color: #3F51B5; /* Cor primária do tema Indigo/Pink */
-  font-weight: bold;
-}
-
-.mat-nav-list a.logout-link {
+  font-size: 0.95rem;
+  font-weight: 500;
   cursor: pointer;
+  transition: background 0.15s, color 0.15s;
 }
 
+.nav-link mat-icon {
+  color: #a0aec0;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  transition: color 0.15s;
+}
+
+.nav-link:hover {
+  background-color: #253152;
+  color: #e2e8f0;
+}
+
+.nav-link:hover mat-icon {
+  color: #e2e8f0;
+}
+
+.active-link {
+  background-color: rgba(37, 99, 235, 0.2) !important;
+  color: #60a5fa !important;
+}
+
+.active-link mat-icon {
+  color: #60a5fa !important;
+}
+
+.logout-link {
+  margin-top: 8px;
+  border-top: 1px solid #2d3f5e;
+  padding-top: 14px;
+  margin-top: 12px;
+}
+
+/* ── Toolbar ── */
+.main-toolbar {
+  background-color: #0f1729 !important;
+  border-bottom: 1px solid #2d3f5e;
+  color: #e2e8f0 !important;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.main-toolbar button mat-icon {
+  color: #e2e8f0;
+}
+
+.toolbar-title {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #e2e8f0;
+  margin-left: 8px;
+}
+
+.toolbar-subtitle {
+  font-size: 0.8rem;
+  color: #a0aec0;
+  margin-left: 8px;
+}
+
+/* ── Main Content ── */
 .main-content {
   padding: 20px;
+  background-color: #0f1729;
+  min-height: calc(100vh - 64px);
 }
 
-
-/* MEDIA QUERIES PARA CELULARES */
+/* ── Mobile ── */
 @media (max-width: 768px) {
   .sidenav {
-     width: 130px;
+    width: 240px;
   }
 
-  .buttons {
-    justify-content: center;
+  .toolbar-subtitle {
+    display: none;
   }
 
-  .main {
-    padding: 10px;
+  .main-content {
+    padding: 12px;
   }
 }

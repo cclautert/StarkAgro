@@ -4,6 +4,7 @@ import { ApiService } from '../../services/api.service';
 import { FormsModule } from '@angular/forms';
 import { jwtDecode } from 'jwt-decode';
 import { environment } from '../../../environments/environment';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 interface DecodedToken {
   id: number;
@@ -28,7 +29,7 @@ export class LoginComponent {
     return !!environment.googleClientId?.trim();
   }
 
-  constructor(private fb: FormsModule, private apiService: ApiService, private router: Router) {}
+  constructor(private fb: FormsModule, private apiService: ApiService, private router: Router, private snackBar: MatSnackBar) {}
 
   loginWithGoogle(): void {
     if (!this.googleLoginEnabled) return;
@@ -65,17 +66,17 @@ export class LoginComponent {
 
           } catch (error) {
             console.error("Erro ao decodificar o token:", error);
-            alert('Token inválido ou corrompido.');
+            this.snackBar.open('Token inválido ou corrompido.', 'Fechar', { duration: 4000 });
           }
 
 
           this.router.navigate(['/home']);
         } else {
-          alert('Token inválido');
+          this.snackBar.open('Token inválido.', 'Fechar', { duration: 4000 });
         }
       },
       error: (err) => {
-        alert('Usuário ou senha inválidos');
+        this.snackBar.open('Usuário ou senha inválidos.', 'Fechar', { duration: 4000 });
       }
     });
   }

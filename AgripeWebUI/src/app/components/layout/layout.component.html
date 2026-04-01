@@ -1,42 +1,55 @@
 <mat-sidenav-container class="sidenav-container">
 
-  <!-- SIDENAV (Menu Lateral) -->
-  <mat-sidenav [opened]="showLayout" #sidenav class="sidenav" mode="side">
-    <mat-toolbar>Menu</mat-toolbar>
-    <mat-nav-list>
-      <a mat-list-item routerLink="/home" routerLinkActive="active-link">
-        <mat-icon>home</mat-icon> Home
+  <!-- Sidebar -->
+  <mat-sidenav
+    #sidenav
+    class="sidenav"
+    [opened]="showLayout && !(isSmallScreen$ | async)"
+    [mode]="(isSmallScreen$ | async) ? 'over' : 'side'">
+
+    <div class="sidenav-header">
+      <span class="sidenav-logo">💧</span>
+      <span class="sidenav-title">AgripeWeb</span>
+    </div>
+
+    <nav class="sidenav-nav">
+      <a class="nav-link" routerLink="/home" routerLinkActive="active-link">
+        <mat-icon>home</mat-icon>
+        <span>Início</span>
       </a>
-      <a mat-list-item routerLink="/irrigation-dashboard" routerLinkActive="active-link">
-        <mat-icon>show_chart</mat-icon> Graph
+      <a class="nav-link" routerLink="/irrigation-dashboard" routerLinkActive="active-link">
+        <mat-icon>show_chart</mat-icon>
+        <span>Gráficos</span>
       </a>
-      <a mat-list-item routerLink="/sensores" routerLinkActive="active-link">
-        <mat-icon>sensors</mat-icon> Sensors
+      <a class="nav-link" routerLink="/sensores" routerLinkActive="active-link">
+        <mat-icon>sensors</mat-icon>
+        <span>Sensores</span>
       </a>
-      <a mat-list-item routerLink="/pivots" routerLinkActive="active-link">
-        <mat-icon>pivot_table_chart</mat-icon> Pivots
+      <a class="nav-link" routerLink="/pivots" routerLinkActive="active-link">
+        <mat-icon>rotate_right</mat-icon>
+        <span>Pivôs</span>
       </a>
 
-      <a mat-list-item (click)="logout()" class="logout-link">
-        <mat-icon>logout</mat-icon> LogOut
+      <a class="nav-link logout-link" (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        <span>Sair</span>
       </a>
-    </mat-nav-list>
+    </nav>
   </mat-sidenav>
 
-  <!-- CONTEÚDO PRINCIPAL -->
+  <!-- Main Content -->
   <mat-sidenav-content>
     <mat-toolbar class="main-toolbar" *ngIf="showLayout">
-      <button mat-icon-button (click)="sidenav.toggle()" [hidden]="!showLayout">
+      <button mat-icon-button (click)="sidenav.toggle()">
         <mat-icon>menu</mat-icon>
       </button>
-      <span></span>
+      <span class="toolbar-title">AgripeWeb</span>
+      <span class="toolbar-subtitle">Monitoramento de Irrigação</span>
     </mat-toolbar>
 
-    <!-- O conteúdo da página atual (Home, Pivots, etc.) será renderizado aqui -->
     <main class="main-content">
       <router-outlet></router-outlet>
     </main>
-
   </mat-sidenav-content>
 
 </mat-sidenav-container>

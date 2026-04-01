@@ -3,19 +3,21 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PivotService } from '../../services/pivot.service';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-pivot-config',
   templateUrl: './pivot-config.component.html',
   styleUrl: './pivot-config.component.css',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, MatSnackBarModule],
 })
 export class PivotConfigComponent implements OnInit {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private pivotService = inject(PivotService);
+  private snackBar = inject(MatSnackBar);
 
   configForm: FormGroup;
   pivoId: number | null = null;
@@ -52,12 +54,12 @@ export class PivotConfigComponent implements OnInit {
 
     this.pivotService.updateLimits(this.pivoId, limiteInferior, limiteSuperior).subscribe({
       next: () => {
-        alert('Configuração salva com sucesso!');
+        this.snackBar.open('Configuração salva com sucesso!', 'OK', { duration: 3000 });
         this.voltar();
       },
       error: (err) => {
         console.error('Erro ao salvar configuração', err);
-        alert('Erro ao salvar a configuração.');
+        this.snackBar.open('Erro ao salvar a configuração.', 'Fechar', { duration: 4000 });
       }
     });
   }

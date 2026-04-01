@@ -12,6 +12,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BaseChartDirective, provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { AppComponent } from './app.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
@@ -50,6 +51,7 @@ import { IrrigationDashboardComponent } from './components/irrigation-dashboard/
     MatSidenavModule,
     MatListModule,
     MatIconModule,
+    MatSnackBarModule,
     BaseChartDirective,
     RouterModule,
     FormsModule,

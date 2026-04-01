@@ -39,7 +39,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       {
         data: [],
         label: 'Sensor Values',
-        borderColor: 'rgba(0,0,0,0.8)',
+        borderColor: '#06b6d4',
         backgroundColor: 'transparent',
         fill: false,
         pointRadius: 3,
@@ -89,6 +89,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   public lineChartOptions: ChartConfiguration['options'] = {
     responsive: true,
+    maintainAspectRatio: false,
     scales: {
       x: {
         title: { display: true, text: 'Data' },

@@ -6,6 +6,7 @@ import { PivotService } from '../../services/pivot.service';
 import { ApiService } from '../../services/api.service';
 import { Quadrante } from '../../models/quadrante.model';
 import { Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-home',
@@ -30,7 +31,8 @@ export class HomeComponent implements OnInit {
   constructor(
     private pivotService: PivotService,
     private apiService: ApiService,
-   private router: Router) { }
+    private router: Router,
+    private snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
     this.pivotService.getPivots().subscribe(pivots => {
@@ -100,7 +102,7 @@ export class HomeComponent implements OnInit {
     console.log(`Cor: ${color}`);
     console.log(`Média: ${avgDisplay}`);
 
-    alert(`Quadrante: ${quadranteName}\nCor: ${color}\nMédia: ${avgDisplay}`);
+    this.snackBar.open(`Quadrante: ${quadranteName} | Média: ${avgDisplay}`, 'OK', { duration: 4000 });
   }
 
   public goToConfig(): void {

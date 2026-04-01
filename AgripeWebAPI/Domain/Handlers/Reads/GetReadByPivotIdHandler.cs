@@ -47,6 +47,19 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
                           .ToList()
                 );
 
+            // Buscar dados do pivô (nome e limites) e do usuário (limites padrão)
+            var pivot = await _dbContext.Pivots
+                .Find(p => p.Id == request.PivotId)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            var user = await _dbContext.Users
+                .Find(u => u.Id == request.UserId)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            // Resolver limites com hierarquia: pivô > usuário > padrão
+            var limiteInferior = (double)(pivot?.LimiteInferior ?? user?.LimiteInferior ?? 25m);
+            var limiteSuperior = (double)(pivot?.LimiteSuperior ?? user?.LimiteSuperior ?? 75m);
+
             // Para a média do quadrante: usar apenas a leitura mais recente de cada sensor
             var latestReads = new List<ReadSensor>();
             foreach (var sensorId in sensorIds)
@@ -71,20 +84,11 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
                     result => result.NumeroQuadrante,
                     result => (
                         Average: (decimal)result.Media,
-                        Color: (result.Media < 25) ? "#F44336" :
-                               (result.Media < 85) ? "#4CAF50" :
-                               "#2196F3"
+                        Color: (result.Media < limiteInferior) ? "#F44336" :
+                               (result.Media > limiteSuperior) ? "#2196F3" :
+                               "#4CAF50"
                     )
                 );
-
-            // Buscar dados do pivô (nome e limites) e do usuário (limites padrão)
-            var pivot = await _dbContext.Pivots
-                .Find(p => p.Id == request.PivotId)
-                .FirstOrDefaultAsync(cancellationToken);
-
-            var user = await _dbContext.Users
-                .Find(u => u.Id == request.UserId)
-                .FirstOrDefaultAsync(cancellationToken);
 
             // --- Etapa 2: Construir o objeto de resposta final ---
             var response = new GetReadByPivotIdResponse

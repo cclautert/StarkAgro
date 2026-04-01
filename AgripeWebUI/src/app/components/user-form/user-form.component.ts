@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-user-form',
@@ -17,6 +18,7 @@ export class UserFormComponent {
     private fb: FormBuilder,
     private router: Router,
     private userService: UserService,
+    private snackBar: MatSnackBar,
   ) {
     this.userForm = this.fb.group({
       name: ['', Validators.required],
@@ -44,8 +46,8 @@ export class UserFormComponent {
   onSubmit(): void {
     if (this.userForm.valid) {
       this.userService.updateUser(this.userForm.value).subscribe({
-        next: () => alert('User added successfully'),
-        error: () => alert('Error adding user')
+        next: () => this.snackBar.open('Usuário atualizado com sucesso!', 'OK', { duration: 3000 }),
+        error: () => this.snackBar.open('Erro ao atualizar usuário.', 'Fechar', { duration: 4000 })
       });
     }
   };

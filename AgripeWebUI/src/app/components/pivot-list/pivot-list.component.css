@@ -1,54 +1,139 @@
 .container {
-  max-width: 960px;
-  margin: 2rem auto;
-  padding: 1rem;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px 16px;
 }
 
-.table-pivots {
-  width: 100%;
-  margin-top: 1rem;
-  border-collapse: collapse;
-  table-layout: fixed;
+/* Header */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
-.table-pivots th, .table-pivots td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #e2e8f0;
+  margin: 0;
 }
 
-.table-pivots th {
-  background-color: #f2f2f2;
-}
-
-.btn {
-  padding: 8px 12px;
+.btn-add {
+  padding: 9px 20px;
+  background-color: #2563eb;
+  color: #fff;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
   cursor: pointer;
-  margin-right: 5px;
-  color: white;
+  transition: background-color 0.15s;
+  white-space: nowrap;
 }
 
-.btn-primary { background-color: #007bff; }
-.btn-secondary { background-color: #6c757d; }
-.btn-danger { background-color: #dc3545; }
-
-.status-ativo {
-  color: green;
-  font-weight: bold;
-}
-.status-inativo {
-  color: red;
-  font-weight: bold;
+.btn-add:hover {
+  background-color: #1d4ed8;
 }
 
-.col-nome {
-  width: 85%;
+/* Cards */
+.pivot-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.col-acoes {
-  width: 15%;
-  /* Também é uma boa prática centralizar os botões de ação */
+.pivot-card {
+  background: #1a2540;
+  border: 1px solid #2d3f5e;
+  border-radius: 10px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  transition: border-color 0.15s;
+}
+
+.pivot-card:hover {
+  border-color: #3a4f75;
+}
+
+.pivot-card-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pivot-icon {
+  font-size: 1.4rem;
+}
+
+.pivot-name {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #e2e8f0;
+}
+
+.pivot-card-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.btn-action {
+  padding: 7px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.btn-action:hover {
+  opacity: 0.85;
+}
+
+.btn-edit {
+  background-color: #253152;
+  color: #93c5fd;
+  border: 1px solid #3a4f75;
+}
+
+.btn-delete {
+  background-color: #7f1d1d;
+  color: #fca5a5;
+  border: 1px solid #dc2626;
+}
+
+.empty-state {
   text-align: center;
+  padding: 40px;
+  color: #a0aec0;
+  font-size: 1rem;
+}
+
+.loading-text {
+  color: #a0aec0;
+  text-align: center;
+  padding: 40px;
+}
+
+@media (max-width: 480px) {
+  .pivot-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .pivot-card-actions {
+    width: 100%;
+  }
+
+  .btn-action {
+    flex: 1;
+    text-align: center;
+  }
 }

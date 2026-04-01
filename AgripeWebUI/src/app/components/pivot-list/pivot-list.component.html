@@ -1,29 +1,28 @@
 <div class="container">
-  <h1>Lista de Pivots</h1>
-  <button class="btn btn-primary" [routerLink]="['/pivots/novo']">Novo Pivot</button>
+  <div class="page-header">
+    <h1 class="page-title">💧 Pivôs</h1>
+    <button class="btn-add" [routerLink]="['/pivots/novo']">+ Novo Pivô</button>
+  </div>
 
-  <table class="table-pivots" *ngIf="pivots$ | async as pivots; else loading">
-    <thead>
-      <tr>
-        <th class="col-nome">Nome</th>
-        <th class="col-acoes">Ações</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let pivot of pivots">
-        <td>{{ pivot.name }}</td>
-        <td>
-          <button class="btn btn-secondary" (click)="updatePivot(pivot.id!)">Editar</button>
-          <button class="btn btn-danger" (click)="deletePivot(pivot.id!)">Excluir</button>
-        </td>
-      </tr>
-      <tr *ngIf="pivots.length === 0">
-        <td colspan="4">Nenhum item cadastrado.</td>
-      </tr>
-    </tbody>
-  </table>
+  <ng-container *ngIf="pivots$ | async as pivots; else loading">
+    <div class="pivot-grid">
+      <div class="pivot-card" *ngFor="let pivot of pivots">
+        <div class="pivot-card-info">
+          <span class="pivot-icon">🔄</span>
+          <span class="pivot-name">{{ pivot.name }}</span>
+        </div>
+        <div class="pivot-card-actions">
+          <button class="btn-action btn-edit" (click)="updatePivot(pivot.id!)">Editar</button>
+          <button class="btn-action btn-delete" (click)="deletePivot(pivot.id!)">Excluir</button>
+        </div>
+      </div>
+      <div class="empty-state" *ngIf="pivots.length === 0">
+        <span>Nenhum pivô cadastrado.</span>
+      </div>
+    </div>
+  </ng-container>
 
   <ng-template #loading>
-    <p>Carregando dados...</p>
+    <p class="loading-text">Carregando dados...</p>
   </ng-template>
 </div>

@@ -1,36 +1,31 @@
 <div class="container">
-  <h1>Lista de Sensores</h1>
-  <button class="btn btn-primary" [routerLink]="['/sensores/novo']">Novo Sensor</button>
+  <div class="page-header">
+    <h1 class="page-title">📡 Sensores</h1>
+    <button class="btn-add" [routerLink]="['/sensores/novo']">+ Novo Sensor</button>
+  </div>
 
-  <table class="table-sensores" *ngIf="sensores$ | async as sensores; else loading">
-    <thead>
-      <tr>
-        <th class="col-pivot">Nome</th>
-        <th class="col-pivot">Pivô</th>
-        <th class="col-quadrante">Quadrante</th>
-        <th class="col-codigo">Código</th>
-        <th class="col-acoes">Ações</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let sensor of sensores">
-        <td>{{ sensor.name }}</td>
-        <td>{{ sensor.pivot.name }}</td>
-        <td>{{ sensor.quadrante }}</td>
-        <td>{{ sensor.code }}</td>
-        <td>
-          <!-- Passamos o pivotId para as funções de editar e excluir -->
-          <button class="btn btn-secondary" (click)="editarSensor(sensor.id!)">Editar</button>
-          <button class="btn btn-danger" (click)="excluirSensor(sensor.id!)">Excluir</button>
-        </td>
-      </tr>
-      <tr *ngIf="sensores.length === 0">
-        <td colspan="4">Nenhum sensor encontrado.</td>
-      </tr>
-    </tbody>
-  </table>
+  <ng-container *ngIf="sensores$ | async as sensores; else loading">
+    <div class="sensor-grid">
+      <div class="sensor-card" *ngFor="let sensor of sensores">
+        <div class="sensor-card-info">
+          <span class="sensor-icon">📡</span>
+          <div class="sensor-details">
+            <span class="sensor-name">{{ sensor.name }}</span>
+            <span class="sensor-meta">Pivô: {{ sensor.pivot.name }} &nbsp;|&nbsp; Quadrante: {{ sensor.quadrante }} &nbsp;|&nbsp; Código: {{ sensor.code }}</span>
+          </div>
+        </div>
+        <div class="sensor-card-actions">
+          <button class="btn-action btn-edit" (click)="editarSensor(sensor.id!)">Editar</button>
+          <button class="btn-action btn-delete" (click)="excluirSensor(sensor.id!)">Excluir</button>
+        </div>
+      </div>
+      <div class="empty-state" *ngIf="sensores.length === 0">
+        <span>Nenhum sensor cadastrado.</span>
+      </div>
+    </div>
+  </ng-container>
 
   <ng-template #loading>
-    <p>Carregando sensores...</p>
+    <p class="loading-text">Carregando sensores...</p>
   </ng-template>
 </div>
