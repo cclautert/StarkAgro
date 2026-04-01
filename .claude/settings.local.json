@@ -64,7 +64,8 @@
       "Bash(mkdir -p \"D:/Source/Repos/cclautert/AgripeWeb/.claude/skills\")",
       "Bash(cp -r \"D:/Source/Repos/cclautert/AgripeWeb/skills/senior-frontend-engineer\" \"D:/Source/Repos/cclautert/AgripeWeb/.claude/skills/\")",
       "Bash(cp -r \"D:/Source/Repos/cclautert/AgripeWeb/skills/senior-backend-engineer\" \"D:/Source/Repos/cclautert/AgripeWeb/.claude/skills/\")",
-      "Bash(cp -r \"D:/Source/Repos/cclautert/AgripeWeb/skills/software-architect\" \"D:/Source/Repos/cclautert/AgripeWeb/.claude/skills/\")"
+      "Bash(cp -r \"D:/Source/Repos/cclautert/AgripeWeb/skills/software-architect\" \"D:/Source/Repos/cclautert/AgripeWeb/.claude/skills/\")",
+      "Bash(find /d/Source/Repos/cclautert/AgripeWeb/AgripeWebUI -type f -name *dashboard*)"
     ]
   }
 }

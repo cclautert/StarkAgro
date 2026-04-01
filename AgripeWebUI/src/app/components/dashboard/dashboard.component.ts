@@ -18,7 +18,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   @ViewChild(BaseChartDirective) chart?: BaseChartDirective;
 
   userId = 1;
-  numberOfReads = 15;
+  numberOfReads = 7;
   intervalSub!: Subscription;
   sidebarOpened = true;
   isMobile = false;
@@ -29,6 +29,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   public selectedSensorId: number = 1;
   public quadrante: number | undefined;// 0 | 1 | 2 | 3 | 4 = 0;
 
+  pivotName: string | null = null;
   limiteSuperior: number | null = null;
   limiteInferior: number | null = null;
 
@@ -130,6 +131,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }
 
       this.apiService.getReadsByPivotId(this.pivoId!, 1).subscribe(pivot => {
+        this.pivotName = pivot.name ?? null;
         this.limiteSuperior = pivot.limiteSuperior ?? null;
         this.limiteInferior = pivot.limiteInferior ?? null;
 
@@ -173,6 +175,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   setDays(days: number): void {
     this.numberOfReads = days;
     this.loadReads();
+  }
+
+  goHome(): void {
+    this.router.navigate(['/home']);
   }
 
   goToConfig(): void {
