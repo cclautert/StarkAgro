@@ -103,7 +103,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           minRotation: 45
         }
       },
-      y: { title: { display: true, text: 'Valor' }, min: 0, max: 100 }
+      y: { title: { display: true, text: '% Umidade' }, min: 0, max: 100 }
     }
   };
 

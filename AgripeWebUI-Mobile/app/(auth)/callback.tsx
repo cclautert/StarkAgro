@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { View, Text, ActivityIndicator, Platform } from 'react-native';
+import { Alert, View, Text, ActivityIndicator, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import * as Linking from 'expo-linking';
 import { jwtDecode } from 'jwt-decode';
@@ -27,8 +27,15 @@ async function exchangeCode(code: string, redirectUri: string, setAuth: (token: 
     } else {
       router.replace('/(auth)/login');
     }
-  } catch {
-    router.replace('/(auth)/login');
+  } catch (error: any) {
+    const status = error?.response?.status;
+    if (status === 403) {
+      Alert.alert('Acesso Bloqueado', 'Contate o suporte técnico.', [
+        { text: 'OK', onPress: () => router.replace('/(auth)/login') }
+      ]);
+    } else {
+      router.replace('/(auth)/login');
+    }
   }
 }
 

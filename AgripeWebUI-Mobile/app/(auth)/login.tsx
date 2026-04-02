@@ -59,8 +59,15 @@ export default function LoginScreen() {
       const decoded = jwtDecode<JwtPayload>(token);
       await setAuth(token, parseInt(decoded.id), decoded.name ?? decoded.email ?? 'Usuário');
       router.replace('/(app)/home');
-    } catch {
-      Alert.alert('Erro de autenticação', 'E-mail ou senha inválidos. Verifique seus dados.');
+    } catch (error: any) {
+      const status = error?.response?.status;
+      if (status === 403) {
+        Alert.alert('Acesso Bloqueado', 'Contate o suporte técnico.');
+      } else if (status === 429) {
+        Alert.alert('Muitas tentativas', 'Tente novamente em alguns minutos.');
+      } else {
+        Alert.alert('Erro de autenticação', 'E-mail ou senha inválidos. Verifique seus dados.');
+      }
     } finally {
       setLoading(false);
     }

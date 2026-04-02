@@ -1,8 +1,9 @@
 import { Tabs, useRouter } from 'expo-router';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '../../stores/authStore';
 import { Colors } from '../../constants/colors';
+import { useIdleTimeout } from '../../hooks/useIdleTimeout';
 
 type IoniconsName = React.ComponentProps<typeof Ionicons>['name'];
 
@@ -13,6 +14,7 @@ function TabIcon({ name, color }: { name: IoniconsName; color: string }) {
 export default function AppLayout() {
   const router = useRouter();
   const { logout } = useAuthStore();
+  const { resetActivity } = useIdleTimeout();
 
   const handleLogout = async () => {
     await logout();
@@ -20,6 +22,7 @@ export default function AppLayout() {
   };
 
   return (
+    <View style={{ flex: 1 }} onTouchStart={resetActivity}>
     <Tabs
       screenOptions={{
         headerShown: false,
@@ -77,5 +80,6 @@ export default function AppLayout() {
       <Tabs.Screen name="sensors/new" options={{ href: null }} />
       <Tabs.Screen name="sensors/[id]/edit" options={{ href: null }} />
     </Tabs>
+    </View>
   );
 }
