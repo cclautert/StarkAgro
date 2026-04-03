@@ -35,7 +35,7 @@ dotnet test AgripeWebAPI.Tests/AgripeWebAPI.Tests.csproj --filter "FullyQualifie
 ### Docker (full stack)
 ```bash
 docker compose -f docker/docker-compose.yml up --build
-# API: localhost:8080, UI: localhost:80, MongoDB: localhost:27017
+# API: localhost:8080, UI: localhost:80, MongoDB: localhost:27027
 ```
 
 ### Terraform (AWS)

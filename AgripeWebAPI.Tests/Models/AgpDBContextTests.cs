@@ -75,7 +75,7 @@ namespace AgripeWebAPI.Tests.Models
             // Arrange
             var settings = Options.Create(new MongoDbSettings
             {
-                ConnectionString = "mongodb://localhost:27017",
+                ConnectionString = "mongodb://localhost:27027",
                 DatabaseName = null!
             });
 
@@ -89,7 +89,7 @@ namespace AgripeWebAPI.Tests.Models
             // Arrange
             var settings = Options.Create(new MongoDbSettings
             {
-                ConnectionString = "mongodb://localhost:27017",
+                ConnectionString = "mongodb://localhost:27027",
                 DatabaseName = "   "
             });
 

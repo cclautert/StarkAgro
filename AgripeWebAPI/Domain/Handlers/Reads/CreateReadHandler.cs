@@ -18,7 +18,7 @@ namespace AgripeWebAPI.Domain.Handlers.Reads
 
         public async Task<CreateReadResponse> Handle(CreateReadRequest request, CancellationToken cancellationToken)
         {
-            var sensor = await _dbContext.Sensors.Find(s => s.Code == request.Code).FirstOrDefaultAsync(cancellationToken);
+            var sensor = await _dbContext.Sensors.Find(s => s.Code.ToUpper() == request.Code.ToUpper()).FirstOrDefaultAsync(cancellationToken);
             if (sensor == null)
             {
                 throw new KeyNotFoundException($"Sensor with code '{request.Code}' not found.");

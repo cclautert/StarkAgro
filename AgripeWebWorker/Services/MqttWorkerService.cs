@@ -83,7 +83,7 @@ namespace AgripeWebWorker.Services
                 if (stoppingToken.IsCancellationRequested) return;
 
                 _logger.LogWarning("MQTT client disconnected. Reconnecting in 5 seconds...");
-                await Task.Delay(TimeSpan.FromSeconds(1), stoppingToken);
+                await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
 
                 try
                 {
@@ -95,7 +95,19 @@ namespace AgripeWebWorker.Services
                 }
             };
 
-            await ConnectAsync(stoppingToken);
+            while (!stoppingToken.IsCancellationRequested)
+            {
+                try
+                {
+                    await ConnectAsync(stoppingToken);
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to connect to MQTT broker. Retrying in 5 seconds...");
+                    await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
+                }
+            }
 
             // Keep the service running
             await Task.Delay(Timeout.Infinite, stoppingToken);

@@ -1,6 +1,6 @@
 # AgripeWeb – API (MongoDB), UI (Angular), MongoDB
 # Run from repo root: docker compose -f docker/docker-compose.yml up -d
-# API: http://localhost:8080  |  UI: http://localhost (port 80)  |  MongoDB: localhost:27017
+# API: http://localhost:8080  |  UI: http://localhost (port 80)  |  MongoDB: localhost:27027
 
 name: agripeweb
 services:
@@ -56,7 +56,7 @@ services:
     image: mongo:8
     container_name: agripewebdb
     ports:
-      - "27017:27017"
+      - "27027:27017"
     volumes:
       - mongo-data:/data/db
     networks:
@@ -72,6 +72,12 @@ services:
       - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "mosquitto_pub -h localhost -t healthcheck -m ping || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
 
   agripwebworker:
     container_name: agripwebworker
@@ -84,8 +90,10 @@ services:
       - Mqtt__Host=mqtt
       - Mqtt__Port=1883
     depends_on:
-      - db
-      - mqtt
+      db:
+        condition: service_started
+      mqtt:
+        condition: service_healthy
     networks:
       - app-network
 

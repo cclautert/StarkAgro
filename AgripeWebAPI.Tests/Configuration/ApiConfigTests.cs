@@ -59,7 +59,7 @@ namespace AgripeWebAPI.Tests.Configuration
             {
                 EnvironmentName = Environments.Development
             });
-            builder.Configuration["MongoDb:ConnectionString"] = "mongodb://localhost:27017";
+            builder.Configuration["MongoDb:ConnectionString"] = "mongodb://localhost:27027";
             builder.Configuration["MongoDb:DatabaseName"] = "TestDb";
             builder.Services.AddApiConfiguration(builder.Configuration);
             builder.Services.ResolveDependencies(new JwtSettings
@@ -85,7 +85,7 @@ namespace AgripeWebAPI.Tests.Configuration
             {
                 EnvironmentName = Environments.Production
             });
-            builder.Configuration["MongoDb:ConnectionString"] = "mongodb://localhost:27017";
+            builder.Configuration["MongoDb:ConnectionString"] = "mongodb://localhost:27027";
             builder.Configuration["MongoDb:DatabaseName"] = "TestDb";
             builder.Services.AddApiConfiguration(builder.Configuration);
             builder.Services.ResolveDependencies(new JwtSettings
