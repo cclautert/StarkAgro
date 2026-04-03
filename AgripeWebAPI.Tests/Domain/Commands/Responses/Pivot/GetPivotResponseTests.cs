@@ -22,5 +22,13 @@ namespace AgripeWebAPI.Tests.Domain.Commands.Responses.Pivot
             Assert.Equal(0, response.Id);
             Assert.Null(response.Name);
         }
+
+        [Fact]
+        public void LimiteInferior_LimiteSuperior_SetAndGet()
+        {
+            var response = new GetPivotResponse { LimiteInferior = 15.5m, LimiteSuperior = 85.0m };
+            Assert.Equal(15.5m, response.LimiteInferior);
+            Assert.Equal(85.0m, response.LimiteSuperior);
+        }
     }
 }

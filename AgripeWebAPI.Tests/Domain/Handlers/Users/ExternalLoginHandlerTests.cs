@@ -1,5 +1,6 @@
 using AgripeWebAPI.Configuration;
 using AgripeWebAPI.Domain.Commands.Requests.Users;
+using AgripeWebAPI.Domain.Commands.Responses.Users;
 using AgripeWebAPI.Domain.Handlers.Users;
 using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Entities;
@@ -337,7 +338,8 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Users
             var result = await handler.Handle(request, CancellationToken.None);
 
             // Assert
-            Assert.Null(result);
+            Assert.NotNull(result);
+            Assert.Equal(LoginErrorCode.AccountInactive, result.ErrorCode);
         }
 
         [Fact]

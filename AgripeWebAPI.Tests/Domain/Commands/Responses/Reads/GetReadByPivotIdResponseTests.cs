@@ -69,5 +69,36 @@ namespace AgripeWebAPI.Tests.Domain.Commands.Responses.Reads
             Assert.Null(quadrante.BottomRight);
             Assert.Null(quadrante.BottomRightAvg);
         }
+
+        [Fact]
+        public void Quadrante_ReadLists_DefaultEmpty()
+        {
+            var q = new Quadrante();
+            Assert.NotNull(q.TopLeftReads);
+            Assert.NotNull(q.TopRightReads);
+            Assert.NotNull(q.BottomLeftReads);
+            Assert.NotNull(q.BottomRightReads);
+            Assert.Empty(q.TopLeftReads);
+            Assert.Empty(q.TopRightReads);
+            Assert.Empty(q.BottomLeftReads);
+            Assert.Empty(q.BottomRightReads);
+        }
+
+        [Fact]
+        public void ReadEntry_SetAndGet()
+        {
+            var date = DateTime.UtcNow;
+            var entry = new ReadEntry { Value = 42.5m, Date = date };
+            Assert.Equal(42.5m, entry.Value);
+            Assert.Equal(date, entry.Date);
+        }
+
+        [Fact]
+        public void GetReadByPivotIdResponse_LimiteInferior_LimiteSuperior()
+        {
+            var response = new GetReadByPivotIdResponse { LimiteInferior = 10m, LimiteSuperior = 90m };
+            Assert.Equal(10m, response.LimiteInferior);
+            Assert.Equal(90m, response.LimiteSuperior);
+        }
     }
 }

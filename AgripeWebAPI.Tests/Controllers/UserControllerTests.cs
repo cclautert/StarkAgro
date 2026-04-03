@@ -150,5 +150,44 @@ namespace AgripeWebAPI.Tests.Controllers
             // Assert
             Assert.IsType<BadRequestObjectResult>(result.Result);
         }
+
+        [Fact]
+        public async Task UpdateLimits_Valid_SetsUserIdAndReturnsResponse()
+        {
+            // Arrange
+            var notifier = new MockNotifier();
+            var mediator = new Mock<IMediator>();
+            var controller = CreateController(notifier);
+
+            var command = new EditUserLimitsRequest { LimiteInferior = 10m, LimiteSuperior = 90m };
+            var expected = new EditUserResponse { Id = 7, Name = "Test", Email = "t@t.com" };
+
+            mediator.Setup(m => m.Send(It.Is<EditUserLimitsRequest>(r => r.Id == 7), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expected);
+
+            // Act
+            var result = await controller.UpdateLimits(mediator.Object, command, CancellationToken.None);
+
+            // Assert
+            var response = Assert.IsType<EditUserResponse>(result.Value);
+            Assert.Equal(7, response.Id);
+            mediator.Verify(m => m.Send(It.Is<EditUserLimitsRequest>(r => r.Id == 7), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task UpdateLimits_InvalidModelState_ReturnsBadRequest()
+        {
+            // Arrange
+            var notifier = new MockNotifier();
+            var mediator = new Mock<IMediator>();
+            var controller = CreateController(notifier);
+            controller.ModelState.AddModelError("LimiteInferior", "Required");
+
+            // Act
+            var result = await controller.UpdateLimits(mediator.Object, new EditUserLimitsRequest(), CancellationToken.None);
+
+            // Assert
+            Assert.IsType<BadRequestObjectResult>(result.Result);
+        }
     }
 }

@@ -25,5 +25,13 @@ namespace AgripeWebAPI.Tests.Domain.Commands.Responses.User
             Assert.Null(response.Name);
             Assert.Null(response.Email);
         }
+
+        [Fact]
+        public void LimiteInferior_LimiteSuperior_SetAndGet()
+        {
+            var response = new GetUserResponse { LimiteInferior = 20m, LimiteSuperior = 80m };
+            Assert.Equal(20m, response.LimiteInferior);
+            Assert.Equal(80m, response.LimiteSuperior);
+        }
     }
 }

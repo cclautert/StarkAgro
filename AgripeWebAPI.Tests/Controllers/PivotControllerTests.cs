@@ -190,5 +190,35 @@ namespace AgripeWebAPI.Tests.Controllers
 
             Assert.IsType<BadRequestObjectResult>(result.Result);
         }
+
+        [Fact]
+        public async Task UpdateLimits_Valid_ReturnsResponse()
+        {
+            var notifier = new Mock<INotifier>();
+            var mediator = new Mock<IMediator>();
+            var controller = CreateControllerWithClaim(notifier.Object);
+
+            var expected = new EditPivotResponse { Id = 7 };
+            mediator.Setup(m => m.Send(It.IsAny<EditPivotLimitsRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expected);
+
+            var result = await controller.UpdateLimits(mediator.Object, new EditPivotLimitsRequest { Id = 7 }, CancellationToken.None);
+
+            var response = Assert.IsType<EditPivotResponse>(result.Value);
+            Assert.Equal(7, response.Id);
+        }
+
+        [Fact]
+        public async Task UpdateLimits_InvalidModelState_ReturnsBadRequest()
+        {
+            var notifier = new MockNotifier();
+            var mediator = new Mock<IMediator>();
+            var controller = CreateControllerWithClaim(notifier);
+            controller.ModelState.AddModelError("Id", "Required");
+
+            var result = await controller.UpdateLimits(mediator.Object, new EditPivotLimitsRequest(), CancellationToken.None);
+
+            Assert.IsType<BadRequestObjectResult>(result.Result);
+        }
     }
 }

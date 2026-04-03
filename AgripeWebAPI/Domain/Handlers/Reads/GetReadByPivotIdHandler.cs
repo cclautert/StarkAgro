@@ -9,6 +9,8 @@ using System.Linq;
 
 namespace AgripeWebAPI.Domain.Handlers.Sensors
 {
+    public sealed record SensorSummary(int Id, int Quadrante);
+
     public class GetReadByPivotIdHandler : IRequestHandler<GetListReadByPivotIdRequest, GetReadByPivotIdResponse>
     {
         private readonly agpDBContext _dbContext;
@@ -25,7 +27,7 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
 
             var sensors = await _dbContext.Sensors
                 .Find(s => s.PivoId == request.PivotId && s.UserId == request.UserId)
-                .Project(s => new { s.Id, s.Quadrante })
+                .Project(s => new SensorSummary(s.Id, s.Quadrante))
                 .ToListAsync(cancellationToken);
 
             var sensorsById = sensors.ToDictionary(s => s.Id, s => s.Quadrante);

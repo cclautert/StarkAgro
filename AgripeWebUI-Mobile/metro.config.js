@@ -4,6 +4,8 @@ const { withNativeWind } = require('nativewind/metro');
 // Apply NativeWind first so its resolveRequest is in place
 const config = withNativeWind(getDefaultConfig(__dirname), { input: './global.css' });
 
+config.resolver.unstable_enablePackageExports = false;
+
 // Chain our web stub AFTER NativeWind so we don't clobber its resolver
 const upstreamResolveRequest = config.resolver?.resolveRequest;
 

@@ -52,7 +52,7 @@ namespace AgripeWebAPI.Tests.Controllers
         }
 
         [Fact]
-        public async Task LogIn_InvalidCredentials_ReturnsBadRequest()
+        public async Task LogIn_InvalidCredentials_ReturnsUnauthorized()
         {
             // Arrange
             var notifier = new MockNotifier();
@@ -62,13 +62,14 @@ namespace AgripeWebAPI.Tests.Controllers
             var command = new UserTokenRequest { Email = "test@example.com", Password = "wrong" };
 
             mediator.Setup(m => m.Send(It.IsAny<UserTokenRequest>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync((UserTokenResponse)null);
+                .ReturnsAsync(new UserTokenResponse { ErrorCode = LoginErrorCode.InvalidCredentials });
 
             // Act
             var result = await controller.LogIn(mediator.Object, command, CancellationToken.None);
 
             // Assert
-            Assert.IsType<BadRequestObjectResult>(result.Result);
+            var statusResult = Assert.IsType<ObjectResult>(result.Result);
+            Assert.Equal(401, statusResult.StatusCode);
         }
 
         [Fact]

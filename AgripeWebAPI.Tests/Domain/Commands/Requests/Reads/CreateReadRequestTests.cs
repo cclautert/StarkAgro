@@ -28,6 +28,14 @@ namespace AgripeWebAPI.Tests.Domain.Commands.Requests.Reads
             // Assert
             Assert.Null(request.Code);
             Assert.Equal(0m, request.Value);
+            Assert.Null(request.UserId);
+        }
+
+        [Fact]
+        public void UserId_SetAndGet()
+        {
+            var request = new CreateReadRequest { UserId = 42 };
+            Assert.Equal(42, request.UserId);
         }
     }
 }
