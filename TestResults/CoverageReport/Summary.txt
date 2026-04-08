@@ -1,0 +1,121 @@
+Summary
+  Generated on: 4/6/2026 - 10:33:44 AM
+  Coverage date: 3/19/2026 - 9:40:48 PM - 4/6/2026 - 10:33:13 AM
+  Parser: MultiReport (5x Cobertura)
+  Assemblies: 1
+  Classes: 99
+  Files: 95
+  Line coverage: 89.2%
+  Covered lines: 1429
+  Uncovered lines: 172
+  Coverable lines: 1601
+  Total lines: 3230
+  Branch coverage: 73% (403 of 552)
+  Covered branches: 403
+  Total branches: 552
+  Method coverage: 97% (325 of 335)
+  Full method coverage: 94.3% (316 of 335)
+  Covered methods: 325
+  Fully covered methods: 316
+  Total methods: 335
+
+AgripeWebAPI                                                                    89.2%
+  AgripeWebAPI.Configuration.ApiConfig                                          59.3%
+  AgripeWebAPI.Configuration.DependencyInjectionConfig                          41.3%
+  AgripeWebAPI.Configuration.GoogleOAuthSettings                                 100%
+  AgripeWebAPI.Configuration.JwtSettings                                         100%
+  AgripeWebAPI.Configuration.MongoDbSettings                                     100%
+  AgripeWebAPI.Configuration.OAuthSettings                                       100%
+  AgripeWebAPI.Configuration.SwaggerConfig                                         0%
+  AgripeWebAPI.Controllers.AuthController                                         98%
+  AgripeWebAPI.Controllers.HealthController                                      100%
+  AgripeWebAPI.Controllers.MainController                                        100%
+  AgripeWebAPI.Controllers.PivotController                                       100%
+  AgripeWebAPI.Controllers.ReadsController                                       100%
+  AgripeWebAPI.Controllers.SensorController                                      100%
+  AgripeWebAPI.Controllers.UserController                                        100%
+  AgripeWebAPI.Domain.Commands.Requests.Pivots.CreatePivotRequest                100%
+  AgripeWebAPI.Domain.Commands.Requests.Pivots.DeletePivotRequest                100%
+  AgripeWebAPI.Domain.Commands.Requests.Pivots.EditPivotLimitsRequest            100%
+  AgripeWebAPI.Domain.Commands.Requests.Pivots.EditPivotRequest                  100%
+  AgripeWebAPI.Domain.Commands.Requests.Pivots.GetListPivotByUserIdRequest       100%
+  AgripeWebAPI.Domain.Commands.Requests.Pivots.GetListPivotRequest               100%
+  AgripeWebAPI.Domain.Commands.Requests.Pivots.GetPivotRequest                   100%
+  AgripeWebAPI.Domain.Commands.Requests.Reads.CreateReadRequest                  100%
+  AgripeWebAPI.Domain.Commands.Requests.Reads.GetAllListReadByPivotIdRequest     100%
+  AgripeWebAPI.Domain.Commands.Requests.Reads.GetAllListReadBySensorIdRequest    100%
+  AgripeWebAPI.Domain.Commands.Requests.Reads.GetListReadByPivotIdRequest        100%
+  AgripeWebAPI.Domain.Commands.Requests.Reads.GetListReadRequest                 100%
+  AgripeWebAPI.Domain.Commands.Requests.Sensors.CreateSensorRequest              100%
+  AgripeWebAPI.Domain.Commands.Requests.Sensors.DeleteSensorRequest              100%
+  AgripeWebAPI.Domain.Commands.Requests.Sensors.EditSensorRequest                100%
+  AgripeWebAPI.Domain.Commands.Requests.Sensors.GetListSensorByUserIdRequest     100%
+  AgripeWebAPI.Domain.Commands.Requests.Sensors.GetListSensorRequest             100%
+  AgripeWebAPI.Domain.Commands.Requests.Sensors.GetSensorRequest                 100%
+  AgripeWebAPI.Domain.Commands.Requests.Users.CreateUserRequest                  100%
+  AgripeWebAPI.Domain.Commands.Requests.Users.DeleteUserRequest                  100%
+  AgripeWebAPI.Domain.Commands.Requests.Users.EditUserLimitsRequest              100%
+  AgripeWebAPI.Domain.Commands.Requests.Users.EditUserRequest                    100%
+  AgripeWebAPI.Domain.Commands.Requests.Users.ExternalLoginRequest               100%
+  AgripeWebAPI.Domain.Commands.Requests.Users.GetUserRequest                     100%
+  AgripeWebAPI.Domain.Commands.Requests.Users.UserTokenRequest                   100%
+  AgripeWebAPI.Domain.Commands.Responses.Pivots.CreatePivotResponse              100%
+  AgripeWebAPI.Domain.Commands.Responses.Pivots.EditPivotResponse                100%
+  AgripeWebAPI.Domain.Commands.Responses.Pivots.GetListPivotResponse             100%
+  AgripeWebAPI.Domain.Commands.Responses.Pivots.GetPivotResponse                 100%
+  AgripeWebAPI.Domain.Commands.Responses.Reads.CreateReadResponse                100%
+  AgripeWebAPI.Domain.Commands.Responses.Reads.GetAllReadByPivotIdResponse       100%
+  AgripeWebAPI.Domain.Commands.Responses.Reads.GetAllReadBySensorIdResponse      100%
+  AgripeWebAPI.Domain.Commands.Responses.Reads.GetReadByPivotIdResponse          100%
+  AgripeWebAPI.Domain.Commands.Responses.Reads.GetReadResponse                   100%
+  AgripeWebAPI.Domain.Commands.Responses.Reads.Quadrante                         100%
+  AgripeWebAPI.Domain.Commands.Responses.Reads.ReadEntry                         100%
+  AgripeWebAPI.Domain.Commands.Responses.Sensors.CreateSensorResponse            100%
+  AgripeWebAPI.Domain.Commands.Responses.Sensors.DeleteSensorResponse            100%
+  AgripeWebAPI.Domain.Commands.Responses.Sensors.EditSensorResponse              100%
+  AgripeWebAPI.Domain.Commands.Responses.Sensors.GetSensorResponse               100%
+  AgripeWebAPI.Domain.Commands.Responses.Users.CreateUserResponse                100%
+  AgripeWebAPI.Domain.Commands.Responses.Users.DeleteUserResponse                100%
+  AgripeWebAPI.Domain.Commands.Responses.Users.EditUserResponse                  100%
+  AgripeWebAPI.Domain.Commands.Responses.Users.GetUserResponse                   100%
+  AgripeWebAPI.Domain.Commands.Responses.Users.UserTokenResponse                 100%
+  AgripeWebAPI.Domain.Handlers.Pivots.CreatePivotHandler                         100%
+  AgripeWebAPI.Domain.Handlers.Pivots.DeletePivotHandler                         100%
+  AgripeWebAPI.Domain.Handlers.Pivots.EditPivotHandler                           100%
+  AgripeWebAPI.Domain.Handlers.Pivots.EditPivotLimitsHandler                     100%
+  AgripeWebAPI.Domain.Handlers.Pivots.GetListPivotHandler                        100%
+  AgripeWebAPI.Domain.Handlers.Pivots.GetPivotHandler                            100%
+  AgripeWebAPI.Domain.Handlers.Reads.CreateReadHandler                           100%
+  AgripeWebAPI.Domain.Handlers.Sensors.CreateSensorHandler                       100%
+  AgripeWebAPI.Domain.Handlers.Sensors.DeleteSensorHandler                       100%
+  AgripeWebAPI.Domain.Handlers.Sensors.EditSensorHandler                         100%
+  AgripeWebAPI.Domain.Handlers.Sensors.GetListReadByPivotIdHandler               100%
+  AgripeWebAPI.Domain.Handlers.Sensors.GetListReadBySensorIdHandler              100%
+  AgripeWebAPI.Domain.Handlers.Sensors.GetListReadHandler                        100%
+  AgripeWebAPI.Domain.Handlers.Sensors.GetListSensorByUserIdHandler              100%
+  AgripeWebAPI.Domain.Handlers.Sensors.GetListSensorHandler                      100%
+  AgripeWebAPI.Domain.Handlers.Sensors.GetReadByPivotIdHandler                  74.6%
+  AgripeWebAPI.Domain.Handlers.Sensors.GetSensorHandler                          100%
+  AgripeWebAPI.Domain.Handlers.Sensors.SensorSummary                             100%
+  AgripeWebAPI.Domain.Handlers.Users.CreateUserHandler                           100%
+  AgripeWebAPI.Domain.Handlers.Users.DeleteUserHandler                           100%
+  AgripeWebAPI.Domain.Handlers.Users.EditUserHandler                             100%
+  AgripeWebAPI.Domain.Handlers.Users.EditUserLimitsHandler                       100%
+  AgripeWebAPI.Domain.Handlers.Users.ExternalLoginHandler                         99%
+  AgripeWebAPI.Domain.Handlers.Users.GetToken                                    100%
+  AgripeWebAPI.Domain.Handlers.Users.GetUserHandler                              100%
+  AgripeWebAPI.Models.agpDBContext                                              62.7%
+  AgripeWebAPI.Models.Entities.Entity                                            100%
+  AgripeWebAPI.Models.Entities.Pivot                                             100%
+  AgripeWebAPI.Models.Entities.ReadSensor                                        100%
+  AgripeWebAPI.Models.Entities.Sensor                                            100%
+  AgripeWebAPI.Models.Entities.User                                              100%
+  AgripeWebAPI.Notifications.Notification                                        100%
+  AgripeWebAPI.Notifications.Notificator                                         100%
+  AgripeWebAPI.Services.CurrentUserContext                                       100%
+  AgripeWebAPI.Services.JwtTokenService                                          100%
+  AgripeWebAPI.Services.LoginAttemptService                                      100%
+  AgripeWebAPI.Services.PasswordHasherService                                    100%
+  AgripeWebAPI.Validators.EmailAttribute                                         100%
+  AgripeWebAPI.Validators.PasswordStrengthAttribute                              100%
+  Program                                                                          0%

@@ -96,5 +96,25 @@ namespace AgripeWebAPI.Tests.Models
             // Act & Assert
             Assert.Throws<InvalidOperationException>(() => new agpDBContext(settings));
         }
+
+        [Fact]
+        public void Constructor_ValidSettings_InitializesAllCollections()
+        {
+            // Arrange — MongoClient é lazy: não requer servidor real para inicializar
+            var settings = Options.Create(new MongoDbSettings
+            {
+                ConnectionString = "mongodb://localhost:27027",
+                DatabaseName = "testdb"
+            });
+
+            // Act
+            var ctx = new agpDBContext(settings);
+
+            // Assert — todos os property getters devem retornar coleção não-nula
+            Assert.NotNull(ctx.Users);
+            Assert.NotNull(ctx.Pivots);
+            Assert.NotNull(ctx.Sensors);
+            Assert.NotNull(ctx.ReadSensors);
+        }
     }
 }

@@ -69,7 +69,8 @@
       "Bash(find D:SourceReposcclautertAgripeWebAgripeWebAPIDomain -type f -name *Handler.cs)",
       "Bash(find D:SourceReposcclautertAgripeWebAgripeWebAPI -name *JwtTokenService* -o -name *jwt* -o -name *token*)",
       "Bash(grep -r \"timeout\\\\|idle\\\\|session\\\\|notification\\\\|Toast\\\\|Alert\\\\|Snack\" /d/Source/Repos/cclautert/AgripeWeb/AgripeWebUI-Mobile --include=*.ts --include=*.tsx)",
-      "Bash(find /d/Source/Repos/cclautert/AgripeWeb/AgripeWebAPI/Domain/Commands/Requests/Reads -name *GetAllList* -o -name *BySensorId*)"
+      "Bash(find /d/Source/Repos/cclautert/AgripeWeb/AgripeWebAPI/Domain/Commands/Requests/Reads -name *GetAllList* -o -name *BySensorId*)",
+      "Bash(dotnet tool:*)"
     ]
   }
 }

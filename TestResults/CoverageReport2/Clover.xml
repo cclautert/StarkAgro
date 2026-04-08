@@ -1,0 +1,2177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<coverage generated="1775482618" clover="4.3.1">
+  <project timestamp="1775482618">
+    <metrics complexity="0" elements="1601" coveredelements="1429" conditionals="552" coveredconditionals="403" statements="1601" coveredstatements="1429" coveredmethods="316" methods="335" classes="99" loc="3230" ncloc="1601" files="95" packages="1" />
+    <package name="AgripeWebAPI">
+      <metrics complexity="0" elements="1601" coveredelements="1429" conditionals="552" coveredconditionals="403" statements="1601" coveredstatements="1429" coveredmethods="316" methods="335" classes="99" loc="3230" ncloc="1601" files="95" />
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Configuration\ApiConfig.cs" name="ApiConfig.cs">
+        <metrics complexity="0" elements="123" coveredelements="73" conditionals="10" coveredconditionals="6" statements="123" coveredstatements="73" coveredmethods="4" methods="4" classes="1" loc="173" ncloc="123" />
+        <class name="AgripeWebAPI.Configuration.ApiConfig">
+          <metrics complexity="0" elements="123" coveredelements="73" conditionals="10" coveredconditionals="6" statements="123" coveredstatements="73" coveredmethods="4" methods="4" />
+        </class>
+        <line complexity="1" signature="AddApiConfiguration(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration)" num="13" count="24" type="method" />
+        <line num="14" count="12" type="stmt" />
+        <line num="15" count="12" type="stmt" />
+        <line num="17" count="12" type="stmt" />
+        <line num="18" count="12" type="stmt" />
+        <line num="19" count="8" type="stmt" />
+        <line num="20" count="8" type="stmt" />
+        <line num="21" count="12" type="stmt" />
+        <line num="22" count="20" type="stmt" />
+        <line num="25" count="12" type="stmt" />
+        <line num="26" count="0" type="stmt" />
+        <line num="27" count="0" type="stmt" />
+        <line num="28" count="0" type="stmt" />
+        <line num="29" count="0" type="stmt" />
+        <line num="30" count="0" type="stmt" />
+        <line num="31" count="0" type="stmt" />
+        <line num="32" count="0" type="stmt" />
+        <line num="33" count="0" type="stmt" />
+        <line num="34" count="0" type="stmt" />
+        <line num="35" count="0" type="stmt" />
+        <line num="36" count="0" type="stmt" />
+        <line num="37" count="12" type="stmt" />
+        <line num="38" count="0" type="stmt" />
+        <line num="39" count="0" type="stmt" />
+        <line num="40" count="0" type="stmt" />
+        <line num="41" count="0" type="stmt" />
+        <line num="42" count="0" type="stmt" />
+        <line num="43" count="0" type="stmt" />
+        <line num="44" count="0" type="stmt" />
+        <line num="45" count="12" type="stmt" />
+        <line num="48" count="12" type="stmt" />
+        <line num="49" count="0" type="stmt" />
+        <line num="50" count="12" type="stmt" />
+        <line num="51" count="0" type="stmt" />
+        <line num="52" count="0" type="stmt" />
+        <line num="53" count="0" type="stmt" />
+        <line num="54" count="12" type="stmt" />
+        <line num="56" count="12" type="stmt" />
+        <line num="59" count="12" type="stmt" />
+        <line num="60" count="12" type="stmt" />
+        <line num="61" count="12" type="stmt" />
+        <line num="62" count="24" type="stmt" />
+        <line num="64" count="12" type="stmt" />
+        <line num="65" count="0" type="stmt" />
+        <line num="66" count="0" type="stmt" />
+        <line num="67" count="0" type="stmt" />
+        <line num="68" count="0" type="stmt" />
+        <line num="69" count="0" type="stmt" />
+        <line num="70" count="0" type="stmt" />
+        <line num="71" count="0" type="stmt" />
+        <line num="72" count="12" type="stmt" />
+        <line num="73" count="0" type="stmt" />
+        <line num="74" count="0" type="stmt" />
+        <line num="75" count="0" type="stmt" />
+        <line num="76" count="0" type="stmt" />
+        <line num="77" count="0" type="stmt" />
+        <line num="78" count="0" type="stmt" />
+        <line num="79" count="0" type="stmt" />
+        <line num="80" count="12" type="stmt" />
+        <line num="81" count="12" type="stmt" />
+        <line complexity="1" signature="GenerateUsers()" num="84" count="4" type="method" />
+        <line num="86" count="4" type="stmt" />
+        <line num="87" count="4" type="stmt" />
+        <line num="89" count="4" type="stmt" />
+        <line num="90" count="4" type="stmt" />
+        <line num="91" count="4" type="stmt" />
+        <line num="92" count="4" type="stmt" />
+        <line num="93" count="4" type="stmt" />
+        <line num="94" count="4" type="stmt" />
+        <line num="95" count="4" type="stmt" />
+        <line num="96" count="4" type="stmt" />
+        <line num="97" count="4" type="stmt" />
+        <line num="98" count="4" type="stmt" />
+        <line num="100" count="4" type="stmt" />
+        <line num="101" count="4" type="stmt" />
+        <line complexity="6" signature="UseApiConfiguration(Microsoft.AspNetCore.Builder.IApplicationBuilder,Microsoft.AspNetCore.Hosting.IWebHostEnvironment)" num="104" count="16" type="method" />
+        <line falsecount="0" truecount="2" num="105" type="cond" />
+        <line num="106" count="4" type="stmt" />
+        <line num="107" count="4" type="stmt" />
+        <line num="108" count="4" type="stmt" />
+        <line num="111" count="8" type="stmt" />
+        <line falsecount="1" truecount="1" num="112" type="cond" />
+        <line num="113" count="0" type="stmt" />
+        <line num="114" count="0" type="stmt" />
+        <line num="115" count="0" type="stmt" />
+        <line falsecount="0" truecount="2" num="118" type="cond" />
+        <line num="119" count="4" type="stmt" />
+        <line num="120" count="4" type="stmt" />
+        <line num="121" count="4" type="stmt" />
+        <line num="123" count="4" type="stmt" />
+        <line num="124" count="4" type="stmt" />
+        <line num="125" count="4" type="stmt" />
+        <line num="127" count="8" type="stmt" />
+        <line num="129" count="8" type="stmt" />
+        <line num="131" count="8" type="stmt" />
+        <line num="133" count="8" type="stmt" />
+        <line num="135" count="8" type="stmt" />
+        <line num="137" count="8" type="stmt" />
+        <line num="138" count="8" type="stmt" />
+        <line num="139" count="8" type="stmt" />
+        <line num="140" count="16" type="stmt" />
+        <line num="142" count="16" type="stmt" />
+        <line num="143" count="8" type="stmt" />
+        <line complexity="4" signature="SeedMongoDatabase()" num="146" count="8" type="method" />
+        <line num="148" count="8" type="stmt" />
+        <line num="149" count="8" type="stmt" />
+        <line num="150" count="8" type="stmt" />
+        <line num="152" count="8" type="stmt" />
+        <line falsecount="1" truecount="1" num="153" type="cond" />
+        <line num="154" count="6" type="stmt" />
+        <line num="155" count="6" type="stmt" />
+        <line num="158" count="0" type="stmt" />
+        <line falsecount="2" truecount="0" num="159" type="cond" />
+        <line num="160" count="0" type="stmt" />
+        <line num="161" count="0" type="stmt" />
+        <line num="162" count="0" type="stmt" />
+        <line num="164" count="0" type="stmt" />
+        <line num="165" count="0" type="stmt" />
+        <line num="166" count="0" type="stmt" />
+        <line num="167" count="0" type="stmt" />
+        <line num="169" count="0" type="stmt" />
+        <line num="170" count="0" type="stmt" />
+        <line num="171" count="6" type="stmt" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Configuration\DependencyInjectionConfig.cs" name="DependencyInjectionConfig.cs">
+        <metrics complexity="0" elements="29" coveredelements="12" conditionals="10" coveredconditionals="0" statements="29" coveredstatements="12" coveredmethods="1" methods="1" classes="1" loc="50" ncloc="29" />
+        <class name="AgripeWebAPI.Configuration.DependencyInjectionConfig">
+          <metrics complexity="0" elements="29" coveredelements="12" conditionals="10" coveredconditionals="0" statements="29" coveredstatements="12" coveredmethods="1" methods="1" />
+        </class>
+        <line complexity="10" signature="ResolveDependencies(Microsoft.Extensions.DependencyInjection.IServiceCollection,AgripeWebAPI.Configuration.JwtSettings)" num="13" count="8" type="method" />
+        <line num="17" count="8" type="stmt" />
+        <line num="18" count="8" type="stmt" />
+        <line num="19" count="8" type="stmt" />
+        <line num="20" count="8" type="stmt" />
+        <line num="21" count="8" type="stmt" />
+        <line num="22" count="8" type="stmt" />
+        <line num="25" count="8" type="stmt" />
+        <line num="27" count="8" type="stmt" />
+        <line num="28" count="0" type="stmt" />
+        <line num="29" count="0" type="stmt" />
+        <line num="30" count="0" type="stmt" />
+        <line num="31" count="0" type="stmt" />
+        <line num="32" count="0" type="stmt" />
+        <line num="33" count="0" type="stmt" />
+        <line falsecount="10" truecount="0" num="34" type="cond" />
+        <line num="35" count="0" type="stmt" />
+        <line num="36" count="0" type="stmt" />
+        <line num="37" count="0" type="stmt" />
+        <line num="38" count="0" type="stmt" />
+        <line num="39" count="0" type="stmt" />
+        <line num="40" count="0" type="stmt" />
+        <line num="41" count="0" type="stmt" />
+        <line num="42" count="0" type="stmt" />
+        <line num="43" count="0" type="stmt" />
+        <line num="44" count="0" type="stmt" />
+        <line num="45" count="8" type="stmt" />
+        <line num="47" count="8" type="stmt" />
+        <line num="48" count="8" type="stmt" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Configuration\OAuthSettings.cs" name="OAuthSettings.cs">
+        <metrics complexity="0" elements="4" coveredelements="4" conditionals="0" coveredconditionals="0" statements="4" coveredstatements="4" coveredmethods="4" methods="4" classes="2" loc="20" ncloc="4" />
+        <class name="AgripeWebAPI.Configuration.OAuthSettings">
+          <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" />
+        </class>
+        <class name="AgripeWebAPI.Configuration.GoogleOAuthSettings">
+          <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" />
+        </class>
+        <line complexity="1" signature="get_ClientId()" num="12" count="160" type="method" />
+        <line complexity="1" signature="get_ClientSecret()" num="13" count="156" type="method" />
+        <line complexity="1" signature="get_AllowedRedirectUris()" num="18" count="116" type="method" />
+        <line complexity="1" signature="get_Google()" num="7" count="192" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Configuration\JwtSettings.cs" name="JwtSettings.cs">
+        <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" classes="1" loc="9" ncloc="3" />
+        <class name="AgripeWebAPI.Configuration.JwtSettings">
+          <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" />
+        </class>
+        <line complexity="1" signature="get_secretkey()" num="5" count="8" type="method" />
+        <line complexity="1" signature="get_issuer()" num="6" count="8" type="method" />
+        <line complexity="1" signature="get_audience()" num="7" count="8" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Configuration\MongoDbSettings.cs" name="MongoDbSettings.cs">
+        <metrics complexity="0" elements="2" coveredelements="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" coveredmethods="2" methods="2" classes="1" loc="10" ncloc="2" />
+        <class name="AgripeWebAPI.Configuration.MongoDbSettings">
+          <metrics complexity="0" elements="2" coveredelements="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" coveredmethods="2" methods="2" />
+        </class>
+        <line complexity="1" signature="get_ConnectionString()" num="7" count="80" type="method" />
+        <line complexity="1" signature="get_DatabaseName()" num="8" count="72" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Configuration\SwaggerConfig.cs" name="SwaggerConfig.cs">
+        <metrics complexity="0" elements="33" coveredelements="0" conditionals="0" coveredconditionals="0" statements="33" coveredstatements="0" coveredmethods="0" methods="2" classes="1" loc="44" ncloc="33" />
+        <class name="AgripeWebAPI.Configuration.SwaggerConfig">
+          <metrics complexity="0" elements="33" coveredelements="0" conditionals="0" coveredconditionals="0" statements="33" coveredstatements="0" coveredmethods="0" methods="2" />
+        </class>
+        <line complexity="1" signature="AddSwaggerConfiguration(Microsoft.Extensions.DependencyInjection.IServiceCollection)" num="8" count="0" type="method" />
+        <line num="9" count="0" type="stmt" />
+        <line num="10" count="0" type="stmt" />
+        <line num="11" count="0" type="stmt" />
+        <line num="12" count="0" type="stmt" />
+        <line num="13" count="0" type="stmt" />
+        <line num="14" count="0" type="stmt" />
+        <line num="15" count="0" type="stmt" />
+        <line num="16" count="0" type="stmt" />
+        <line num="17" count="0" type="stmt" />
+        <line num="18" count="0" type="stmt" />
+        <line num="19" count="0" type="stmt" />
+        <line num="20" count="0" type="stmt" />
+        <line num="21" count="0" type="stmt" />
+        <line num="22" count="0" type="stmt" />
+        <line num="23" count="0" type="stmt" />
+        <line num="24" count="0" type="stmt" />
+        <line num="25" count="0" type="stmt" />
+        <line num="26" count="0" type="stmt" />
+        <line num="27" count="0" type="stmt" />
+        <line num="28" count="0" type="stmt" />
+        <line num="29" count="0" type="stmt" />
+        <line num="30" count="0" type="stmt" />
+        <line num="31" count="0" type="stmt" />
+        <line num="32" count="0" type="stmt" />
+        <line num="33" count="0" type="stmt" />
+        <line num="34" count="0" type="stmt" />
+        <line num="35" count="0" type="stmt" />
+        <line num="36" count="0" type="stmt" />
+        <line complexity="1" signature="UseSwaggerConfiguration(Microsoft.AspNetCore.Builder.IApplicationBuilder)" num="39" count="0" type="method" />
+        <line num="40" count="0" type="stmt" />
+        <line num="41" count="0" type="stmt" />
+        <line num="42" count="0" type="stmt" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Controllers\AuthController.cs" name="AuthController.cs">
+        <metrics complexity="0" elements="51" coveredelements="50" conditionals="32" coveredconditionals="27" statements="51" coveredstatements="50" coveredmethods="8" methods="8" classes="1" loc="83" ncloc="51" />
+        <class name="AgripeWebAPI.Controllers.AuthController">
+          <metrics complexity="0" elements="51" coveredelements="50" conditionals="32" coveredconditionals="27" statements="51" coveredstatements="50" coveredmethods="8" methods="8" />
+        </class>
+        <line complexity="1" signature=".ctor(AgripeWebAPI.Models.Interfaces.INotifier)" num="12" count="40" type="method" />
+        <line complexity="1" signature=".ctor(AgripeWebAPI.Models.Interfaces.INotifier)" num="13" count="40" type="method" />
+        <line num="14" count="40" type="stmt" />
+        <line num="15" count="32" type="stmt" />
+        <line complexity="4" signature="LogIn()" num="21" count="18" type="method" />
+        <line falsecount="0" truecount="2" num="22" type="cond" />
+        <line complexity="6" signature="LogIn()" num="23" count="18" type="method" />
+        <line falsecount="0" truecount="2" num="24" type="cond" />
+        <line falsecount="0" truecount="2" num="26" type="cond" />
+        <line num="27" count="1" type="stmt" />
+        <line falsecount="2" truecount="2" num="28" type="cond" />
+        <line num="29" count="9" type="stmt" />
+        <line num="30" count="8" type="stmt" />
+        <line num="31" count="0" type="stmt" />
+        <line num="32" count="9" type="stmt" />
+        <line num="33" count="3" type="stmt" />
+        <line num="34" count="8" type="stmt" />
+        <line num="35" count="3" type="stmt" />
+        <line num="36" count="4" type="stmt" />
+        <line num="37" count="8" type="stmt" />
+        <line num="38" count="11" type="stmt" />
+        <line complexity="6" signature="ExternalLogin()" num="44" count="12" type="method" />
+        <line falsecount="1" truecount="3" num="45" type="cond" />
+        <line num="46" count="1" type="stmt" />
+        <line num="47" count="1" type="stmt" />
+        <line num="48" count="1" type="stmt" />
+        <line complexity="12" signature="ExternalLogin()" num="49" count="12" type="method" />
+        <line falsecount="1" truecount="3" num="50" type="cond" />
+        <line num="51" count="6" type="stmt" />
+        <line num="52" count="4" type="stmt" />
+        <line falsecount="0" truecount="2" num="53" type="cond" />
+        <line num="54" count="1" type="stmt" />
+        <line num="55" count="1" type="stmt" />
+        <line num="56" count="9" type="stmt" />
+        <line falsecount="1" truecount="3" num="58" type="cond" />
+        <line num="59" count="1" type="stmt" />
+        <line num="60" count="3" type="stmt" />
+        <line falsecount="0" truecount="4" num="61" type="cond" />
+        <line num="62" count="4" type="stmt" />
+        <line num="63" count="4" type="stmt" />
+        <line num="64" count="4" type="stmt" />
+        <line num="67" count="4" type="stmt" />
+        <line num="68" count="12" type="stmt" />
+        <line complexity="2" signature="AddUser()" num="69" count="3" type="method" />
+        <line falsecount="0" truecount="2" num="70" type="cond" />
+        <line num="72" count="1" type="stmt" />
+        <line num="73" count="2" type="stmt" />
+        <line complexity="2" signature="AddUser()" num="77" count="12" type="method" />
+        <line falsecount="0" truecount="2" num="78" type="cond" />
+        <line num="80" count="4" type="stmt" />
+        <line num="81" count="8" type="stmt" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Controllers\HealthController.cs" name="HealthController.cs">
+        <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" classes="1" loc="16" ncloc="1" />
+        <class name="AgripeWebAPI.Controllers.HealthController">
+          <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" />
+        </class>
+        <line complexity="1" signature="Get()" num="14" count="5" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Controllers\MainController.cs" name="MainController.cs">
+        <metrics complexity="0" elements="52" coveredelements="52" conditionals="20" coveredconditionals="18" statements="52" coveredstatements="52" coveredmethods="8" methods="8" classes="1" loc="91" ncloc="52" />
+        <class name="AgripeWebAPI.Controllers.MainController">
+          <metrics complexity="0" elements="52" coveredelements="52" conditionals="20" coveredconditionals="18" statements="52" coveredstatements="52" coveredmethods="8" methods="8" />
+        </class>
+        <line complexity="1" signature=".ctor(AgripeWebAPI.Models.Interfaces.INotifier)" num="15" count="228" type="method" />
+        <line num="16" count="228" type="stmt" />
+        <line num="17" count="228" type="stmt" />
+        <line num="18" count="228" type="stmt" />
+        <line complexity="1" signature="ValidOperation()" num="21" count="105" type="method" />
+        <line num="22" count="105" type="stmt" />
+        <line num="23" count="105" type="stmt" />
+        <line complexity="4" signature="CustomResponse(System.Object,System.Net.HttpStatusCode)" num="26" count="95" type="method" />
+        <line falsecount="0" truecount="2" num="27" type="cond" />
+        <line num="28" count="15" type="stmt" />
+        <line falsecount="0" truecount="2" num="29" type="cond" />
+        <line num="30" count="10" type="stmt" />
+        <line num="31" count="10" type="stmt" />
+        <line num="32" count="10" type="stmt" />
+        <line num="33" count="10" type="stmt" />
+        <line num="34" count="10" type="stmt" />
+        <line num="37" count="5" type="stmt" />
+        <line num="38" count="5" type="stmt" />
+        <line num="42" count="80" type="stmt" />
+        <line num="43" count="80" type="stmt" />
+        <line num="44" count="5" type="stmt" />
+        <line num="45" count="80" type="stmt" />
+        <line num="46" count="95" type="stmt" />
+        <line complexity="2" signature="GetCurrentUserId()" num="49" count="51" type="method" />
+        <line num="50" count="51" type="stmt" />
+        <line falsecount="0" truecount="2" num="51" type="cond" />
+        <line num="52" count="42" type="stmt" />
+        <line num="53" count="42" type="stmt" />
+        <line num="55" count="9" type="stmt" />
+        <line num="56" count="51" type="stmt" />
+        <line complexity="8" signature="getUserIdFromClaim()" num="59" count="93" type="method" />
+        <line falsecount="1" truecount="5" num="60" type="cond" />
+        <line falsecount="0" truecount="2" num="62" type="cond" />
+        <line num="63" count="42" type="stmt" />
+        <line num="64" count="42" type="stmt" />
+        <line num="67" count="9" type="stmt" />
+        <line num="68" count="51" type="stmt" />
+        <line complexity="2" signature="CustomResponse(Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary)" num="71" count="128" type="method" />
+        <line falsecount="0" truecount="2" num="72" type="cond" />
+        <line num="73" count="64" type="stmt" />
+        <line num="74" count="64" type="stmt" />
+        <line complexity="4" signature="NotifyErrorModelInvalid(Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary)" num="77" count="320" type="method" />
+        <line num="78" count="128" type="stmt" />
+        <line falsecount="0" truecount="2" num="79" type="cond" />
+        <line num="80" count="64" type="stmt" />
+        <line falsecount="1" truecount="1" num="81" type="cond" />
+        <line num="82" count="64" type="stmt" />
+        <line num="83" count="64" type="stmt" />
+        <line num="84" count="64" type="stmt" />
+        <line complexity="1" signature="NotifyError(System.String)" num="87" count="90" type="method" />
+        <line num="88" count="90" type="stmt" />
+        <line num="89" count="90" type="stmt" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Controllers\PivotController.cs" name="PivotController.cs">
+        <metrics complexity="0" elements="30" coveredelements="30" conditionals="12" coveredconditionals="10" statements="30" coveredstatements="30" coveredmethods="7" methods="8" classes="1" loc="100" ncloc="30" />
+        <class name="AgripeWebAPI.Controllers.PivotController">
+          <metrics complexity="0" elements="30" coveredelements="30" conditionals="12" coveredconditionals="10" statements="30" coveredstatements="30" coveredmethods="7" methods="8" />
+        </class>
+        <line complexity="1" signature=".ctor(AgripeWebAPI.Models.Interfaces.INotifier)" num="14" count="44" type="method" />
+        <line num="15" count="44" type="stmt" />
+        <line num="16" count="44" type="stmt" />
+        <line complexity="2" signature="GetById()" num="25" count="15" type="method" />
+        <line falsecount="0" truecount="2" num="26" type="cond" />
+        <line num="28" count="5" type="stmt" />
+        <line num="29" count="10" type="stmt" />
+        <line complexity="2" signature="GetAll()" num="38" count="5" type="method" />
+        <line falsecount="1" truecount="1" num="39" type="cond" />
+        <line num="41" count="5" type="stmt" />
+        <line num="42" count="5" type="stmt" />
+        <line num="44" count="5" type="stmt" />
+        <line num="45" count="5" type="stmt" />
+        <line complexity="2" signature="Add()" num="54" count="5" type="method" />
+        <line falsecount="1" truecount="1" num="55" type="cond" />
+        <line num="57" count="5" type="stmt" />
+        <line num="58" count="5" type="stmt" />
+        <line num="59" count="5" type="stmt" />
+        <line complexity="2" signature="Update()" num="68" count="15" type="method" />
+        <line falsecount="0" truecount="2" num="69" type="cond" />
+        <line num="71" count="5" type="stmt" />
+        <line num="72" count="10" type="stmt" />
+        <line complexity="2" signature="Delete()" num="81" count="9" type="method" />
+        <line falsecount="0" truecount="2" num="82" type="cond" />
+        <line num="84" count="3" type="stmt" />
+        <line num="85" count="6" type="stmt" />
+        <line complexity="2" signature="Delete()" num="94" count="12" type="method" />
+        <line falsecount="0" truecount="2" num="95" type="cond" />
+        <line num="97" count="4" type="stmt" />
+        <line num="98" count="8" type="stmt" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Controllers\ReadsController.cs" name="ReadsController.cs">
+        <metrics complexity="0" elements="34" coveredelements="34" conditionals="0" coveredconditionals="0" statements="34" coveredstatements="34" coveredmethods="12" methods="12" classes="1" loc="68" ncloc="34" />
+        <class name="AgripeWebAPI.Controllers.ReadsController">
+          <metrics complexity="0" elements="34" coveredelements="34" conditionals="0" coveredconditionals="0" statements="34" coveredstatements="34" coveredmethods="12" methods="12" />
+        </class>
+        <line complexity="1" signature=".ctor(AgripeWebAPI.Models.Interfaces.INotifier)" num="13" count="25" type="method" />
+        <line num="14" count="5" type="stmt" />
+        <line complexity="1" signature=".ctor(AgripeWebAPI.Models.Interfaces.INotifier)" num="15" count="25" type="method" />
+        <line num="16" count="20" type="stmt" />
+        <line num="17" count="20" type="stmt" />
+        <line complexity="1" signature="GetActive()" num="19" count="5" type="method" />
+        <line num="20" count="1" type="stmt" />
+        <line complexity="1" signature="GetActive()" num="21" count="5" type="method" />
+        <line num="22" count="4" type="stmt" />
+        <line num="23" count="4" type="stmt" />
+        <line complexity="1" signature="GetAll()" num="29" count="5" type="method" />
+        <line num="30" count="1" type="stmt" />
+        <line complexity="1" signature="GetAll()" num="31" count="5" type="method" />
+        <line num="32" count="5" type="stmt" />
+        <line num="33" count="4" type="stmt" />
+        <line num="34" count="4" type="stmt" />
+        <line complexity="1" signature="GetAllByPivotId()" num="40" count="5" type="method" />
+        <line num="41" count="1" type="stmt" />
+        <line complexity="1" signature="GetAllBySensorId()" num="42" count="5" type="method" />
+        <line num="43" count="4" type="stmt" />
+        <line num="44" count="4" type="stmt" />
+        <line complexity="1" signature="GetByPivotId()" num="50" count="5" type="method" />
+        <line num="51" count="1" type="stmt" />
+        <line complexity="1" signature="GetByPivotId()" num="52" count="5" type="method" />
+        <line num="53" count="4" type="stmt" />
+        <line num="54" count="4" type="stmt" />
+        <line num="55" count="4" type="stmt" />
+        <line complexity="1" signature="Add()" num="60" count="1" type="method" />
+        <line num="61" count="1" type="stmt" />
+        <line num="62" count="1" type="stmt" />
+        <line num="63" count="1" type="stmt" />
+        <line complexity="1" signature="Add()" num="64" count="4" type="method" />
+        <line num="65" count="4" type="stmt" />
+        <line num="66" count="4" type="stmt" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Controllers\SensorController.cs" name="SensorController.cs">
+        <metrics complexity="0" elements="29" coveredelements="29" conditionals="10" coveredconditionals="10" statements="29" coveredstatements="29" coveredmethods="8" methods="8" classes="1" loc="87" ncloc="29" />
+        <class name="AgripeWebAPI.Controllers.SensorController">
+          <metrics complexity="0" elements="29" coveredelements="29" conditionals="10" coveredconditionals="10" statements="29" coveredstatements="29" coveredmethods="8" methods="8" />
+        </class>
+        <line complexity="1" signature=".ctor(AgripeWebAPI.Models.Interfaces.INotifier)" num="14" count="40" type="method" />
+        <line num="15" count="40" type="stmt" />
+        <line num="16" count="40" type="stmt" />
+        <line complexity="2" signature="GetById()" num="25" count="15" type="method" />
+        <line falsecount="0" truecount="2" num="26" type="cond" />
+        <line num="28" count="5" type="stmt" />
+        <line num="29" count="10" type="stmt" />
+        <line complexity="1" signature="getAll()" num="38" count="5" type="method" />
+        <line num="41" count="5" type="stmt" />
+        <line num="42" count="5" type="stmt" />
+        <line num="43" count="5" type="stmt" />
+        <line complexity="1" signature="getAllByPivotId()" num="52" count="5" type="method" />
+        <line num="55" count="5" type="stmt" />
+        <line num="56" count="5" type="stmt" />
+        <line num="57" count="4" type="stmt" />
+        <line complexity="2" signature="Add()" num="65" count="12" type="method" />
+        <line complexity="2" signature="Add()" num="66" count="12" type="method" />
+        <line falsecount="0" truecount="2" num="67" type="cond" />
+        <line num="68" count="1" type="stmt" />
+        <line num="69" count="5" type="stmt" />
+        <line num="70" count="6" type="stmt" />
+        <line num="71" count="8" type="stmt" />
+        <line complexity="2" signature="Update()" num="79" count="12" type="method" />
+        <line complexity="2" signature="Update()" num="80" count="12" type="method" />
+        <line falsecount="0" truecount="2" num="81" type="cond" />
+        <line num="82" count="1" type="stmt" />
+        <line num="83" count="5" type="stmt" />
+        <line num="84" count="6" type="stmt" />
+        <line num="85" count="8" type="stmt" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Controllers\UserController.cs" name="UserController.cs">
+        <metrics complexity="0" elements="20" coveredelements="20" conditionals="8" coveredconditionals="8" statements="20" coveredstatements="20" coveredmethods="5" methods="6" classes="1" loc="71" ncloc="20" />
+        <class name="AgripeWebAPI.Controllers.UserController">
+          <metrics complexity="0" elements="20" coveredelements="20" conditionals="8" coveredconditionals="8" statements="20" coveredstatements="20" coveredmethods="5" methods="6" />
+        </class>
+        <line complexity="1" signature=".ctor(AgripeWebAPI.Models.Interfaces.INotifier)" num="14" count="34" type="method" />
+        <line num="15" count="34" type="stmt" />
+        <line num="16" count="34" type="stmt" />
+        <line complexity="2" signature="GetById()" num="25" count="15" type="method" />
+        <line falsecount="0" truecount="2" num="26" type="cond" />
+        <line num="28" count="5" type="stmt" />
+        <line num="29" count="10" type="stmt" />
+        <line complexity="2" signature="Add()" num="38" count="15" type="method" />
+        <line falsecount="0" truecount="2" num="39" type="cond" />
+        <line num="41" count="5" type="stmt" />
+        <line num="42" count="10" type="stmt" />
+        <line complexity="2" signature="Update()" num="51" count="9" type="method" />
+        <line falsecount="0" truecount="2" num="52" type="cond" />
+        <line num="54" count="3" type="stmt" />
+        <line num="55" count="4" type="stmt" />
+        <line num="56" count="4" type="stmt" />
+        <line complexity="2" signature="Update()" num="65" count="12" type="method" />
+        <line falsecount="0" truecount="2" num="66" type="cond" />
+        <line num="68" count="4" type="stmt" />
+        <line num="69" count="8" type="stmt" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Pivots\CreatePivotRequest.cs" name="CreatePivotRequest.cs">
+        <metrics complexity="0" elements="2" coveredelements="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" coveredmethods="2" methods="2" classes="1" loc="11" ncloc="2" />
+        <class name="AgripeWebAPI.Domain.Commands.Requests.Pivots.CreatePivotRequest">
+          <metrics complexity="0" elements="2" coveredelements="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" coveredmethods="2" methods="2" />
+        </class>
+        <line complexity="1" signature="get_UserId()" num="8" count="30" type="method" />
+        <line complexity="1" signature="get_Name()" num="9" count="40" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Pivots\DeletePivotRequest.cs" name="DeletePivotRequest.cs">
+        <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" classes="1" loc="10" ncloc="1" />
+        <class name="AgripeWebAPI.Domain.Commands.Requests.Pivots.DeletePivotRequest">
+          <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" />
+        </class>
+        <line complexity="1" signature="get_Id()" num="8" count="30" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Pivots\EditPivotLimitsRequest.cs" name="EditPivotLimitsRequest.cs">
+        <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" classes="1" loc="12" ncloc="3" />
+        <class name="AgripeWebAPI.Domain.Commands.Requests.Pivots.EditPivotLimitsRequest">
+          <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" />
+        </class>
+        <line complexity="1" signature="get_Id()" num="8" count="10" type="method" />
+        <line complexity="1" signature="get_LimiteInferior()" num="9" count="8" type="method" />
+        <line complexity="1" signature="get_LimiteSuperior()" num="10" count="8" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Pivots\EditPivotRequest.cs" name="EditPivotRequest.cs">
+        <metrics complexity="0" elements="2" coveredelements="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" coveredmethods="2" methods="2" classes="1" loc="11" ncloc="2" />
+        <class name="AgripeWebAPI.Domain.Commands.Requests.Pivots.EditPivotRequest">
+          <metrics complexity="0" elements="2" coveredelements="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" coveredmethods="2" methods="2" />
+        </class>
+        <line complexity="1" signature="get_Id()" num="8" count="25" type="method" />
+        <line complexity="1" signature="get_Name()" num="9" count="35" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Pivots\GetListPivotByUserIdRequest.cs" name="GetListPivotByUserIdRequest.cs">
+        <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" classes="1" loc="11" ncloc="1" />
+        <class name="AgripeWebAPI.Domain.Commands.Requests.Pivots.GetListPivotByUserIdRequest">
+          <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" />
+        </class>
+        <line complexity="1" signature="get_UserId()" num="9" count="30" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Pivots\GetListPivotRequest.cs" name="GetListPivotRequest.cs">
+        <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" classes="1" loc="10" ncloc="1" />
+        <class name="AgripeWebAPI.Domain.Commands.Requests.Pivots.GetListPivotRequest">
+          <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" />
+        </class>
+        <line complexity="1" signature="get_Id()" num="8" count="15" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Pivots\GetPivotRequest.cs" name="GetPivotRequest.cs">
+        <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" classes="1" loc="10" ncloc="1" />
+        <class name="AgripeWebAPI.Domain.Commands.Requests.Pivots.GetPivotRequest">
+          <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" />
+        </class>
+        <line complexity="1" signature="get_Id()" num="8" count="20" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Reads\CreateReadRequest.cs" name="CreateReadRequest.cs">
+        <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" classes="1" loc="12" ncloc="3" />
+        <class name="AgripeWebAPI.Domain.Commands.Requests.Reads.CreateReadRequest">
+          <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" />
+        </class>
+        <line complexity="1" signature="get_UserId()" num="8" count="9" type="method" />
+        <line complexity="1" signature="get_Code()" num="9" count="55" type="method" />
+        <line complexity="1" signature="get_Value()" num="10" count="56" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Reads\GetAllListReadByPivotIdRequest.cs" name="GetAllListReadByPivotIdRequest.cs">
+        <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" classes="1" loc="11" ncloc="3" />
+        <class name="AgripeWebAPI.Domain.Commands.Requests.Reads.GetAllListReadByPivotIdRequest">
+          <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" />
+        </class>
+        <line complexity="1" signature="get_SensorId()" num="8" count="6" type="method" />
+        <line complexity="1" signature="get_Quadrante()" num="9" count="11" type="method" />
+        <line complexity="1" signature="get_NumberOfReads()" num="10" count="12" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Reads\GetAllListReadBySensorIdRequest.cs" name="GetAllListReadBySensorIdRequest.cs">
+        <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" classes="1" loc="12" ncloc="3" />
+        <class name="AgripeWebAPI.Domain.Commands.Requests.Reads.GetAllListReadBySensorIdRequest">
+          <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" />
+        </class>
+        <line complexity="1" signature="get_SensorId()" num="8" count="24" type="method" />
+        <line complexity="1" signature="get_Quadrante()" num="9" count="44" type="method" />
+        <line complexity="1" signature="get_NumberOfReads()" num="10" count="48" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Reads\GetListReadByPivotIdRequest.cs" name="GetListReadByPivotIdRequest.cs">
+        <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" classes="1" loc="12" ncloc="3" />
+        <class name="AgripeWebAPI.Domain.Commands.Requests.Reads.GetListReadByPivotIdRequest">
+          <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" />
+        </class>
+        <line complexity="1" signature="get_PivotId()" num="8" count="44" type="method" />
+        <line complexity="1" signature="get_NumberOfReads()" num="9" count="66" type="method" />
+        <line complexity="1" signature="get_UserId()" num="10" count="16" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Reads\GetListReadRequest.cs" name="GetListReadRequest.cs">
+        <metrics complexity="0" elements="2" coveredelements="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" coveredmethods="2" methods="2" classes="1" loc="11" ncloc="2" />
+        <class name="AgripeWebAPI.Domain.Commands.Requests.Reads.GetListReadRequest">
+          <metrics complexity="0" elements="2" coveredelements="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" coveredmethods="2" methods="2" />
+        </class>
+        <line complexity="1" signature="get_UserId()" num="8" count="30" type="method" />
+        <line complexity="1" signature="get_NumberOfReads()" num="9" count="60" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Sensors\CreateSensorRequest.cs" name="CreateSensorRequest.cs">
+        <metrics complexity="0" elements="5" coveredelements="5" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="5" coveredmethods="5" methods="5" classes="1" loc="15" ncloc="5" />
+        <class name="AgripeWebAPI.Domain.Commands.Requests.Sensors.CreateSensorRequest">
+          <metrics complexity="0" elements="5" coveredelements="5" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="5" coveredmethods="5" methods="5" />
+        </class>
+        <line complexity="1" signature="get_Name()" num="9" count="10" type="method" />
+        <line complexity="1" signature="get_Pivot()" num="10" count="50" type="method" />
+        <line complexity="1" signature="get_UserId()" num="11" count="30" type="method" />
+        <line complexity="1" signature="get_Code()" num="12" count="45" type="method" />
+        <line complexity="1" signature="get_Quadrante()" num="13" count="40" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Sensors\DeleteSensorRequest.cs" name="DeleteSensorRequest.cs">
+        <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" classes="1" loc="10" ncloc="1" />
+        <class name="AgripeWebAPI.Domain.Commands.Requests.Sensors.DeleteSensorRequest">
+          <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" />
+        </class>
+        <line complexity="1" signature="get_Id()" num="8" count="15" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Sensors\EditSensorRequest.cs" name="EditSensorRequest.cs">
+        <metrics complexity="0" elements="6" coveredelements="6" conditionals="0" coveredconditionals="0" statements="6" coveredstatements="6" coveredmethods="6" methods="6" classes="1" loc="16" ncloc="6" />
+        <class name="AgripeWebAPI.Domain.Commands.Requests.Sensors.EditSensorRequest">
+          <metrics complexity="0" elements="6" coveredelements="6" conditionals="0" coveredconditionals="0" statements="6" coveredstatements="6" coveredmethods="6" methods="6" />
+        </class>
+        <line complexity="1" signature="get_Id()" num="9" count="35" type="method" />
+        <line complexity="1" signature="get_Name()" num="10" count="10" type="method" />
+        <line complexity="1" signature="get_Pivot()" num="11" count="45" type="method" />
+        <line complexity="1" signature="get_UserId()" num="12" count="30" type="method" />
+        <line complexity="1" signature="get_Code()" num="13" count="35" type="method" />
+        <line complexity="1" signature="get_Quadrante()" num="14" count="35" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Sensors\GetListSensorByUserIdRequest.cs" name="GetListSensorByUserIdRequest.cs">
+        <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" classes="1" loc="10" ncloc="1" />
+        <class name="AgripeWebAPI.Domain.Commands.Requests.Sensors.GetListSensorByUserIdRequest">
+          <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" />
+        </class>
+        <line complexity="1" signature="get_UserId()" num="8" count="30" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Sensors\GetListSensorRequest.cs" name="GetListSensorRequest.cs">
+        <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" classes="1" loc="12" ncloc="3" />
+        <class name="AgripeWebAPI.Domain.Commands.Requests.Sensors.GetListSensorRequest">
+          <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" />
+        </class>
+        <line complexity="1" signature="get_PivotId()" num="8" count="45" type="method" />
+        <line complexity="1" signature="get_Quadrante()" num="9" count="20" type="method" />
+        <line complexity="1" signature="get_UserId()" num="10" count="4" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Sensors\GetSensorRequest.cs" name="GetSensorRequest.cs">
+        <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" classes="1" loc="10" ncloc="1" />
+        <class name="AgripeWebAPI.Domain.Commands.Requests.Sensors.GetSensorRequest">
+          <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" />
+        </class>
+        <line complexity="1" signature="get_Id()" num="8" count="30" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Users\CreateUserRequest.cs" name="CreateUserRequest.cs">
+        <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" classes="1" loc="24" ncloc="3" />
+        <class name="AgripeWebAPI.Domain.Commands.Requests.Users.CreateUserRequest">
+          <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" />
+        </class>
+        <line complexity="1" signature="get_Name()" num="12" count="50" type="method" />
+        <line complexity="1" signature="get_Email()" num="18" count="65" type="method" />
+        <line complexity="1" signature="get_Password()" num="22" count="50" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Users\DeleteUserRequest.cs" name="DeleteUserRequest.cs">
+        <metrics complexity="0" elements="2" coveredelements="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" coveredmethods="2" methods="2" classes="1" loc="11" ncloc="2" />
+        <class name="AgripeWebAPI.Domain.Commands.Requests.Users.DeleteUserRequest">
+          <metrics complexity="0" elements="2" coveredelements="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" coveredmethods="2" methods="2" />
+        </class>
+        <line complexity="1" signature="get_Id()" num="8" count="45" type="method" />
+        <line complexity="1" signature="get_CurrentUserId()" num="9" count="30" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Users\EditUserLimitsRequest.cs" name="EditUserLimitsRequest.cs">
+        <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" classes="1" loc="12" ncloc="3" />
+        <class name="AgripeWebAPI.Domain.Commands.Requests.Users.EditUserLimitsRequest">
+          <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" />
+        </class>
+        <line complexity="1" signature="get_Id()" num="8" count="14" type="method" />
+        <line complexity="1" signature="get_LimiteInferior()" num="9" count="10" type="method" />
+        <line complexity="1" signature="get_LimiteSuperior()" num="10" count="10" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Users\EditUserRequest.cs" name="EditUserRequest.cs">
+        <metrics complexity="0" elements="4" coveredelements="4" conditionals="0" coveredconditionals="0" statements="4" coveredstatements="4" coveredmethods="4" methods="4" classes="1" loc="26" ncloc="4" />
+        <class name="AgripeWebAPI.Domain.Commands.Requests.Users.EditUserRequest">
+          <metrics complexity="0" elements="4" coveredelements="4" conditionals="0" coveredconditionals="0" statements="4" coveredstatements="4" coveredmethods="4" methods="4" />
+        </class>
+        <line complexity="1" signature="get_Name()" num="12" count="80" type="method" />
+        <line complexity="1" signature="get_Email()" num="18" count="125" type="method" />
+        <line complexity="1" signature="get_Password()" num="22" count="90" type="method" />
+        <line complexity="1" signature="get_CurrentUserId()" num="24" count="45" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Users\ExternalLoginRequest.cs" name="ExternalLoginRequest.cs">
+        <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" classes="1" loc="12" ncloc="3" />
+        <class name="AgripeWebAPI.Domain.Commands.Requests.Users.ExternalLoginRequest">
+          <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" />
+        </class>
+        <line complexity="1" signature="get_Provider()" num="8" count="350" type="method" />
+        <line complexity="1" signature="get_Code()" num="9" count="340" type="method" />
+        <line complexity="1" signature="get_RedirectUri()" num="10" count="260" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Users\GetUserRequest.cs" name="GetUserRequest.cs">
+        <metrics complexity="0" elements="2" coveredelements="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" coveredmethods="2" methods="2" classes="1" loc="11" ncloc="2" />
+        <class name="AgripeWebAPI.Domain.Commands.Requests.Users.GetUserRequest">
+          <metrics complexity="0" elements="2" coveredelements="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" coveredmethods="2" methods="2" />
+        </class>
+        <line complexity="1" signature="get_Id()" num="8" count="50" type="method" />
+        <line complexity="1" signature="get_CurrentUserId()" num="9" count="30" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Users\UserTokenRequest.cs" name="UserTokenRequest.cs">
+        <metrics complexity="0" elements="2" coveredelements="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" coveredmethods="2" methods="2" classes="1" loc="18" ncloc="2" />
+        <class name="AgripeWebAPI.Domain.Commands.Requests.Users.UserTokenRequest">
+          <metrics complexity="0" elements="2" coveredelements="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" coveredmethods="2" methods="2" />
+        </class>
+        <line complexity="1" signature="get_Email()" num="13" count="151" type="method" />
+        <line complexity="1" signature="get_Password()" num="16" count="89" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Responses\Pivots\CreatePivotResponse.cs" name="CreatePivotResponse.cs">
+        <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" classes="1" loc="7" ncloc="1" />
+        <class name="AgripeWebAPI.Domain.Commands.Responses.Pivots.CreatePivotResponse">
+          <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" />
+        </class>
+        <line complexity="1" signature="get_Id()" num="5" count="35" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Responses\Pivots\EditPivotResponse.cs" name="EditPivotResponse.cs">
+        <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" classes="1" loc="7" ncloc="1" />
+        <class name="AgripeWebAPI.Domain.Commands.Responses.Pivots.EditPivotResponse">
+          <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" />
+        </class>
+        <line complexity="1" signature="get_Id()" num="5" count="47" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Responses\Pivots\GetListPivotResponse.cs" name="GetListPivotResponse.cs">
+        <metrics complexity="0" elements="2" coveredelements="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" coveredmethods="2" methods="2" classes="1" loc="8" ncloc="2" />
+        <class name="AgripeWebAPI.Domain.Commands.Responses.Pivots.GetListPivotResponse">
+          <metrics complexity="0" elements="2" coveredelements="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" coveredmethods="2" methods="2" />
+        </class>
+        <line complexity="1" signature="get_Id()" num="5" count="15" type="method" />
+        <line complexity="1" signature="get_Name()" num="6" count="15" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Responses\Pivots\GetPivotResponse.cs" name="GetPivotResponse.cs">
+        <metrics complexity="0" elements="4" coveredelements="4" conditionals="0" coveredconditionals="0" statements="4" coveredstatements="4" coveredmethods="4" methods="4" classes="1" loc="10" ncloc="4" />
+        <class name="AgripeWebAPI.Domain.Commands.Responses.Pivots.GetPivotResponse">
+          <metrics complexity="0" elements="4" coveredelements="4" conditionals="0" coveredconditionals="0" statements="4" coveredstatements="4" coveredmethods="4" methods="4" />
+        </class>
+        <line complexity="1" signature="get_Id()" num="5" count="70" type="method" />
+        <line complexity="1" signature="get_Name()" num="6" count="50" type="method" />
+        <line complexity="1" signature="get_LimiteInferior()" num="7" count="4" type="method" />
+        <line complexity="1" signature="get_LimiteSuperior()" num="8" count="4" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Responses\Reads\CreateReadResponse.cs" name="CreateReadResponse.cs">
+        <metrics complexity="0" elements="2" coveredelements="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" coveredmethods="2" methods="2" classes="1" loc="8" ncloc="2" />
+        <class name="AgripeWebAPI.Domain.Commands.Responses.Reads.CreateReadResponse">
+          <metrics complexity="0" elements="2" coveredelements="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" coveredmethods="2" methods="2" />
+        </class>
+        <line complexity="1" signature="get_Id()" num="5" count="25" type="method" />
+        <line complexity="1" signature="get_Content()" num="6" count="10" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Responses\Reads\GetAllReadByPivotIdResponse.cs" name="GetAllReadByPivotIdResponse.cs">
+        <metrics complexity="0" elements="4" coveredelements="4" conditionals="0" coveredconditionals="0" statements="4" coveredstatements="4" coveredmethods="4" methods="4" classes="1" loc="9" ncloc="4" />
+        <class name="AgripeWebAPI.Domain.Commands.Responses.Reads.GetAllReadByPivotIdResponse">
+          <metrics complexity="0" elements="4" coveredelements="4" conditionals="0" coveredconditionals="0" statements="4" coveredstatements="4" coveredmethods="4" methods="4" />
+        </class>
+        <line complexity="1" signature="get_Id()" num="5" count="9" type="method" />
+        <line complexity="1" signature="get_SensorId()" num="6" count="6" type="method" />
+        <line complexity="1" signature="get_Value()" num="7" count="8" type="method" />
+        <line complexity="1" signature="get_Date()" num="8" count="5" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Responses\Reads\GetAllReadBySensorIdResponse.cs" name="GetAllReadBySensorIdResponse.cs">
+        <metrics complexity="0" elements="4" coveredelements="4" conditionals="0" coveredconditionals="0" statements="4" coveredstatements="4" coveredmethods="4" methods="4" classes="1" loc="10" ncloc="4" />
+        <class name="AgripeWebAPI.Domain.Commands.Responses.Reads.GetAllReadBySensorIdResponse">
+          <metrics complexity="0" elements="4" coveredelements="4" conditionals="0" coveredconditionals="0" statements="4" coveredstatements="4" coveredmethods="4" methods="4" />
+        </class>
+        <line complexity="1" signature="get_Id()" num="5" count="36" type="method" />
+        <line complexity="1" signature="get_SensorId()" num="6" count="24" type="method" />
+        <line complexity="1" signature="get_Value()" num="7" count="32" type="method" />
+        <line complexity="1" signature="get_Date()" num="8" count="20" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Responses\Reads\GetReadByPivotIdResponse.cs" name="GetReadByPivotIdResponse.cs">
+        <metrics complexity="0" elements="30" coveredelements="30" conditionals="0" coveredconditionals="0" statements="30" coveredstatements="30" coveredmethods="24" methods="30" classes="3" loc="36" ncloc="30" />
+        <class name="AgripeWebAPI.Domain.Commands.Responses.Reads.ReadEntry">
+          <metrics complexity="0" elements="2" coveredelements="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" coveredmethods="0" methods="2" />
+        </class>
+        <class name="AgripeWebAPI.Domain.Commands.Responses.Reads.Quadrante">
+          <metrics complexity="0" elements="20" coveredelements="20" conditionals="0" coveredconditionals="0" statements="20" coveredstatements="20" coveredmethods="16" methods="20" />
+        </class>
+        <class name="AgripeWebAPI.Domain.Commands.Responses.Reads.GetReadByPivotIdResponse">
+          <metrics complexity="0" elements="8" coveredelements="8" conditionals="0" coveredconditionals="0" statements="8" coveredstatements="8" coveredmethods="8" methods="8" />
+        </class>
+        <line complexity="1" signature="get_Id()" num="5" count="5" type="method" />
+        <line complexity="1" signature="get_Name()" num="6" count="5" type="method" />
+        <line complexity="1" signature="get_Quadrante()" num="7" count="11" type="method" />
+        <line complexity="1" signature="get_Id()" num="11" count="34" type="method" />
+        <line complexity="1" signature="get_Name()" num="12" count="34" type="method" />
+        <line complexity="1" signature="get_Quadrante()" num="13" count="174" type="method" />
+        <line complexity="1" signature="get_LimiteInferior()" num="14" count="22" type="method" />
+        <line complexity="1" signature="get_LimiteSuperior()" num="15" count="22" type="method" />
+        <line complexity="1" signature="get_BottomLeft()" num="16" count="3" type="method" />
+        <line complexity="1" signature="get_BottomLeftAvg()" num="17" count="3" type="method" />
+        <line complexity="1" signature="get_BottomRight()" num="18" count="3" type="method" />
+        <line complexity="1" signature="get_BottomRightAvg()" num="19" count="3" type="method" />
+        <line complexity="1" signature="get_TopLeft()" num="20" count="26" type="method" />
+        <line complexity="1" signature="get_TopLeftAvg()" num="21" count="12" type="method" />
+        <line complexity="1" signature="get_TopLeftReads()" num="22" count="38" type="method" />
+        <line complexity="1" signature="get_TopRight()" num="24" count="28" type="method" />
+        <line complexity="1" signature="get_TopRightAvg()" num="25" count="13" type="method" />
+        <line complexity="1" signature="get_TopRightReads()" num="26" count="38" type="method" />
+        <line complexity="1" signature="get_BottomLeft()" num="28" count="28" type="method" />
+        <line complexity="1" signature="get_BottomLeftAvg()" num="29" count="14" type="method" />
+        <line complexity="1" signature="get_BottomLeftReads()" num="30" count="38" type="method" />
+        <line complexity="1" signature="get_BottomRight()" num="32" count="27" type="method" />
+        <line complexity="1" signature="get_BottomRightAvg()" num="33" count="14" type="method" />
+        <line complexity="1" signature="get_BottomRightReads()" num="34" count="38" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Responses\Reads\GetReadResponse.cs" name="GetReadResponse.cs">
+        <metrics complexity="0" elements="4" coveredelements="4" conditionals="0" coveredconditionals="0" statements="4" coveredstatements="4" coveredmethods="4" methods="4" classes="1" loc="10" ncloc="4" />
+        <class name="AgripeWebAPI.Domain.Commands.Responses.Reads.GetReadResponse">
+          <metrics complexity="0" elements="4" coveredelements="4" conditionals="0" coveredconditionals="0" statements="4" coveredstatements="4" coveredmethods="4" methods="4" />
+        </class>
+        <line complexity="1" signature="get_Id()" num="5" count="35" type="method" />
+        <line complexity="1" signature="get_SensorId()" num="6" count="25" type="method" />
+        <line complexity="1" signature="get_Value()" num="7" count="25" type="method" />
+        <line complexity="1" signature="get_Date()" num="8" count="15" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Responses\Sensors\CreateSensorResponse.cs" name="CreateSensorResponse.cs">
+        <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" classes="1" loc="7" ncloc="1" />
+        <class name="AgripeWebAPI.Domain.Commands.Responses.Sensors.CreateSensorResponse">
+          <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" />
+        </class>
+        <line complexity="1" signature="get_Id()" num="5" count="35" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Responses\Sensors\DeleteSensorResponse.cs" name="DeleteSensorResponse.cs">
+        <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" classes="1" loc="7" ncloc="1" />
+        <class name="AgripeWebAPI.Domain.Commands.Responses.Sensors.DeleteSensorResponse">
+          <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" />
+        </class>
+        <line complexity="1" signature="get_Success()" num="5" count="10" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Responses\Sensors\EditSensorResponse.cs" name="EditSensorResponse.cs">
+        <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" classes="1" loc="7" ncloc="1" />
+        <class name="AgripeWebAPI.Domain.Commands.Responses.Sensors.EditSensorResponse">
+          <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" />
+        </class>
+        <line complexity="1" signature="get_Id()" num="5" count="35" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Responses\Sensors\GetSensorResponse.cs" name="GetSensorResponse.cs">
+        <metrics complexity="0" elements="5" coveredelements="5" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="5" coveredmethods="5" methods="5" classes="1" loc="14" ncloc="5" />
+        <class name="AgripeWebAPI.Domain.Commands.Responses.Sensors.GetSensorResponse">
+          <metrics complexity="0" elements="5" coveredelements="5" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="5" coveredmethods="5" methods="5" />
+        </class>
+        <line complexity="1" signature="get_Id()" num="8" count="95" type="method" />
+        <line complexity="1" signature="get_Name()" num="9" count="60" type="method" />
+        <line complexity="1" signature="get_Pivot()" num="10" count="55" type="method" />
+        <line complexity="1" signature="get_Quadrante()" num="11" count="55" type="method" />
+        <line complexity="1" signature="get_Code()" num="12" count="65" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Responses\Users\CreateUserResponse.cs" name="CreateUserResponse.cs">
+        <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" classes="1" loc="9" ncloc="3" />
+        <class name="AgripeWebAPI.Domain.Commands.Responses.Users.CreateUserResponse">
+          <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" />
+        </class>
+        <line complexity="1" signature="get_Id()" num="5" count="40" type="method" />
+        <line complexity="1" signature="get_Name()" num="6" count="45" type="method" />
+        <line complexity="1" signature="get_Email()" num="7" count="35" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Responses\Users\DeleteUserResponse.cs" name="DeleteUserResponse.cs">
+        <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" classes="1" loc="7" ncloc="1" />
+        <class name="AgripeWebAPI.Domain.Commands.Responses.Users.DeleteUserResponse">
+          <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" />
+        </class>
+        <line complexity="1" signature="get_Success()" num="5" count="40" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Responses\Users\EditUserResponse.cs" name="EditUserResponse.cs">
+        <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" classes="1" loc="9" ncloc="3" />
+        <class name="AgripeWebAPI.Domain.Commands.Responses.Users.EditUserResponse">
+          <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" />
+        </class>
+        <line complexity="1" signature="get_Id()" num="5" count="52" type="method" />
+        <line complexity="1" signature="get_Name()" num="6" count="55" type="method" />
+        <line complexity="1" signature="get_Email()" num="7" count="50" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Responses\Users\GetUserResponse.cs" name="GetUserResponse.cs">
+        <metrics complexity="0" elements="5" coveredelements="5" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="5" coveredmethods="5" methods="5" classes="1" loc="11" ncloc="5" />
+        <class name="AgripeWebAPI.Domain.Commands.Responses.Users.GetUserResponse">
+          <metrics complexity="0" elements="5" coveredelements="5" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="5" coveredmethods="5" methods="5" />
+        </class>
+        <line complexity="1" signature="get_Id()" num="5" count="35" type="method" />
+        <line complexity="1" signature="get_Name()" num="6" count="35" type="method" />
+        <line complexity="1" signature="get_Email()" num="7" count="30" type="method" />
+        <line complexity="1" signature="get_LimiteInferior()" num="8" count="4" type="method" />
+        <line complexity="1" signature="get_LimiteSuperior()" num="9" count="4" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Responses\Users\UserTokenResponse.cs" name="UserTokenResponse.cs">
+        <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" classes="1" loc="16" ncloc="3" />
+        <class name="AgripeWebAPI.Domain.Commands.Responses.Users.UserTokenResponse">
+          <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" />
+        </class>
+        <line complexity="1" signature="get_Token()" num="5" count="18" type="method" />
+        <line complexity="1" signature="get_Token()" num="13" count="73" type="method" />
+        <line complexity="1" signature="get_ErrorCode()" num="14" count="125" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Pivots\CreatePivotHandler.cs" name="CreatePivotHandler.cs">
+        <metrics complexity="0" elements="20" coveredelements="20" conditionals="6" coveredconditionals="3" statements="20" coveredstatements="20" coveredmethods="2" methods="2" classes="1" loc="43" ncloc="20" />
+        <class name="AgripeWebAPI.Domain.Handlers.Pivots.CreatePivotHandler">
+          <metrics complexity="0" elements="20" coveredelements="20" conditionals="6" coveredconditionals="3" statements="20" coveredstatements="20" coveredmethods="2" methods="2" />
+        </class>
+        <line complexity="4" signature=".ctor(AgripeWebAPI.Models.agpDBContext,AgripeWebAPI.Models.Interfaces.ICurrentUserContext)" num="16" count="5" type="method" />
+        <line num="17" count="5" type="stmt" />
+        <line falsecount="1" truecount="1" num="18" type="cond" />
+        <line falsecount="1" truecount="1" num="19" type="cond" />
+        <line num="20" count="5" type="stmt" />
+        <line complexity="2" signature="Handle()" num="23" count="5" type="method" />
+        <line falsecount="1" truecount="1" num="24" type="cond" />
+        <line num="25" count="5" type="stmt" />
+        <line num="27" count="5" type="stmt" />
+        <line num="28" count="5" type="stmt" />
+        <line num="29" count="5" type="stmt" />
+        <line num="30" count="5" type="stmt" />
+        <line num="31" count="5" type="stmt" />
+        <line num="32" count="5" type="stmt" />
+        <line num="34" count="5" type="stmt" />
+        <line num="36" count="5" type="stmt" />
+        <line num="37" count="5" type="stmt" />
+        <line num="38" count="5" type="stmt" />
+        <line num="39" count="5" type="stmt" />
+        <line num="41" count="5" type="stmt" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Pivots\DeletePivotHandler.cs" name="DeletePivotHandler.cs">
+        <metrics complexity="0" elements="12" coveredelements="12" conditionals="2" coveredconditionals="2" statements="12" coveredstatements="12" coveredmethods="2" methods="2" classes="1" loc="29" ncloc="12" />
+        <class name="AgripeWebAPI.Domain.Handlers.Pivots.DeletePivotHandler">
+          <metrics complexity="0" elements="12" coveredelements="12" conditionals="2" coveredconditionals="2" statements="12" coveredstatements="12" coveredmethods="2" methods="2" />
+        </class>
+        <line complexity="1" signature=".ctor(AgripeWebAPI.Models.agpDBContext)" num="13" count="10" type="method" />
+        <line num="14" count="10" type="stmt" />
+        <line num="15" count="10" type="stmt" />
+        <line num="16" count="10" type="stmt" />
+        <line complexity="2" signature="Handle()" num="18" count="10" type="method" />
+        <line num="19" count="10" type="stmt" />
+        <line falsecount="0" truecount="2" num="20" type="cond" />
+        <line num="21" count="5" type="stmt" />
+        <line num="22" count="5" type="stmt" />
+        <line num="25" count="5" type="stmt" />
+        <line num="26" count="5" type="stmt" />
+        <line num="27" count="5" type="stmt" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Pivots\EditPivotHandler.cs" name="EditPivotHandler.cs">
+        <metrics complexity="0" elements="13" coveredelements="13" conditionals="2" coveredconditionals="2" statements="13" coveredstatements="13" coveredmethods="2" methods="2" classes="1" loc="28" ncloc="13" />
+        <class name="AgripeWebAPI.Domain.Handlers.Pivots.EditPivotHandler">
+          <metrics complexity="0" elements="13" coveredelements="13" conditionals="2" coveredconditionals="2" statements="13" coveredstatements="13" coveredmethods="2" methods="2" />
+        </class>
+        <line complexity="1" signature=".ctor(AgripeWebAPI.Models.agpDBContext)" num="12" count="10" type="method" />
+        <line num="13" count="10" type="stmt" />
+        <line num="14" count="10" type="stmt" />
+        <line num="15" count="10" type="stmt" />
+        <line complexity="2" signature="Handle()" num="17" count="10" type="method" />
+        <line num="18" count="10" type="stmt" />
+        <line falsecount="0" truecount="2" num="19" type="cond" />
+        <line num="20" count="5" type="stmt" />
+        <line num="21" count="5" type="stmt" />
+        <line num="23" count="5" type="stmt" />
+        <line num="24" count="5" type="stmt" />
+        <line num="25" count="5" type="stmt" />
+        <line num="26" count="5" type="stmt" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Pivots\EditPivotLimitsHandler.cs" name="EditPivotLimitsHandler.cs">
+        <metrics complexity="0" elements="14" coveredelements="14" conditionals="2" coveredconditionals="2" statements="14" coveredstatements="14" coveredmethods="2" methods="2" classes="1" loc="34" ncloc="14" />
+        <class name="AgripeWebAPI.Domain.Handlers.Pivots.EditPivotLimitsHandler">
+          <metrics complexity="0" elements="14" coveredelements="14" conditionals="2" coveredconditionals="2" statements="14" coveredstatements="14" coveredmethods="2" methods="2" />
+        </class>
+        <line complexity="1" signature=".ctor(AgripeWebAPI.Models.agpDBContext)" num="13" count="8" type="method" />
+        <line num="14" count="8" type="stmt" />
+        <line num="15" count="8" type="stmt" />
+        <line num="16" count="8" type="stmt" />
+        <line complexity="2" signature="Handle()" num="19" count="8" type="method" />
+        <line num="20" count="8" type="stmt" />
+        <line falsecount="0" truecount="2" num="21" type="cond" />
+        <line num="22" count="4" type="stmt" />
+        <line num="23" count="4" type="stmt" />
+        <line num="26" count="4" type="stmt" />
+        <line num="27" count="4" type="stmt" />
+        <line num="29" count="4" type="stmt" />
+        <line num="31" count="4" type="stmt" />
+        <line num="32" count="4" type="stmt" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Pivots\GetListPivotHandler.cs" name="GetListPivotHandler.cs">
+        <metrics complexity="0" elements="17" coveredelements="17" conditionals="6" coveredconditionals="3" statements="17" coveredstatements="17" coveredmethods="2" methods="2" classes="1" loc="36" ncloc="17" />
+        <class name="AgripeWebAPI.Domain.Handlers.Pivots.GetListPivotHandler">
+          <metrics complexity="0" elements="17" coveredelements="17" conditionals="6" coveredconditionals="3" statements="17" coveredstatements="17" coveredmethods="2" methods="2" />
+        </class>
+        <line complexity="4" signature=".ctor(AgripeWebAPI.Models.agpDBContext,AgripeWebAPI.Models.Interfaces.ICurrentUserContext)" num="15" count="10" type="method" />
+        <line num="16" count="10" type="stmt" />
+        <line falsecount="1" truecount="1" num="17" type="cond" />
+        <line falsecount="1" truecount="1" num="18" type="cond" />
+        <line num="19" count="10" type="stmt" />
+        <line complexity="2" signature="Handle()" num="22" count="10" type="method" />
+        <line falsecount="1" truecount="1" num="23" type="cond" />
+        <line num="24" count="10" type="stmt" />
+        <line num="26" count="10" type="stmt" />
+        <line num="27" count="10" type="stmt" />
+        <line num="28" count="10" type="stmt" />
+        <line num="29" count="10" type="stmt" />
+        <line num="30" count="10" type="stmt" />
+        <line num="31" count="10" type="stmt" />
+        <line num="32" count="10" type="stmt" />
+        <line num="33" count="10" type="stmt" />
+        <line num="34" count="10" type="stmt" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Pivots\GetPivotHandler.cs" name="GetPivotHandler.cs">
+        <metrics complexity="0" elements="18" coveredelements="18" conditionals="0" coveredconditionals="0" statements="18" coveredstatements="18" coveredmethods="2" methods="2" classes="1" loc="34" ncloc="18" />
+        <class name="AgripeWebAPI.Domain.Handlers.Pivots.GetPivotHandler">
+          <metrics complexity="0" elements="18" coveredelements="18" conditionals="0" coveredconditionals="0" statements="18" coveredstatements="18" coveredmethods="2" methods="2" />
+        </class>
+        <line complexity="1" signature=".ctor(AgripeWebAPI.Models.agpDBContext)" num="13" count="5" type="method" />
+        <line num="14" count="5" type="stmt" />
+        <line num="15" count="5" type="stmt" />
+        <line num="16" count="5" type="stmt" />
+        <line complexity="1" signature="Handle()" num="19" count="5" type="method" />
+        <line num="20" count="5" type="stmt" />
+        <line num="21" count="5" type="stmt" />
+        <line num="22" count="5" type="stmt" />
+        <line num="23" count="5" type="stmt" />
+        <line num="24" count="5" type="stmt" />
+        <line num="25" count="5" type="stmt" />
+        <line num="26" count="5" type="stmt" />
+        <line num="27" count="5" type="stmt" />
+        <line num="28" count="4" type="stmt" />
+        <line num="29" count="5" type="stmt" />
+        <line num="30" count="1" type="stmt" />
+        <line num="31" count="4" type="stmt" />
+        <line num="32" count="4" type="stmt" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Reads\CreateReadHandler.cs" name="CreateReadHandler.cs">
+        <metrics complexity="0" elements="37" coveredelements="37" conditionals="12" coveredconditionals="9" statements="37" coveredstatements="37" coveredmethods="4" methods="4" classes="1" loc="41" ncloc="37" />
+        <class name="AgripeWebAPI.Domain.Handlers.Reads.CreateReadHandler">
+          <metrics complexity="0" elements="37" coveredelements="37" conditionals="12" coveredconditionals="9" statements="37" coveredstatements="37" coveredmethods="4" methods="4" />
+        </class>
+        <line complexity="2" signature=".ctor(AgripeWebAPI.Models.agpDBContext)" num="14" count="20" type="method" />
+        <line complexity="4" signature=".ctor(AgripeWebAPI.Models.agpDBContext,AgripeWebAPI.Models.Interfaces.ICurrentUserContext)" num="15" count="20" type="method" />
+        <line falsecount="1" truecount="1" num="16" type="cond" />
+        <line num="17" count="20" type="stmt" />
+        <line num="18" count="4" type="stmt" />
+        <line num="19" count="4" type="stmt" />
+        <line complexity="2" signature="Handle()" num="20" count="20" type="method" />
+        <line num="21" count="20" type="stmt" />
+        <line falsecount="0" truecount="2" num="22" type="cond" />
+        <line falsecount="1" truecount="1" num="23" type="cond" />
+        <line falsecount="1" truecount="1" num="24" type="cond" />
+        <line num="25" count="4" type="stmt" />
+        <line num="27" count="12" type="stmt" />
+        <line complexity="4" signature="Handle()" num="28" count="16" type="method" />
+        <line num="29" count="16" type="stmt" />
+        <line num="30" count="16" type="stmt" />
+        <line num="31" count="12" type="stmt" />
+        <line num="32" count="12" type="stmt" />
+        <line num="33" count="16" type="stmt" />
+        <line num="34" count="12" type="stmt" />
+        <line num="35" count="4" type="stmt" />
+        <line falsecount="0" truecount="2" num="36" type="cond" />
+        <line num="37" count="1" type="stmt" />
+        <line num="38" count="13" type="stmt" />
+        <line num="39" count="12" type="stmt" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Sensors\CreateSensorHandler.cs" name="CreateSensorHandler.cs">
+        <metrics complexity="0" elements="26" coveredelements="26" conditionals="10" coveredconditionals="8" statements="26" coveredstatements="26" coveredmethods="2" methods="2" classes="1" loc="49" ncloc="26" />
+        <class name="AgripeWebAPI.Domain.Handlers.Sensors.CreateSensorHandler">
+          <metrics complexity="0" elements="26" coveredelements="26" conditionals="10" coveredconditionals="8" statements="26" coveredstatements="26" coveredmethods="2" methods="2" />
+        </class>
+        <line complexity="4" signature=".ctor(AgripeWebAPI.Models.agpDBContext,AgripeWebAPI.Models.Interfaces.ICurrentUserContext)" num="16" count="15" type="method" />
+        <line num="17" count="15" type="stmt" />
+        <line falsecount="1" truecount="1" num="18" type="cond" />
+        <line falsecount="1" truecount="1" num="19" type="cond" />
+        <line num="20" count="15" type="stmt" />
+        <line complexity="6" signature="Handle()" num="23" count="20" type="method" />
+        <line falsecount="0" truecount="2" num="24" type="cond" />
+        <line num="25" count="20" type="stmt" />
+        <line falsecount="0" truecount="2" num="26" type="cond" />
+        <line num="27" count="5" type="stmt" />
+        <line num="28" count="5" type="stmt" />
+        <line falsecount="0" truecount="2" num="30" type="cond" />
+        <line num="31" count="5" type="stmt" />
+        <line num="32" count="5" type="stmt" />
+        <line num="34" count="5" type="stmt" />
+        <line num="35" count="5" type="stmt" />
+        <line num="36" count="5" type="stmt" />
+        <line num="37" count="5" type="stmt" />
+        <line num="38" count="5" type="stmt" />
+        <line num="39" count="5" type="stmt" />
+        <line num="40" count="5" type="stmt" />
+        <line num="41" count="5" type="stmt" />
+        <line num="42" count="5" type="stmt" />
+        <line num="44" count="5" type="stmt" />
+        <line num="46" count="5" type="stmt" />
+        <line num="47" count="5" type="stmt" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Sensors\DeleteSensorHandler.cs" name="DeleteSensorHandler.cs">
+        <metrics complexity="0" elements="12" coveredelements="12" conditionals="2" coveredconditionals="2" statements="12" coveredstatements="12" coveredmethods="2" methods="2" classes="1" loc="28" ncloc="12" />
+        <class name="AgripeWebAPI.Domain.Handlers.Sensors.DeleteSensorHandler">
+          <metrics complexity="0" elements="12" coveredelements="12" conditionals="2" coveredconditionals="2" statements="12" coveredstatements="12" coveredmethods="2" methods="2" />
+        </class>
+        <line complexity="1" signature=".ctor(AgripeWebAPI.Models.agpDBContext)" num="12" count="10" type="method" />
+        <line num="13" count="10" type="stmt" />
+        <line num="14" count="10" type="stmt" />
+        <line num="15" count="10" type="stmt" />
+        <line complexity="2" signature="Handle()" num="17" count="10" type="method" />
+        <line num="18" count="10" type="stmt" />
+        <line falsecount="0" truecount="2" num="19" type="cond" />
+        <line num="20" count="5" type="stmt" />
+        <line num="21" count="5" type="stmt" />
+        <line num="24" count="5" type="stmt" />
+        <line num="25" count="5" type="stmt" />
+        <line num="26" count="5" type="stmt" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Sensors\EditSensorHandler.cs" name="EditSensorHandler.cs">
+        <metrics complexity="0" elements="19" coveredelements="19" conditionals="6" coveredconditionals="5" statements="19" coveredstatements="19" coveredmethods="2" methods="2" classes="1" loc="36" ncloc="19" />
+        <class name="AgripeWebAPI.Domain.Handlers.Sensors.EditSensorHandler">
+          <metrics complexity="0" elements="19" coveredelements="19" conditionals="6" coveredconditionals="5" statements="19" coveredstatements="19" coveredmethods="2" methods="2" />
+        </class>
+        <line complexity="2" signature=".ctor(AgripeWebAPI.Models.agpDBContext)" num="12" count="15" type="method" />
+        <line num="13" count="15" type="stmt" />
+        <line falsecount="1" truecount="1" num="14" type="cond" />
+        <line num="15" count="15" type="stmt" />
+        <line complexity="4" signature="Handle()" num="17" count="15" type="method" />
+        <line num="18" count="15" type="stmt" />
+        <line falsecount="0" truecount="2" num="19" type="cond" />
+        <line num="20" count="5" type="stmt" />
+        <line num="21" count="5" type="stmt" />
+        <line falsecount="0" truecount="2" num="23" type="cond" />
+        <line num="24" count="5" type="stmt" />
+        <line num="25" count="5" type="stmt" />
+        <line num="28" count="5" type="stmt" />
+        <line num="29" count="5" type="stmt" />
+        <line num="30" count="5" type="stmt" />
+        <line num="31" count="5" type="stmt" />
+        <line num="32" count="5" type="stmt" />
+        <line num="33" count="5" type="stmt" />
+        <line num="34" count="5" type="stmt" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Reads\GetListReadByPivotIdHandler.cs" name="GetListReadByPivotIdHandler.cs">
+        <metrics complexity="0" elements="33" coveredelements="33" conditionals="6" coveredconditionals="6" statements="33" coveredstatements="33" coveredmethods="3" methods="3" classes="1" loc="59" ncloc="33" />
+        <class name="AgripeWebAPI.Domain.Handlers.Sensors.GetListReadByPivotIdHandler">
+          <metrics complexity="0" elements="33" coveredelements="33" conditionals="6" coveredconditionals="6" statements="33" coveredstatements="33" coveredmethods="3" methods="3" />
+        </class>
+        <line complexity="2" signature=".ctor(AgripeWebAPI.Models.agpDBContext)" num="16" count="3" type="method" />
+        <line num="17" count="3" type="stmt" />
+        <line falsecount="0" truecount="2" num="18" type="cond" />
+        <line num="19" count="2" type="stmt" />
+        <line complexity="2" signature="Handle()" num="22" count="2" type="method" />
+        <line num="23" count="2" type="stmt" />
+        <line num="24" count="2" type="stmt" />
+        <line num="25" count="2" type="stmt" />
+        <line num="26" count="2" type="stmt" />
+        <line falsecount="0" truecount="2" num="28" type="cond" />
+        <line num="29" count="1" type="stmt" />
+        <line num="30" count="1" type="stmt" />
+        <line num="33" count="1" type="stmt" />
+        <line num="34" count="1" type="stmt" />
+        <line num="35" count="1" type="stmt" />
+        <line num="36" count="1" type="stmt" />
+        <line num="37" count="1" type="stmt" />
+        <line num="38" count="1" type="stmt" />
+        <line num="39" count="1" type="stmt" />
+        <line num="40" count="1" type="stmt" />
+        <line num="41" count="1" type="stmt" />
+        <line num="42" count="1" type="stmt" />
+        <line num="43" count="1" type="stmt" />
+        <line num="45" count="1" type="stmt" />
+        <line num="46" count="2" type="stmt" />
+        <line complexity="2" signature="ToAsyncEnumerable()" num="51" count="10" type="method" />
+        <line falsecount="0" truecount="2" num="52" type="cond" />
+        <line num="53" count="2" type="stmt" />
+        <line num="54" count="2" type="stmt" />
+        <line num="55" count="2" type="stmt" />
+        <line num="56" count="2" type="stmt" />
+        <line num="57" count="2" type="stmt" />
+        <line num="58" count="2" type="stmt" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Reads\GetListReadBySensorIdHandler.cs" name="GetListReadBySensorIdHandler.cs">
+        <metrics complexity="0" elements="27" coveredelements="27" conditionals="4" coveredconditionals="4" statements="27" coveredstatements="27" coveredmethods="3" methods="3" classes="1" loc="49" ncloc="27" />
+        <class name="AgripeWebAPI.Domain.Handlers.Sensors.GetListReadBySensorIdHandler">
+          <metrics complexity="0" elements="27" coveredelements="27" conditionals="4" coveredconditionals="4" statements="27" coveredstatements="27" coveredmethods="3" methods="3" />
+        </class>
+        <line complexity="2" signature=".ctor(AgripeWebAPI.Models.agpDBContext)" num="13" count="12" type="method" />
+        <line num="14" count="12" type="stmt" />
+        <line falsecount="0" truecount="2" num="15" type="cond" />
+        <line num="16" count="8" type="stmt" />
+        <line complexity="1" signature="Handle()" num="19" count="8" type="method" />
+        <line num="20" count="8" type="stmt" />
+        <line num="22" count="8" type="stmt" />
+        <line num="23" count="8" type="stmt" />
+        <line num="24" count="8" type="stmt" />
+        <line num="25" count="8" type="stmt" />
+        <line num="26" count="8" type="stmt" />
+        <line num="27" count="8" type="stmt" />
+        <line num="28" count="8" type="stmt" />
+        <line num="29" count="8" type="stmt" />
+        <line num="30" count="8" type="stmt" />
+        <line num="31" count="8" type="stmt" />
+        <line num="32" count="8" type="stmt" />
+        <line num="34" count="8" type="stmt" />
+        <line num="35" count="8" type="stmt" />
+        <line complexity="2" signature="ToAsyncEnumerable()" num="40" count="40" type="method" />
+        <line falsecount="0" truecount="2" num="41" type="cond" />
+        <line num="42" count="8" type="stmt" />
+        <line num="43" count="8" type="stmt" />
+        <line num="44" count="8" type="stmt" />
+        <line num="45" count="8" type="stmt" />
+        <line num="46" count="8" type="stmt" />
+        <line num="47" count="8" type="stmt" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Reads\GetListReadHandler.cs" name="GetListReadHandler.cs">
+        <metrics complexity="0" elements="30" coveredelements="30" conditionals="8" coveredconditionals="5" statements="30" coveredstatements="30" coveredmethods="3" methods="3" classes="1" loc="57" ncloc="30" />
+        <class name="AgripeWebAPI.Domain.Handlers.Sensors.GetListReadHandler">
+          <metrics complexity="0" elements="30" coveredelements="30" conditionals="8" coveredconditionals="5" statements="30" coveredstatements="30" coveredmethods="3" methods="3" />
+        </class>
+        <line complexity="4" signature=".ctor(AgripeWebAPI.Models.agpDBContext,AgripeWebAPI.Models.Interfaces.ICurrentUserContext)" num="17" count="10" type="method" />
+        <line num="18" count="10" type="stmt" />
+        <line falsecount="1" truecount="1" num="19" type="cond" />
+        <line falsecount="1" truecount="1" num="20" type="cond" />
+        <line num="21" count="10" type="stmt" />
+        <line complexity="2" signature="Handle()" num="24" count="10" type="method" />
+        <line falsecount="1" truecount="1" num="25" type="cond" />
+        <line num="26" count="10" type="stmt" />
+        <line num="28" count="10" type="stmt" />
+        <line num="30" count="10" type="stmt" />
+        <line num="31" count="10" type="stmt" />
+        <line num="32" count="10" type="stmt" />
+        <line num="33" count="10" type="stmt" />
+        <line num="34" count="10" type="stmt" />
+        <line num="35" count="10" type="stmt" />
+        <line num="36" count="10" type="stmt" />
+        <line num="37" count="10" type="stmt" />
+        <line num="38" count="10" type="stmt" />
+        <line num="39" count="10" type="stmt" />
+        <line num="40" count="10" type="stmt" />
+        <line num="42" count="10" type="stmt" />
+        <line num="43" count="10" type="stmt" />
+        <line complexity="2" signature="ToAsyncEnumerable()" num="48" count="50" type="method" />
+        <line falsecount="0" truecount="2" num="49" type="cond" />
+        <line num="50" count="10" type="stmt" />
+        <line num="51" count="10" type="stmt" />
+        <line num="52" count="10" type="stmt" />
+        <line num="53" count="10" type="stmt" />
+        <line num="54" count="10" type="stmt" />
+        <line num="55" count="10" type="stmt" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Sensors\GetListSensorHandlerByUserId.cs" name="GetListSensorHandlerByUserId.cs">
+        <metrics complexity="0" elements="23" coveredelements="23" conditionals="6" coveredconditionals="6" statements="23" coveredstatements="23" coveredmethods="2" methods="2" classes="1" loc="40" ncloc="23" />
+        <class name="AgripeWebAPI.Domain.Handlers.Sensors.GetListSensorByUserIdHandler">
+          <metrics complexity="0" elements="23" coveredelements="23" conditionals="6" coveredconditionals="6" statements="23" coveredstatements="23" coveredmethods="2" methods="2" />
+        </class>
+        <line complexity="2" signature=".ctor(AgripeWebAPI.Models.agpDBContext)" num="14" count="20" type="method" />
+        <line num="15" count="20" type="stmt" />
+        <line falsecount="0" truecount="2" num="16" type="cond" />
+        <line num="17" count="15" type="stmt" />
+        <line complexity="2" signature="Handle()" num="20" count="30" type="method" />
+        <line num="21" count="15" type="stmt" />
+        <line num="22" count="15" type="stmt" />
+        <line num="23" count="15" type="stmt" />
+        <line num="24" count="12" type="stmt" />
+        <line falsecount="0" truecount="2" num="25" type="cond" />
+        <line num="26" count="3" type="stmt" />
+        <line falsecount="0" truecount="2" num="27" type="cond" />
+        <line num="28" count="18" type="stmt" />
+        <line num="29" count="6" type="stmt" />
+        <line num="30" count="30" type="stmt" />
+        <line num="31" count="30" type="stmt" />
+        <line num="32" count="30" type="stmt" />
+        <line num="33" count="30" type="stmt" />
+        <line num="34" count="30" type="stmt" />
+        <line num="35" count="30" type="stmt" />
+        <line num="36" count="27" type="stmt" />
+        <line num="37" count="24" type="stmt" />
+        <line num="38" count="12" type="stmt" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Sensors\GetListSensorHandler.cs" name="GetListSensorHandler.cs">
+        <metrics complexity="0" elements="25" coveredelements="25" conditionals="10" coveredconditionals="7" statements="25" coveredstatements="25" coveredmethods="2" methods="2" classes="1" loc="48" ncloc="25" />
+        <class name="AgripeWebAPI.Domain.Handlers.Sensors.GetListSensorHandler">
+          <metrics complexity="0" elements="25" coveredelements="25" conditionals="10" coveredconditionals="7" statements="25" coveredstatements="25" coveredmethods="2" methods="2" />
+        </class>
+        <line complexity="4" signature=".ctor(AgripeWebAPI.Models.agpDBContext,AgripeWebAPI.Models.Interfaces.ICurrentUserContext)" num="16" count="15" type="method" />
+        <line num="17" count="15" type="stmt" />
+        <line falsecount="0" truecount="2" num="18" type="cond" />
+        <line falsecount="1" truecount="1" num="19" type="cond" />
+        <line num="20" count="10" type="stmt" />
+        <line complexity="4" signature="Handle()" num="23" count="20" type="method" />
+        <line falsecount="1" truecount="1" num="24" type="cond" />
+        <line num="25" count="10" type="stmt" />
+        <line num="27" count="10" type="stmt" />
+        <line num="28" count="10" type="stmt" />
+        <line num="29" count="10" type="stmt" />
+        <line num="31" count="20" type="stmt" />
+        <line falsecount="0" truecount="2" num="32" type="cond" />
+        <line num="33" count="10" type="stmt" />
+        <line num="34" count="10" type="stmt" />
+        <line num="36" count="20" type="stmt" />
+        <line falsecount="1" truecount="1" num="38" type="cond" />
+        <line num="39" count="20" type="stmt" />
+        <line num="40" count="20" type="stmt" />
+        <line num="41" count="20" type="stmt" />
+        <line num="42" count="20" type="stmt" />
+        <line num="43" count="20" type="stmt" />
+        <line num="44" count="20" type="stmt" />
+        <line num="45" count="20" type="stmt" />
+        <line num="46" count="10" type="stmt" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Reads\GetReadByPivotIdHandler.cs" name="GetReadByPivotIdHandler.cs">
+        <metrics complexity="0" elements="143" coveredelements="107" conditionals="122" coveredconditionals="55" statements="143" coveredstatements="107" coveredmethods="7" methods="7" classes="2" loc="159" ncloc="143" />
+        <class name="AgripeWebAPI.Domain.Handlers.Sensors.SensorSummary">
+          <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" />
+        </class>
+        <class name="AgripeWebAPI.Domain.Handlers.Sensors.GetReadByPivotIdHandler">
+          <metrics complexity="0" elements="142" coveredelements="106" conditionals="122" coveredconditionals="55" statements="142" coveredstatements="106" coveredmethods="6" methods="6" />
+        </class>
+        <line complexity="2" signature=".ctor(AgripeWebAPI.Models.agpDBContext)" num="16" count="16" type="method" />
+        <line complexity="2" signature=".ctor(AgripeWebAPI.Models.agpDBContext)" num="17" count="16" type="method" />
+        <line falsecount="1" truecount="1" num="18" type="cond" />
+        <line complexity="2" signature=".ctor(AgripeWebAPI.Models.agpDBContext)" num="19" count="16" type="method" />
+        <line num="20" count="14" type="stmt" />
+        <line falsecount="0" truecount="2" num="21" type="cond" />
+        <line complexity="10" signature="Handle()" num="22" count="48" type="method" />
+        <line complexity="48" signature="Handle()" num="23" count="48" type="method" />
+        <line num="24" count="0" type="stmt" />
+        <line complexity="48" signature="Handle()" num="25" count="48" type="method" />
+        <line num="26" count="12" type="stmt" />
+        <line num="27" count="0" type="stmt" />
+        <line num="28" count="12" type="stmt" />
+        <line num="29" count="12" type="stmt" />
+        <line num="30" count="12" type="stmt" />
+        <line num="31" count="12" type="stmt" />
+        <line num="32" count="0" type="stmt" />
+        <line falsecount="2" truecount="0" num="33" type="cond" />
+        <line falsecount="2" truecount="0" num="34" type="cond" />
+        <line num="35" count="0" type="stmt" />
+        <line falsecount="0" truecount="2" num="36" type="cond" />
+        <line num="37" count="12" type="stmt" />
+        <line num="38" count="12" type="stmt" />
+        <line num="39" count="12" type="stmt" />
+        <line num="40" count="12" type="stmt" />
+        <line num="41" count="0" type="stmt" />
+        <line num="42" count="12" type="stmt" />
+        <line num="43" count="5" type="stmt" />
+        <line num="44" count="5" type="stmt" />
+        <line num="45" count="12" type="stmt" />
+        <line num="46" count="5" type="stmt" />
+        <line num="47" count="10" type="stmt" />
+        <line num="48" count="5" type="stmt" />
+        <line falsecount="6" truecount="0" num="49" type="cond" />
+        <line num="50" count="12" type="stmt" />
+        <line num="51" count="0" type="stmt" />
+        <line num="52" count="0" type="stmt" />
+        <line num="53" count="12" type="stmt" />
+        <line num="54" count="12" type="stmt" />
+        <line num="55" count="12" type="stmt" />
+        <line num="56" count="0" type="stmt" />
+        <line num="57" count="12" type="stmt" />
+        <line num="58" count="12" type="stmt" />
+        <line num="59" count="12" type="stmt" />
+        <line falsecount="6" truecount="0" num="60" type="cond" />
+        <line falsecount="6" truecount="0" num="61" type="cond" />
+        <line falsecount="0" truecount="6" num="62" type="cond" />
+        <line falsecount="0" truecount="6" num="63" type="cond" />
+        <line num="64" count="0" type="stmt" />
+        <line falsecount="2" truecount="0" num="65" type="cond" />
+        <line num="66" count="12" type="stmt" />
+        <line falsecount="0" truecount="2" num="67" type="cond" />
+        <line num="68" count="6" type="stmt" />
+        <line num="69" count="6" type="stmt" />
+        <line num="70" count="6" type="stmt" />
+        <line num="71" count="6" type="stmt" />
+        <line falsecount="2" truecount="0" num="72" type="cond" />
+        <line num="73" count="6" type="stmt" />
+        <line falsecount="0" truecount="2" num="74" type="cond" />
+        <line num="75" count="6" type="stmt" />
+        <line falsecount="2" truecount="0" num="76" type="cond" />
+        <line num="77" count="12" type="stmt" />
+        <line num="78" count="5" type="stmt" />
+        <line num="79" count="5" type="stmt" />
+        <line num="80" count="5" type="stmt" />
+        <line num="81" count="5" type="stmt" />
+        <line num="82" count="5" type="stmt" />
+        <line num="83" count="5" type="stmt" />
+        <line num="84" count="5" type="stmt" />
+        <line falsecount="4" truecount="0" num="85" type="cond" />
+        <line num="86" count="5" type="stmt" />
+        <line falsecount="0" truecount="4" num="87" type="cond" />
+        <line num="88" count="5" type="stmt" />
+        <line num="89" count="5" type="stmt" />
+        <line num="90" count="5" type="stmt" />
+        <line num="91" count="5" type="stmt" />
+        <line num="92" count="5" type="stmt" />
+        <line num="93" count="12" type="stmt" />
+        <line falsecount="14" truecount="0" num="94" type="cond" />
+        <line num="95" count="0" type="stmt" />
+        <line falsecount="0" truecount="14" num="96" type="cond" />
+        <line num="97" count="12" type="stmt" />
+        <line falsecount="2" truecount="0" num="98" type="cond" />
+        <line num="99" count="12" type="stmt" />
+        <line num="100" count="12" type="stmt" />
+        <line num="101" count="12" type="stmt" />
+        <line num="102" count="12" type="stmt" />
+        <line num="103" count="12" type="stmt" />
+        <line num="104" count="0" type="stmt" />
+        <line num="105" count="0" type="stmt" />
+        <line num="106" count="0" type="stmt" />
+        <line falsecount="2" truecount="0" num="107" type="cond" />
+        <line num="108" count="0" type="stmt" />
+        <line falsecount="0" truecount="2" num="109" type="cond" />
+        <line num="110" count="1" type="stmt" />
+        <line num="111" count="1" type="stmt" />
+        <line num="112" count="1" type="stmt" />
+        <line num="113" count="1" type="stmt" />
+        <line num="114" count="0" type="stmt" />
+        <line num="115" count="11" type="stmt" />
+        <line falsecount="2" truecount="0" num="116" type="cond" />
+        <line num="117" count="11" type="stmt" />
+        <line falsecount="0" truecount="2" num="118" type="cond" />
+        <line falsecount="2" truecount="0" num="119" type="cond" />
+        <line num="120" count="0" type="stmt" />
+        <line falsecount="0" truecount="2" num="121" type="cond" />
+        <line num="122" count="2" type="stmt" />
+        <line num="123" count="2" type="stmt" />
+        <line num="124" count="2" type="stmt" />
+        <line num="125" count="2" type="stmt" />
+        <line num="126" count="0" type="stmt" />
+        <line num="127" count="10" type="stmt" />
+        <line falsecount="2" truecount="0" num="128" type="cond" />
+        <line num="129" count="10" type="stmt" />
+        <line falsecount="0" truecount="2" num="130" type="cond" />
+        <line falsecount="2" truecount="0" num="131" type="cond" />
+        <line num="132" count="0" type="stmt" />
+        <line falsecount="0" truecount="2" num="133" type="cond" />
+        <line num="134" count="2" type="stmt" />
+        <line num="135" count="2" type="stmt" />
+        <line num="136" count="2" type="stmt" />
+        <line num="137" count="2" type="stmt" />
+        <line num="138" count="0" type="stmt" />
+        <line num="139" count="10" type="stmt" />
+        <line falsecount="2" truecount="0" num="140" type="cond" />
+        <line num="141" count="10" type="stmt" />
+        <line falsecount="0" truecount="2" num="142" type="cond" />
+        <line falsecount="2" truecount="0" num="143" type="cond" />
+        <line num="144" count="0" type="stmt" />
+        <line falsecount="1" truecount="1" num="145" type="cond" />
+        <line num="146" count="0" type="stmt" />
+        <line num="147" count="0" type="stmt" />
+        <line num="148" count="0" type="stmt" />
+        <line num="149" count="0" type="stmt" />
+        <line num="150" count="0" type="stmt" />
+        <line num="151" count="12" type="stmt" />
+        <line falsecount="2" truecount="0" num="152" type="cond" />
+        <line num="153" count="12" type="stmt" />
+        <line falsecount="0" truecount="2" num="154" type="cond" />
+        <line num="155" count="0" type="stmt" />
+        <line num="156" count="12" type="stmt" />
+        <line num="157" count="12" type="stmt" />
+        <line complexity="1" signature="get_Id()" num="12" count="18" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Sensors\GetSensorHandler.cs" name="GetSensorHandler.cs">
+        <metrics complexity="0" elements="23" coveredelements="23" conditionals="6" coveredconditionals="5" statements="23" coveredstatements="23" coveredmethods="2" methods="2" classes="1" loc="44" ncloc="23" />
+        <class name="AgripeWebAPI.Domain.Handlers.Sensors.GetSensorHandler">
+          <metrics complexity="0" elements="23" coveredelements="23" conditionals="6" coveredconditionals="5" statements="23" coveredstatements="23" coveredmethods="2" methods="2" />
+        </class>
+        <line complexity="2" signature=".ctor(AgripeWebAPI.Models.agpDBContext)" num="14" count="15" type="method" />
+        <line num="15" count="15" type="stmt" />
+        <line falsecount="0" truecount="2" num="16" type="cond" />
+        <line num="17" count="10" type="stmt" />
+        <line complexity="4" signature="Handle()" num="20" count="10" type="method" />
+        <line num="21" count="10" type="stmt" />
+        <line num="22" count="10" type="stmt" />
+        <line num="23" count="10" type="stmt" />
+        <line falsecount="0" truecount="2" num="25" type="cond" />
+        <line num="26" count="5" type="stmt" />
+        <line num="27" count="5" type="stmt" />
+        <line falsecount="1" truecount="1" num="30" type="cond" />
+        <line num="31" count="5" type="stmt" />
+        <line num="32" count="5" type="stmt" />
+        <line num="34" count="5" type="stmt" />
+        <line num="35" count="5" type="stmt" />
+        <line num="36" count="5" type="stmt" />
+        <line num="37" count="5" type="stmt" />
+        <line num="38" count="5" type="stmt" />
+        <line num="39" count="5" type="stmt" />
+        <line num="40" count="5" type="stmt" />
+        <line num="41" count="5" type="stmt" />
+        <line num="42" count="10" type="stmt" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Users\CreateUserHandler.cs" name="CreateUserHandler.cs">
+        <metrics complexity="0" elements="35" coveredelements="35" conditionals="12" coveredconditionals="8" statements="35" coveredstatements="35" coveredmethods="2" methods="2" classes="1" loc="67" ncloc="35" />
+        <class name="AgripeWebAPI.Domain.Handlers.Users.CreateUserHandler">
+          <metrics complexity="0" elements="35" coveredelements="35" conditionals="12" coveredconditionals="8" statements="35" coveredstatements="35" coveredmethods="2" methods="2" />
+        </class>
+        <line complexity="8" signature=".ctor(AgripeWebAPI.Models.agpDBContext,AgripeWebAPI.Models.Interfaces.IPasswordHasher,AgripeWebAPI.Models.Interfaces.INotifier,Microsoft.Extensions.Logging.ILogger`1&lt;AgripeWebAPI.Domain.Handlers.Users.CreateUserHandler&gt;)" num="20" count="15" type="method" />
+        <line num="21" count="15" type="stmt" />
+        <line falsecount="1" truecount="1" num="22" type="cond" />
+        <line falsecount="1" truecount="1" num="23" type="cond" />
+        <line falsecount="1" truecount="1" num="24" type="cond" />
+        <line falsecount="1" truecount="1" num="25" type="cond" />
+        <line num="26" count="15" type="stmt" />
+        <line complexity="4" signature="Handle()" num="29" count="15" type="method" />
+        <line num="30" count="15" type="stmt" />
+        <line num="31" count="15" type="stmt" />
+        <line num="32" count="15" type="stmt" />
+        <line falsecount="0" truecount="2" num="34" type="cond" />
+        <line num="35" count="5" type="stmt" />
+        <line num="36" count="5" type="stmt" />
+        <line num="37" count="5" type="stmt" />
+        <line num="38" count="5" type="stmt" />
+        <line num="42" count="10" type="stmt" />
+        <line num="43" count="10" type="stmt" />
+        <line num="44" count="10" type="stmt" />
+        <line num="45" count="10" type="stmt" />
+        <line num="46" count="10" type="stmt" />
+        <line num="47" count="10" type="stmt" />
+        <line num="48" count="10" type="stmt" />
+        <line num="49" count="10" type="stmt" />
+        <line num="50" count="10" type="stmt" />
+        <line num="51" count="10" type="stmt" />
+        <line num="53" count="10" type="stmt" />
+        <line num="55" count="5" type="stmt" />
+        <line num="57" count="5" type="stmt" />
+        <line num="59" count="5" type="stmt" />
+        <line num="60" count="5" type="stmt" />
+        <line num="61" count="5" type="stmt" />
+        <line num="62" count="5" type="stmt" />
+        <line num="63" count="5" type="stmt" />
+        <line num="65" count="15" type="stmt" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Users\DeleteUserHandler.cs" name="DeleteUserHandler.cs">
+        <metrics complexity="0" elements="28" coveredelements="28" conditionals="12" coveredconditionals="9" statements="28" coveredstatements="28" coveredmethods="2" methods="2" classes="1" loc="59" ncloc="28" />
+        <class name="AgripeWebAPI.Domain.Handlers.Users.DeleteUserHandler">
+          <metrics complexity="0" elements="28" coveredelements="28" conditionals="12" coveredconditionals="9" statements="28" coveredstatements="28" coveredmethods="2" methods="2" />
+        </class>
+        <line complexity="6" signature=".ctor(AgripeWebAPI.Models.agpDBContext,AgripeWebAPI.Models.Interfaces.INotifier,Microsoft.Extensions.Logging.ILogger`1&lt;AgripeWebAPI.Domain.Handlers.Users.DeleteUserHandler&gt;)" num="18" count="20" type="method" />
+        <line num="19" count="20" type="stmt" />
+        <line falsecount="1" truecount="1" num="20" type="cond" />
+        <line falsecount="1" truecount="1" num="21" type="cond" />
+        <line falsecount="1" truecount="1" num="22" type="cond" />
+        <line num="23" count="20" type="stmt" />
+        <line complexity="6" signature="Handle()" num="26" count="20" type="method" />
+        <line num="27" count="20" type="stmt" />
+        <line falsecount="0" truecount="2" num="28" type="cond" />
+        <line num="29" count="5" type="stmt" />
+        <line num="30" count="5" type="stmt" />
+        <line num="31" count="5" type="stmt" />
+        <line num="32" count="5" type="stmt" />
+        <line falsecount="0" truecount="4" num="36" type="cond" />
+        <line num="37" count="5" type="stmt" />
+        <line num="38" count="5" type="stmt" />
+        <line num="39" count="5" type="stmt" />
+        <line num="40" count="5" type="stmt" />
+        <line num="44" count="10" type="stmt" />
+        <line num="45" count="10" type="stmt" />
+        <line num="47" count="5" type="stmt" />
+        <line num="49" count="5" type="stmt" />
+        <line num="51" count="5" type="stmt" />
+        <line num="52" count="5" type="stmt" />
+        <line num="53" count="5" type="stmt" />
+        <line num="54" count="5" type="stmt" />
+        <line num="55" count="5" type="stmt" />
+        <line num="57" count="20" type="stmt" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Users\EditUserHandler.cs" name="EditUserHandler.cs">
+        <metrics complexity="0" elements="55" coveredelements="55" conditionals="20" coveredconditionals="16" statements="55" coveredstatements="55" coveredmethods="3" methods="3" classes="1" loc="97" ncloc="55" />
+        <class name="AgripeWebAPI.Domain.Handlers.Users.EditUserHandler">
+          <metrics complexity="0" elements="55" coveredelements="55" conditionals="20" coveredconditionals="16" statements="55" coveredstatements="55" coveredmethods="3" methods="3" />
+        </class>
+        <line complexity="1" signature=".cctor()" num="21" count="5" type="method" />
+        <line complexity="8" signature=".ctor(AgripeWebAPI.Models.agpDBContext,AgripeWebAPI.Models.Interfaces.IPasswordHasher,AgripeWebAPI.Models.Interfaces.INotifier,Microsoft.Extensions.Logging.ILogger`1&lt;AgripeWebAPI.Domain.Handlers.Users.EditUserHandler&gt;)" num="23" count="35" type="method" />
+        <line num="24" count="35" type="stmt" />
+        <line falsecount="1" truecount="1" num="25" type="cond" />
+        <line falsecount="1" truecount="1" num="26" type="cond" />
+        <line falsecount="1" truecount="1" num="27" type="cond" />
+        <line falsecount="1" truecount="1" num="28" type="cond" />
+        <line num="29" count="35" type="stmt" />
+        <line complexity="12" signature="Handle()" num="32" count="35" type="method" />
+        <line num="33" count="35" type="stmt" />
+        <line num="34" count="35" type="stmt" />
+        <line num="35" count="35" type="stmt" />
+        <line falsecount="0" truecount="2" num="37" type="cond" />
+        <line num="38" count="5" type="stmt" />
+        <line num="39" count="5" type="stmt" />
+        <line num="40" count="5" type="stmt" />
+        <line num="41" count="5" type="stmt" />
+        <line falsecount="0" truecount="4" num="45" type="cond" />
+        <line num="46" count="5" type="stmt" />
+        <line num="47" count="5" type="stmt" />
+        <line num="48" count="5" type="stmt" />
+        <line num="49" count="5" type="stmt" />
+        <line num="53" count="25" type="stmt" />
+        <line num="54" count="25" type="stmt" />
+        <line num="55" count="25" type="stmt" />
+        <line num="56" count="25" type="stmt" />
+        <line falsecount="0" truecount="2" num="59" type="cond" />
+        <line num="60" count="10" type="stmt" />
+        <line falsecount="0" truecount="2" num="61" type="cond" />
+        <line num="62" count="5" type="stmt" />
+        <line num="63" count="5" type="stmt" />
+        <line num="64" count="5" type="stmt" />
+        <line num="65" count="5" type="stmt" />
+        <line num="68" count="5" type="stmt" />
+        <line num="69" count="5" type="stmt" />
+        <line num="70" count="5" type="stmt" />
+        <line num="71" count="5" type="stmt" />
+        <line num="73" count="20" type="stmt" />
+        <line falsecount="0" truecount="2" num="75" type="cond" />
+        <line num="76" count="5" type="stmt" />
+        <line num="77" count="5" type="stmt" />
+        <line num="78" count="5" type="stmt" />
+        <line num="80" count="15" type="stmt" />
+        <line num="82" count="15" type="stmt" />
+        <line num="83" count="15" type="stmt" />
+        <line num="84" count="15" type="stmt" />
+        <line num="85" count="15" type="stmt" />
+        <line num="86" count="15" type="stmt" />
+        <line num="87" count="15" type="stmt" />
+        <line num="89" count="5" type="stmt" />
+        <line num="90" count="5" type="stmt" />
+        <line num="91" count="5" type="stmt" />
+        <line num="92" count="5" type="stmt" />
+        <line num="93" count="5" type="stmt" />
+        <line num="95" count="35" type="stmt" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Users\EditUserLimitsHandler.cs" name="EditUserLimitsHandler.cs">
+        <metrics complexity="0" elements="15" coveredelements="15" conditionals="4" coveredconditionals="4" statements="15" coveredstatements="15" coveredmethods="2" methods="2" classes="1" loc="35" ncloc="15" />
+        <class name="AgripeWebAPI.Domain.Handlers.Users.EditUserLimitsHandler">
+          <metrics complexity="0" elements="15" coveredelements="15" conditionals="4" coveredconditionals="4" statements="15" coveredstatements="15" coveredmethods="2" methods="2" />
+        </class>
+        <line complexity="2" signature=".ctor(AgripeWebAPI.Models.agpDBContext)" num="13" count="12" type="method" />
+        <line num="14" count="12" type="stmt" />
+        <line falsecount="0" truecount="2" num="15" type="cond" />
+        <line num="16" count="8" type="stmt" />
+        <line complexity="2" signature="Handle()" num="19" count="8" type="method" />
+        <line num="20" count="8" type="stmt" />
+        <line num="21" count="8" type="stmt" />
+        <line num="22" count="8" type="stmt" />
+        <line falsecount="0" truecount="2" num="24" type="cond" />
+        <line num="25" count="4" type="stmt" />
+        <line num="27" count="4" type="stmt" />
+        <line num="28" count="4" type="stmt" />
+        <line num="30" count="4" type="stmt" />
+        <line num="32" count="4" type="stmt" />
+        <line num="33" count="4" type="stmt" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Users\ExternalLoginHandler.cs" name="ExternalLoginHandler.cs">
+        <metrics complexity="0" elements="110" coveredelements="109" conditionals="58" coveredconditionals="44" statements="110" coveredstatements="109" coveredmethods="6" methods="7" classes="1" loc="189" ncloc="110" />
+        <class name="AgripeWebAPI.Domain.Handlers.Users.ExternalLoginHandler">
+          <metrics complexity="0" elements="110" coveredelements="109" conditionals="58" coveredconditionals="44" statements="110" coveredstatements="109" coveredmethods="6" methods="7" />
+        </class>
+        <line complexity="14" signature=".ctor(AgripeWebAPI.Models.agpDBContext,System.Net.Http.IHttpClientFactory,AgripeWebAPI.Models.Interfaces.IJwtTokenService,AgripeWebAPI.Models.Interfaces.IPasswordHasher,Microsoft.Extensions.Options.IOptions`1&lt;AgripeWebAPI.Configuration.OAuthSettings&gt;,Microsoft.Extensions.Logging.ILogger`1&lt;AgripeWebAPI.Domain.Handlers.Users.ExternalLoginHandler&gt;)" num="29" count="75" type="method" />
+        <line num="30" count="75" type="stmt" />
+        <line num="31" count="75" type="stmt" />
+        <line num="32" count="75" type="stmt" />
+        <line num="33" count="75" type="stmt" />
+        <line num="34" count="75" type="stmt" />
+        <line num="35" count="75" type="stmt" />
+        <line num="36" count="75" type="stmt" />
+        <line falsecount="1" truecount="1" num="37" type="cond" />
+        <line falsecount="1" truecount="1" num="38" type="cond" />
+        <line falsecount="1" truecount="1" num="39" type="cond" />
+        <line falsecount="1" truecount="1" num="40" type="cond" />
+        <line falsecount="2" truecount="2" num="41" type="cond" />
+        <line falsecount="1" truecount="1" num="42" type="cond" />
+        <line num="43" count="75" type="stmt" />
+        <line complexity="44" signature="Handle()" num="46" count="75" type="method" />
+        <line falsecount="0" truecount="4" num="47" type="cond" />
+        <line num="48" count="10" type="stmt" />
+        <line num="49" count="10" type="stmt" />
+        <line num="50" count="10" type="stmt" />
+        <line falsecount="0" truecount="2" num="53" type="cond" />
+        <line num="54" count="5" type="stmt" />
+        <line num="55" count="5" type="stmt" />
+        <line num="56" count="5" type="stmt" />
+        <line num="59" count="60" type="stmt" />
+        <line falsecount="2" truecount="6" num="60" type="cond" />
+        <line num="61" count="5" type="stmt" />
+        <line num="62" count="5" type="stmt" />
+        <line num="63" count="5" type="stmt" />
+        <line falsecount="2" truecount="2" num="66" type="cond" />
+        <line falsecount="0" truecount="4" num="67" type="cond" />
+        <line num="68" count="55" type="stmt" />
+        <line num="69" count="50" type="stmt" />
+        <line num="70" count="55" type="stmt" />
+        <line falsecount="0" truecount="4" num="72" type="cond" />
+        <line num="73" count="5" type="stmt" />
+        <line num="74" count="5" type="stmt" />
+        <line num="75" count="5" type="stmt" />
+        <line num="78" count="50" type="stmt" />
+        <line num="81" count="50" type="stmt" />
+        <line num="82" count="50" type="stmt" />
+        <line num="83" count="50" type="stmt" />
+        <line num="84" count="50" type="stmt" />
+        <line num="85" count="50" type="stmt" />
+        <line num="86" count="50" type="stmt" />
+        <line num="87" count="50" type="stmt" />
+        <line num="88" count="50" type="stmt" />
+        <line num="92" count="50" type="stmt" />
+        <line num="93" count="50" type="stmt" />
+        <line num="94" count="45" type="stmt" />
+        <line num="95" count="5" type="stmt" />
+        <line num="96" count="5" type="stmt" />
+        <line num="97" count="5" type="stmt" />
+        <line num="98" count="5" type="stmt" />
+        <line falsecount="0" truecount="2" num="101" type="cond" />
+        <line num="102" count="5" type="stmt" />
+        <line num="103" count="5" type="stmt" />
+        <line num="104" count="5" type="stmt" />
+        <line num="105" count="5" type="stmt" />
+        <line num="108" count="40" type="stmt" />
+        <line falsecount="1" truecount="3" num="109" type="cond" />
+        <line num="110" count="5" type="stmt" />
+        <line num="111" count="5" type="stmt" />
+        <line num="112" count="5" type="stmt" />
+        <line num="116" count="35" type="stmt" />
+        <line num="117" count="35" type="stmt" />
+        <line num="121" count="35" type="stmt" />
+        <line num="122" count="35" type="stmt" />
+        <line num="123" count="30" type="stmt" />
+        <line num="124" count="5" type="stmt" />
+        <line num="125" count="5" type="stmt" />
+        <line num="126" count="5" type="stmt" />
+        <line num="127" count="5" type="stmt" />
+        <line falsecount="0" truecount="2" num="130" type="cond" />
+        <line num="131" count="5" type="stmt" />
+        <line num="132" count="5" type="stmt" />
+        <line num="133" count="5" type="stmt" />
+        <line num="136" count="25" type="stmt" />
+        <line falsecount="1" truecount="3" num="137" type="cond" />
+        <line num="138" count="5" type="stmt" />
+        <line num="139" count="5" type="stmt" />
+        <line num="140" count="5" type="stmt" />
+        <line num="143" count="20" type="stmt" />
+        <line num="144" count="20" type="stmt" />
+        <line num="145" count="20" type="stmt" />
+        <line falsecount="0" truecount="2" num="147" type="cond" />
+        <line num="148" count="10" type="stmt" />
+        <line falsecount="1" truecount="1" num="150" type="cond" />
+        <line num="151" count="10" type="stmt" />
+        <line num="152" count="10" type="stmt" />
+        <line num="153" count="10" type="stmt" />
+        <line num="154" count="10" type="stmt" />
+        <line num="155" count="10" type="stmt" />
+        <line num="156" count="10" type="stmt" />
+        <line num="157" count="10" type="stmt" />
+        <line num="158" count="10" type="stmt" />
+        <line num="159" count="10" type="stmt" />
+        <line num="160" count="10" type="stmt" />
+        <line falsecount="0" truecount="2" num="161" type="cond" />
+        <line num="162" count="5" type="stmt" />
+        <line num="163" count="5" type="stmt" />
+        <line num="164" count="5" type="stmt" />
+        <line num="167" count="15" type="stmt" />
+        <line num="168" count="15" type="stmt" />
+        <line num="169" count="75" type="stmt" />
+        <line complexity="1" signature="get_AccessToken()" num="174" count="110" type="method" />
+        <line complexity="1" signature="get_Id()" num="180" count="25" type="method" />
+        <line complexity="1" signature="get_Email()" num="182" count="55" type="method" />
+        <line complexity="1" signature="get_Name()" num="184" count="30" type="method" />
+        <line complexity="1" signature="get_Picture()" num="186" count="0" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Users\GetToken.cs" name="GetToken.cs">
+        <metrics complexity="0" elements="64" coveredelements="64" conditionals="48" coveredconditionals="41" statements="64" coveredstatements="64" coveredmethods="6" methods="6" classes="1" loc="91" ncloc="64" />
+        <class name="AgripeWebAPI.Domain.Handlers.Users.GetToken">
+          <metrics complexity="0" elements="64" coveredelements="64" conditionals="48" coveredconditionals="41" statements="64" coveredstatements="64" coveredmethods="6" methods="6" />
+        </class>
+        <line complexity="8" signature=".ctor(AgripeWebAPI.Models.agpDBContext,AgripeWebAPI.Models.Interfaces.IPasswordHasher,AgripeWebAPI.Models.Interfaces.IJwtTokenService,Microsoft.Extensions.Logging.ILogger`1&lt;AgripeWebAPI.Domain.Handlers.Users.GetToken&gt;)" num="19" count="34" type="method" />
+        <line num="20" count="6" type="stmt" />
+        <line complexity="10" signature=".ctor(AgripeWebAPI.Models.agpDBContext,AgripeWebAPI.Models.Interfaces.IPasswordHasher,AgripeWebAPI.Models.Interfaces.IJwtTokenService,Microsoft.Extensions.Logging.ILogger`1&lt;AgripeWebAPI.Domain.Handlers.Users.GetToken&gt;,AgripeWebAPI.Services.ILoginAttemptService)" num="21" count="34" type="method" />
+        <line falsecount="1" truecount="1" num="22" type="cond" />
+        <line falsecount="1" truecount="1" num="23" type="cond" />
+        <line falsecount="1" truecount="1" num="24" type="cond" />
+        <line falsecount="1" truecount="1" num="25" type="cond" />
+        <line falsecount="1" truecount="1" num="26" type="cond" />
+        <line falsecount="1" truecount="1" num="27" type="cond" />
+        <line complexity="8" signature="Handle()" num="28" count="34" type="method" />
+        <line num="29" count="6" type="stmt" />
+        <line num="30" count="6" type="stmt" />
+        <line complexity="10" signature="Handle()" num="31" count="34" type="method" />
+        <line falsecount="0" truecount="2" num="32" type="cond" />
+        <line falsecount="0" truecount="2" num="33" type="cond" />
+        <line num="34" count="5" type="stmt" />
+        <line num="35" count="5" type="stmt" />
+        <line num="36" count="1" type="stmt" />
+        <line num="38" count="24" type="stmt" />
+        <line falsecount="0" truecount="2" num="39" type="cond" />
+        <line num="40" count="25" type="stmt" />
+        <line num="41" count="1" type="stmt" />
+        <line falsecount="0" truecount="2" num="42" type="cond" />
+        <line num="43" count="4" type="stmt" />
+        <line num="44" count="4" type="stmt" />
+        <line falsecount="0" truecount="2" num="45" type="cond" />
+        <line num="46" count="5" type="stmt" />
+        <line num="47" count="1" type="stmt" />
+        <line num="48" count="1" type="stmt" />
+        <line falsecount="0" truecount="2" num="49" type="cond" />
+        <line num="50" count="4" type="stmt" />
+        <line num="51" count="4" type="stmt" />
+        <line falsecount="0" truecount="2" num="52" type="cond" />
+        <line num="53" count="2" type="stmt" />
+        <line num="54" count="2" type="stmt" />
+        <line falsecount="0" truecount="2" num="55" type="cond" />
+        <line num="56" count="6" type="stmt" />
+        <line num="57" count="6" type="stmt" />
+        <line num="58" count="4" type="stmt" />
+        <line num="59" count="7" type="stmt" />
+        <line num="61" count="3" type="stmt" />
+        <line num="62" count="6" type="stmt" />
+        <line falsecount="0" truecount="2" num="63" type="cond" />
+        <line num="64" count="8" type="stmt" />
+        <line num="65" count="8" type="stmt" />
+        <line num="66" count="8" type="stmt" />
+        <line num="67" count="8" type="stmt" />
+        <line complexity="8" signature="IsBcryptHash(System.String)" num="68" count="30" type="method" />
+        <line falsecount="0" truecount="2" num="69" type="cond" />
+        <line num="70" count="13" type="stmt" />
+        <line num="71" count="12" type="stmt" />
+        <line falsecount="0" truecount="6" num="73" type="cond" />
+        <line num="74" count="30" type="stmt" />
+        <line num="75" count="2" type="stmt" />
+        <line num="76" count="2" type="stmt" />
+        <line num="77" count="3" type="stmt" />
+        <line complexity="8" signature="IsBcryptHash(System.String)" num="80" count="12" type="method" />
+        <line falsecount="0" truecount="2" num="81" type="cond" />
+        <line num="82" count="4" type="stmt" />
+        <line falsecount="0" truecount="6" num="85" type="cond" />
+        <line num="86" count="8" type="stmt" />
+        <line num="87" count="8" type="stmt" />
+        <line num="88" count="8" type="stmt" />
+        <line num="89" count="12" type="stmt" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Users\GetUserHandler.cs" name="GetUserHandler.cs">
+        <metrics complexity="0" elements="33" coveredelements="33" conditionals="14" coveredconditionals="11" statements="33" coveredstatements="33" coveredmethods="2" methods="2" classes="1" loc="57" ncloc="33" />
+        <class name="AgripeWebAPI.Domain.Handlers.Users.GetUserHandler">
+          <metrics complexity="0" elements="33" coveredelements="33" conditionals="14" coveredconditionals="11" statements="33" coveredstatements="33" coveredmethods="2" methods="2" />
+        </class>
+        <line complexity="6" signature=".ctor(AgripeWebAPI.Models.agpDBContext,AgripeWebAPI.Models.Interfaces.INotifier,Microsoft.Extensions.Logging.ILogger`1&lt;AgripeWebAPI.Domain.Handlers.Users.GetUserHandler&gt;)" num="18" count="15" type="method" />
+        <line num="19" count="15" type="stmt" />
+        <line falsecount="1" truecount="1" num="20" type="cond" />
+        <line falsecount="1" truecount="1" num="21" type="cond" />
+        <line falsecount="1" truecount="1" num="22" type="cond" />
+        <line num="23" count="15" type="stmt" />
+        <line complexity="6" signature="Handle()" num="26" count="15" type="method" />
+        <line falsecount="0" truecount="4" num="28" type="cond" />
+        <line num="29" count="5" type="stmt" />
+        <line num="30" count="5" type="stmt" />
+        <line num="31" count="5" type="stmt" />
+        <line num="32" count="5" type="stmt" />
+        <line num="35" count="10" type="stmt" />
+        <line num="36" count="10" type="stmt" />
+        <line num="37" count="10" type="stmt" />
+        <line num="38" count="10" type="stmt" />
+        <line num="39" count="10" type="stmt" />
+        <line num="40" count="10" type="stmt" />
+        <line num="41" count="10" type="stmt" />
+        <line num="42" count="10" type="stmt" />
+        <line num="43" count="10" type="stmt" />
+        <line num="44" count="8" type="stmt" />
+        <line falsecount="0" truecount="2" num="45" type="cond" />
+        <line num="46" count="1" type="stmt" />
+        <line falsecount="0" truecount="2" num="47" type="cond" />
+        <line num="48" count="5" type="stmt" />
+        <line num="49" count="5" type="stmt" />
+        <line num="50" count="4" type="stmt" />
+        <line num="51" count="4" type="stmt" />
+        <line num="52" count="1" type="stmt" />
+        <line num="53" count="3" type="stmt" />
+        <line num="54" count="4" type="stmt" />
+        <line num="55" count="12" type="stmt" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Models\agpDBContext.cs" name="agpDBContext.cs">
+        <metrics complexity="0" elements="43" coveredelements="27" conditionals="8" coveredconditionals="7" statements="43" coveredstatements="27" coveredmethods="5" methods="11" classes="1" loc="77" ncloc="43" />
+        <class name="AgripeWebAPI.Models.agpDBContext">
+          <metrics complexity="0" elements="43" coveredelements="27" conditionals="8" coveredconditionals="7" statements="43" coveredstatements="27" coveredmethods="5" methods="11" />
+        </class>
+        <line complexity="1" signature=".ctor()" num="12" count="1161" type="method" />
+        <line complexity="8" signature=".ctor(Microsoft.Extensions.Options.IOptions`1&lt;AgripeWebAPI.Configuration.MongoDbSettings&gt;)" num="14" count="35" type="method" />
+        <line num="15" count="35" type="stmt" />
+        <line falsecount="1" truecount="3" num="16" type="cond" />
+        <line num="17" count="5" type="stmt" />
+        <line num="18" count="5" type="stmt" />
+        <line falsecount="0" truecount="2" num="21" type="cond" />
+        <line num="22" count="10" type="stmt" />
+        <line num="23" count="10" type="stmt" />
+        <line falsecount="0" truecount="2" num="26" type="cond" />
+        <line num="27" count="10" type="stmt" />
+        <line num="28" count="10" type="stmt" />
+        <line num="31" count="10" type="stmt" />
+        <line num="32" count="10" type="stmt" />
+        <line num="34" count="10" type="stmt" />
+        <line num="35" count="10" type="stmt" />
+        <line num="36" count="10" type="stmt" />
+        <line num="37" count="10" type="stmt" />
+        <line num="38" count="10" type="stmt" />
+        <line num="39" count="10" type="stmt" />
+        <line complexity="1" signature="get_Users()" num="41" count="10" type="method" />
+        <line complexity="1" signature="get_Pivots()" num="42" count="0" type="method" />
+        <line complexity="1" signature="get_Sensors()" num="43" count="0" type="method" />
+        <line complexity="1" signature="get_ReadSensors()" num="44" count="0" type="method" />
+        <line complexity="1" signature="GetNextIdAsync()" num="47" count="0" type="method" />
+        <line num="48" count="0" type="stmt" />
+        <line num="49" count="0" type="stmt" />
+        <line num="51" count="0" type="stmt" />
+        <line num="52" count="0" type="stmt" />
+        <line num="53" count="0" type="stmt" />
+        <line num="54" count="0" type="stmt" />
+        <line num="55" count="0" type="stmt" />
+        <line num="57" count="0" type="stmt" />
+        <line num="58" count="0" type="stmt" />
+        <line num="59" count="0" type="stmt" />
+        <line complexity="1" signature="SaveChangesAsync(System.Threading.CancellationToken)" num="62" count="5" type="method" />
+        <line num="63" count="5" type="stmt" />
+        <line num="64" count="5" type="stmt" />
+        <line complexity="1" signature="SaveChanges()" num="67" count="5" type="method" />
+        <line num="68" count="5" type="stmt" />
+        <line num="69" count="5" type="stmt" />
+        <line complexity="1" signature="get_Id()" num="73" count="0" type="method" />
+        <line complexity="1" signature="get_Sequence()" num="74" count="0" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Models\Entities\Entity.cs" name="Entity.cs">
+        <metrics complexity="0" elements="4" coveredelements="4" conditionals="0" coveredconditionals="0" statements="4" coveredstatements="4" coveredmethods="2" methods="2" classes="1" loc="14" ncloc="4" />
+        <class name="AgripeWebAPI.Models.Entities.Entity">
+          <metrics complexity="0" elements="4" coveredelements="4" conditionals="0" coveredconditionals="0" statements="4" coveredstatements="4" coveredmethods="2" methods="2" />
+        </class>
+        <line complexity="1" signature=".ctor()" num="7" count="348" type="method" />
+        <line num="8" count="348" type="stmt" />
+        <line num="9" count="348" type="stmt" />
+        <line complexity="1" signature="get_Id()" num="12" count="581" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Models\Entities\Pivot.cs" name="Pivot.cs">
+        <metrics complexity="0" elements="5" coveredelements="5" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="5" coveredmethods="5" methods="6" classes="1" loc="18" ncloc="5" />
+        <class name="AgripeWebAPI.Models.Entities.Pivot">
+          <metrics complexity="0" elements="5" coveredelements="5" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="5" coveredmethods="5" methods="6" />
+        </class>
+        <line complexity="1" signature="get_UserId()" num="8" count="19" type="method" />
+        <line complexity="1" signature="get_Name()" num="10" count="70" type="method" />
+        <line complexity="1" signature="get_Sensors()" num="12" count="32" type="method" />
+        <line complexity="1" signature="get_LimiteSuperior()" num="14" count="30" type="method" />
+        <line complexity="1" signature="get_Sensors()" num="16" count="8" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Models\Entities\ReadSensor.cs" name="ReadSensor.cs">
+        <metrics complexity="0" elements="5" coveredelements="5" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="5" coveredmethods="5" methods="5" classes="1" loc="18" ncloc="5" />
+        <class name="AgripeWebAPI.Models.Entities.ReadSensor">
+          <metrics complexity="0" elements="5" coveredelements="5" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="5" coveredmethods="5" methods="5" />
+        </class>
+        <line complexity="1" signature="get_SensorId()" num="10" count="46" type="method" />
+        <line complexity="1" signature="get_UserId()" num="12" count="20" type="method" />
+        <line complexity="1" signature="get_Value()" num="13" count="37" type="method" />
+        <line complexity="1" signature="get_Date()" num="14" count="31" type="method" />
+        <line complexity="1" signature="get_Sensor()" num="16" count="10" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Models\Entities\Sensor.cs" name="Sensor.cs">
+        <metrics complexity="0" elements="8" coveredelements="8" conditionals="0" coveredconditionals="0" statements="8" coveredstatements="8" coveredmethods="8" methods="8" classes="1" loc="20" ncloc="8" />
+        <class name="AgripeWebAPI.Models.Entities.Sensor">
+          <metrics complexity="0" elements="8" coveredelements="8" conditionals="0" coveredconditionals="0" statements="8" coveredstatements="8" coveredmethods="8" methods="8" />
+        </class>
+        <line complexity="1" signature="get_PivoId()" num="9" count="76" type="method" />
+        <line complexity="1" signature="get_UserId()" num="11" count="48" type="method" />
+        <line complexity="1" signature="get_Quadrante()" num="12" count="86" type="method" />
+        <line complexity="1" signature="get_Name()" num="13" count="137" type="method" />
+        <line complexity="1" signature="get_Code()" num="14" count="177" type="method" />
+        <line complexity="1" signature="get_Pivot()" num="16" count="10" type="method" />
+        <line complexity="1" signature="get_User()" num="17" count="10" type="method" />
+        <line complexity="1" signature="get_Reads()" num="18" count="10" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Models\Entities\User.cs" name="User.cs">
+        <metrics complexity="0" elements="6" coveredelements="6" conditionals="0" coveredconditionals="0" statements="6" coveredstatements="6" coveredmethods="6" methods="6" classes="1" loc="14" ncloc="6" />
+        <class name="AgripeWebAPI.Models.Entities.User">
+          <metrics complexity="0" elements="6" coveredelements="6" conditionals="0" coveredconditionals="0" statements="6" coveredstatements="6" coveredmethods="6" methods="6" />
+        </class>
+        <line complexity="1" signature="get_Name()" num="7" count="228" type="method" />
+        <line complexity="1" signature="get_Email()" num="8" count="248" type="method" />
+        <line complexity="1" signature="get_Password()" num="9" count="205" type="method" />
+        <line complexity="1" signature="get_Active()" num="10" count="130" type="method" />
+        <line complexity="1" signature="get_LimiteInferior()" num="11" count="152" type="method" />
+        <line complexity="1" signature="get_LimiteSuperior()" num="12" count="152" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Notifications\Notification.cs" name="Notification.cs">
+        <metrics complexity="0" elements="2" coveredelements="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" coveredmethods="2" methods="2" classes="1" loc="7" ncloc="2" />
+        <class name="AgripeWebAPI.Notifications.Notification">
+          <metrics complexity="0" elements="2" coveredelements="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" coveredmethods="2" methods="2" />
+        </class>
+        <line complexity="1" signature=".ctor(System.String)" num="3" count="180" type="method" />
+        <line complexity="1" signature="get_Mensagem()" num="5" count="245" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Notifications\Notificator.cs" name="Notificator.cs">
+        <metrics complexity="0" elements="13" coveredelements="13" conditionals="0" coveredconditionals="0" statements="13" coveredstatements="13" coveredmethods="4" methods="4" classes="1" loc="29" ncloc="13" />
+        <class name="AgripeWebAPI.Notifications.Notificator">
+          <metrics complexity="0" elements="13" coveredelements="13" conditionals="0" coveredconditionals="0" statements="13" coveredstatements="13" coveredmethods="4" methods="4" />
+        </class>
+        <line complexity="1" signature=".ctor()" num="9" count="20" type="method" />
+        <line num="10" count="20" type="stmt" />
+        <line num="11" count="20" type="stmt" />
+        <line num="12" count="20" type="stmt" />
+        <line complexity="1" signature="HasNotification()" num="15" count="10" type="method" />
+        <line num="16" count="10" type="stmt" />
+        <line num="17" count="10" type="stmt" />
+        <line complexity="1" signature="getNotifications()" num="20" count="15" type="method" />
+        <line num="21" count="15" type="stmt" />
+        <line num="22" count="15" type="stmt" />
+        <line complexity="1" signature="Handle(AgripeWebAPI.Notifications.Notification)" num="25" count="25" type="method" />
+        <line num="26" count="25" type="stmt" />
+        <line num="27" count="25" type="stmt" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Services\CurrentUserContext.cs" name="CurrentUserContext.cs">
+        <metrics complexity="0" elements="22" coveredelements="22" conditionals="18" coveredconditionals="16" statements="22" coveredstatements="22" coveredmethods="3" methods="3" classes="1" loc="49" ncloc="22" />
+        <class name="AgripeWebAPI.Services.CurrentUserContext">
+          <metrics complexity="0" elements="22" coveredelements="22" conditionals="18" coveredconditionals="16" statements="22" coveredstatements="22" coveredmethods="3" methods="3" />
+        </class>
+        <line complexity="2" signature=".ctor(Microsoft.AspNetCore.Http.IHttpContextAccessor)" num="15" count="40" type="method" />
+        <line num="16" count="40" type="stmt" />
+        <line falsecount="0" truecount="2" num="17" type="cond" />
+        <line num="18" count="35" type="stmt" />
+        <line complexity="16" signature="get_UserId()" num="23" count="40" type="method" />
+        <line falsecount="0" truecount="2" num="24" type="cond" />
+        <line num="25" count="35" type="stmt" />
+        <line num="26" count="35" type="stmt" />
+        <line falsecount="0" truecount="2" num="27" type="cond" />
+        <line falsecount="1" truecount="5" num="29" type="cond" />
+        <line num="30" count="20" type="stmt" />
+        <line falsecount="0" truecount="2" num="32" type="cond" />
+        <line falsecount="1" truecount="3" num="33" type="cond" />
+        <line num="34" count="20" type="stmt" />
+        <line num="35" count="20" type="stmt" />
+        <line num="36" count="20" type="stmt" />
+        <line num="37" count="20" type="stmt" />
+        <line num="39" count="35" type="stmt" />
+        <line num="40" count="35" type="stmt" />
+        <line num="42" count="40" type="stmt" />
+        <line num="43" count="40" type="stmt" />
+        <line complexity="1" signature="get_IsAuthenticated()" num="46" count="10" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Services\JwtTokenService.cs" name="JwtTokenService.cs">
+        <metrics complexity="0" elements="25" coveredelements="25" conditionals="8" coveredconditionals="6" statements="25" coveredstatements="25" coveredmethods="2" methods="2" classes="1" loc="46" ncloc="25" />
+        <class name="AgripeWebAPI.Services.JwtTokenService">
+          <metrics complexity="0" elements="25" coveredelements="25" conditionals="8" coveredconditionals="6" statements="25" coveredstatements="25" coveredmethods="2" methods="2" />
+        </class>
+        <line complexity="2" signature=".ctor(Microsoft.Extensions.Configuration.IConfiguration)" num="15" count="30" type="method" />
+        <line num="16" count="30" type="stmt" />
+        <line falsecount="0" truecount="2" num="17" type="cond" />
+        <line num="18" count="25" type="stmt" />
+        <line complexity="6" signature="GenerateTokenAsync(AgripeWebAPI.Models.Entities.User,System.Threading.CancellationToken)" num="21" count="25" type="method" />
+        <line falsecount="2" truecount="2" num="22" type="cond" />
+        <line num="23" count="25" type="stmt" />
+        <line num="24" count="25" type="stmt" />
+        <line num="25" count="25" type="stmt" />
+        <line num="26" count="25" type="stmt" />
+        <line num="27" count="25" type="stmt" />
+        <line num="28" count="25" type="stmt" />
+        <line falsecount="0" truecount="2" num="30" type="cond" />
+        <line num="31" count="20" type="stmt" />
+        <line num="32" count="20" type="stmt" />
+        <line num="33" count="20" type="stmt" />
+        <line num="35" count="20" type="stmt" />
+        <line num="36" count="20" type="stmt" />
+        <line num="37" count="20" type="stmt" />
+        <line num="38" count="20" type="stmt" />
+        <line num="39" count="20" type="stmt" />
+        <line num="40" count="20" type="stmt" />
+        <line num="41" count="20" type="stmt" />
+        <line num="43" count="20" type="stmt" />
+        <line num="44" count="20" type="stmt" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Services\LoginAttemptService.cs" name="LoginAttemptService.cs">
+        <metrics complexity="0" elements="24" coveredelements="24" conditionals="10" coveredconditionals="10" statements="24" coveredstatements="24" coveredmethods="7" methods="7" classes="1" loc="56" ncloc="24" />
+        <class name="AgripeWebAPI.Services.LoginAttemptService">
+          <metrics complexity="0" elements="24" coveredelements="24" conditionals="10" coveredconditionals="10" statements="24" coveredstatements="24" coveredmethods="7" methods="7" />
+        </class>
+        <line complexity="1" signature=".cctor()" num="15" count="4" type="method" />
+        <line complexity="1" signature=".ctor(Microsoft.Extensions.Caching.Memory.IMemoryCache)" num="19" count="24" type="method" />
+        <line num="20" count="24" type="stmt" />
+        <line num="21" count="24" type="stmt" />
+        <line num="22" count="24" type="stmt" />
+        <line complexity="6" signature="IsLockedOut(System.String)" num="25" count="24" type="method" />
+        <line num="26" count="24" type="stmt" />
+        <line falsecount="0" truecount="4" num="27" type="cond" />
+        <line num="28" count="8" type="stmt" />
+        <line falsecount="0" truecount="2" num="30" type="cond" />
+        <line num="31" count="24" type="stmt" />
+        <line complexity="4" signature="RecordFailure(System.String)" num="34" count="100" type="method" />
+        <line num="35" count="100" type="stmt" />
+        <line num="36" count="100" type="stmt" />
+        <line falsecount="0" truecount="4" num="38" type="cond" />
+        <line num="39" count="24" type="stmt" />
+        <line num="41" count="76" type="stmt" />
+        <line num="43" count="100" type="stmt" />
+        <line num="44" count="100" type="stmt" />
+        <line complexity="1" signature="ResetFailures(System.String)" num="47" count="8" type="method" />
+        <line num="48" count="8" type="stmt" />
+        <line num="49" count="8" type="stmt" />
+        <line complexity="1" signature="CacheKey(System.String)" num="52" count="132" type="method" />
+        <line complexity="1" signature="get_Count()" num="54" count="276" type="method" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Services\PasswordHasherService.cs" name="PasswordHasherService.cs">
+        <metrics complexity="0" elements="16" coveredelements="16" conditionals="6" coveredconditionals="6" statements="16" coveredstatements="16" coveredmethods="2" methods="2" classes="1" loc="34" ncloc="16" />
+        <class name="AgripeWebAPI.Services.PasswordHasherService">
+          <metrics complexity="0" elements="16" coveredelements="16" conditionals="6" coveredconditionals="6" statements="16" coveredstatements="16" coveredmethods="2" methods="2" />
+        </class>
+        <line complexity="2" signature="HashPassword(System.String)" num="9" count="40" type="method" />
+        <line falsecount="0" truecount="2" num="10" type="cond" />
+        <line num="11" count="10" type="stmt" />
+        <line num="13" count="30" type="stmt" />
+        <line num="14" count="30" type="stmt" />
+        <line complexity="4" signature="VerifyPassword(System.String,System.String)" num="17" count="35" type="method" />
+        <line falsecount="0" truecount="2" num="18" type="cond" />
+        <line num="19" count="10" type="stmt" />
+        <line falsecount="0" truecount="2" num="21" type="cond" />
+        <line num="22" count="10" type="stmt" />
+        <line num="25" count="15" type="stmt" />
+        <line num="26" count="15" type="stmt" />
+        <line num="28" count="5" type="stmt" />
+        <line num="29" count="5" type="stmt" />
+        <line num="30" count="5" type="stmt" />
+        <line num="32" count="35" type="stmt" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Validators\EmailAttribute.cs" name="EmailAttribute.cs">
+        <metrics complexity="0" elements="12" coveredelements="12" conditionals="6" coveredconditionals="6" statements="12" coveredstatements="12" coveredmethods="3" methods="3" classes="1" loc="26" ncloc="12" />
+        <class name="AgripeWebAPI.Validators.EmailAttribute">
+          <metrics complexity="0" elements="12" coveredelements="12" conditionals="6" coveredconditionals="6" statements="12" coveredstatements="12" coveredmethods="3" methods="3" />
+        </class>
+        <line complexity="1" signature=".cctor()" num="8" count="5" type="method" />
+        <line num="9" count="5" type="stmt" />
+        <line num="10" count="5" type="stmt" />
+        <line complexity="6" signature="IsValid(System.Object)" num="13" count="60" type="method" />
+        <line falsecount="0" truecount="4" num="14" type="cond" />
+        <line num="15" count="10" type="stmt" />
+        <line num="17" count="50" type="stmt" />
+        <line falsecount="0" truecount="2" num="18" type="cond" />
+        <line num="19" count="60" type="stmt" />
+        <line complexity="1" signature="FormatErrorMessage(System.String)" num="22" count="5" type="method" />
+        <line num="23" count="5" type="stmt" />
+        <line num="24" count="5" type="stmt" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Validators\PasswordStrengthAttribute.cs" name="PasswordStrengthAttribute.cs">
+        <metrics complexity="0" elements="19" coveredelements="19" conditionals="16" coveredconditionals="16" statements="19" coveredstatements="19" coveredmethods="2" methods="2" classes="1" loc="45" ncloc="19" />
+        <class name="AgripeWebAPI.Validators.PasswordStrengthAttribute">
+          <metrics complexity="0" elements="19" coveredelements="19" conditionals="16" coveredconditionals="16" statements="19" coveredstatements="19" coveredmethods="2" methods="2" />
+        </class>
+        <line complexity="16" signature="IsValid(System.Object)" num="12" count="65" type="method" />
+        <line falsecount="0" truecount="4" num="13" type="cond" />
+        <line num="14" count="10" type="stmt" />
+        <line num="16" count="55" type="stmt" />
+        <line falsecount="0" truecount="4" num="18" type="cond" />
+        <line num="19" count="10" type="stmt" />
+        <line falsecount="0" truecount="2" num="22" type="cond" />
+        <line num="23" count="5" type="stmt" />
+        <line falsecount="0" truecount="2" num="26" type="cond" />
+        <line num="27" count="5" type="stmt" />
+        <line falsecount="0" truecount="2" num="30" type="cond" />
+        <line num="31" count="5" type="stmt" />
+        <line falsecount="0" truecount="2" num="34" type="cond" />
+        <line num="35" count="5" type="stmt" />
+        <line num="37" count="25" type="stmt" />
+        <line num="38" count="65" type="stmt" />
+        <line complexity="1" signature="FormatErrorMessage(System.String)" num="41" count="5" type="method" />
+        <line num="42" count="5" type="stmt" />
+        <line num="43" count="5" type="stmt" />
+      </file>
+      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Program.cs" name="Program.cs">
+        <metrics complexity="0" elements="18" coveredelements="0" conditionals="0" coveredconditionals="0" statements="18" coveredstatements="0" coveredmethods="0" methods="1" classes="1" loc="34" ncloc="18" />
+        <class name="Program">
+          <metrics complexity="0" elements="18" coveredelements="0" conditionals="0" coveredconditionals="0" statements="18" coveredstatements="0" coveredmethods="0" methods="1" />
+        </class>
+        <line complexity="1" signature="&lt;Main&gt;$(System.String[])" num="3" count="0" type="method" />
+        <line num="6" count="0" type="stmt" />
+        <line num="10" count="0" type="stmt" />
+        <line num="11" count="0" type="stmt" />
+        <line num="12" count="0" type="stmt" />
+        <line num="13" count="0" type="stmt" />
+        <line num="14" count="0" type="stmt" />
+        <line num="17" count="0" type="stmt" />
+        <line num="19" count="0" type="stmt" />
+        <line num="21" count="0" type="stmt" />
+        <line num="23" count="0" type="stmt" />
+        <line num="24" count="0" type="stmt" />
+        <line num="25" count="0" type="stmt" />
+        <line num="26" count="0" type="stmt" />
+        <line num="28" count="0" type="stmt" />
+        <line num="30" count="0" type="stmt" />
+        <line num="32" count="0" type="stmt" />
+        <line num="34" count="0" type="stmt" />
+      </file>
+    </package>
+  </project>
+  <testproject timestamp="1775482618">
+    <metrics complexity="0" elements="0" coveredelements="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" coveredmethods="0" methods="0" classes="0" loc="0" ncloc="0" files="0" packages="0" />
+  </testproject>
+</coverage>
