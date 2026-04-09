@@ -1,0 +1,32 @@
+# Development overrides — use alongside docker-compose.yml for local development.
+# Restores direct host port bindings and disables the nginx-proxy / certbot services.
+#
+# Usage:
+#   docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml up --build -d
+
+services:
+  agripewebapi:
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+
+  agripewebui:
+    ports:
+      - "80:80"
+
+  agripewebui-mobile:
+    ports:
+      - "3000:80"
+
+  db:
+    ports:
+      - "27027:27017"
+
+  nginx-proxy:
+    profiles:
+      - prod   # only starts when --profile prod is passed; ignored in dev
+
+  certbot:
+    profiles:
+      - prod
