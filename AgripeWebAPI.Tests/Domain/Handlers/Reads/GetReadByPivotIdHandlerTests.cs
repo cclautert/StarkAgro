@@ -238,5 +238,64 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Reads
             // value=10 < LimiteInferior=25 → red
             Assert.Equal("#F44336", result.Quadrante!.BottomLeft);
         }
+
+        [Fact]
+        public async Task Handle_NoDataForQuadrant4_ShowsGrayColor()
+        {
+            // Arrange — sensors in quadrants 1, 2, 3 only; quadrant 4 is absent
+            var mockDb = new Mock<agpDBContext>();
+            var mockSensors = new Mock<IMongoCollection<Sensor>>();
+            var mockPivots = new Mock<IMongoCollection<Pivot>>();
+            var mockUsers = new Mock<IMongoCollection<User>>();
+            var mockReads = new Mock<IMongoCollection<ReadSensor>>();
+
+            var sensorSummaries = new List<SensorSummary>
+            {
+                new SensorSummary(1, 1), // quadrant 1
+                new SensorSummary(2, 2), // quadrant 2
+                new SensorSummary(3, 3)  // quadrant 3
+            };
+
+            MongoMockHelper.SetupFindProjection<Sensor, SensorSummary>(mockSensors, sensorSummaries);
+
+            var now = DateTime.UtcNow;
+            var read1 = new ReadSensor { Id = 1, SensorId = 1, Value = 50m, Date = now };
+            var read2 = new ReadSensor { Id = 2, SensorId = 2, Value = 50m, Date = now };
+            var read3 = new ReadSensor { Id = 3, SensorId = 3, Value = 50m, Date = now };
+            var allReads = new List<ReadSensor> { read1, read2, read3 };
+
+            // First call: ToListAsync for all reads in date range
+            // Next three calls: FirstOrDefaultAsync per sensor (latest read for each)
+            mockReads.SetupSequence(c => c.FindAsync(
+                    It.IsAny<FilterDefinition<ReadSensor>>(),
+                    It.IsAny<FindOptions<ReadSensor, ReadSensor>>(),
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => MongoMockHelper.CreateMockCursor(allReads).Object)
+                .ReturnsAsync(() => MongoMockHelper.CreateMockCursor(new List<ReadSensor> { read1 }).Object)
+                .ReturnsAsync(() => MongoMockHelper.CreateMockCursor(new List<ReadSensor> { read2 }).Object)
+                .ReturnsAsync(() => MongoMockHelper.CreateMockCursor(new List<ReadSensor> { read3 }).Object);
+
+            MongoMockHelper.SetupFind(mockPivots, new Pivot { Id = 1, Name = "P1", LimiteInferior = 25m, LimiteSuperior = 75m });
+            MongoMockHelper.SetupFind(mockUsers, new User { Id = 1, LimiteInferior = 25m, LimiteSuperior = 75m });
+
+            mockDb.Setup(c => c.Sensors).Returns(mockSensors.Object);
+            mockDb.Setup(c => c.Pivots).Returns(mockPivots.Object);
+            mockDb.Setup(c => c.Users).Returns(mockUsers.Object);
+            mockDb.Setup(c => c.ReadSensors).Returns(mockReads.Object);
+
+            var handler = new GetReadByPivotIdHandler(mockDb.Object);
+
+            // Act
+            var result = await handler.Handle(CreateRequest(), CancellationToken.None);
+
+            // Assert — quadrant 4 (TopLeft) has no sensor, so it falls into the else branch → gray
+            Assert.NotNull(result);
+            Assert.NotNull(result.Quadrante);
+            Assert.Equal("#607D8B", result.Quadrante.TopLeft);
+            // Quadrants 1, 2, 3 have data with value=50 (between 25 and 75) → green
+            Assert.Equal("#4CAF50", result.Quadrante.TopRight);
+            Assert.Equal("#4CAF50", result.Quadrante.BottomRight);
+            Assert.Equal("#4CAF50", result.Quadrante.BottomLeft);
+        }
     }
 }

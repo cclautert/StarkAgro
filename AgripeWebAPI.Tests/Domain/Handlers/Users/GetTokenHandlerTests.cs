@@ -205,5 +205,80 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Users
             Assert.NotNull(result);
             Assert.Equal(LoginErrorCode.TooManyAttempts, result.ErrorCode);
         }
+
+        [Fact]
+        public void Constructor_NullDbContext_Throws()
+        {
+            // Arrange
+            var passwordHasher = new Mock<IPasswordHasher>();
+            var jwtService = new Mock<IJwtTokenService>();
+            var logger = new Mock<ILogger<GetToken>>();
+            var loginAttemptService = new Mock<ILoginAttemptService>();
+
+            // Act & Assert
+            var ex = Assert.Throws<ArgumentNullException>(() =>
+                new GetToken(null!, passwordHasher.Object, jwtService.Object, logger.Object, loginAttemptService.Object));
+            Assert.Equal("dbContext", ex.ParamName);
+        }
+
+        [Fact]
+        public void Constructor_NullPasswordHasher_Throws()
+        {
+            // Arrange
+            var mockDbContext = new Mock<agpDBContext>();
+            var jwtService = new Mock<IJwtTokenService>();
+            var logger = new Mock<ILogger<GetToken>>();
+            var loginAttemptService = new Mock<ILoginAttemptService>();
+
+            // Act & Assert
+            var ex = Assert.Throws<ArgumentNullException>(() =>
+                new GetToken(mockDbContext.Object, null!, jwtService.Object, logger.Object, loginAttemptService.Object));
+            Assert.Equal("passwordHasher", ex.ParamName);
+        }
+
+        [Fact]
+        public void Constructor_NullJwtTokenService_Throws()
+        {
+            // Arrange
+            var mockDbContext = new Mock<agpDBContext>();
+            var passwordHasher = new Mock<IPasswordHasher>();
+            var logger = new Mock<ILogger<GetToken>>();
+            var loginAttemptService = new Mock<ILoginAttemptService>();
+
+            // Act & Assert
+            var ex = Assert.Throws<ArgumentNullException>(() =>
+                new GetToken(mockDbContext.Object, passwordHasher.Object, null!, logger.Object, loginAttemptService.Object));
+            Assert.Equal("jwtTokenService", ex.ParamName);
+        }
+
+        [Fact]
+        public void Constructor_NullLogger_Throws()
+        {
+            // Arrange
+            var mockDbContext = new Mock<agpDBContext>();
+            var passwordHasher = new Mock<IPasswordHasher>();
+            var jwtService = new Mock<IJwtTokenService>();
+            var loginAttemptService = new Mock<ILoginAttemptService>();
+
+            // Act & Assert
+            var ex = Assert.Throws<ArgumentNullException>(() =>
+                new GetToken(mockDbContext.Object, passwordHasher.Object, jwtService.Object, null!, loginAttemptService.Object));
+            Assert.Equal("logger", ex.ParamName);
+        }
+
+        [Fact]
+        public void Constructor_NullLoginAttemptService_Throws()
+        {
+            // Arrange
+            var mockDbContext = new Mock<agpDBContext>();
+            var passwordHasher = new Mock<IPasswordHasher>();
+            var jwtService = new Mock<IJwtTokenService>();
+            var logger = new Mock<ILogger<GetToken>>();
+
+            // Act & Assert
+            var ex = Assert.Throws<ArgumentNullException>(() =>
+                new GetToken(mockDbContext.Object, passwordHasher.Object, jwtService.Object, logger.Object, null!));
+            Assert.Equal("loginAttemptService", ex.ParamName);
+        }
     }
 }

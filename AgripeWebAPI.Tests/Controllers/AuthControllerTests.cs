@@ -91,6 +91,48 @@ namespace AgripeWebAPI.Tests.Controllers
         }
 
         [Fact]
+        public async Task LogIn_AccountInactive_ReturnsForbidden()
+        {
+            // Arrange
+            var notifier = new MockNotifier();
+            var mediator = new Mock<IMediator>();
+            var controller = CreateController(notifier);
+
+            var command = new UserTokenRequest { Email = "inactive@example.com", Password = "pass" };
+
+            mediator.Setup(m => m.Send(It.IsAny<UserTokenRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new UserTokenResponse { ErrorCode = LoginErrorCode.AccountInactive });
+
+            // Act
+            var result = await controller.LogIn(mediator.Object, command, CancellationToken.None);
+
+            // Assert
+            var statusResult = Assert.IsType<ObjectResult>(result.Result);
+            Assert.Equal(403, statusResult.StatusCode);
+        }
+
+        [Fact]
+        public async Task LogIn_TooManyAttempts_ReturnsTooManyRequests()
+        {
+            // Arrange
+            var notifier = new MockNotifier();
+            var mediator = new Mock<IMediator>();
+            var controller = CreateController(notifier);
+
+            var command = new UserTokenRequest { Email = "locked@example.com", Password = "pass" };
+
+            mediator.Setup(m => m.Send(It.IsAny<UserTokenRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new UserTokenResponse { ErrorCode = LoginErrorCode.TooManyAttempts });
+
+            // Act
+            var result = await controller.LogIn(mediator.Object, command, CancellationToken.None);
+
+            // Assert
+            var statusResult = Assert.IsType<ObjectResult>(result.Result);
+            Assert.Equal(429, statusResult.StatusCode);
+        }
+
+        [Fact]
         public async Task ExternalLogin_ValidCode_ReturnsOkWithToken()
         {
             // Arrange
@@ -158,6 +200,32 @@ namespace AgripeWebAPI.Tests.Controllers
 
             // Assert
             Assert.IsType<BadRequestObjectResult>(result.Result);
+        }
+
+        [Fact]
+        public async Task ExternalLogin_AccountInactive_ReturnsForbidden()
+        {
+            // Arrange
+            var notifier = new MockNotifier();
+            var mediator = new Mock<IMediator>();
+            var controller = CreateController(notifier);
+
+            var command = new ExternalLoginRequest
+            {
+                Provider = "Google",
+                Code = "auth-code-123",
+                RedirectUri = "https://localhost:4200/login/callback"
+            };
+
+            mediator.Setup(m => m.Send(It.IsAny<ExternalLoginRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new UserTokenResponse { ErrorCode = LoginErrorCode.AccountInactive });
+
+            // Act
+            var result = await controller.ExternalLogin(mediator.Object, command, CancellationToken.None);
+
+            // Assert
+            var statusResult = Assert.IsType<ObjectResult>(result.Result);
+            Assert.Equal(403, statusResult.StatusCode);
         }
 
         [Fact]

@@ -29,7 +29,7 @@ namespace AgripeWebWorker.Tests.Handlers
             _mockDbContext.Setup(db => db.GetNextIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(42);
 
-            _handler = new CreateReadHandler(_mockDbContext.Object, _mockCurrentUser.Object);
+            _handler = new CreateReadHandler(_mockDbContext.Object);
         }
 
         [Fact]
