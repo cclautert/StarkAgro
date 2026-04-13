@@ -31,13 +31,14 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
             {
                 throw new ArgumentNullException(nameof(request.Pivot.Id), "PivotId must be greater than zero.");
             }
+            var normalisedCode = request.Code?.ToUpperInvariant();
             var sensor = new Sensor
             {
                 Id = await _dbContext.GetNextIdAsync(nameof(Sensor), cancellationToken),
                 Name = request.Name,
                 PivoId = request.Pivot.Id,
                 UserId = userId,
-                Code = request.Code,
+                Code = normalisedCode,
                 Quadrante = request.Quadrante
             };
 

@@ -129,7 +129,7 @@ namespace AgripeWebAPI.Tests.Controllers
             var mediator = new Mock<IMediator>();
             var controller = CreateController(notifier);
 
-            var command = new CreateSensorRequest { Name = "New Sensor", Code = "S001" };
+            var command = new CreateSensorRequest { Name = "New Sensor", Code = "5C:CF:7F:3A:54:29" };
             var expected = new CreateSensorResponse { Id = 10 };
 
             mediator.Setup(m => m.Send(It.Is<CreateSensorRequest>(c => c.UserId == 7), It.IsAny<CancellationToken>()))
@@ -157,6 +157,47 @@ namespace AgripeWebAPI.Tests.Controllers
 
             // Act
             var result = await controller.Add(mediator.Object, command, CancellationToken.None);
+
+            // Assert
+            Assert.IsType<BadRequestObjectResult>(result.Result);
+        }
+
+        [Fact]
+        public async Task Add_WithValidMacCode_ReturnsSuccess()
+        {
+            // Arrange
+            var notifier = new MockNotifier();
+            var mediator = new Mock<IMediator>();
+            var controller = CreateController(notifier);
+
+            var command = new CreateSensorRequest { Name = "Sensor Norte", Code = "5C:CF:7F:3A:54:29" };
+            var expected = new CreateSensorResponse { Id = 20 };
+
+            mediator.Setup(m => m.Send(It.IsAny<CreateSensorRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expected);
+
+            // Act
+            var result = await controller.Add(mediator.Object, command, CancellationToken.None);
+
+            // Assert
+            var response = Assert.IsType<CreateSensorResponse>(result.Value);
+            Assert.Equal(20, response.Id);
+        }
+
+        [Fact]
+        public async Task Update_WithInvalidMacCode_ModelStateError_ReturnsBadRequest()
+        {
+            // Arrange
+            var notifier = new MockNotifier();
+            var mediator = new Mock<IMediator>();
+            var controller = CreateController(notifier);
+            controller.ModelState.AddModelError("Code",
+                "Code must be a valid MAC address in the format XX:XX:XX:XX:XX:XX.");
+
+            var command = new EditSensorRequest { Id = 1, Code = "NOT-A-MAC" };
+
+            // Act
+            var result = await controller.Update(mediator.Object, command, CancellationToken.None);
 
             // Assert
             Assert.IsType<BadRequestObjectResult>(result.Result);
