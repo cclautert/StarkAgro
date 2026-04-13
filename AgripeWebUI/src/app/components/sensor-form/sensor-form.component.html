@@ -32,13 +32,16 @@
     <div class="form-group">
       <label for="code">Código do Sensor</label>
       <div class="input-with-button">
-        <input id="code" type="text" formControlName="code" required>
+        <input id="code" type="text" formControlName="code" required
+               placeholder="XX:XX:XX:XX:XX:XX" maxlength="17"
+               (input)="formatMacAddress($event)">
         <button type="button" class="btn btn-icon" (click)="scanQrCode()" [disabled]="isScanning" title="Escanear QR Code">
           <mat-icon>{{ isScanning ? 'hourglass_empty' : 'qr_code_scanner' }}</mat-icon>
         </button>
       </div>
       <div *ngIf="code?.invalid && (code?.dirty || code?.touched)" class="error">
-        Código é obrigatório.
+        <div *ngIf="code?.errors?.['required']">Código é obrigatório.</div>
+        <div *ngIf="code?.errors?.['pattern']">Formato inválido. Use o formato XX:XX:XX:XX:XX:XX (ex: 5C:CF:7F:3A:54:29).</div>
       </div>
     </div>
 
