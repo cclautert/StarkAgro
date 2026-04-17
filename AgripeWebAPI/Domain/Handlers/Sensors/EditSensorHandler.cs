@@ -26,7 +26,7 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
             }
 
             sensor.Name = request.Name;
-            sensor.Code = request.Code?.ToUpperInvariant();
+            sensor.Code = request.Code;
             sensor.Quadrante = request.Quadrante;
             sensor.PivoId = request.Pivot.Id;
             await _dbContext.Sensors.ReplaceOneAsync(x => x.Id == sensor.Id, sensor, cancellationToken: cancellationToken);

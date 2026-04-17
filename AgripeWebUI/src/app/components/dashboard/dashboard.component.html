@@ -3,12 +3,12 @@
   <!-- Header -->
   <div class="dash-header">
     <div class="dash-title-group">
-      <h2 class="dash-title" *ngIf="pivotName">{{ pivotName }} — Quadrante {{ quadrante }}</h2>
+      <h2 class="dash-title" *ngIf="pivotName">{{ pivotName }} &mdash; Quadrante {{ quadrante }}</h2>
       <h2 class="dash-title" *ngIf="!pivotName">Dashboard</h2>
     </div>
     <div class="dash-nav">
-      <button class="btn-nav" (click)="goHome()">← Voltar</button>
-      <button class="btn-config" (click)="goToConfig()">⚙ Configuração</button>
+      <button class="btn-nav" (click)="goHome()">&#8592; Voltar</button>
+      <button class="btn-config" (click)="goToConfig()">&#9881; Configuracao</button>
     </div>
   </div>
 
@@ -26,22 +26,169 @@
     </select>
   </div>
 
+  <!-- Metric Cards -->
+  <div class="metric-cards-grid" *ngIf="trendStats">
+    <div class="metric-card">
+      <div class="metric-card-label">Ultima leitura</div>
+      <div class="metric-card-value" style="color: #38bdf8;">
+        {{ trendStats.last.toFixed(1) }}<span class="metric-card-unit">%</span>
+      </div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-card-label">Media do periodo</div>
+      <div class="metric-card-value" style="color: #a78bfa;">
+        {{ trendStats.avg.toFixed(1) }}<span class="metric-card-unit">%</span>
+      </div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-card-label">Minimo</div>
+      <div class="metric-card-value" style="color: #fb923c;">
+        {{ trendStats.min.toFixed(1) }}<span class="metric-card-unit">%</span>
+      </div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-card-label">Maximo</div>
+      <div class="metric-card-value" style="color: #34d399;">
+        {{ trendStats.max.toFixed(1) }}<span class="metric-card-unit">%</span>
+      </div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-card-label">Projecao em 5 dias</div>
+      <div class="metric-card-value" style="color: #facc15;">
+        {{ trendStats.proj5.toFixed(1) }}<span class="metric-card-unit">%</span>
+      </div>
+      <div class="metric-card-sub">&#177; margem de confianca</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-card-label">Alertas no periodo</div>
+      <div class="metric-card-value"
+           [style.color]="trendStats.alertCount > 0 ? '#f87171' : '#4ade80'">
+        {{ trendStats.alertCount }}<span class="metric-card-unit"> leituras</span>
+      </div>
+      <div class="metric-card-sub">
+        {{ trendStats.alertCount > 0 ? 'fora dos limites' : 'dentro dos limites' }}
+      </div>
+    </div>
+  </div>
+
   <!-- Chart Card -->
   <div class="chart-card">
     <div class="chart-header">
-      <span class="chart-label">Leituras do Sensor</span>
-      <div class="period-selector">
-        <button class="period-btn" [class.active]="numberOfReads === 7" (click)="setDays(7)">7 dias</button>
-        <button class="period-btn" [class.active]="numberOfReads === 14" (click)="setDays(14)">14 dias</button>
-        <button class="period-btn" [class.active]="numberOfReads === 30" (click)="setDays(30)">30 dias</button>
+      <div class="chart-header-left">
+        <span class="chart-label">Leituras do Sensor</span>
+        <!-- Trend Badge -->
+        <ng-container *ngIf="trendStats">
+          <span class="trend-badge"
+                [ngClass]="trendDirection.cssClass">
+            <ng-container [ngSwitch]="trendDirection.cssClass">
+              <ng-container *ngSwitchCase="'trend-badge-rising'">&#8593; Subindo {{ trendStats.slope | number:'1.1-1' }}%/dia</ng-container>
+              <ng-container *ngSwitchCase="'trend-badge-falling'">&#8595; Caindo {{ slopeAbs | number:'1.1-1' }}%/dia</ng-container>
+              <ng-container *ngSwitchDefault>&#8594; Estavel</ng-container>
+            </ng-container>
+          </span>
+        </ng-container>
+      </div>
+      <div class="chart-header-right">
+        <!-- Period selector buttons -->
+        <div class="period-selector">
+          <button class="period-btn" [class.active]="numberOfReads === 7"  (click)="setDays(7)">7 dias</button>
+          <button class="period-btn" [class.active]="numberOfReads === 14" (click)="setDays(14)">14 dias</button>
+          <button class="period-btn" [class.active]="numberOfReads === 30" (click)="setDays(30)">30 dias</button>
+        </div>
+        <!-- Overlay toggles -->
+        <div class="overlay-toggles">
+          <label class="overlay-toggle" [style.color]="showTrend ? '#facc15' : '#475569'">
+            <input type="checkbox" [checked]="showTrend" (change)="onToggleTrend()" />
+            Tendencia
+          </label>
+          <label class="overlay-toggle" [style.color]="showMA ? '#a78bfa' : '#475569'">
+            <input type="checkbox" [checked]="showMA" (change)="onToggleMA()" />
+            Media Movel
+          </label>
+          <label class="overlay-toggle" [style.color]="showProjection ? '#fb923c' : '#475569'">
+            <input type="checkbox" [checked]="showProjection" (change)="onToggleProjection()" />
+            Projecao
+          </label>
+        </div>
       </div>
     </div>
+
     <div class="chart-wrapper">
       <canvas baseChart
         [data]="lineChartData"
         [options]="lineChartOptions"
         [type]="'line'">
       </canvas>
+    </div>
+
+    <!-- Chart Legend -->
+    <div class="chart-legend" *ngIf="trendStats">
+      <div class="legend-item">
+        <div class="legend-line legend-solid" style="background: #06b6d4;"></div>
+        <span>Leituras</span>
+      </div>
+      <div class="legend-item" *ngIf="showTrend">
+        <div class="legend-line legend-dashed" style="--legend-color: #facc15;"></div>
+        <span>Tendencia (regressao linear)</span>
+      </div>
+      <div class="legend-item" *ngIf="showMA">
+        <div class="legend-line legend-solid" style="background: #a78bfa;"></div>
+        <span>Media Movel (3d)</span>
+      </div>
+      <div class="legend-item" *ngIf="showProjection">
+        <div class="legend-line legend-dashed" style="--legend-color: #fb923c;"></div>
+        <span>Projecao futura</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Analysis Panel -->
+  <div class="analysis-panel" *ngIf="trendStats">
+    <div class="analysis-panel-title">Analise de Tendencia</div>
+    <div class="analysis-tiles-grid">
+
+      <!-- Trend Direction tile -->
+      <div class="analysis-tile" [style.border-left-color]="trendTileBorderColor">
+        <div class="analysis-tile-label">DIRECAO DA TENDENCIA</div>
+        <span class="trend-badge" [ngClass]="trendDirection.cssClass">
+          <ng-container [ngSwitch]="trendDirection.cssClass">
+            <ng-container *ngSwitchCase="'trend-badge-rising'">&#8593; Subindo {{ trendStats.slope | number:'1.1-1' }}%/dia</ng-container>
+            <ng-container *ngSwitchCase="'trend-badge-falling'">&#8595; Caindo {{ slopeAbs | number:'1.1-1' }}%/dia</ng-container>
+            <ng-container *ngSwitchDefault>&#8594; Estavel</ng-container>
+          </ng-container>
+        </span>
+        <div class="analysis-tile-sub">
+          Coef. angular: <strong>{{ trendStats.slope | number:'1.3-3' }} %/dia</strong>
+        </div>
+      </div>
+
+      <!-- Projection 5 days tile -->
+      <div class="analysis-tile" style="border-left-color: #facc15;">
+        <div class="analysis-tile-label">PROJECAO (5 DIAS)</div>
+        <div class="analysis-tile-value" style="color: #facc15;">{{ trendStats.proj5.toFixed(1) }}%</div>
+        <div class="analysis-tile-sub">
+          Margem de confianca: <strong>&#177; 13%</strong>
+        </div>
+      </div>
+
+      <!-- Compliance tile -->
+      <div class="analysis-tile"
+           [style.border-left-color]="trendStats.alertCount > 0 ? '#f87171' : '#4ade80'">
+        <div class="analysis-tile-label">CONFORMIDADE</div>
+        <div class="analysis-tile-value"
+             [style.color]="trendStats.alertCount > 0 ? '#f87171' : '#4ade80'">
+          {{ trendStats.compliancePct }}%
+        </div>
+        <div class="analysis-tile-sub">{{ trendStats.alertCount }} leituras fora dos limites</div>
+      </div>
+
+      <!-- Variability tile -->
+      <div class="analysis-tile" style="border-left-color: #a78bfa;">
+        <div class="analysis-tile-label">VARIABILIDADE</div>
+        <div class="analysis-tile-value" style="color: #a78bfa;">{{ trendStats.variability.toFixed(1) }}%</div>
+        <div class="analysis-tile-sub">Amplitude max. no periodo</div>
+      </div>
+
     </div>
   </div>
 

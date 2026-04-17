@@ -61,7 +61,7 @@ export class SensorFormComponent implements OnInit {
       id: [null],
       name: ['', Validators.required],
       pivot: [null, Validators.required],
-      code: ['', [Validators.required, Validators.pattern(/^([0-9A-F]{2}:){5}[0-9A-F]{2}$/)]],
+      code: ['', [Validators.required]],
       quadrante: [null, [Validators.required, Validators.min(1)]]
     });
 
@@ -160,15 +160,6 @@ export class SensorFormComponent implements OnInit {
   get code() { return this.sensorForm.get('code'); }
   get quadrante() { return this.sensorForm.get('quadrante'); }
 
-  formatMacAddress(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const hex = input.value.replace(/[^0-9A-Fa-f]/g, '').toUpperCase();
-    const formatted = (hex.match(/.{1,2}/g) ?? []).join(':').substring(0, 17);
-    input.value = formatted;
-    this.sensorForm.patchValue({ code: formatted }, { emitEvent: false });
-    this.sensorForm.get('code')!.updateValueAndValidity();
-  }
-
   async scanQrCode(): Promise<void> {
     if (this.isScanning) return;
 
@@ -208,9 +199,7 @@ export class SensorFormComponent implements OnInit {
         scan();
       });
 
-      const hex = result.replace(/[^0-9A-Fa-f]/g, '').toUpperCase();
-      const mac = (hex.match(/.{1,2}/g) ?? []).join(':').substring(0, 17);
-      this.sensorForm.patchValue({ code: mac });
+      this.sensorForm.patchValue({ code: result });
       this.snackBar.open('QR Code lido com sucesso!', 'OK', { duration: 3000 });
     } catch (err: any) {
       this.snackBar.open(err?.message ?? 'Erro ao acessar a câmera.', 'Fechar', { duration: 4000 });
