@@ -22,4 +22,8 @@ export const Colors = {
   // Reference line colors
   limitUpper: '#EF4444',
   limitLower: '#F97316',
+  // Trend analysis overlay colors
+  trendLine: '#FBBF24',
+  movingAvg: '#A78BFA',
+  projection: '#FB923C',
 };
