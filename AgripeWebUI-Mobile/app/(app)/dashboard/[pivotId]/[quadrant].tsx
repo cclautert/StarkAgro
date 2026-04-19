@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   View,
   Text,
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
-  Dimensions,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -16,105 +15,33 @@ import { Colors } from '../../../../constants/colors';
 import { QUADRANT_NAME_TO_NUMBER, QUADRANT_LABELS } from '../../../../constants/api';
 import { Card } from '../../../../components/ui/Card';
 import { Picker } from '@react-native-picker/picker';
-
-const { width } = Dimensions.get('window');
+import { useSettingsStore } from '../../../../stores/settingsStore';
+import { computeDailyData, TrendStats, TrendPoint, ProjectionPoint } from '../../../../services/trendAnalysis';
+import { TrendChart } from '../../../../components/dashboard/TrendChart';
+import { TrendStatsPanel } from '../../../../components/dashboard/TrendStatsPanel';
 
 const DAY_OPTIONS = [
-  { label: '5 dias', value: 5 },
-  { label: '10 dias', value: 10 },
+  { label: '7 dias', value: 7 },
+  { label: '14 dias', value: 14 },
   { label: '30 dias', value: 30 },
 ];
-
-function formatDate(dateStr: string): string {
-  const d = new Date(dateStr);
-  const day = d.getDate().toString().padStart(2, '0');
-  const month = (d.getMonth() + 1).toString().padStart(2, '0');
-  const hours = d.getHours().toString().padStart(2, '0');
-  const mins = d.getMinutes().toString().padStart(2, '0');
-  return `${day}/${month} ${hours}:${mins}`;
-}
-
-function SimpleLineChart({ readings }: { readings: ReadEntry[] }) {
-  if (!readings.length) {
-    return (
-      <View style={{ height: 160, justifyContent: 'center', alignItems: 'center' }}>
-        <Text style={{ color: Colors.textSecondary }}>Sem dados disponíveis</Text>
-      </View>
-    );
-  }
-
-  const chartWidth = width - 64;
-  const chartHeight = 140;
-  const values = readings.map((r) => r.value);
-  const minVal = 0;
-  const maxVal = 100;
-  const range = 100;
-
-  const points = readings.map((r, i) => ({
-    x: (i / Math.max(readings.length - 1, 1)) * chartWidth,
-    y: chartHeight - ((r.value - minVal) / range) * chartHeight,
-  }));
-
-  const pathD = points.reduce(
-    (acc, p, i) => acc + (i === 0 ? `M${p.x},${p.y}` : ` L${p.x},${p.y}`),
-    ''
-  );
-
-  return (
-    <View style={{ height: chartHeight + 20, position: 'relative' }}>
-      <View
-        style={{
-          position: 'absolute',
-          left: 0,
-          top: 0,
-          width: chartWidth,
-          height: chartHeight,
-          overflow: 'hidden',
-        }}
-      >
-        {/* SVG-less fallback: render as React Native View bars */}
-        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'flex-end' }}>
-          {readings.map((r, i) => {
-            const barH = ((r.value - minVal) / range) * chartHeight;
-            return (
-              <View
-                key={i}
-                style={{
-                  flex: 1,
-                  height: Math.max(barH, 2),
-                  backgroundColor: Colors.primary,
-                  marginHorizontal: 1,
-                  borderTopLeftRadius: 2,
-                  borderTopRightRadius: 2,
-                  opacity: 0.8,
-                }}
-              />
-            );
-          })}
-        </View>
-      </View>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: chartHeight + 4 }}>
-        <Text style={{ color: Colors.textSecondary, fontSize: 10 }}>
-          {readings[0] ? formatDate(readings[0].date as string) : ''}
-        </Text>
-        <Text style={{ color: Colors.textSecondary, fontSize: 10 }}>
-          {readings[readings.length - 1] ? formatDate(readings[readings.length - 1].date as string) : ''}
-        </Text>
-      </View>
-    </View>
-  );
-}
 
 export default function QuadrantDetailScreen() {
   const router = useRouter();
   const { pivotId, quadrant } = useLocalSearchParams<{ pivotId: string; quadrant: string }>();
   const quadranteNumber = QUADRANT_NAME_TO_NUMBER[quadrant] ?? 1;
+  const { humidityUpper, humidityLower } = useSettingsStore();
 
   const [sensors, setSensors] = useState<Sensor[]>([]);
   const [selectedSensorId, setSelectedSensorId] = useState<number | null>(null);
   const [readings, setReadings] = useState<ReadEntry[]>([]);
-  const [days, setDays] = useState(5);
+  const [days, setDays] = useState(7);
   const [loading, setLoading] = useState(true);
+
+  // Overlay toggles
+  const [showTrend, setShowTrend] = useState(true);
+  const [showMovingAvg, setShowMovingAvg] = useState(true);
+  const [showProjection, setShowProjection] = useState(true);
 
   const loadSensors = useCallback(async () => {
     if (!pivotId) return;
@@ -150,6 +77,12 @@ export default function QuadrantDetailScreen() {
     const interval = setInterval(loadReadings, 60000);
     return () => clearInterval(interval);
   }, [loadReadings]);
+
+  // Trend analysis computed from readings
+  const { points, projection, stats } = useMemo(
+    () => computeDailyData(readings, humidityLower, humidityUpper),
+    [readings, humidityLower, humidityUpper]
+  );
 
   const qLabel = QUADRANT_LABELS[quadranteNumber] ?? quadrant;
 
@@ -218,15 +151,45 @@ export default function QuadrantDetailScreen() {
           ))}
         </View>
 
+        {/* Overlay toggles */}
+        <View style={{ flexDirection: 'row', gap: 6, marginBottom: 16, flexWrap: 'wrap' }}>
+          <OverlayToggle
+            label="Tendência"
+            color={Colors.trendLine}
+            active={showTrend}
+            onPress={() => setShowTrend((v) => !v)}
+          />
+          <OverlayToggle
+            label="Méd. Móvel"
+            color={Colors.movingAvg}
+            active={showMovingAvg}
+            onPress={() => setShowMovingAvg((v) => !v)}
+          />
+          <OverlayToggle
+            label="Projeção"
+            color={Colors.projection}
+            active={showProjection}
+            onPress={() => setShowProjection((v) => !v)}
+          />
+        </View>
+
         {/* Chart */}
-        <Card>
+        <Card style={{ marginBottom: 16 }}>
           <Text style={{ color: Colors.textPrimary, fontSize: 16, fontWeight: '700', marginBottom: 16 }}>
             Leituras do Sensor
           </Text>
           {loading ? (
             <ActivityIndicator color={Colors.primary} style={{ paddingVertical: 40 }} />
           ) : (
-            <SimpleLineChart readings={readings} />
+            <TrendChart
+              points={points}
+              projection={projection}
+              humidityUpper={humidityUpper}
+              humidityLower={humidityLower}
+              showTrend={showTrend}
+              showMovingAvg={showMovingAvg}
+              showProjection={showProjection}
+            />
           )}
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 8 }}>
             <Text style={{ color: Colors.textSecondary, fontSize: 12 }}>
@@ -237,7 +200,58 @@ export default function QuadrantDetailScreen() {
             </Text>
           </View>
         </Card>
+
+        {/* Trend stats panel */}
+        {!loading && points.length > 0 && (
+          <Card style={{ marginBottom: 16 }}>
+            <Text style={{ color: Colors.textPrimary, fontSize: 16, fontWeight: '700', marginBottom: 12 }}>
+              Análise de Tendência
+            </Text>
+            <TrendStatsPanel stats={stats} />
+          </Card>
+        )}
       </ScrollView>
     </View>
+  );
+}
+
+function OverlayToggle({
+  label,
+  color,
+  active,
+  onPress,
+}: {
+  label: string;
+  color: string;
+  active: boolean;
+  onPress: () => void;
+}) {
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 10,
+        paddingVertical: 5,
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: active ? color : Colors.cardBorder,
+        backgroundColor: active ? color + '22' : Colors.card,
+        gap: 5,
+      }}
+    >
+      <View
+        style={{
+          width: 8,
+          height: 8,
+          borderRadius: 4,
+          backgroundColor: active ? color : Colors.textSecondary,
+        }}
+      />
+      <Text style={{ color: active ? color : Colors.textSecondary, fontSize: 12, fontWeight: '600' }}>
+        {label}
+      </Text>
+    </TouchableOpacity>
   );
 }
