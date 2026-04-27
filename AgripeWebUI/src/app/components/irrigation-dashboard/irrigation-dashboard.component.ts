@@ -4,6 +4,7 @@ import { interval, Subscription } from 'rxjs';
 import { BaseChartDirective } from 'ng2-charts';
 import { Pivot } from '../../models/pivot.model';
 import { ReadEntry } from '../../models/quadrante.model';
+import { IrrigationTrend } from '../../models/irrigation-trend.model';
 import { ApiService } from '../../services/api.service';
 import { PivotService } from '../../services/pivot.service';
 
@@ -35,6 +36,7 @@ export class IrrigationDashboardComponent implements OnInit, OnDestroy {
   numberOfDays: number = 7;
   quadrants: QuadrantInfo[] = [];
   alerts: AlertInfo[] = [];
+  irrigationTrend: IrrigationTrend | null = null;
   private intervalSub!: Subscription;
 
   public chartData: ChartConfiguration<'line'>['data'] = {
@@ -102,6 +104,11 @@ export class IrrigationDashboardComponent implements OnInit, OnDestroy {
   }
 
   loadDashboard(): void {
+    this.apiService.getIrrigationTrend(this.selectedPivotId, this.numberOfDays).subscribe({
+      next: trend => this.irrigationTrend = trend,
+      error: () => this.irrigationTrend = null
+    });
+
     this.apiService.getReadsByPivotId(this.selectedPivotId, this.numberOfDays).subscribe(pivot => {
       const q = pivot.quadrante;
       const limInf = pivot.limiteInferior ?? 25;

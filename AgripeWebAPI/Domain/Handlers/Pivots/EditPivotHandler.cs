@@ -21,6 +21,8 @@ namespace AgripeWebAPI.Domain.Handlers.Pivots
                 throw new KeyNotFoundException("Pivot not found");
             }
             pivot.Name = request.Name;
+            pivot.Latitude = request.Latitude;
+            pivot.Longitude = request.Longitude;
             await _dbContext.Pivots.ReplaceOneAsync(x => x.Id == pivot.Id, pivot, cancellationToken: cancellationToken);
             return new EditPivotResponse { Id = pivot.Id };
         }

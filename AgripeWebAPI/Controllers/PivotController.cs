@@ -91,10 +91,26 @@ namespace AgripeWebAPI.Controllers
             [FromQuery] DeletePivotRequest command,
             CancellationToken cancellationToken
         )
-        { 
+        {
             if (!ModelState.IsValid) return CustomResponse(ModelState);
 
             return await mediator.Send(command, cancellationToken);
+        }
+
+        [Route("getIrrigationTrend")]
+        [HttpGet]
+        public async Task<IActionResult> GetIrrigationTrend(
+            [FromServices] IMediator mediator,
+            [FromQuery] GetIrrigationTrendRequest command,
+            CancellationToken cancellationToken
+        )
+        {
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
+
+            command.UserId = GetCurrentUserId();
+            var result = await mediator.Send(command, cancellationToken);
+
+            return CustomResponse(result!);
         }
     }
 }

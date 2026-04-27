@@ -24,7 +24,9 @@ namespace AgripeWebAPI.Domain.Handlers.Pivots
                     Id = x.Id,
                     Name = x.Name,
                     LimiteInferior = x.LimiteInferior,
-                    LimiteSuperior = x.LimiteSuperior
+                    LimiteSuperior = x.LimiteSuperior,
+                    Latitude = x.Latitude,
+                    Longitude = x.Longitude
                 })
                 .FirstOrDefaultAsync(cancellationToken);
 

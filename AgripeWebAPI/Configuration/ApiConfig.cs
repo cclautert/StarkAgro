@@ -1,5 +1,7 @@
 using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Entities;
+using AgripeWebAPI.Models.Interfaces;
+using AgripeWebAPI.Services.Forecast;
 using Microsoft.AspNetCore.RateLimiting;
 using MongoDB.Driver;
 using System.Reflection;
@@ -12,7 +14,20 @@ namespace AgripeWebAPI.Configuration
         public static void AddApiConfiguration(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<MongoDbSettings>(configuration.GetSection(MongoDbSettings.SectionName));
+            services.Configure<WeatherForecastSettings>(configuration.GetSection(WeatherForecastSettings.SectionName));
             services.AddScoped<agpDBContext>();
+            services.AddMemoryCache();
+
+            services.AddHttpClient<OpenMeteoForecastService>(client =>
+            {
+                client.BaseAddress = new Uri("https://api.open-meteo.com/");
+                client.Timeout = TimeSpan.FromSeconds(8);
+            });
+            services.AddHttpClient<GoogleWeatherAIForecastService>(client =>
+            {
+                client.Timeout = TimeSpan.FromSeconds(8);
+            });
+            services.AddScoped<IWeatherForecastService, WeatherForecastOrchestrator>();
 
             services.AddControllers()
                 .AddJsonOptions(options =>

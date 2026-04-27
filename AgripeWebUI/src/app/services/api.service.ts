@@ -5,6 +5,7 @@ import { Read } from '../models/read.model';
 import { Pivot } from '../models/pivot.model';
 import { User } from '../models/user.model';
 import { Sensor } from '../models/sensor.model';
+import { IrrigationTrend } from '../models/irrigation-trend.model';
 import { HttpParams } from '@angular/common/http';
 
 @Injectable({
@@ -51,6 +52,14 @@ export class ApiService {
     .set('NumberOfReads', numberOfReads.toString());
 
     return this.http.get<Pivot>(`${this.baseUrl}reads/GetByPivotId`, { params });
+  }
+
+  getIrrigationTrend(pivotId: number, numberOfReads: number = 10): Observable<IrrigationTrend> {
+    const params = new HttpParams()
+      .set('PivotId', pivotId.toString())
+      .set('NumberOfReads', numberOfReads.toString());
+
+    return this.http.get<IrrigationTrend>(`${this.baseUrl}pivot/getIrrigationTrend`, { params });
   }
 
   addUser(user: User): Observable<any> {
