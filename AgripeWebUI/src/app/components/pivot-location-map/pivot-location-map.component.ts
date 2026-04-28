@@ -73,7 +73,10 @@ export class PivotLocationMapComponent implements AfterViewInit, OnDestroy {
     if (!isPlatformBrowser(this.platformId)) return;
 
     // Lazy-load Leaflet only in the browser to keep SSR safe and the bundle small.
-    const L = await import('leaflet');
+    // Leaflet ships as CommonJS, so `await import('leaflet')` returns a namespace
+    // wrapper — unwrap `.default` to get the actual API.
+    const leafletModule = await import('leaflet');
+    const L: any = (leafletModule as any).default ?? leafletModule;
     this.leaflet = L;
 
     // Default Leaflet marker icons reference relative paths that break under bundlers.
