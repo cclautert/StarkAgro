@@ -52,7 +52,7 @@ export default function CallbackScreen() {
       router.replace('/(auth)/login');
       return;
     }
-    const redirectUri = `${window.location.origin}/callback`;
+    const redirectUri = `${window.location.origin}/login/callback`;
     exchangeCode(code, redirectUri, setAuth, router);
   }, []);
 

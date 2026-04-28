@@ -34,8 +34,8 @@ resource "aws_ecs_task_definition" "api" {
         # OAuth credentials — supply via TF_VAR_google_client_id / TF_VAR_google_client_secret
         { name = "OAuth__Google__ClientId",            value = var.google_client_id },
         { name = "OAuth__Google__ClientSecret",        value = var.google_client_secret },
-        # OAuth: allow redirect_uri from Angular UI and Expo mobile web
-        { name = "OAuth__Google__AllowedRedirectUris", value = "https://agripeweb.com/login/callback,https://app.agripeweb.com/callback" }
+        # OAuth: Angular UI web callback + native app deep-link
+        { name = "OAuth__Google__AllowedRedirectUris", value = "https://agripeweb.com/login/callback,agripeweb://callback" }
       ]
 
       logConfiguration = {
@@ -85,67 +85,6 @@ resource "aws_ecs_task_definition" "ui" {
   ])
 }
 
-# Mobile web UI task definition
-resource "aws_ecs_task_definition" "mobile_ui" {
-  family                   = "agripeweb-mobile-ui"
-  network_mode             = "awsvpc"
-  requires_compatibilities = ["FARGATE"]
-  cpu                      = "256"
-  memory                   = "512"
-
-  execution_role_arn = aws_iam_role.ecs_execution.arn
-  task_role_arn      = aws_iam_role.ecs_task.arn
-
-  container_definitions = jsonencode([
-    {
-      name  = "mobile-ui"
-      image = "${aws_ecr_repository.mobile_ui.repository_url}:${var.mobile_ui_image_tag}"
-
-      portMappings = [
-        {
-          containerPort = 80
-          protocol     = "tcp"
-        }
-      ]
-
-      environment = [
-        { name = "API_BASE_URL", value = "http://${aws_lb.main.dns_name}" }
-      ]
-
-      logConfiguration = {
-        logDriver = "awslogs"
-        options = {
-          "awslogs-group"         = aws_cloudwatch_log_group.mobile_ui.name
-          "awslogs-region"        = var.aws_region
-          "awslogs-stream-prefix" = "ecs"
-        }
-      }
-    }
-  ])
-}
-
-resource "aws_ecs_service" "mobile_ui" {
-  name            = "agripeweb-mobile-ui"
-  cluster         = aws_ecs_cluster.main.id
-  task_definition = aws_ecs_task_definition.mobile_ui.arn
-  desired_count   = 1
-  launch_type     = "FARGATE"
-
-  depends_on = [aws_lb_listener.http]
-
-  network_configuration {
-    subnets          = data.aws_subnets.default.ids
-    security_groups  = [aws_security_group.ecs_ui.id]
-    assign_public_ip = true
-  }
-
-  load_balancer {
-    target_group_arn = aws_lb_target_group.mobile_ui.arn
-    container_name   = "mobile-ui"
-    container_port   = 80
-  }
-}
-
 # CloudWatch log groups
 resource "aws_cloudwatch_log_group" "api" {
   name_prefix = "/ecs/agripeweb-api-"
@@ -154,11 +93,6 @@ resource "aws_cloudwatch_log_group" "api" {
 
 resource "aws_cloudwatch_log_group" "ui" {
   name_prefix = "/ecs/agripeweb-ui-"
-  retention_in_days = 7
-}
-
-resource "aws_cloudwatch_log_group" "mobile_ui" {
-  name_prefix = "/ecs/agripeweb-mobile-ui-"
   retention_in_days = 7
 }
 

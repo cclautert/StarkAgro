@@ -79,7 +79,7 @@ export default function LoginScreen() {
     try {
       const redirectUri =
         Platform.OS === 'web' && typeof window !== 'undefined'
-          ? `${window.location.origin}/callback`
+          ? `${window.location.origin}/login/callback`
           : 'agripeweb://callback';
 
       const oauthUrl = buildGoogleOAuthUrl(redirectUri);
