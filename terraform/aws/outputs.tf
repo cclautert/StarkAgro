@@ -17,3 +17,8 @@ output "ecr_ui_url" {
   description = "ECR repository URL for UI image (use for docker push)"
   value       = aws_ecr_repository.ui.repository_url
 }
+
+output "ecr_mobile_ui_url" {
+  description = "ECR repository URL for mobile web UI image (use for docker push)"
+  value       = aws_ecr_repository.mobile_ui.repository_url
+}
