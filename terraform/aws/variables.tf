@@ -45,3 +45,9 @@ variable "ui_image_tag" {
   type        = string
   default     = "latest"
 }
+
+variable "mobile_ui_image_tag" {
+  description = "Docker image tag for the mobile web UI (ECR image)"
+  type        = string
+  default     = "latest"
+}
