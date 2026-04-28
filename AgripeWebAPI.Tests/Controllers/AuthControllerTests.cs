@@ -87,7 +87,8 @@ namespace AgripeWebAPI.Tests.Controllers
             var result = await controller.LogIn(mediator.Object, command, CancellationToken.None);
 
             // Assert
-            Assert.IsType<BadRequestObjectResult>(result.Result);
+            var badRequest = Assert.IsType<ObjectResult>(result.Result);
+            Assert.Equal(400, badRequest.StatusCode);
         }
 
         [Fact]
@@ -174,11 +175,12 @@ namespace AgripeWebAPI.Tests.Controllers
             var result = await controller.ExternalLogin(mediator.Object, command, CancellationToken.None);
 
             // Assert
-            Assert.IsType<BadRequestObjectResult>(result.Result);
+            var badRequest = Assert.IsType<ObjectResult>(result.Result);
+            Assert.Equal(400, badRequest.StatusCode);
         }
 
         [Fact]
-        public async Task ExternalLogin_MediatorReturnsNull_ReturnsBadRequest()
+        public async Task ExternalLogin_MediatorReturnsNull_ReturnsUnauthorized()
         {
             // Arrange
             var notifier = new MockNotifier();
@@ -198,8 +200,9 @@ namespace AgripeWebAPI.Tests.Controllers
             // Act
             var result = await controller.ExternalLogin(mediator.Object, command, CancellationToken.None);
 
-            // Assert
-            Assert.IsType<BadRequestObjectResult>(result.Result);
+            // Assert — handler failure returns 401, not 400
+            var unauthorized = Assert.IsType<ObjectResult>(result.Result);
+            Assert.Equal(401, unauthorized.StatusCode);
         }
 
         [Fact]
@@ -266,7 +269,8 @@ namespace AgripeWebAPI.Tests.Controllers
             var result = await controller.AddUser(mediator.Object, command, CancellationToken.None);
 
             // Assert
-            Assert.IsType<BadRequestObjectResult>(result.Result);
+            var badRequest = Assert.IsType<ObjectResult>(result.Result);
+            Assert.Equal(400, badRequest.StatusCode);
         }
     }
 }

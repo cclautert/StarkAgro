@@ -51,3 +51,15 @@ variable "mobile_ui_image_tag" {
   type        = string
   default     = "latest"
 }
+
+variable "google_client_id" {
+  description = "Google OAuth 2.0 client ID. Pass via TF_VAR or terraform.tfvars; do not commit."
+  type        = string
+  sensitive   = true
+}
+
+variable "google_client_secret" {
+  description = "Google OAuth 2.0 client secret. Pass via TF_VAR or terraform.tfvars; do not commit."
+  type        = string
+  sensitive   = true
+}

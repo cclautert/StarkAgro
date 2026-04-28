@@ -31,6 +31,9 @@ resource "aws_ecs_task_definition" "api" {
         { name = "ASPNETCORE_PATHBASE", value = "/api" },
         { name = "MongoDb__ConnectionString", value = var.mongodb_connection_string },
         { name = "MongoDb__DatabaseName", value = var.mongodb_database_name },
+        # OAuth credentials — supply via TF_VAR_google_client_id / TF_VAR_google_client_secret
+        { name = "OAuth__Google__ClientId",            value = var.google_client_id },
+        { name = "OAuth__Google__ClientSecret",        value = var.google_client_secret },
         # OAuth: allow redirect_uri from Angular UI and Expo mobile web
         { name = "OAuth__Google__AllowedRedirectUris", value = "https://agripeweb.com/login/callback,https://app.agripeweb.com/callback" }
       ]

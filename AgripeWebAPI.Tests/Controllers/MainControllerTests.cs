@@ -94,9 +94,9 @@ namespace AgripeWebAPI.Tests.Controllers
             var result = controller.TestCustomResponse(new { Name = "Test" });
 
             // Assert
-            var badRequest = Assert.IsType<BadRequestObjectResult>(result);
+            var badRequest = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(400, badRequest.StatusCode);
             Assert.NotNull(badRequest.Value);
-            // Verify the error messages are serialized in the response
             var json = System.Text.Json.JsonSerializer.Serialize(badRequest.Value);
             Assert.Contains("Something went wrong", json);
         }
@@ -114,7 +114,8 @@ namespace AgripeWebAPI.Tests.Controllers
             var result = controller.TestCustomResponseModelState(modelState);
 
             // Assert
-            Assert.IsType<BadRequestObjectResult>(result);
+            var badRequest = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(400, badRequest.StatusCode);
         }
 
         [Fact]

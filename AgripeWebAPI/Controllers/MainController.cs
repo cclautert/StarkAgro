@@ -39,10 +39,16 @@ namespace AgripeWebAPI.Controllers
                 }
             }
 
-            return BadRequest(new
+            // Respect the caller's intended status code; fall back to 400 only when no
+            // specific error code was provided (i.e. the caller used the default OK).
+            var errorStatus = statusCode == HttpStatusCode.OK ? HttpStatusCode.BadRequest : statusCode;
+            return new ObjectResult(new
             {
                 errors = _notificador.getNotifications().Select(n => n.Mensagem)
-            });
+            })
+            {
+                StatusCode = (int)errorStatus
+            };
         }
 
         protected int GetCurrentUserId()
