@@ -3,7 +3,7 @@
 namespace AgripeWebAPI.Models.Entities
 {
     public class Pivot : Entity
-    { 
+    {
         [ForeignKey("User")]
         public int UserId { get; set; }
 
@@ -12,6 +12,10 @@ namespace AgripeWebAPI.Models.Entities
         public decimal? LimiteInferior { get; set; }
 
         public decimal? LimiteSuperior { get; set; }
+
+        public double? Latitude { get; set; }
+
+        public double? Longitude { get; set; }
 
         public ICollection<Sensor>? Sensors { get; set; }
     }

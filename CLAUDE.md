@@ -55,10 +55,10 @@ Controllers receive requests and delegate to MediatR handlers. No business logic
 - **Domain/Commands/Requests/** — Command/query request objects (e.g., `CreatePivotRequest`)
 - **Domain/Commands/Responses/** — Response DTOs
 - **Domain/Handlers/** — MediatR handlers with business logic
-- **Models/Entities/** — MongoDB entities (`User`, `Pivot`, `Sensor`, `ReadSensor`), all inherit from `Entity` (has `[BsonId] int Id`)
-- **Models/Interfaces/** — `ICurrentUserContext`, `IJwtTokenService`, `INotifier`, `IPasswordHasher`
-- **Services/** — `JwtTokenService`, `PasswordHasherService`, `CurrentUserContext`
-- **Configuration/** — DI registration, JWT/OAuth/Swagger/CORS setup, `MongoDbSettings`
+- **Models/Entities/** — MongoDB entities (`User`, `Pivot`, `Sensor`, `ReadSensor`), all inherit from `Entity` (has `[BsonId] int Id`). `Pivot` has nullable `Latitude`/`Longitude` (used by the rain-forecast feature; pivots without coordinates skip the forecast step)
+- **Models/Interfaces/** — `ICurrentUserContext`, `IJwtTokenService`, `INotifier`, `IPasswordHasher`, `IWeatherForecastService`
+- **Services/** — `JwtTokenService`, `PasswordHasherService`, `CurrentUserContext`. `Services/Forecast/` holds `WeatherForecastOrchestrator` (cache + fallback) plus `OpenMeteoForecastService` and `GoogleWeatherAIForecastService` implementations
+- **Configuration/** — DI registration, JWT/OAuth/Swagger/CORS setup, `MongoDbSettings`, `WeatherForecastSettings`
 - **Validators/** — Custom validation attributes (`EmailAttribute`, `PasswordStrengthAttribute`)
 - **Notifications/** — Error notification pattern via `INotifier`/`Notificator`
 

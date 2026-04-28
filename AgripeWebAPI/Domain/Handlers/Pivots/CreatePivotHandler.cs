@@ -28,7 +28,9 @@ namespace AgripeWebAPI.Domain.Handlers.Pivots
             {
                 Id = await _dbContext.GetNextIdAsync(nameof(Pivot), cancellationToken),
                 Name = request.Name,
-                UserId = userId
+                UserId = userId,
+                Latitude = request.Latitude,
+                Longitude = request.Longitude
             };
 
             await _dbContext.Pivots.InsertOneAsync(pivot, cancellationToken: cancellationToken);

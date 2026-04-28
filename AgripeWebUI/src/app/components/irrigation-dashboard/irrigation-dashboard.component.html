@@ -43,6 +43,17 @@
     </div>
   </div>
 
+  <!-- Rain forecast / postpone notice -->
+  <div class="alert-grid" *ngIf="irrigationTrend?.irrigationPostponed">
+    <div class="alert-banner alert-low">
+      <span class="alert-icon">🌧️</span>
+      <div class="alert-text">
+        <strong>Irrigação adiada</strong>
+        <span>{{ irrigationTrend?.postponeReason }}</span>
+      </div>
+    </div>
+  </div>
+
   <!-- Alert banners -->
   <div class="alert-grid" *ngIf="alerts.length > 0">
     <div class="alert-banner" *ngFor="let alert of alerts" [ngClass]="alert.type">

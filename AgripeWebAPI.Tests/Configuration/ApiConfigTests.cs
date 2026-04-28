@@ -31,7 +31,9 @@ namespace AgripeWebAPI.Tests.Configuration
             var services = new ServiceCollection();
             var configMock = new Mock<IConfiguration>();
             var mongoSection = new Mock<IConfigurationSection>();
+            var weatherSection = new Mock<IConfigurationSection>();
             configMock.Setup(c => c.GetSection("MongoDb")).Returns(mongoSection.Object);
+            configMock.Setup(c => c.GetSection("WeatherForecast")).Returns(weatherSection.Object);
 
             // Act
             services.AddApiConfiguration(configMock.Object);
