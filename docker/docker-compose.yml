@@ -15,8 +15,8 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - MongoDb__ConnectionString=mongodb://db:27017
       - MongoDb__DatabaseName=agripeweb
-      - OAuth__Google__ClientId=728628470722-23le0egpfio5jfg14g61i39mjjqcg4vp.apps.googleusercontent.com](http://728628470722-23le0egpfio5jfg14g61i39mjjqcg4vp.apps.googleusercontent.com)
-      - OAuth__Google__ClientSecret=GOOGLE_CLIENT_SECRET_REDACTED
+      - OAuth__Google__ClientId=${GOOGLE_CLIENT_ID}
+      - OAuth__Google__ClientSecret=${GOOGLE_CLIENT_SECRET}
       - OAuth__Google__AllowedRedirectUris=https://agripeweb.com/login/callback,https://app.agripeweb.com/callback
     depends_on:
       - db
