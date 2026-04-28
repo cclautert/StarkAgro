@@ -15,7 +15,9 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - MongoDb__ConnectionString=mongodb://db:27017
       - MongoDb__DatabaseName=agripeweb
-      - OAuth__Google__AllowedRedirectUris=https://agripeweb.com/login/callback,https://app.agripeweb.com/callback
+      - OAuth__Google__ClientId=${GOOGLE_CLIENT_ID}
+      - OAuth__Google__ClientSecret=${GOOGLE_CLIENT_SECRET}
+      - OAuth__Google__AllowedRedirectUris=https://agripeweb.com/login/callback,agripeweb://callback
     depends_on:
       - db
     networks:
@@ -105,7 +107,6 @@ services:
       - letsencrypt-certs:/etc/letsencrypt:ro
     depends_on:
       - agripewebui
-      - agripewebui-mobile
     networks:
       - app-network
     restart: unless-stopped

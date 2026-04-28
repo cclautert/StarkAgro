@@ -46,8 +46,14 @@ variable "ui_image_tag" {
   default     = "latest"
 }
 
-variable "mobile_ui_image_tag" {
-  description = "Docker image tag for the mobile web UI (ECR image)"
+variable "google_client_id" {
+  description = "Google OAuth 2.0 client ID. Pass via TF_VAR or terraform.tfvars; do not commit."
   type        = string
-  default     = "latest"
+  sensitive   = true
+}
+
+variable "google_client_secret" {
+  description = "Google OAuth 2.0 client secret. Pass via TF_VAR or terraform.tfvars; do not commit."
+  type        = string
+  sensitive   = true
 }

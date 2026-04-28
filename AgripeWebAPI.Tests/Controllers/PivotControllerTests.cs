@@ -129,7 +129,8 @@ namespace AgripeWebAPI.Tests.Controllers
 
             var result = await controller.GetById(mediator.Object, new GetPivotRequest(), CancellationToken.None);
 
-            Assert.IsType<BadRequestObjectResult>(result.Result);
+            var badRequest = Assert.IsType<ObjectResult>(result.Result);
+            Assert.Equal(400, badRequest.StatusCode);
         }
 
         [Fact]
@@ -159,7 +160,8 @@ namespace AgripeWebAPI.Tests.Controllers
 
             var result = await controller.Update(mediator.Object, new EditPivotRequest(), CancellationToken.None);
 
-            Assert.IsType<BadRequestObjectResult>(result.Result);
+            var badRequest = Assert.IsType<ObjectResult>(result.Result);
+            Assert.Equal(400, badRequest.StatusCode);
         }
 
         [Fact]
@@ -188,7 +190,8 @@ namespace AgripeWebAPI.Tests.Controllers
 
             var result = await controller.Delete(mediator.Object, new DeletePivotRequest(), CancellationToken.None);
 
-            Assert.IsType<BadRequestObjectResult>(result.Result);
+            var badRequest = Assert.IsType<ObjectResult>(result.Result);
+            Assert.Equal(400, badRequest.StatusCode);
         }
 
         [Fact]
@@ -218,7 +221,8 @@ namespace AgripeWebAPI.Tests.Controllers
 
             var result = await controller.UpdateLimits(mediator.Object, new EditPivotLimitsRequest(), CancellationToken.None);
 
-            Assert.IsType<BadRequestObjectResult>(result.Result);
+            var badRequest = Assert.IsType<ObjectResult>(result.Result);
+            Assert.Equal(400, badRequest.StatusCode);
         }
     }
 }

@@ -67,7 +67,8 @@ namespace AgripeWebAPI.Tests.Controllers
             var result = await controller.GetById(mediator.Object, command, CancellationToken.None);
 
             // Assert
-            Assert.IsType<BadRequestObjectResult>(result.Result);
+            var badRequest = Assert.IsType<ObjectResult>(result.Result);
+            Assert.Equal(400, badRequest.StatusCode);
         }
 
         [Fact]
@@ -159,7 +160,8 @@ namespace AgripeWebAPI.Tests.Controllers
             var result = await controller.Add(mediator.Object, command, CancellationToken.None);
 
             // Assert
-            Assert.IsType<BadRequestObjectResult>(result.Result);
+            var badRequest = Assert.IsType<ObjectResult>(result.Result);
+            Assert.Equal(400, badRequest.StatusCode);
         }
 
         [Fact]
@@ -200,7 +202,8 @@ namespace AgripeWebAPI.Tests.Controllers
             var result = await controller.Update(mediator.Object, command, CancellationToken.None);
 
             // Assert
-            Assert.IsType<BadRequestObjectResult>(result.Result);
+            var badRequest = Assert.IsType<ObjectResult>(result.Result);
+            Assert.Equal(400, badRequest.StatusCode);
         }
 
         [Fact]
@@ -241,7 +244,8 @@ namespace AgripeWebAPI.Tests.Controllers
             var result = await controller.Update(mediator.Object, command, CancellationToken.None);
 
             // Assert
-            Assert.IsType<BadRequestObjectResult>(result.Result);
+            var badRequest = Assert.IsType<ObjectResult>(result.Result);
+            Assert.Equal(400, badRequest.StatusCode);
         }
     }
 }

@@ -75,7 +75,18 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(git push:*)",
-      "Bash(gh pr:*)"
+      "Bash(gh pr:*)",
+      "mcp__plugin_github_github__issue_read",
+      "mcp__plugin_github_github__list_issues",
+      "Bash(gh issue *)",
+      "Bash(tasklist)",
+      "mcp__plugin_github_github__add_issue_comment",
+      "Skill(schedule)",
+      "Bash(uuidgen)",
+      "Bash(python -c \"import uuid; print\\(str\\(uuid.uuid4\\(\\)\\)\\)\")",
+      "Bash(powershell -Command \"[guid]::NewGuid\\(\\).ToString\\(\\).ToLower\\(\\)\")",
+      "Bash(git *)",
+      "Skill(commit-commands:commit-push-pr)"
     ]
   }
 }
