@@ -95,6 +95,42 @@
   margin-top: 4px;
 }
 
+.location-section {
+  background: #20294a;
+  border: 1px solid #2d3f5e;
+  border-radius: 10px;
+  padding: 14px;
+}
+
+.location-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.location-readout {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 6px 16px;
+  font-size: 0.9rem;
+  color: #cbd5e1;
+}
+
+.location-readout span {
+  color: #94a3b8;
+}
+
+.location-readout-address {
+  grid-column: 1 / -1;
+  word-break: break-word;
+}
+
+.location-empty {
+  color: #94a3b8;
+  font-size: 0.85rem;
+}
+
 @media (max-width: 480px) {
   .form-container {
     margin: 12px;

@@ -8,6 +8,8 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Sensor } from '../../models/sensor.model';
 import { SensorService } from '../../services/sensor.service';
 import { TrendAnalysisService, TrendStats, ProjectionPoint } from '../../services/trend-analysis.service';
+import { PivotService } from '../../services/pivot.service';
+import { PivotForecast } from '../../models/pivot-forecast.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -37,6 +39,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
   pivotName: string | null = null;
   limiteSuperior: number | null = null;
   limiteInferior: number | null = null;
+
+  // ── Weather forecast state ────────────────────────────────────────────────
+  forecast: PivotForecast | null = null;
+  forecastLoading = false;
+  private forecastSub: Subscription | null = null;
 
   // ── Trend-analysis overlay state ──────────────────────────────────────────
   showTrend = true;
@@ -199,7 +206,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private sensorService: SensorService,
     private router: Router,
     private breakpointObserver: BreakpointObserver,
-    private trendAnalysisService: TrendAnalysisService
+    private trendAnalysisService: TrendAnalysisService,
+    private pivotService: PivotService
   ) {
     this.breakpointSub = this.breakpointObserver.observe([Breakpoints.Handset]).subscribe(result => {
       this.isMobile = result.matches;
@@ -226,6 +234,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
       // Capture into local consts so TypeScript narrowing holds inside async callbacks
       const pivoId = this.pivoId;
       const quadrante = this.quadrante;
+
+      this.loadForecast(pivoId);
 
       this.apiService.getReadsByPivotId(pivoId, 1).subscribe(pivot => {
         this.pivotName = pivot.name ?? null;
@@ -256,6 +266,28 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.breakpointSub?.unsubscribe();
     this.paramSub?.unsubscribe();
     this.readsSub?.unsubscribe();
+    this.forecastSub?.unsubscribe();
+  }
+
+  private loadForecast(pivotId: number): void {
+    this.forecastSub?.unsubscribe();
+    this.forecastLoading = true;
+    this.forecastSub = this.pivotService.getForecast(pivotId, 7).subscribe({
+      next: f => {
+        this.forecast = f;
+        this.forecastLoading = false;
+      },
+      error: () => {
+        this.forecast = null;
+        this.forecastLoading = false;
+      }
+    });
+  }
+
+  goToPivotEdit(): void {
+    if (this.pivoId !== null) {
+      this.router.navigate(['/pivots/editar', this.pivoId]);
+    }
   }
 
   loadReads(): void {

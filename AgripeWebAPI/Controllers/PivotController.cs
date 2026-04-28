@@ -1,4 +1,4 @@
-﻿using AgripeWebAPI.Domain.Commands.Requests.Pivots;
+using AgripeWebAPI.Domain.Commands.Requests.Pivots;
 using AgripeWebAPI.Domain.Commands.Responses.Pivots;
 using AgripeWebAPI.Models.Interfaces;
 using MediatR;
@@ -22,7 +22,7 @@ namespace AgripeWebAPI.Controllers
             [FromQuery] GetPivotRequest command,
             CancellationToken cancellationToken
         )
-        { 
+        {
             if (!ModelState.IsValid) return CustomResponse(ModelState);
 
             return await mediator.Send(command, cancellationToken);
@@ -46,29 +46,31 @@ namespace AgripeWebAPI.Controllers
 
         [Route("add")]
         [HttpPost]
-        public async Task<ActionResult<CreatePivotResponse>> Add(
+        public async Task<IActionResult> Add(
             [FromServices] IMediator mediator,
             [FromBody] CreatePivotRequest command,
             CancellationToken cancellationToken
         )
-        { 
+        {
             if (!ModelState.IsValid) return CustomResponse(ModelState);
 
             command.UserId = GetCurrentUserId();
-            return await mediator.Send(command, cancellationToken);
+            var result = await mediator.Send(command, cancellationToken);
+            return CustomResponse(result!);
         }
 
         [Route("update")]
         [HttpPut]
-        public async Task<ActionResult<EditPivotResponse>> Update(
+        public async Task<IActionResult> Update(
             [FromServices] IMediator mediator,
             [FromBody] EditPivotRequest command,
             CancellationToken cancellationToken
         )
-        { 
+        {
             if (!ModelState.IsValid) return CustomResponse(ModelState);
 
-            return await mediator.Send(command, cancellationToken);
+            var result = await mediator.Send(command, cancellationToken);
+            return CustomResponse(result!);
         }
 
         [Route("updateLimits")]
@@ -102,6 +104,22 @@ namespace AgripeWebAPI.Controllers
         public async Task<IActionResult> GetIrrigationTrend(
             [FromServices] IMediator mediator,
             [FromQuery] GetIrrigationTrendRequest command,
+            CancellationToken cancellationToken
+        )
+        {
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
+
+            command.UserId = GetCurrentUserId();
+            var result = await mediator.Send(command, cancellationToken);
+
+            return CustomResponse(result!);
+        }
+
+        [Route("forecast")]
+        [HttpGet]
+        public async Task<IActionResult> GetForecast(
+            [FromServices] IMediator mediator,
+            [FromQuery] GetPivotForecastRequest command,
             CancellationToken cancellationToken
         )
         {

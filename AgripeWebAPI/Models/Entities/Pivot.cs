@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AgripeWebAPI.Models.Entities
 {
@@ -16,6 +16,12 @@ namespace AgripeWebAPI.Models.Entities
         public double? Latitude { get; set; }
 
         public double? Longitude { get; set; }
+
+        public double? Altitude { get; set; }
+
+        public string? LocationAddress { get; set; }
+
+        public DateTime? LocationUpdatedAt { get; set; }
 
         public ICollection<Sensor>? Sensors { get; set; }
     }

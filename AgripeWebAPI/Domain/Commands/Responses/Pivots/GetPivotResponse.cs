@@ -1,4 +1,4 @@
-﻿namespace AgripeWebAPI.Domain.Commands.Responses.Pivots
+namespace AgripeWebAPI.Domain.Commands.Responses.Pivots
 {
     public class GetPivotResponse
     {
@@ -8,5 +8,8 @@
         public decimal? LimiteSuperior { get; set; }
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
+        public double? Altitude { get; set; }
+        public string? LocationAddress { get; set; }
+        public DateTime? LocationUpdatedAt { get; set; }
     }
 }

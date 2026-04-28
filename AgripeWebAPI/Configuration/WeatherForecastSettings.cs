@@ -10,5 +10,6 @@ namespace AgripeWebAPI.Configuration
         public string FallbackSource { get; set; } = "OpenMeteo";
         public string GoogleWeatherApiKey { get; set; } = "CHANGE_ME";
         public int CacheDurationMinutes { get; set; } = 60;
+        public int PivotDashboardForecastDays { get; set; } = 7;
     }
 }

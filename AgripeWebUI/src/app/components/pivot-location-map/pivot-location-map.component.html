@@ -1,0 +1,52 @@
+<div class="map-dialog">
+  <h2 class="map-dialog-title">Selecionar Localização no Mapa</h2>
+
+  <div class="map-toolbar">
+    <div class="map-search">
+      <input
+        type="text"
+        class="map-search-input"
+        placeholder="Buscar endereço..."
+        [(ngModel)]="searchQuery"
+        (keyup.enter)="runSearch()"
+        aria-label="Campo de busca de endereço" />
+      <button type="button" class="btn btn-secondary" (click)="runSearch()" [disabled]="searching">
+        {{ searching ? 'Buscando...' : 'Buscar' }}
+      </button>
+      <button type="button" class="btn btn-secondary" (click)="useMyLocation()">
+        Usar minha localização atual
+      </button>
+    </div>
+
+    <ul *ngIf="searchResults.length" class="map-search-results">
+      <li *ngFor="let r of searchResults" (click)="selectSearchResult(r)" tabindex="0"
+          (keyup.enter)="selectSearchResult(r)">
+        {{ r.display_name }}
+      </li>
+    </ul>
+
+    <div *ngIf="geolocationError" class="map-error">{{ geolocationError }}</div>
+  </div>
+
+  <div #mapContainer class="map-canvas" role="application" aria-label="Mapa interativo de localização"></div>
+
+  <div class="map-readout" aria-live="polite">
+    <div><strong>Latitude:</strong> {{ latitude !== null ? (latitude | number:'1.6-6') : '—' }}</div>
+    <div><strong>Longitude:</strong> {{ longitude !== null ? (longitude | number:'1.6-6') : '—' }}</div>
+    <div>
+      <strong>Altitude:</strong>
+      {{ loadingAltitude ? 'consultando...' : (altitude !== null ? (altitude | number:'1.1-1') + ' m' : '—') }}
+    </div>
+    <div class="map-readout-address">
+      <strong>Endereço:</strong>
+      {{ loadingAddress ? 'consultando...' : (locationAddress ?? '—') }}
+    </div>
+  </div>
+
+  <div class="map-actions">
+    <button type="button" class="btn btn-primary" (click)="confirm()" [disabled]="latitude === null || longitude === null">
+      Confirmar
+    </button>
+    <button type="button" class="btn btn-secondary" (click)="cancel()">Cancelar</button>
+  </div>
+</div>

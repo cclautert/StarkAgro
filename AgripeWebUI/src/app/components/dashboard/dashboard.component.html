@@ -12,6 +12,39 @@
     </div>
   </div>
 
+  <!-- Forecast Tile -->
+  <div class="forecast-card" *ngIf="forecast || forecastLoading">
+    <div class="forecast-header">
+      <span class="forecast-title">Previsão do tempo (7 dias)</span>
+      <span class="forecast-source" *ngIf="forecast?.forecast?.source">
+        Fonte: {{ forecast?.forecast?.source }}
+      </span>
+    </div>
+
+    <div *ngIf="forecastLoading" class="forecast-empty">Carregando previsão...</div>
+
+    <ng-container *ngIf="!forecastLoading && forecast">
+      <div *ngIf="!forecast.hasCoordinates" class="forecast-cta">
+        <p>{{ forecast.message }}</p>
+        <button class="btn-cta" (click)="goToPivotEdit()">Cadastrar localização</button>
+      </div>
+
+      <div *ngIf="forecast.hasCoordinates && forecast.forecast?.isAvailable" class="forecast-strip">
+        <div *ngFor="let d of forecast.forecast?.dailyForecasts" class="forecast-day">
+          <div class="forecast-day-date">{{ d.date }}</div>
+          <div class="forecast-day-precip">{{ d.precipitationMm | number:'1.1-1' }} mm</div>
+          <div class="forecast-day-prob" *ngIf="d.probabilityPercent !== null">
+            {{ d.probabilityPercent | number:'1.0-0' }}%
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="forecast.hasCoordinates && !forecast.forecast?.isAvailable" class="forecast-empty">
+        {{ forecast.message ?? 'Previsão indisponível.' }}
+      </div>
+    </ng-container>
+  </div>
+
   <!-- Sensor Selector -->
   <div class="selector-box">
     <label for="sensor-select">Sensor</label>

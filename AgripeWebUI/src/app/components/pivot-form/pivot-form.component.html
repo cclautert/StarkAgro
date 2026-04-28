@@ -6,9 +6,44 @@
     <div class="form-group">
       <label for="name">Nome</label>
       <input id="name" type="text" formControlName="name" required>
-      <div *ngIf="pivotForm?.invalid && (pivotForm?.dirty || pivotForm?.touched)" class="error">
-        <div *ngIf="pivotForm?.errors?.['required']">Nome é obrigatório.</div>
-        <div *ngIf="pivotForm?.errors?.['min']">O nome deve ser no mínimo 3 caracteres.</div>
+      <div *ngIf="pivotForm.get('name')?.invalid && (pivotForm.get('name')?.dirty || pivotForm.get('name')?.touched)" class="error">
+        <div *ngIf="pivotForm.get('name')?.errors?.['required']">Nome é obrigatório.</div>
+      </div>
+    </div>
+
+    <div class="form-group location-section">
+      <label>Localização</label>
+      <div class="location-actions">
+        <button type="button" class="btn btn-primary" (click)="openLocationMap()">
+          Selecionar Localização no Mapa
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="clearLocation()" *ngIf="hasCoordinates">
+          Limpar localização
+        </button>
+      </div>
+
+      <div class="location-readout" *ngIf="hasCoordinates; else noLocation">
+        <div><span>Latitude:</span> <strong>{{ latitude | number:'1.6-6' }}</strong></div>
+        <div><span>Longitude:</span> <strong>{{ longitude | number:'1.6-6' }}</strong></div>
+        <div *ngIf="altitude !== null"><span>Altitude:</span> <strong>{{ altitude | number:'1.1-1' }} m</strong></div>
+        <div class="location-readout-address" *ngIf="locationAddress">
+          <span>Endereço:</span> <strong>{{ locationAddress }}</strong>
+        </div>
+      </div>
+      <ng-template #noLocation>
+        <div class="location-empty">
+          Nenhuma localização cadastrada. Clique em "Selecionar Localização no Mapa" para definir.
+        </div>
+      </ng-template>
+
+      <div class="error" *ngIf="pivotForm.get('latitude')?.invalid">
+        Latitude deve estar entre -90 e 90.
+      </div>
+      <div class="error" *ngIf="pivotForm.get('longitude')?.invalid">
+        Longitude deve estar entre -180 e 180.
+      </div>
+      <div class="error" *ngIf="pivotForm.get('altitude')?.invalid">
+        Altitude deve estar entre -500 e 9000 metros.
       </div>
     </div>
 

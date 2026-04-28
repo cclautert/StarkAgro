@@ -6,4 +6,16 @@ export interface Pivot {
   quadrante?: Quadrante;
   limiteInferior?: number;
   limiteSuperior?: number;
+  latitude?: number | null;
+  longitude?: number | null;
+  altitude?: number | null;
+  locationAddress?: string | null;
+  locationUpdatedAt?: string | null;
+}
+
+export interface PivotLocation {
+  latitude: number;
+  longitude: number;
+  altitude: number | null;
+  locationAddress: string | null;
 }
