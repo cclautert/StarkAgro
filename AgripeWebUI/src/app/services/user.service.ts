@@ -31,8 +31,8 @@ export class UserService {
   }
 
   // UPDATE LIMITS
-  updateLimits(limiteInferior: number, limiteSuperior: number): Observable<any> {
-    return this.http.put(`${this.baseUrl}user/updateLimits`, { limiteInferior, limiteSuperior });
+  updateLimits(limiteInferior: number, limiteSuperior: number, rainThresholdMm?: number | null): Observable<any> {
+    return this.http.put(`${this.baseUrl}user/updateLimits`, { limiteInferior, limiteSuperior, rainThresholdMm });
   }
 
   // DELETE

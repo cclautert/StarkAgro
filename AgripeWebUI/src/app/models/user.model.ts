@@ -6,4 +6,5 @@ export interface User {
   active: boolean;
   limiteInferior?: number;
   limiteSuperior?: number;
+  rainThresholdMm?: number | null;
 }

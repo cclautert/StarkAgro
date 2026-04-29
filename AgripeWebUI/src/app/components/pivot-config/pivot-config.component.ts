@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PivotService } from '../../services/pivot.service';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -27,6 +27,7 @@ export class PivotConfigComponent implements OnInit {
     this.configForm = this.fb.group({
       limiteInferior: [null],
       limiteSuperior: [null],
+      rainThresholdMm: [null, [Validators.min(0)]],
     });
   }
 
@@ -41,6 +42,7 @@ export class PivotConfigComponent implements OnInit {
           this.configForm.patchValue({
             limiteInferior: pivot.limiteInferior ?? null,
             limiteSuperior: pivot.limiteSuperior ?? null,
+            rainThresholdMm: pivot.rainThresholdMm ?? null,
           });
         }
       });
@@ -50,9 +52,9 @@ export class PivotConfigComponent implements OnInit {
   onSubmit(): void {
     if (!this.pivoId) return;
 
-    const { limiteInferior, limiteSuperior } = this.configForm.value;
+    const { limiteInferior, limiteSuperior, rainThresholdMm } = this.configForm.value;
 
-    this.pivotService.updateLimits(this.pivoId, limiteInferior, limiteSuperior).subscribe({
+    this.pivotService.updateLimits(this.pivoId, limiteInferior, limiteSuperior, rainThresholdMm).subscribe({
       next: () => {
         this.snackBar.open('Configuração salva com sucesso!', 'OK', { duration: 3000 });
         this.voltar();
