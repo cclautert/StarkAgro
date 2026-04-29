@@ -1,0 +1,135 @@
+.map-dialog {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: min(800px, 90vw);
+  max-height: 85vh;
+  background: #1a2540;
+  color: #e2e8f0;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.map-dialog-title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #e2e8f0;
+}
+
+.map-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.map-search {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.map-search-input {
+  flex: 1 1 240px;
+  min-width: 0;
+  padding: 8px 12px;
+  background: #253152;
+  border: 1px solid #3a4f75;
+  border-radius: 8px;
+  color: #e2e8f0;
+  font-size: 0.95rem;
+}
+
+.map-search-results {
+  list-style: none;
+  margin: 0;
+  padding: 4px 0;
+  background: #253152;
+  border: 1px solid #3a4f75;
+  border-radius: 8px;
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+.map-search-results li {
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #cbd5e1;
+}
+
+.map-search-results li:hover,
+.map-search-results li:focus {
+  background: #2d3f5e;
+  outline: none;
+}
+
+.map-error {
+  color: #f87171;
+  font-size: 0.85rem;
+}
+
+.map-canvas {
+  width: 100%;
+  min-height: 380px;
+  border-radius: 8px;
+  border: 1px solid #2d3f5e;
+}
+
+.map-readout {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 6px 16px;
+  background: #253152;
+  border: 1px solid #3a4f75;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 0.9rem;
+}
+
+.map-readout-address {
+  grid-column: 1 / -1;
+  word-break: break-word;
+}
+
+.map-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.btn {
+  padding: 8px 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.btn-primary {
+  background-color: #2563eb;
+  color: #fff;
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background-color: #253152;
+  color: #e2e8f0;
+  border: 1px solid #3a4f75;
+}
+
+.btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+  .map-canvas {
+    min-height: 300px;
+  }
+}

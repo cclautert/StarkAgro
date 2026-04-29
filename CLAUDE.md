@@ -55,7 +55,7 @@ Controllers receive requests and delegate to MediatR handlers. No business logic
 - **Domain/Commands/Requests/** — Command/query request objects (e.g., `CreatePivotRequest`)
 - **Domain/Commands/Responses/** — Response DTOs
 - **Domain/Handlers/** — MediatR handlers with business logic
-- **Models/Entities/** — MongoDB entities (`User`, `Pivot`, `Sensor`, `ReadSensor`), all inherit from `Entity` (has `[BsonId] int Id`). `Pivot` has nullable `Latitude`/`Longitude` (used by the rain-forecast feature; pivots without coordinates skip the forecast step)
+- **Models/Entities/** — MongoDB entities (`User`, `Pivot`, `Sensor`, `ReadSensor`), all inherit from `Entity` (has `[BsonId] int Id`). `Pivot` has nullable `Latitude`/`Longitude`/`Altitude`/`LocationAddress`/`LocationUpdatedAt` (set via the map-based location selector — pivots without coordinates skip forecast queries and show a CTA in the dashboard)
 - **Models/Interfaces/** — `ICurrentUserContext`, `IJwtTokenService`, `INotifier`, `IPasswordHasher`, `IWeatherForecastService`
 - **Services/** — `JwtTokenService`, `PasswordHasherService`, `CurrentUserContext`. `Services/Forecast/` holds `WeatherForecastOrchestrator` (cache + fallback) plus `OpenMeteoForecastService` and `GoogleWeatherAIForecastService` implementations
 - **Configuration/** — DI registration, JWT/OAuth/Swagger/CORS setup, `MongoDbSettings`, `WeatherForecastSettings`
@@ -83,6 +83,7 @@ Controllers receive requests and delegate to MediatR handlers. No business logic
 - **Services**: `ApiService` calls `/api/v1/*` relative URLs (proxy handles dev routing)
 - **Guards**: `AuthGuard` checks localStorage (with `typeof window` guard for SSR safety)
 - **Key routes**: `/login`, `/login/callback`, `/home`, `/pivots`, `/sensores`, `/dashboard/:pivoId/:quadrante`, `/user`
+- **Map selector**: `PivotLocationMapComponent` uses Leaflet + OpenStreetMap (no API key); loaded via dynamic `import('leaflet')` for SSR safety; reverse geocoding via Nominatim, altitude via Open-Meteo Elevation API
 
 ### Security
 - CORS: dev allows `localhost:4200`, prod allows `agripeweb.com`

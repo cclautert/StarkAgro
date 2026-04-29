@@ -1,8 +1,9 @@
 // src/app/services/pivot.service.ts
 
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Pivot } from '../models/pivot.model';
+import { PivotForecast } from '../models/pivot-forecast.model';
 import { HttpClient, HttpParams } from '@angular/common/http';
 
 @Injectable({
@@ -47,5 +48,13 @@ export class PivotService {
     const params = new HttpParams()
     .set('Id', id.toString());
     return this.http.delete(`${this.baseUrl}pivot/delete`, { params });
+  }
+
+  // FORECAST
+  getForecast(pivotId: number, days = 7): Observable<PivotForecast> {
+    const params = new HttpParams()
+      .set('PivotId', pivotId.toString())
+      .set('Days', days.toString());
+    return this.http.get<PivotForecast>(`${this.baseUrl}pivot/forecast`, { params });
   }
 }

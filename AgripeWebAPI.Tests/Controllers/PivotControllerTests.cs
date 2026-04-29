@@ -86,7 +86,9 @@ namespace AgripeWebAPI.Tests.Controllers
 
             // Assert
             mediator.Verify(m => m.Send(It.Is<CreatePivotRequest>(c => c.UserId == 2 && c.Name == "Pivot A"), It.IsAny<CancellationToken>()), Times.Once);
-            var result = Assert.IsType<CreatePivotResponse>(actionResult.Value);
+            var objectResult = Assert.IsType<ObjectResult>(actionResult);
+            Assert.Equal(200, objectResult.StatusCode);
+            var result = Assert.IsType<CreatePivotResponse>(objectResult.Value);
             Assert.Equal(99, result.Id);
         }
         private PivotController CreateControllerWithClaim(INotifier notifier, string userId = "7")
@@ -144,9 +146,11 @@ namespace AgripeWebAPI.Tests.Controllers
             mediator.Setup(m => m.Send(It.IsAny<EditPivotRequest>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(expected);
 
-            var result = await controller.Update(mediator.Object, new EditPivotRequest { Name = "Updated" }, CancellationToken.None);
+            var result = await controller.Update(mediator.Object, new EditPivotRequest { Id = 3, Name = "Updated" }, CancellationToken.None);
 
-            var response = Assert.IsType<EditPivotResponse>(result.Value);
+            var objectResult = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(200, objectResult.StatusCode);
+            var response = Assert.IsType<EditPivotResponse>(objectResult.Value);
             Assert.Equal(3, response.Id);
         }
 
@@ -160,7 +164,53 @@ namespace AgripeWebAPI.Tests.Controllers
 
             var result = await controller.Update(mediator.Object, new EditPivotRequest(), CancellationToken.None);
 
-            var badRequest = Assert.IsType<ObjectResult>(result.Result);
+            var badRequest = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(400, badRequest.StatusCode);
+        }
+
+        [Fact]
+        public async Task GetForecast_Sets_UserId_And_Returns_Response()
+        {
+            var notifier = new Mock<INotifier>();
+            var mediator = new Mock<IMediator>();
+            var controller = CreateControllerWithClaim(notifier.Object, "11");
+
+            var expected = new GetPivotForecastResponse
+            {
+                PivotId = 5,
+                Days = 7,
+                HasCoordinates = true
+            };
+            mediator
+                .Setup(m => m.Send(It.Is<GetPivotForecastRequest>(c => c.UserId == 11 && c.PivotId == 5), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expected);
+
+            var result = await controller.GetForecast(
+                mediator.Object,
+                new GetPivotForecastRequest { PivotId = 5, Days = 7 },
+                CancellationToken.None);
+
+            var objectResult = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(200, objectResult.StatusCode);
+            var response = Assert.IsType<GetPivotForecastResponse>(objectResult.Value);
+            Assert.Equal(5, response.PivotId);
+            Assert.True(response.HasCoordinates);
+        }
+
+        [Fact]
+        public async Task GetForecast_InvalidModelState_ReturnsBadRequest()
+        {
+            var notifier = new MockNotifier();
+            var mediator = new Mock<IMediator>();
+            var controller = CreateControllerWithClaim(notifier);
+            controller.ModelState.AddModelError("PivotId", "Required");
+
+            var result = await controller.GetForecast(
+                mediator.Object,
+                new GetPivotForecastRequest(),
+                CancellationToken.None);
+
+            var badRequest = Assert.IsType<ObjectResult>(result);
             Assert.Equal(400, badRequest.StatusCode);
         }
 
