@@ -225,4 +225,36 @@
     </div>
   </div>
 
+  <!-- AI Insights Panel -->
+  <div class="ai-panel">
+    <div class="ai-panel-header">
+      <div class="ai-panel-title">
+        <span class="ai-icon">🤖</span>
+        <span>Insights IA</span>
+      </div>
+      <button class="btn-ai-analyze" (click)="loadAIInsights()" [disabled]="aiInsightsLoading">
+        <span *ngIf="!aiInsightsLoading">Analisar com IA</span>
+        <span *ngIf="aiInsightsLoading">Analisando...</span>
+      </button>
+    </div>
+
+    <div *ngIf="aiInsightsLoading" class="ai-loading">
+      Gerando análise com Claude... isto pode levar alguns segundos.
+    </div>
+
+    <div *ngIf="aiError && !aiInsightsLoading" class="ai-error">
+      {{ aiError }}
+    </div>
+
+    <div *ngIf="aiInsights && !aiInsightsLoading && aiExpanded" class="ai-response">
+      <div class="ai-meta">
+        <span *ngIf="aiGeneratedAt">
+          Análise de {{ aiGeneratedAt | date:'dd/MM HH:mm' }}
+        </span>
+        <span *ngIf="aiFromCache" class="ai-cache-badge">cache</span>
+      </div>
+      <div class="ai-text">{{ aiInsights }}</div>
+    </div>
+  </div>
+
 </div>

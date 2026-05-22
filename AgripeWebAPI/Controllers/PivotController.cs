@@ -5,6 +5,7 @@ using AgripeWebAPI.Models.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace AgripeWebAPI.Controllers
 {
@@ -134,6 +135,25 @@ namespace AgripeWebAPI.Controllers
                 PageIndex = pageIndex
             };
             var result = await mediator.Send(command, cancellationToken);
+            return CustomResponse(result);
+        }
+
+        [Route("{pivotId:int}/ai-insights")]
+        [HttpPost]
+        public async Task<IActionResult> GetAIInsights(
+            [FromServices] IMediator mediator,
+            int pivotId,
+            CancellationToken cancellationToken
+        )
+        {
+            var command = new GetPivotAIInsightsRequest
+            {
+                PivotId = pivotId,
+                UserId = GetCurrentUserId()
+            };
+            var result = await mediator.Send(command, cancellationToken);
+            if (result is null)
+                return CustomResponse(result, HttpStatusCode.ServiceUnavailable);
             return CustomResponse(result);
         }
 

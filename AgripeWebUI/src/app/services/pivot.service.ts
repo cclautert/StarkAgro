@@ -65,4 +65,11 @@ export class PivotService {
       .set('pageIndex', pageIndex.toString());
     return this.http.get<any[]>(`${this.baseUrl}pivot/${pivotId}/anomalies`, { params });
   }
+
+  // AI INSIGHTS
+  getAIInsights(pivotId: number): Observable<{ insights: string; generatedAt: string; fromCache: boolean }> {
+    return this.http.post<{ insights: string; generatedAt: string; fromCache: boolean }>(
+      `${this.baseUrl}pivot/${pivotId}/ai-insights`, {}
+    );
+  }
 }
