@@ -33,10 +33,8 @@ namespace AgripeWebWorker.Tests.Handlers
         }
 
         [Fact]
-        public async Task Handle_AuthenticatedUser_ShouldUseJwtUserId()
+        public async Task Handle_ShouldUseSensorUserId()
         {
-            _mockCurrentUser.Setup(u => u.UserId).Returns(5);
-
             var sensor = new Sensor { Id = 1, Code = "SENS01", UserId = 10 };
             MongoMockHelper.SetupFind(_mockSensors, sensor);
 
@@ -48,7 +46,7 @@ namespace AgripeWebWorker.Tests.Handlers
             await _handler.Handle(request, CancellationToken.None);
 
             _mockReadSensors.Verify(c => c.InsertOneAsync(
-                It.Is<ReadSensor>(r => r.UserId == 5),
+                It.Is<ReadSensor>(r => r.UserId == 10),
                 It.IsAny<InsertOneOptions>(),
                 It.IsAny<CancellationToken>()), Times.Once);
         }
@@ -86,10 +84,8 @@ namespace AgripeWebWorker.Tests.Handlers
         }
 
         [Fact]
-        public async Task Handle_ShouldConvertAnalogValueToPressure()
+        public async Task Handle_ShouldPersistRawSensorValue()
         {
-            _mockCurrentUser.Setup(u => u.UserId).Returns(1);
-
             var sensor = new Sensor { Id = 1, Code = "SENS01", UserId = 1 };
             MongoMockHelper.SetupFind(_mockSensors, sensor);
 
@@ -100,11 +96,8 @@ namespace AgripeWebWorker.Tests.Handlers
             var request = new CreateReadRequest { Code = "SENS01", Value = 512 };
             await _handler.Handle(request, CancellationToken.None);
 
-            // Value=512 → voltage = (512/1023.0)*3.0 ≈ 1.5015
-            // pressure = -100 + ((1.5015 - 0.2) / (2.8 - 0.2)) * (0 - (-100)) = -100 + (1.3015/2.6)*100 ≈ -49.94
-            // abs(clamp) ≈ 49.94
             _mockReadSensors.Verify(c => c.InsertOneAsync(
-                It.Is<ReadSensor>(r => r.Value > 49.0m && r.Value < 51.0m),
+                It.Is<ReadSensor>(r => r.Value == 512),
                 It.IsAny<InsertOneOptions>(),
                 It.IsAny<CancellationToken>()), Times.Once);
         }
