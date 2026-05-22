@@ -71,8 +71,11 @@ namespace AgripeWebAPI.Domain.Handlers.Pivots
                 var latestPerSensor = new List<decimal>();
                 foreach (var sensorId in sensorIds)
                 {
+                    var notAnomalyFilter = Builders<ReadSensor>.Filter.And(
+                        Builders<ReadSensor>.Filter.Eq(r => r.SensorId, sensorId),
+                        Builders<ReadSensor>.Filter.Ne(r => r.IsAnomaly, true));
                     var latest = await _dbContext.ReadSensors
-                        .Find(r => r.SensorId == sensorId && !r.IsAnomaly)
+                        .Find(notAnomalyFilter)
                         .SortByDescending(r => r.Date)
                         .Limit(1)
                         .FirstOrDefaultAsync(cancellationToken);

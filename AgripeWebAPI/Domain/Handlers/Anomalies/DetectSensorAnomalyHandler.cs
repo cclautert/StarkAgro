@@ -26,7 +26,7 @@ namespace AgripeWebAPI.Domain.Handlers.Anomalies
             var baselineFilter = Builders<ReadSensor>.Filter.And(
                 Builders<ReadSensor>.Filter.Eq(r => r.SensorId, request.SensorId),
                 Builders<ReadSensor>.Filter.Ne(r => r.Id, request.ReadSensorId),
-                Builders<ReadSensor>.Filter.Eq(r => r.IsAnomaly, false));
+                Builders<ReadSensor>.Filter.Ne(r => r.IsAnomaly, true));
 
             var baselineReadings = await _dbContext.ReadSensors
                 .Find(baselineFilter)
