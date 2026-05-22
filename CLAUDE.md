@@ -38,6 +38,11 @@ docker compose -f docker/docker-compose.yml up --build
 # API: localhost:8080, UI: localhost:80, MongoDB: localhost:27027
 ```
 
+### CI/CD (GitHub Actions → Hostinger VPS)
+- **CI** (`.github/workflows/ci.yml`): .NET build/test, Angular production build, Docker image validation on PR/push.
+- **Deploy** (`.github/workflows/deploy.yml`): SSH + `docker compose` on VPS after CI passes on `main`.
+- Setup and secrets: [docs/deploy-hostinger.md](docs/deploy-hostinger.md).
+
 ### Terraform (AWS)
 ```bash
 cd terraform/aws

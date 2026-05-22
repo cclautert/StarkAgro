@@ -7,5 +7,6 @@
         public string Email { get; set; }
         public decimal LimiteInferior { get; set; }
         public decimal LimiteSuperior { get; set; }
+        public double? RainThresholdMm { get; set; }
     }
 }

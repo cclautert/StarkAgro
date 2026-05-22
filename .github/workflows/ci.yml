@@ -1,0 +1,104 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: Backend (.NET)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            nuget-${{ runner.os }}-
+
+      - name: Restore
+        run: dotnet restore AgripeWeb.sln
+
+      - name: Build
+        run: dotnet build AgripeWeb.sln -c Release --no-restore
+
+      - name: Test
+        run: dotnet test AgripeWeb.sln -c Release --no-build --verbosity normal
+
+  frontend:
+    name: Frontend (Angular)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: AgripeWebUI
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: AgripeWebUI/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Production build
+        run: npm run build -- --configuration=production
+
+  docker-build:
+    name: Docker images
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build API image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: AgripeWebAPI/Dockerfile
+          push: false
+          tags: agripeweb-api:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build Worker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: AgripeWebWorker/Dockerfile
+          push: false
+          tags: agripeweb-worker:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build UI image
+        uses: docker/build-push-action@v6
+        with:
+          context: AgripeWebUI
+          file: AgripeWebUI/Dockerfile
+          push: false
+          tags: agripeweb-ui:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

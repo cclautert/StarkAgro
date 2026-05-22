@@ -13,6 +13,8 @@ namespace AgripeWebAPI.Models.Entities
 
         public decimal? LimiteSuperior { get; set; }
 
+        public double? RainThresholdMm { get; set; }
+
         public double? Latitude { get; set; }
 
         public double? Longitude { get; set; }

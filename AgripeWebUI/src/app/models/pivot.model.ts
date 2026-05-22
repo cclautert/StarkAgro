@@ -6,6 +6,7 @@ export interface Pivot {
   quadrante?: Quadrante;
   limiteInferior?: number;
   limiteSuperior?: number;
+  rainThresholdMm?: number | null;
   latitude?: number | null;
   longitude?: number | null;
   altitude?: number | null;

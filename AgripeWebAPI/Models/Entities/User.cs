@@ -10,5 +10,6 @@ namespace AgripeWebAPI.Models.Entities
         public bool Active { get; set; }
         public decimal LimiteInferior { get; set; } = 25m;
         public decimal LimiteSuperior { get; set; } = 75m;
+        public double? RainThresholdMm { get; set; }
     }
 }

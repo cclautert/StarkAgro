@@ -25,6 +25,7 @@ namespace AgripeWebAPI.Domain.Handlers.Pivots
 
             pivot.LimiteInferior = request.LimiteInferior;
             pivot.LimiteSuperior = request.LimiteSuperior;
+            pivot.RainThresholdMm = request.RainThresholdMm;
 
             await _dbContext.Pivots.ReplaceOneAsync(x => x.Id == pivot.Id, pivot, cancellationToken: cancellationToken);
 

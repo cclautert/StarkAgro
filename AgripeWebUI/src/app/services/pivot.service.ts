@@ -39,8 +39,8 @@ export class PivotService {
   }
 
   // UPDATE LIMITS
-  updateLimits(id: number, limiteInferior: number | null, limiteSuperior: number | null): Observable<any> {
-    return this.http.put(`${this.baseUrl}pivot/updateLimits`, { id, limiteInferior, limiteSuperior });
+  updateLimits(id: number, limiteInferior: number | null, limiteSuperior: number | null, rainThresholdMm?: number | null): Observable<any> {
+    return this.http.put(`${this.baseUrl}pivot/updateLimits`, { id, limiteInferior, limiteSuperior, rainThresholdMm });
   }
 
   // DELETE

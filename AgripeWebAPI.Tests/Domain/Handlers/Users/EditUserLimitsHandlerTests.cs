@@ -56,5 +56,47 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Users
             await Assert.ThrowsAsync<KeyNotFoundException>(() =>
                 handler.Handle(new EditUserLimitsRequest { Id = 999 }, default));
         }
+
+        [Fact]
+        public async Task Handle_PersistsRainThresholdMm_WhenProvided()
+        {
+            var mockDbContext = new Mock<agpDBContext>();
+            var mockUsers = new Mock<IMongoCollection<User>>();
+
+            var user = new User { Id = 1, Name = "Alice", Email = "alice@example.com" };
+            MongoMockHelper.SetupFind(mockUsers, user);
+            mockUsers.Setup(c => c.ReplaceOneAsync(
+                    It.IsAny<FilterDefinition<User>>(), It.IsAny<User>(),
+                    It.IsAny<ReplaceOptions>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new ReplaceOneResult.Acknowledged(1, 1, null));
+            mockDbContext.Setup(c => c.Users).Returns(mockUsers.Object);
+
+            var handler = new EditUserLimitsHandler(mockDbContext.Object);
+            await handler.Handle(
+                new EditUserLimitsRequest { Id = 1, LimiteInferior = 25m, LimiteSuperior = 75m, RainThresholdMm = 10.0 }, default);
+
+            Assert.Equal(10.0, user.RainThresholdMm);
+        }
+
+        [Fact]
+        public async Task Handle_ClearsRainThresholdMm_WhenNull()
+        {
+            var mockDbContext = new Mock<agpDBContext>();
+            var mockUsers = new Mock<IMongoCollection<User>>();
+
+            var user = new User { Id = 1, Name = "Alice", Email = "alice@example.com", RainThresholdMm = 10.0 };
+            MongoMockHelper.SetupFind(mockUsers, user);
+            mockUsers.Setup(c => c.ReplaceOneAsync(
+                    It.IsAny<FilterDefinition<User>>(), It.IsAny<User>(),
+                    It.IsAny<ReplaceOptions>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new ReplaceOneResult.Acknowledged(1, 1, null));
+            mockDbContext.Setup(c => c.Users).Returns(mockUsers.Object);
+
+            var handler = new EditUserLimitsHandler(mockDbContext.Object);
+            await handler.Handle(
+                new EditUserLimitsRequest { Id = 1, LimiteInferior = 25m, LimiteSuperior = 75m, RainThresholdMm = null }, default);
+
+            Assert.Null(user.RainThresholdMm);
+        }
     }
 }

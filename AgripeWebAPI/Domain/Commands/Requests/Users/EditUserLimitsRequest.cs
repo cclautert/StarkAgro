@@ -8,5 +8,6 @@ namespace AgripeWebAPI.Domain.Commands.Requests.Users
         public int Id { get; set; }
         public decimal LimiteInferior { get; set; }
         public decimal LimiteSuperior { get; set; }
+        public double? RainThresholdMm { get; set; }
     }
 }

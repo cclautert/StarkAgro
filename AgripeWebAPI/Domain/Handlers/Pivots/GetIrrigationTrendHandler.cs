@@ -58,6 +58,7 @@ namespace AgripeWebAPI.Domain.Handlers.Pivots
 
             var limiteInferior = pivot.LimiteInferior ?? user?.LimiteInferior ?? 25m;
             var limiteSuperior = pivot.LimiteSuperior ?? user?.LimiteSuperior ?? 75m;
+            var rainThreshold = pivot.RainThresholdMm ?? user?.RainThresholdMm ?? _settings.RainThresholdMm;
 
             var sensors = await _dbContext.Sensors
                 .Find(s => s.PivoId == pivot.Id && s.UserId == request.UserId)
@@ -114,7 +115,7 @@ namespace AgripeWebAPI.Domain.Handlers.Pivots
 
             response.WeatherForecast = forecast;
 
-            if (forecast.IsAvailable && forecast.TotalPrecipitationMm >= _settings.RainThresholdMm)
+            if (forecast.IsAvailable && forecast.TotalPrecipitationMm >= rainThreshold)
             {
                 response.IrrigationPostponed = true;
                 response.PostponeReason = string.Format(

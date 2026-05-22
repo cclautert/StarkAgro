@@ -224,6 +224,110 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Pivots
         }
 
         [Fact]
+        public async Task Handle_PivotRainThresholdOverridesUserAndSettings_PostponesWhenPivotThresholdExceeded()
+        {
+            // pivot.RainThresholdMm = 3.0 → 2.5 mm forecast should NOT postpone with settings=5.0 but SHOULD when threshold=2.0
+            var notifier = new Notificator();
+            var (db, pivots, users, sensors, reads) = BuildDbMocks();
+            MongoMockHelper.SetupFind(pivots, new Pivot
+            {
+                Id = 1, UserId = OwnerUserId, Name = "P1",
+                LimiteInferior = 25m, LimiteSuperior = 75m,
+                Latitude = -27.5, Longitude = -48.5,
+                RainThresholdMm = 2.0
+            });
+            MongoMockHelper.SetupFind(users, new User { Id = OwnerUserId, LimiteInferior = 25m, LimiteSuperior = 75m, RainThresholdMm = 8.0 });
+            MongoMockHelper.SetupFindList(sensors, new List<Sensor> { new() { Id = 10, UserId = OwnerUserId, PivoId = 1, Quadrante = 1 } });
+            MongoMockHelper.SetupFind(reads, new ReadSensor { Id = 100, SensorId = 10, Value = 18m, Date = DateTime.UtcNow });
+
+            var forecast = new Mock<IWeatherForecastService>();
+            forecast
+                .Setup(f => f.GetForecastAsync(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new WeatherForecast
+                {
+                    IsAvailable = true, Source = "OpenMeteo",
+                    TotalPrecipitationMm = 2.5, DailyForecasts = Array.Empty<DailyForecast>()
+                });
+
+            var handler = BuildHandler(db.Object, forecast.Object, notifier,
+                new WeatherForecastSettings { ForecastHorizonDays = 5, RainThresholdMm = 5.0 });
+
+            var result = await handler.Handle(CreateRequest(), CancellationToken.None);
+
+            Assert.NotNull(result);
+            Assert.True(result!.IrrigationPostponed);
+        }
+
+        [Fact]
+        public async Task Handle_UserRainThresholdUsed_WhenPivotThresholdIsNull()
+        {
+            var notifier = new Notificator();
+            var (db, pivots, users, sensors, reads) = BuildDbMocks();
+            MongoMockHelper.SetupFind(pivots, new Pivot
+            {
+                Id = 1, UserId = OwnerUserId, Name = "P1",
+                LimiteInferior = 25m, LimiteSuperior = 75m,
+                Latitude = -27.5, Longitude = -48.5,
+                RainThresholdMm = null
+            });
+            MongoMockHelper.SetupFind(users, new User { Id = OwnerUserId, LimiteInferior = 25m, LimiteSuperior = 75m, RainThresholdMm = 2.0 });
+            MongoMockHelper.SetupFindList(sensors, new List<Sensor> { new() { Id = 10, UserId = OwnerUserId, PivoId = 1, Quadrante = 1 } });
+            MongoMockHelper.SetupFind(reads, new ReadSensor { Id = 100, SensorId = 10, Value = 18m, Date = DateTime.UtcNow });
+
+            var forecast = new Mock<IWeatherForecastService>();
+            forecast
+                .Setup(f => f.GetForecastAsync(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new WeatherForecast
+                {
+                    IsAvailable = true, Source = "OpenMeteo",
+                    TotalPrecipitationMm = 2.5, DailyForecasts = Array.Empty<DailyForecast>()
+                });
+
+            var handler = BuildHandler(db.Object, forecast.Object, notifier,
+                new WeatherForecastSettings { ForecastHorizonDays = 5, RainThresholdMm = 5.0 });
+
+            var result = await handler.Handle(CreateRequest(), CancellationToken.None);
+
+            Assert.NotNull(result);
+            Assert.True(result!.IrrigationPostponed);
+        }
+
+        [Fact]
+        public async Task Handle_SettingsThresholdUsed_WhenPivotAndUserThresholdAreNull()
+        {
+            var notifier = new Notificator();
+            var (db, pivots, users, sensors, reads) = BuildDbMocks();
+            MongoMockHelper.SetupFind(pivots, new Pivot
+            {
+                Id = 1, UserId = OwnerUserId, Name = "P1",
+                LimiteInferior = 25m, LimiteSuperior = 75m,
+                Latitude = -27.5, Longitude = -48.5,
+                RainThresholdMm = null
+            });
+            MongoMockHelper.SetupFind(users, new User { Id = OwnerUserId, LimiteInferior = 25m, LimiteSuperior = 75m, RainThresholdMm = null });
+            MongoMockHelper.SetupFindList(sensors, new List<Sensor> { new() { Id = 10, UserId = OwnerUserId, PivoId = 1, Quadrante = 1 } });
+            MongoMockHelper.SetupFind(reads, new ReadSensor { Id = 100, SensorId = 10, Value = 18m, Date = DateTime.UtcNow });
+
+            var forecast = new Mock<IWeatherForecastService>();
+            forecast
+                .Setup(f => f.GetForecastAsync(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new WeatherForecast
+                {
+                    IsAvailable = true, Source = "OpenMeteo",
+                    TotalPrecipitationMm = 4.0, DailyForecasts = Array.Empty<DailyForecast>()
+                });
+
+            // 4.0 mm < 5.0 mm (settings default) → should NOT postpone
+            var handler = BuildHandler(db.Object, forecast.Object, notifier,
+                new WeatherForecastSettings { ForecastHorizonDays = 5, RainThresholdMm = 5.0 });
+
+            var result = await handler.Handle(CreateRequest(), CancellationToken.None);
+
+            Assert.NotNull(result);
+            Assert.False(result!.IrrigationPostponed);
+        }
+
+        [Fact]
         public async Task Handle_ForecastUnavailable_KeepsRecommendation()
         {
             var notifier = new Notificator();
