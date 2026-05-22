@@ -57,4 +57,12 @@ export class PivotService {
       .set('Days', days.toString());
     return this.http.get<PivotForecast>(`${this.baseUrl}pivot/forecast`, { params });
   }
+
+  // ANOMALIES
+  getAnomalies(pivotId: number, pageSize = 20, pageIndex = 0): Observable<any[]> {
+    const params = new HttpParams()
+      .set('pageSize', pageSize.toString())
+      .set('pageIndex', pageIndex.toString());
+    return this.http.get<any[]>(`${this.baseUrl}pivot/${pivotId}/anomalies`, { params });
+  }
 }

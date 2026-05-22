@@ -1,3 +1,4 @@
+using AgripeWebAPI.Domain.Commands.Requests.Anomalies;
 using AgripeWebAPI.Domain.Commands.Requests.Pivots;
 using AgripeWebAPI.Domain.Commands.Responses.Pivots;
 using AgripeWebAPI.Models.Interfaces;
@@ -113,6 +114,27 @@ namespace AgripeWebAPI.Controllers
             var result = await mediator.Send(command, cancellationToken);
 
             return CustomResponse(result!);
+        }
+
+        [Route("{pivotId:int}/anomalies")]
+        [HttpGet]
+        public async Task<IActionResult> GetAnomalies(
+            [FromServices] IMediator mediator,
+            int pivotId,
+            [FromQuery] int pageSize = 20,
+            [FromQuery] int pageIndex = 0,
+            CancellationToken cancellationToken = default
+        )
+        {
+            var command = new GetPivotAnomaliesRequest
+            {
+                PivotId = pivotId,
+                UserId = GetCurrentUserId(),
+                PageSize = pageSize,
+                PageIndex = pageIndex
+            };
+            var result = await mediator.Send(command, cancellationToken);
+            return CustomResponse(result);
         }
 
         [Route("forecast")]

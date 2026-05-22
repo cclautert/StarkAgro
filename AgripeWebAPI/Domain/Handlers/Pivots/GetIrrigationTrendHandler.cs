@@ -72,7 +72,7 @@ namespace AgripeWebAPI.Domain.Handlers.Pivots
                 foreach (var sensorId in sensorIds)
                 {
                     var latest = await _dbContext.ReadSensors
-                        .Find(r => r.SensorId == sensorId)
+                        .Find(r => r.SensorId == sensorId && !r.IsAnomaly)
                         .SortByDescending(r => r.Date)
                         .Limit(1)
                         .FirstOrDefaultAsync(cancellationToken);

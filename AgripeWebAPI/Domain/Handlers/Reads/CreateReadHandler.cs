@@ -35,7 +35,12 @@ namespace AgripeWebAPI.Domain.Handlers.Reads
 
             await _dbContext.ReadSensors.InsertOneAsync(read, cancellationToken: cancellationToken);
 
-            return new CreateReadResponse();
+            return new CreateReadResponse
+            {
+                Id = read.Id,
+                SensorId = sensor.Id,
+                UserId = sensor.UserId
+            };
         }
     }
 }

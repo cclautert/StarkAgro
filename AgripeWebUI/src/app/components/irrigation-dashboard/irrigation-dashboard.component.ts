@@ -37,6 +37,7 @@ export class IrrigationDashboardComponent implements OnInit, OnDestroy {
   quadrants: QuadrantInfo[] = [];
   alerts: AlertInfo[] = [];
   irrigationTrend: IrrigationTrend | null = null;
+  anomalyCount: number = 0;
   private intervalSub!: Subscription;
 
   public chartData: ChartConfiguration<'line'>['data'] = {
@@ -107,6 +108,11 @@ export class IrrigationDashboardComponent implements OnInit, OnDestroy {
     this.apiService.getIrrigationTrend(this.selectedPivotId, this.numberOfDays).subscribe({
       next: trend => this.irrigationTrend = trend,
       error: () => this.irrigationTrend = null
+    });
+
+    this.pivotService.getAnomalies(this.selectedPivotId).subscribe({
+      next: anomalies => this.anomalyCount = anomalies.filter(a => !a.acknowledged).length,
+      error: () => this.anomalyCount = 0
     });
 
     this.apiService.getReadsByPivotId(this.selectedPivotId, this.numberOfDays).subscribe(pivot => {
