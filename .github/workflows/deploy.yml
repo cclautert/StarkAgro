@@ -34,10 +34,10 @@ jobs:
             cd "${{ secrets.VPS_DEPLOY_PATH }}"
             git fetch origin main
             git reset --hard origin/main
-            docker compose --project-directory . -f docker/docker-compose.yml build agripewebapi agripewebui agripwebworker
-            docker compose --project-directory . -f docker/docker-compose.yml up -d db mqtt agripewebapi agripewebui agripwebworker
+            docker compose -f docker/docker-compose.yml build agripewebapi agripewebui agripwebworker
+            docker compose -f docker/docker-compose.yml up -d db mqtt agripewebapi agripewebui agripwebworker
             docker image prune -f
-            docker compose --project-directory . -f docker/docker-compose.yml ps
+            docker compose -f docker/docker-compose.yml ps
 
       - name: Health check
         uses: appleboy/ssh-action@v1.2.0
