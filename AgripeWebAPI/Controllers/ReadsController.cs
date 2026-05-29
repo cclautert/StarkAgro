@@ -54,7 +54,6 @@ namespace AgripeWebAPI.Controllers
             return await mediator.Send(command, cancellationToken);
         }
                 
-        [AllowAnonymous]
         [HttpPost("Add")]
         public async Task<CreateReadResponse> Add(
             [FromServices] IMediator mediator,
