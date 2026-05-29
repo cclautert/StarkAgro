@@ -1,0 +1,4 @@
+# Mosquitto password file — generate with:
+#   mosquitto_passwd -c docker/mosquitto/passwd iot_device
+# Then set MQTT_USERNAME=iot_device and MQTT_PASSWORD=<chosen-password> in your .env file.
+# DO NOT commit real credentials here.

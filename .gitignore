@@ -68,6 +68,7 @@ publish/
 docker/certs/*.pfx
 docker/certs/*.pem
 docker/certs/*.key
+docker/mosquitto/passwd
 
 ## Terraform
 .terraform/

@@ -112,6 +112,45 @@ namespace AgripeWebWorker.Tests.Services
         // --- Lifecycle tests ---
 
         [Fact]
+        public async Task ExecuteAsync_ShouldConnectWithCredentials_WhenUsernameConfigured()
+        {
+            var settingsWithCreds = new MqttSettings
+            {
+                Host = "test-broker",
+                Port = 1884,
+                Topic = "test/reads",
+                ClientId = "test-client",
+                Username = "iot_device",
+                Password = "s3cr3t"
+            };
+
+            var options = Options.Create(settingsWithCreds);
+            var service = new MqttWorkerService(_mockServiceProvider.Object, options, _mockLogger.Object, _mockMqttClient.Object);
+
+            var cts = new CancellationTokenSource();
+            cts.CancelAfter(TimeSpan.FromSeconds(2));
+            try { await service.StartAsync(cts.Token); await Task.Delay(100); }
+            catch (OperationCanceledException) { }
+
+            _mockMqttClient.Verify(c => c.ConnectAsync(
+                It.Is<MqttClientOptions>(o => o.Credentials != null && o.Credentials.GetUserName(o) == "iot_device"),
+                It.IsAny<CancellationToken>()), Times.AtLeastOnce);
+
+            cts.Dispose();
+            service.Dispose();
+        }
+
+        [Fact]
+        public async Task ExecuteAsync_ShouldConnectWithoutCredentials_WhenUsernameNotConfigured()
+        {
+            await StartServiceAndCapture();
+
+            _mockMqttClient.Verify(c => c.ConnectAsync(
+                It.Is<MqttClientOptions>(o => o.Credentials == null),
+                It.IsAny<CancellationToken>()), Times.AtLeastOnce);
+        }
+
+        [Fact]
         public async Task ExecuteAsync_ShouldConnectToBroker_WithCorrectSettings()
         {
             await StartServiceAndCapture();

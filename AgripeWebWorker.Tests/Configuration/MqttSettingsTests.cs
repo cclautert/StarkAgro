@@ -32,5 +32,27 @@ namespace AgripeWebWorker.Tests.Configuration
             Assert.Equal("Mqtt", MqttSettings.SectionName);
             Assert.Equal("agripeweb-worker", settings.ClientId);
         }
+
+        [Fact]
+        public void DefaultUsername_ShouldBe_Null()
+        {
+            var settings = new MqttSettings();
+            Assert.Null(settings.Username);
+        }
+
+        [Fact]
+        public void DefaultPassword_ShouldBe_Null()
+        {
+            var settings = new MqttSettings();
+            Assert.Null(settings.Password);
+        }
+
+        [Fact]
+        public void Username_And_Password_ShouldAcceptValues()
+        {
+            var settings = new MqttSettings { Username = "iot_device", Password = "s3cr3t" };
+            Assert.Equal("iot_device", settings.Username);
+            Assert.Equal("s3cr3t", settings.Password);
+        }
     }
 }
