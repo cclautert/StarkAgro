@@ -100,7 +100,8 @@ AgripeWeb/
 
 ## Documentação adicional
 
-- [CLAUDE.md](CLAUDE.md) — visão técnica, convenções e comandos para desenvolvimento
+- [CLAUDE.md](CLAUDE.md) — guia para agentes de código (arquitetura, armadilhas, comandos)
+- [docs/agent-behavior.md](docs/agent-behavior.md) — diretrizes genéricas de comportamento para LLMs
 - [docs/contratacao-time.md](docs/contratacao-time.md) — planejamento de time e papéis do projeto
 - [docs/agents/README.md](docs/agents/README.md) — SOUL.md e HEARTBEAT.md (CEO Stark, IoT Lead) para Paperclip
 - [docs/deploy-hostinger.md](docs/deploy-hostinger.md) — deploy na VPS (Hostinger)

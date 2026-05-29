@@ -1,111 +1,161 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Guide for Claude Code and coding agents in this repository.
 
-## Project Overview
+| Doc | Purpose |
+|-----|---------|
+| [README.md](README.md) | Product overview, onboarding (human) |
+| [.cursor/rules/agripeweb-standards.mdc](.cursor/rules/agripeweb-standards.mdc) | Mandatory patterns (Cursor, always applied) |
+| [docs/agent-behavior.md](docs/agent-behavior.md) | Generic agent behavior (think, simplify, surgical edits) |
 
-AgripeWeb is an agricultural IoT monitoring platform with three main components:
-- **AgripeWebAPI** — ASP.NET Core 10.0 REST API (C#, MongoDB, MediatR/CQRS)
-- **AgripeWebUI** — Angular 19 SPA (TypeScript, Angular Material, Chart.js)
-- **AgripeWebIOT** — ESP8266 Arduino firmware for field sensors
+## How to work here
 
-## Build & Run Commands
+- **Scope:** minimum change that satisfies the request; match existing patterns.
+- **Uncertainty:** state assumptions or ask — don't guess tenant rules, API contracts, or irrigation logic.
+- **Verify:** `dotnet test` for API changes; manual or documented check for UI/IoT.
+- **Features:** large backend work → plan in `docs/features/{name}/plan.md` first (see `.claude/skills/agripeweb-feature-planner/`).
+- **Behavior details:** [docs/agent-behavior.md](docs/agent-behavior.md).
+
+## Components
+
+| Path | Role |
+|------|------|
+| `AgripeWebAPI/` | ASP.NET Core 10, MediatR/CQRS, MongoDB, JWT + Google OAuth |
+| `AgripeWebUI/` | Angular 19, Material, Chart.js, Leaflet |
+| `AgripeWebUI-Mobile/` | React Native (field use) |
+| `AgripeWebIOT/` | ESP8266 (Wi-Fi), ESP32 LoRa gateway/slave |
+| `docker/`, `.github/workflows/` | Compose, CI, deploy VPS |
+| `terraform/aws/` | ECS Fargate, ALB, optional cloud path |
+
+## Pitfalls (break prod or waste time)
+
+| Situation | Rule |
+|-----------|------|
+| `dotnet build` API on Windows | Kill running `AgripeWebAPI` first (MSB3027/MSB3021 file lock) |
+| UI dev server | Only `npm run start` inside `AgripeWebUI/` — proxy is in `angular.json` |
+| API URLs from UI | Relative `/api/v1/...` — never hardcode host |
+| Pivot without lat/long | Skip weather forecast; show CTA in dashboard |
+| New domain handler | Inject `ICurrentUserContext`; filter `_currentUser.UserId`; never trust `request.UserId` |
+| MongoDB | No EF Core / SQL / `dotnet ef` — collections via `agpDBContext` |
+| Firmware | No real Wi-Fi passwords, tokens, or MACs in committed `.ino` files |
+| Deploy | `main` + green CI; secrets only via env / user secrets — placeholders in repo |
+| Google login button | Show only when `environment.googleClientId` is set |
+
+## Build and run
 
 ### API
 ```bash
 dotnet run --project AgripeWebAPI/AgripeWebAPI.csproj
-# Before building, kill any running AgripeWebAPI process — the exe gets locked (MSB3027/MSB3021)
-dotnet build AgripeWebAPI/AgripeWebAPI.csproj
+dotnet build AgripeWebAPI/AgripeWebAPI.csproj   # stop API process first on Windows
 ```
 
-### UI (run from AgripeWebUI/)
+### UI (from `AgripeWebUI/`)
 ```bash
-cd AgripeWebUI
 npm install
-npm run start          # serves at http://localhost:4200, proxy to API configured
+npm run start    # http://localhost:4200 — proxy to API
 ```
 
 ### Tests
 ```bash
 dotnet test AgripeWebAPI.Tests/AgripeWebAPI.Tests.csproj
-# Single test:
 dotnet test AgripeWebAPI.Tests/AgripeWebAPI.Tests.csproj --filter "FullyQualifiedName~TestMethodName"
 ```
 
-### Docker (full stack)
+Handler tests: **xUnit + Moq**, MongoDB cursor mocking (not EF InMemory). Pattern: Arrange–Act–Assert.
+
+### Docker / CI / cloud
 ```bash
 docker compose -f docker/docker-compose.yml up --build
-# API: localhost:8080, UI: localhost:80, MongoDB: localhost:27027
+# API :8080, UI :80, MongoDB :27027
 ```
+- **CI:** `.github/workflows/ci.yml` — build, test, Angular prod build
+- **Deploy:** `.github/workflows/deploy.yml` → VPS after `main` — [docs/deploy-hostinger.md](docs/deploy-hostinger.md)
+- **Terraform:** `cd terraform/aws && terraform init && terraform plan -out=tfplan`
 
-### CI/CD (GitHub Actions → Hostinger VPS)
-- **CI** (`.github/workflows/ci.yml`): .NET build/test, Angular production build, Docker image validation on PR/push.
-- **Deploy** (`.github/workflows/deploy.yml`): SSH + `docker compose` on VPS after CI passes on `main`.
-- Setup and secrets: [docs/deploy-hostinger.md](docs/deploy-hostinger.md).
+## Where to implement
 
-### Terraform (AWS)
-```bash
-cd terraform/aws
-terraform init
-terraform plan -out=tfplan
-terraform apply tfplan
-```
+| Task | Location |
+|------|----------|
+| REST endpoint | `Controllers/` → `Domain/Commands/Requests|Responses/` → `Domain/Handlers/` |
+| Entity / collection | `Models/Entities/`, register in `agpDBContext` — [agripeweb-mongo-setup skill](.claude/skills/agripeweb-mongo-setup/SKILL.md) |
+| Angular route / screen | `AgripeWebUI/src/app/app.routes.ts` + component; auth under `LayoutComponent` |
+| Weather / irrigation logic | `Services/Forecast/`, irrigation trend handlers |
+| OAuth | API `Auth/external-login`; UI `/login/callback` |
+| Firmware / field device | `AgripeWebIOT/` — coordinate API contract with backend |
+| Multi-agent (Paperclip) | [docs/agents/README.md](docs/agents/README.md) |
+
+## Feature workflow
+
+1. GitHub issue → acceptance criteria clear  
+2. Plan → `docs/features/{name}/plan.md` (optional skill: `agripeweb-feature-planner`)  
+3. Implement → handler + tests; UI and IoT in parallel only if contract is defined  
+4. Review → tenant isolation, no secrets in diff (`agripeweb-code-reviewer` skill)
 
 ## Architecture
 
-### API — CQRS with MediatR
-Controllers receive requests and delegate to MediatR handlers. No business logic in controllers.
+### API — CQRS (MediatR)
 
-- **Controllers/** — Thin controllers (`MainController` is the base class with helper methods)
-- **Domain/Commands/Requests/** — Command/query request objects (e.g., `CreatePivotRequest`)
-- **Domain/Commands/Responses/** — Response DTOs
-- **Domain/Handlers/** — MediatR handlers with business logic
-- **Models/Entities/** — MongoDB entities (`User`, `Pivot`, `Sensor`, `ReadSensor`), all inherit from `Entity` (has `[BsonId] int Id`). `Pivot` has nullable `Latitude`/`Longitude`/`Altitude`/`LocationAddress`/`LocationUpdatedAt` (set via the map-based location selector — pivots without coordinates skip forecast queries and show a CTA in the dashboard)
-- **Models/Interfaces/** — `ICurrentUserContext`, `IJwtTokenService`, `INotifier`, `IPasswordHasher`, `IWeatherForecastService`
-- **Services/** — `JwtTokenService`, `PasswordHasherService`, `CurrentUserContext`. `Services/Forecast/` holds `WeatherForecastOrchestrator` (cache + fallback) plus `OpenMeteoForecastService` and `GoogleWeatherAIForecastService` implementations
-- **Configuration/** — DI registration, JWT/OAuth/Swagger/CORS setup, `MongoDbSettings`, `WeatherForecastSettings`
-- **Validators/** — Custom validation attributes (`EmailAttribute`, `PasswordStrengthAttribute`)
-- **Notifications/** — Error notification pattern via `INotifier`/`Notificator`
+Controllers delegate to handlers; **no business logic in controllers.**
 
-### Database — MongoDB
-- Context class: `agpDBContext` exposes `IMongoCollection<T>` for each entity
-- Collections: `users`, `pivots`, `sensors`, `read_sensors`, `counters`
-- IDs are sequential integers via `counters` collection (`GetNextIdAsync`)
-- Config section in appsettings: `MongoDb` with `ConnectionString` and `DatabaseName`
+- `Controllers/` — thin; `MainController` base helpers  
+- `Domain/Commands/` — request/response DTOs  
+- `Domain/Handlers/` — business logic  
+- `Models/Entities/` — `User`, `Pivot`, `Sensor`, `ReadSensor` extend `Entity` (`[BsonId] int Id`)  
+- `Pivot` — nullable `Latitude`, `Longitude`, `Altitude`, `LocationAddress`, `LocationUpdatedAt` (map selector)  
+- `Services/` — JWT, passwords, `CurrentUserContext`; `Services/Forecast/` — `WeatherForecastOrchestrator`, Open-Meteo, Google Weather AI  
+- `Configuration/` — DI, JWT/OAuth, Swagger, CORS, `MongoDbSettings`, `WeatherForecastSettings`  
+- `Validators/`, `Notifications/` (`INotifier` / `Notificator`)
 
-### Multi-Tenant Isolation
-- Implemented via `UserId` from JWT claim `"id"`, resolved by `ICurrentUserContext`
-- All domain handlers must inject `ICurrentUserContext` and filter by `_currentUser.UserId`
-- Never trust `request.UserId` from the client for tenant isolation
+### MongoDB
+
+- `agpDBContext` → `IMongoCollection<T>`  
+- Collections: `users`, `pivots`, `sensors`, `read_sensors`, `counters`  
+- Sequential `int` IDs: `counters` + `GetNextIdAsync`  
+- Config: `appsettings.*.json` → section `MongoDb`  
+- Seed default user on startup if `users` is empty (`ApiConfig`)
+
+### Multi-tenant isolation
+
+- JWT claim `"id"` → `ICurrentUserContext.UserId` (`CurrentUserContext` + `IHttpContextAccessor`)  
+- Every domain handler: inject `ICurrentUserContext`, filter/persist with `_currentUser.UserId`  
+- **Never** use client-supplied `request.UserId` for isolation  
+- Examples: `CreatePivotHandler`, `CreateReadHandler`, `GetListSensorHandler`
 
 ### Authentication
-- JWT Bearer tokens (8-hour expiration) + Google OAuth 2.0
-- OAuth flow goes through backend endpoint `Auth/external-login` which exchanges the code for a JWT
-- Frontend stores JWT in localStorage
 
-### UI — Angular 19 Standalone Components
-- **Routing**: `app.routes.ts` is the single source of routes (not `AppRoutingModule`). Login routes at top level; authenticated routes are children of `LayoutComponent` (provides sidebar nav)
-- **Services**: `ApiService` calls `/api/v1/*` relative URLs (proxy handles dev routing)
-- **Guards**: `AuthGuard` checks localStorage (with `typeof window` guard for SSR safety)
-- **Key routes**: `/login`, `/login/callback`, `/home`, `/pivots`, `/sensores`, `/dashboard/:pivoId/:quadrante`, `/user`
-- **Map selector**: `PivotLocationMapComponent` uses Leaflet + OpenStreetMap (no API key); loaded via dynamic `import('leaflet')` for SSR safety; reverse geocoding via Nominatim, altitude via Open-Meteo Elevation API
+- JWT Bearer (8 h) + Google OAuth → `Auth/external-login` exchanges code for API JWT  
+- UI stores token in `localStorage` (`AuthGuard` with `typeof window` guard for SSR)
 
-### Security
-- CORS: dev allows `localhost:4200`, prod allows `agripeweb.com`
-- Rate limiting: 100 requests per 10 seconds
-- Passwords: BCrypt with salt
-- CSRF: AntiForgery tokens configured
+### UI — Angular 19
 
-### Infrastructure
-- **Docker**: Multi-stage builds — API (dotnet SDK → runtime), UI (Node → Nginx Alpine)
-- **AWS via Terraform**: ECS Fargate, ALB (path-based routing: `/api/*` → API, default → UI), ECR, CloudWatch
-- **ECS tasks**: 256 CPU, 512 MB memory
+- **Routes:** single source `app.routes.ts` + `provideRouter` in `app.config.ts` — **not** `RouterModule.forRoot` in `AppModule`  
+- Login outside layout; authenticated routes are children of `LayoutComponent`  
+- **Routes:** `/login`, `/login/callback`, `/home`, `/irrigation-dashboard`, `/config`, `/pivots`, `/pivots/novo`, `/pivots/editar/:id`, `/sensores`, `/sensores/novo`, `/sensores/editar/:id`, `/dashboard/:pivoId/:quadrante`, `/dashboard/:pivoId/:quadrante/config`, `/user`  
+- `ApiService` → `/api/v1/*`  
+- `PivotLocationMapComponent` — dynamic `import('leaflet')`; Nominatim + Open-Meteo elevation  
+- `LayoutComponent` standalone — `showLayout` from URL + `NavigationEnd` in `ngOnInit`  
+- `AppModule` imports `RouterModule` without `.forRoot()` for `routerLink` only
 
-## Key Conventions
+### Security and infra
 
-- UI calls API via relative URLs (`/api/v1/...`) — never hardcode the API host
-- Use placeholder values for secrets in committed files (`CHANGE_ME`, `YOUR_GOOGLE_CLIENT_ID`)
-- Prefer stable .NET/NuGet versions (no previews) compatible with the installed SDK
-- Test framework: xUnit + Moq + InMemory provider, using Arrange-Act-Assert pattern
-- `LayoutComponent` is standalone; set `showLayout` from URL in `ngOnInit` using `NavigationEnd`
-- `AppModule` imports `RouterModule` (without `.forRoot()`) — routing is configured via `provideRouter(routes)` in `app.config.ts`
+- CORS: `localhost:4200` (dev), `agripeweb.com` (prod)  
+- Rate limit: 100 req / 10 s  
+- Passwords: BCrypt; CSRF anti-forgery configured  
+- Docker: multi-stage API + UI (Nginx)  
+- AWS (Terraform): ECS Fargate, ALB `/api/*` → API, default → UI, ECR, CloudWatch (256 CPU / 512 MB tasks)
+
+## Key conventions
+
+- Secrets in repo: placeholders only (`CHANGE_ME`, `YOUR_GOOGLE_CLIENT_ID`)  
+- Stable .NET / NuGet versions — no previews without explicit approval  
+- UI OAuth button only if `environment.googleClientId` is configured  
+- IoT login/read endpoints must stay aligned with API routes used in `.ino` files
+
+## Documentation and skills
+
+- [docs/contratacao-time.md](docs/contratacao-time.md) — team roles  
+- [docs/agents/README.md](docs/agents/README.md) — Paperclip SOUL/HEARTBEAT  
+- `.claude/skills/agripeweb-backend-expert` — handlers/endpoints  
+- `.claude/skills/agripeweb-implement` — full issue workflow  
+- `.claude/skills/agripeweb-test-writer` — xUnit + Mongo mocks  
+- `.claude/skills/agripeweb-code-reviewer` — pre-merge review
