@@ -2,6 +2,7 @@ using AgripeWebAPI.Domain.Commands.Requests.Sensors;
 using AgripeWebAPI.Domain.Commands.Responses.Sensors;
 using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Entities;
+using AgripeWebAPI.Models.Interfaces;
 using MediatR;
 using MongoDB.Driver;
 
@@ -10,16 +11,21 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
     public class GetSensorHandler : IRequestHandler<GetSensorRequest, GetSensorResponse?>
     {
         private readonly agpDBContext _dbContext;
+        private readonly ICurrentUserContext _currentUser;
 
-        public GetSensorHandler(agpDBContext dbContext)
+        public GetSensorHandler(agpDBContext dbContext, ICurrentUserContext currentUser)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+            _currentUser = currentUser ?? throw new ArgumentNullException(nameof(currentUser));
         }
 
         public async Task<GetSensorResponse?> Handle(GetSensorRequest request, CancellationToken cancellationToken)
         {
+            var userId = _currentUser.UserId
+                ?? throw new InvalidOperationException("Authenticated user required.");
+
             var sensor = await _dbContext.Sensors
-                .Find(x => x.Id == request.Id)
+                .Find(x => x.Id == request.Id && x.UserId == userId)
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (sensor == null)
