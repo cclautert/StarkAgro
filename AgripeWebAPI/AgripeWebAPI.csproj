@@ -18,6 +18,9 @@
     <PackageReference Include="MongoDB.Driver" Version="3.6.0" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.9.0" />
+    <!-- Transitive overrides: pin to safe versions (GHSA-6c8g-7p36-r338, GHSA-pggp-6c3x-2xmx) -->
+    <PackageReference Include="SharpCompress" Version="0.49.1" />
+    <PackageReference Include="Snappier" Version="1.3.1" />
   </ItemGroup>
 
 </Project>
