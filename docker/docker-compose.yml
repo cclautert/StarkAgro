@@ -15,6 +15,9 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - MongoDb__ConnectionString=mongodb://db:27017
       - MongoDb__DatabaseName=agripeweb
+      - JwtSettings__secretkey=${JWT_SECRET_KEY}
+      - JwtSettings__issuer=${JWT_ISSUER:-agripeweb.com}
+      - JwtSettings__audience=${JWT_AUDIENCE:-https://agripeweb.com}
       - OAuth__Google__ClientId=${GOOGLE_CLIENT_ID}
       - OAuth__Google__ClientSecret=${GOOGLE_CLIENT_SECRET}
       - OAuth__Google__AllowedRedirectUris=https://agripeweb.com/login/callback,agripeweb://callback
@@ -63,11 +66,10 @@ services:
   mqtt:
     image: eclipse-mosquitto:2
     container_name: agripeweb-mqtt
-    ports:
-      - "1883:1883"
     volumes:
       - mosquitto-data:/mosquitto/data
-      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - ./mosquitto/passwd:/mosquitto/config/passwd:ro
     networks:
       - app-network
     healthcheck:
@@ -87,6 +89,8 @@ services:
       - MongoDb__DatabaseName=agripeweb
       - Mqtt__Host=mqtt
       - Mqtt__Port=1883
+      - Mqtt__Username=${MQTT_USERNAME}
+      - Mqtt__Password=${MQTT_PASSWORD}
     depends_on:
       db:
         condition: service_started
