@@ -12,6 +12,7 @@ namespace AgripeWebAPI.Models.Entities
         public int UserId { get; set; }
         public Decimal Value { get; set; }
         public DateTime Date { get; set; }
+        public bool IsAnomaly { get; set; }
 
         public virtual Sensor? Sensor { get; set; }
     }

@@ -115,6 +115,7 @@ namespace AgripeWebAPI.Tests.Models
             Assert.NotNull(ctx.Pivots);
             Assert.NotNull(ctx.Sensors);
             Assert.NotNull(ctx.ReadSensors);
+            Assert.NotNull(ctx.SensorAnomalies);
         }
     }
 }

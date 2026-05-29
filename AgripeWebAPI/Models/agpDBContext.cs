@@ -35,13 +35,33 @@ namespace AgripeWebAPI.Models
             Pivots = database.GetCollection<Pivot>("pivots");
             Sensors = database.GetCollection<Sensor>("sensors");
             ReadSensors = database.GetCollection<ReadSensor>("read_sensors");
+            SensorAnomalies = database.GetCollection<SensorAnomaly>("sensor_anomalies");
             _counters = database.GetCollection<CounterDocument>("counters");
+
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    await SensorAnomalies.Indexes.CreateOneAsync(new CreateIndexModel<SensorAnomaly>(
+                        Builders<SensorAnomaly>.IndexKeys
+                            .Ascending(a => a.UserId)
+                            .Ascending(a => a.SensorId)
+                            .Descending(a => a.Date)));
+                    await SensorAnomalies.Indexes.CreateOneAsync(new CreateIndexModel<SensorAnomaly>(
+                        Builders<SensorAnomaly>.IndexKeys.Ascending(a => a.Acknowledged)));
+                }
+                catch
+                {
+                    // Index creation is best-effort; app can start without it
+                }
+            });
         }
 
         public virtual IMongoCollection<User> Users { get; }
         public virtual IMongoCollection<Pivot> Pivots { get; }
         public virtual IMongoCollection<Sensor> Sensors { get; }
         public virtual IMongoCollection<ReadSensor> ReadSensors { get; }
+        public virtual IMongoCollection<SensorAnomaly> SensorAnomalies { get; }
 
         public virtual async Task<int> GetNextIdAsync(string entityName, CancellationToken cancellationToken = default)
         {

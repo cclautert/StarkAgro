@@ -45,6 +45,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
   forecastLoading = false;
   private forecastSub: Subscription | null = null;
 
+  // ── AI Insights state ─────────────────────────────────────────────────────
+  aiInsights: string | null = null;
+  aiInsightsLoading = false;
+  aiGeneratedAt: Date | null = null;
+  aiFromCache = false;
+  aiError: string | null = null;
+  aiExpanded = false;
+  private aiSub: Subscription | null = null;
+
   // ── Trend-analysis overlay state ──────────────────────────────────────────
   showTrend = true;
   showMA = true;
@@ -267,6 +276,28 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.paramSub?.unsubscribe();
     this.readsSub?.unsubscribe();
     this.forecastSub?.unsubscribe();
+    this.aiSub?.unsubscribe();
+  }
+
+  loadAIInsights(): void {
+    if (!this.pivoId) return;
+    this.aiSub?.unsubscribe();
+    this.aiInsightsLoading = true;
+    this.aiError = null;
+    this.aiExpanded = true;
+    const pivotId = this.pivoId;
+    this.aiSub = this.pivotService.getAIInsights(pivotId).subscribe({
+      next: res => {
+        this.aiInsights = res.insights;
+        this.aiGeneratedAt = new Date(res.generatedAt);
+        this.aiFromCache = res.fromCache;
+        this.aiInsightsLoading = false;
+      },
+      error: () => {
+        this.aiError = 'Assistente IA indisponível. Tente novamente em alguns minutos.';
+        this.aiInsightsLoading = false;
+      }
+    });
   }
 
   private loadForecast(pivotId: number): void {

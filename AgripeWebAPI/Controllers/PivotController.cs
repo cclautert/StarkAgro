@@ -1,9 +1,11 @@
+using AgripeWebAPI.Domain.Commands.Requests.Anomalies;
 using AgripeWebAPI.Domain.Commands.Requests.Pivots;
 using AgripeWebAPI.Domain.Commands.Responses.Pivots;
 using AgripeWebAPI.Models.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace AgripeWebAPI.Controllers
 {
@@ -113,6 +115,46 @@ namespace AgripeWebAPI.Controllers
             var result = await mediator.Send(command, cancellationToken);
 
             return CustomResponse(result!);
+        }
+
+        [Route("{pivotId:int}/anomalies")]
+        [HttpGet]
+        public async Task<IActionResult> GetAnomalies(
+            [FromServices] IMediator mediator,
+            int pivotId,
+            [FromQuery] int pageSize = 20,
+            [FromQuery] int pageIndex = 0,
+            CancellationToken cancellationToken = default
+        )
+        {
+            var command = new GetPivotAnomaliesRequest
+            {
+                PivotId = pivotId,
+                UserId = GetCurrentUserId(),
+                PageSize = pageSize,
+                PageIndex = pageIndex
+            };
+            var result = await mediator.Send(command, cancellationToken);
+            return CustomResponse(result);
+        }
+
+        [Route("{pivotId:int}/ai-insights")]
+        [HttpPost]
+        public async Task<IActionResult> GetAIInsights(
+            [FromServices] IMediator mediator,
+            int pivotId,
+            CancellationToken cancellationToken
+        )
+        {
+            var command = new GetPivotAIInsightsRequest
+            {
+                PivotId = pivotId,
+                UserId = GetCurrentUserId()
+            };
+            var result = await mediator.Send(command, cancellationToken);
+            if (result is null)
+                return CustomResponse(result, HttpStatusCode.ServiceUnavailable);
+            return CustomResponse(result);
         }
 
         [Route("forecast")]

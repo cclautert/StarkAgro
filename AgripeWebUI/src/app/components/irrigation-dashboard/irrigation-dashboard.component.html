@@ -1,6 +1,13 @@
 <div class="irr-container">
 
-  <h1 class="irr-title">Controle de Irrigação{{ selectedPivotName ? ' - ' + selectedPivotName : '' }}</h1>
+  <div class="irr-header">
+    <h1 class="irr-title">Controle de Irrigação{{ selectedPivotName ? ' - ' + selectedPivotName : '' }}</h1>
+    <div class="anomaly-badge" *ngIf="anomalyCount > 0" title="Anomalias detectadas não reconhecidas">
+      <span class="anomaly-icon">⚠️</span>
+      <span class="anomaly-count">{{ anomalyCount }}</span>
+      <span class="anomaly-label">anomalia{{ anomalyCount > 1 ? 's' : '' }} detectada{{ anomalyCount > 1 ? 's' : '' }}</span>
+    </div>
+  </div>
 
   <!-- Pivot selector -->
   <div class="filter-bar">

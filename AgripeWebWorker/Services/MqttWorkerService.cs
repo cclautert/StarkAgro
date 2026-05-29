@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using AgripeWebWorker.Configuration;
+using AgripeWebAPI.Domain.Commands.Requests.Anomalies;
 using AgripeWebAPI.Domain.Commands.Requests.Reads;
 using MediatR;
 using Microsoft.Extensions.Options;
@@ -63,14 +64,25 @@ namespace AgripeWebWorker.Services
                     using var scope = _serviceProvider.CreateScope();
                     var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-                    var request = new CreateReadRequest
+                    var createRequest = new CreateReadRequest
                     {
                         Code = message.Code,
                         Value = message.Value
                     };
 
-                    await mediator.Send(request, stoppingToken);
+                    var createResponse = await mediator.Send(createRequest, stoppingToken);
                     _logger.LogInformation("Successfully processed read for sensor '{Code}'", message.Code);
+
+                    if (createResponse.Id > 0)
+                    {
+                        await mediator.Send(new DetectSensorAnomalyRequest
+                        {
+                            ReadSensorId = createResponse.Id,
+                            SensorId = createResponse.SensorId,
+                            UserId = createResponse.UserId,
+                            Value = message.Value
+                        }, stoppingToken);
+                    }
                 }
                 catch (Exception ex)
                 {

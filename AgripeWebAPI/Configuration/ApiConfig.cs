@@ -1,6 +1,7 @@
 using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Entities;
 using AgripeWebAPI.Models.Interfaces;
+using AgripeWebAPI.Services.AIInsights;
 using AgripeWebAPI.Services.Forecast;
 using Microsoft.AspNetCore.RateLimiting;
 using MongoDB.Driver;
@@ -15,6 +16,7 @@ namespace AgripeWebAPI.Configuration
         {
             services.Configure<MongoDbSettings>(configuration.GetSection(MongoDbSettings.SectionName));
             services.Configure<WeatherForecastSettings>(configuration.GetSection(WeatherForecastSettings.SectionName));
+            services.Configure<AISettings>(configuration.GetSection(AISettings.SectionName));
             services.AddScoped<agpDBContext>();
             services.AddMemoryCache();
 
@@ -28,6 +30,12 @@ namespace AgripeWebAPI.Configuration
                 client.Timeout = TimeSpan.FromSeconds(8);
             });
             services.AddScoped<IWeatherForecastService, WeatherForecastOrchestrator>();
+
+            services.AddHttpClient<IAIInsightsService, ClaudeInsightsService>(client =>
+            {
+                client.BaseAddress = new Uri("https://api.anthropic.com/");
+                client.Timeout = TimeSpan.FromSeconds(30);
+            });
 
             services.AddControllers()
                 .AddJsonOptions(options =>
