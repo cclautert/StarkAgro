@@ -25,6 +25,8 @@ namespace AgripeWebAPI.Configuration
                 client.BaseAddress = new Uri("https://api.open-meteo.com/");
                 client.Timeout = TimeSpan.FromSeconds(8);
             });
+            services.AddScoped<IAgricultureWeatherService>(sp =>
+                sp.GetRequiredService<OpenMeteoForecastService>());
             services.AddHttpClient<GoogleWeatherAIForecastService>(client =>
             {
                 client.Timeout = TimeSpan.FromSeconds(8);

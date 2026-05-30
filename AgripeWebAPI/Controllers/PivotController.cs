@@ -172,5 +172,22 @@ namespace AgripeWebAPI.Controllers
 
             return CustomResponse(result!);
         }
+
+        [Route("{pivotId:int}/moisture-prediction")]
+        [HttpGet]
+        public async Task<IActionResult> GetMoisturePrediction(
+            [FromServices] IMediator mediator,
+            int pivotId,
+            CancellationToken cancellationToken
+        )
+        {
+            var command = new GetMoisturePredictionRequest
+            {
+                PivotId = pivotId,
+                UserId = GetCurrentUserId()
+            };
+            var result = await mediator.Send(command, cancellationToken);
+            return CustomResponse(result!);
+        }
     }
 }
