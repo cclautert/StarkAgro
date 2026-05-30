@@ -49,16 +49,35 @@ cd /opt/agripeweb
 
 Use o mesmo caminho em `VPS_DEPLOY_PATH` nos secrets do GitHub.
 
-### 2. Variáveis de ambiente (OAuth)
+### 2. Variáveis de ambiente (runtime)
 
-Crie um arquivo `.env` na **raiz do clone** (`/opt/agripeweb/.env`). O deploy usa `--project-directory .` para que o Compose leia esse arquivo:
+Crie um arquivo `.env` na **raiz do clone** (`/opt/agripeweb/.env`). O deploy usa `--project-directory .` para que o Compose leia esse arquivo. Use [docker/.env.example](../docker/.env.example) como modelo:
 
 ```env
+JWT_SECRET_KEY=<min 32 chars>
+JWT_ISSUER=agripeweb.com
+JWT_AUDIENCE=https://agripeweb.com
 GOOGLE_CLIENT_ID=seu_client_id
 GOOGLE_CLIENT_SECRET=seu_client_secret
+MQTT_USERNAME=iot_device
+MQTT_PASSWORD=<senha forte>
 ```
 
 Nunca commite este arquivo. Valores reais ficam apenas na VPS.
+
+### 2b. Mosquitto (MQTT)
+
+Após definir `MQTT_USERNAME` / `MQTT_PASSWORD` no `.env`, gere o arquivo de senhas (não versionado):
+
+```bash
+cd /opt/agripeweb
+docker run --rm \
+  -v "$(pwd)/docker/mosquitto:/mosquitto/config" \
+  eclipse-mosquitto:2 \
+  mosquitto_passwd -b -c "/mosquitto/config/passwd" "$MQTT_USERNAME" "$MQTT_PASSWORD"
+```
+
+O pipeline de deploy também cria `docker/mosquitto/passwd` automaticamente se o arquivo não existir e o `.env` estiver completo.
 
 ### 3. Primeiro start e TLS
 
@@ -109,10 +128,9 @@ Em **Settings → Environments → production**:
 Em cada `push` bem-sucedido em `main`, após o CI passar:
 
 1. `git fetch` + `git reset --hard origin/main`
-2. `docker compose build` para `agripewebapi`, `agripewebui`, `agripwebworker`
-3. `docker compose up -d` para `db`, `mqtt`, API, UI e Worker
-4. `docker image prune -f`
-5. Health check: `curl https://agripeweb.com/api/v1/health`
+2. `scripts/deploy-hostinger-remote.sh` — valida `.env`, garante `docker/mosquitto/passwd`, `docker compose --project-directory .` build/up
+3. `docker image prune -f`
+4. Health check: `curl https://agripeweb.com/api/v1/health`
 
 Serviços **não** atualizados automaticamente neste pipeline: `agripewebui-mobile`, `nginx-proxy`, `certbot`.
 
@@ -134,8 +152,7 @@ Isso impede merge com CI vermelho. O workflow **Deploy** só roda após merge em
 ```bash
 cd /opt/agripeweb
 git pull origin main
-docker compose --project-directory . -f docker/docker-compose.yml build agripewebapi agripewebui agripwebworker
-docker compose --project-directory . -f docker/docker-compose.yml up -d db mqtt agripewebapi agripewebui agripwebworker
+./scripts/deploy-hostinger-remote.sh .
 curl -fsS https://agripeweb.com/api/v1/health
 ```
 
@@ -144,9 +161,23 @@ curl -fsS https://agripeweb.com/api/v1/health
 | Problema | Ação |
 |----------|------|
 | Deploy falha no `docker build` (memória) | Considere fase 2 com GHCR (build no GitHub, `pull` na VPS) |
+| `agripeweb-mqtt exited (13)` / MQTT dependency failed | Confira `.env` na raiz (`JWT_*`, `MQTT_*`, Google OAuth) e `docker/mosquitto/passwd`; rode `./scripts/deploy-hostinger-remote.sh .` |
+| Warnings `JWT_SECRET_KEY` / `MQTT_*` variable is not set | `.env` ausente ou Compose sem `--project-directory .` — use o script de deploy |
 | OAuth não funciona após deploy | Confira `.env` na raiz do clone e reinicie só `agripewebapi` |
 | Health check 404 | Confirme nginx-proxy ativo e URL `/api/v1/health` |
 | `workflow_run` não dispara Deploy | Verifique se o workflow CI se chama exatamente `CI` e se o push foi em `main` |
+
+### Rollback (produção)
+
+```bash
+cd /opt/agripeweb
+git fetch origin main
+git reset --hard <sha-anterior-estavel>   # ex.: último deploy verde em Actions
+./scripts/deploy-hostinger-remote.sh .
+curl -fsS https://agripeweb.com/api/v1/health
+```
+
+Mantenha o `.env` e `docker/mosquitto/passwd` intactos no rollback — não são versionados no Git.
 
 ## Caminho AWS (separado)
 
