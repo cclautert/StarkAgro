@@ -29,8 +29,12 @@ var builder = Host.CreateDefaultBuilder(args)
         // Notifications
         services.AddScoped<INotifier, Notificator>();
 
-        // Worker service
+        // Alert email — no-op until Backend Lead's AlertEmailService issue is merged
+        services.AddScoped<IAlertEmailService, NoOpAlertEmailService>();
+
+        // Hosted services
         services.AddHostedService<MqttWorkerService>();
+        services.AddHostedService<IrrigationAlertScheduler>();
     });
 
 var host = builder.Build();

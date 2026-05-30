@@ -49,5 +49,15 @@ namespace AgripeWebWorker.Tests.Helpers
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => CreateMockCursor(items).Object);
         }
+
+        public static void SetupFindList<T>(Mock<IMongoCollection<T>> mockCollection, List<T> items) where T : class
+        {
+            mockCollection
+                .Setup(c => c.FindAsync(
+                    It.IsAny<FilterDefinition<T>>(),
+                    It.IsAny<FindOptions<T, T>>(),
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => CreateMockCursor(items).Object);
+        }
     }
 }
