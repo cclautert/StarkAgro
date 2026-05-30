@@ -29,12 +29,14 @@ namespace AgripeWebWorker.Tests.Handlers
             _mockDbContext.Setup(db => db.GetNextIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(42);
 
-            _handler = new CreateReadHandler(_mockDbContext.Object);
+            _handler = new CreateReadHandler(_mockDbContext.Object, _mockCurrentUser.Object);
         }
 
         [Fact]
         public async Task Handle_ShouldUseSensorUserId()
         {
+            _mockCurrentUser.Setup(u => u.UserId).Returns(10);
+
             var sensor = new Sensor { Id = 1, Code = "SENS01", UserId = 10 };
             MongoMockHelper.SetupFind(_mockSensors, sensor);
 
@@ -52,29 +54,21 @@ namespace AgripeWebWorker.Tests.Handlers
         }
 
         [Fact]
-        public async Task Handle_WorkerContext_ShouldFallbackToSensorUserId()
+        public async Task Handle_UnauthenticatedUser_ShouldThrowUnauthorizedAccessException()
         {
             _mockCurrentUser.Setup(u => u.UserId).Returns((int?)null);
 
-            var sensor = new Sensor { Id = 1, Code = "SENS01", UserId = 10 };
-            MongoMockHelper.SetupFind(_mockSensors, sensor);
-
-            _mockReadSensors
-                .Setup(c => c.InsertOneAsync(It.IsAny<ReadSensor>(), It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()))
-                .Returns(Task.CompletedTask);
-
             var request = new CreateReadRequest { Code = "SENS01", Value = 512 };
-            await _handler.Handle(request, CancellationToken.None);
 
-            _mockReadSensors.Verify(c => c.InsertOneAsync(
-                It.Is<ReadSensor>(r => r.UserId == 10),
-                It.IsAny<InsertOneOptions>(),
-                It.IsAny<CancellationToken>()), Times.Once);
+            await Assert.ThrowsAsync<UnauthorizedAccessException>(() =>
+                _handler.Handle(request, CancellationToken.None));
         }
 
         [Fact]
         public async Task Handle_SensorNotFound_ShouldThrowKeyNotFoundException()
         {
+            _mockCurrentUser.Setup(u => u.UserId).Returns(1);
+
             MongoMockHelper.SetupFind<Sensor>(_mockSensors, null);
 
             var request = new CreateReadRequest { Code = "INVALID", Value = 100 };
@@ -86,6 +80,8 @@ namespace AgripeWebWorker.Tests.Handlers
         [Fact]
         public async Task Handle_ShouldPersistRawSensorValue()
         {
+            _mockCurrentUser.Setup(u => u.UserId).Returns(1);
+
             var sensor = new Sensor { Id = 1, Code = "SENS01", UserId = 1 };
             MongoMockHelper.SetupFind(_mockSensors, sensor);
 
