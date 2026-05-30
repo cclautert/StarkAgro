@@ -7,6 +7,7 @@ using AgripeWebAPI.Domain.Commands.Requests.Reads;
 using AgripeWebAPI.Domain.Commands.Responses.Reads;
 using AgripeWebAPI.Models.Interfaces;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -28,12 +29,10 @@ namespace AgripeWebAPI.Tests.Controllers
         [Fact]
         public async Task GetAll_Sets_UserId_And_Returns_Items()
         {
-            // Arrange
             var notifier = new Mock<INotifier>();
             var mediator = new Mock<IMediator>();
             var controller = new ReadsController(notifier.Object);
 
-            // Set user id claim
             controller.ControllerContext = new Microsoft.AspNetCore.Mvc.ControllerContext
             {
                 HttpContext = new DefaultHttpContext
@@ -52,10 +51,8 @@ namespace AgripeWebAPI.Tests.Controllers
             mediator.Setup(m => m.Send(It.Is<GetListReadRequest>(c => c.UserId == 5), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(ToAsync(responses));
 
-            // Act
             var result = await controller.GetAll(mediator.Object, command, CancellationToken.None);
 
-            // Assert
             mediator.Verify(m => m.Send(It.Is<GetListReadRequest>(c => c.UserId == 5), It.IsAny<CancellationToken>()), Times.Once);
 
             var list = new List<GetReadResponse>();
@@ -69,12 +66,19 @@ namespace AgripeWebAPI.Tests.Controllers
         }
 
         [Fact]
-        public async Task Add_Invokes_Mediator_Without_UserId()
+        public async Task Add_Invokes_Mediator_With_Authenticated_User()
         {
-            // Arrange — Add is AllowAnonymous; UserId is resolved from the sensor inside the handler
             var notifier = new Mock<INotifier>();
             var mediator = new Mock<IMediator>();
             var controller = new ReadsController(notifier.Object);
+
+            controller.ControllerContext = new Microsoft.AspNetCore.Mvc.ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim("id", "3") }))
+                }
+            };
 
             var command = new CreateReadRequest { Code = "SENSOR-1", Value = 12.3m };
             var response = new CreateReadResponse { Id = 42 };
@@ -82,33 +86,37 @@ namespace AgripeWebAPI.Tests.Controllers
             mediator.Setup(m => m.Send(It.Is<CreateReadRequest>(c => c.Code == "SENSOR-1"), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(response);
 
-            // Act
             var result = await controller.Add(mediator.Object, command, CancellationToken.None);
 
-            // Assert
             mediator.Verify(m => m.Send(It.Is<CreateReadRequest>(c => c.Code == "SENSOR-1"), It.IsAny<CancellationToken>()), Times.Once);
             Assert.NotNull(result);
             Assert.Equal(42, result.Id);
         }
 
+        // Regression test: Add must NEVER carry [AllowAnonymous]
+        [Fact]
+        public void Add_Action_Does_Not_Have_AllowAnonymous_Attribute()
+        {
+            var method = typeof(ReadsController).GetMethod(nameof(ReadsController.Add));
+            Assert.NotNull(method);
+            var hasAllowAnonymous = method!.GetCustomAttributes(typeof(AllowAnonymousAttribute), inherit: true).Length > 0;
+            Assert.False(hasAllowAnonymous, "POST /v1/reads/Add must not carry [AllowAnonymous]. See STA-88.");
+        }
+
         [Fact]
         public async Task GetActive_ReturnsOk()
         {
-            // Arrange
             var notifier = new Mock<INotifier>();
             var controller = new ReadsController(notifier.Object);
 
-            // Act
             var result = await controller.GetActive(CancellationToken.None);
 
-            // Assert
             Assert.IsType<OkResult>(result);
         }
 
         [Fact]
         public async Task GetAllBySensorId_ReturnsItems()
         {
-            // Arrange
             var notifier = new Mock<INotifier>();
             var mediator = new Mock<IMediator>();
             var controller = new ReadsController(notifier.Object);
@@ -123,10 +131,8 @@ namespace AgripeWebAPI.Tests.Controllers
 
             var command = new GetAllListReadBySensorIdRequest { SensorId = 10, Quadrante = 1 };
 
-            // Act
             var result = await controller.GetAllBySensorId(mediator.Object, command, CancellationToken.None);
 
-            // Assert
             var list = new List<GetAllReadBySensorIdResponse>();
             await foreach (var item in result)
             {
@@ -139,7 +145,6 @@ namespace AgripeWebAPI.Tests.Controllers
         [Fact]
         public async Task GetByPivotId_ReturnsResponse()
         {
-            // Arrange
             var notifier = new Mock<INotifier>();
             var mediator = new Mock<IMediator>();
             var controller = new ReadsController(notifier.Object);
@@ -151,10 +156,8 @@ namespace AgripeWebAPI.Tests.Controllers
 
             var command = new GetListReadByPivotIdRequest { PivotId = 5 };
 
-            // Act
             var result = await controller.GetByPivotId(mediator.Object, command, CancellationToken.None);
 
-            // Assert
             Assert.NotNull(result);
             Assert.Equal(5, result.Id);
             Assert.Equal("Pivot1", result.Name);

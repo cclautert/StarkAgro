@@ -3,6 +3,7 @@ using AgripeWebAPI.Domain.Commands.Responses.Reads;
 using AgripeWebAPI.Domain.Handlers.Reads;
 using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Entities;
+using AgripeWebAPI.Models.Interfaces;
 using AgripeWebAPI.Tests.Helpers;
 using MongoDB.Driver;
 using Moq;
@@ -11,6 +12,22 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Reads
 {
     public class CreateReadHandlerTests
     {
+        private static Mock<ICurrentUserContext> AuthenticatedUser(int userId)
+        {
+            var mock = new Mock<ICurrentUserContext>();
+            mock.Setup(c => c.UserId).Returns(userId);
+            mock.Setup(c => c.IsAuthenticated).Returns(true);
+            return mock;
+        }
+
+        private static Mock<ICurrentUserContext> AnonymousUser()
+        {
+            var mock = new Mock<ICurrentUserContext>();
+            mock.Setup(c => c.UserId).Returns((int?)null);
+            mock.Setup(c => c.IsAuthenticated).Returns(false);
+            return mock;
+        }
+
         [Fact]
         public async Task Handle_Should_Add_ReadSensor_When_Sensor_Exists()
         {
@@ -26,7 +43,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Reads
             mockReadSensors.Setup(c => c.InsertOneAsync(It.IsAny<ReadSensor>(), It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
 
-            var handler = new CreateReadHandler(mockDbContext.Object);
+            var handler = new CreateReadHandler(mockDbContext.Object, AuthenticatedUser(1).Object);
             var request = new CreateReadRequest { Code = "SENSOR-1", Value = 512 };
 
             var result = await handler.Handle(request, CancellationToken.None);
@@ -47,7 +64,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Reads
             MongoMockHelper.SetupFind<Sensor>(mockSensors, null);
             mockDbContext.Setup(c => c.Sensors).Returns(mockSensors.Object);
 
-            var handler = new CreateReadHandler(mockDbContext.Object);
+            var handler = new CreateReadHandler(mockDbContext.Object, AuthenticatedUser(1).Object);
             var request = new CreateReadRequest { Code = "NOT-FOUND", Value = 10m };
 
             await Assert.ThrowsAsync<KeyNotFoundException>(() => handler.Handle(request, CancellationToken.None));
@@ -68,7 +85,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Reads
             mockReadSensors.Setup(c => c.InsertOneAsync(It.IsAny<ReadSensor>(), It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
 
-            var handler = new CreateReadHandler(mockDbContext.Object);
+            var handler = new CreateReadHandler(mockDbContext.Object, AuthenticatedUser(1).Object);
             var request = new CreateReadRequest { Code = "SENSOR-1", Value = 512 };
 
             var result = await handler.Handle(request, CancellationToken.None);
@@ -94,7 +111,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Reads
             mockReadSensors.Setup(c => c.InsertOneAsync(It.IsAny<ReadSensor>(), It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
 
-            var handler = new CreateReadHandler(mockDbContext.Object);
+            var handler = new CreateReadHandler(mockDbContext.Object, AuthenticatedUser(5).Object);
             var request = new CreateReadRequest { Code = "SENSOR-1", Value = 512 };
 
             var result = await handler.Handle(request, CancellationToken.None);
@@ -103,6 +120,33 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Reads
             mockReadSensors.Verify(c => c.InsertOneAsync(
                 It.Is<ReadSensor>(rs => rs.UserId == 5),
                 It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task Handle_Should_Throw_UnauthorizedAccessException_When_Unauthenticated()
+        {
+            var mockDbContext = new Mock<agpDBContext>();
+
+            var handler = new CreateReadHandler(mockDbContext.Object, AnonymousUser().Object);
+            var request = new CreateReadRequest { Code = "SENSOR-1", Value = 10m };
+
+            await Assert.ThrowsAsync<UnauthorizedAccessException>(() => handler.Handle(request, CancellationToken.None));
+        }
+
+        [Fact]
+        public async Task Handle_Should_Throw_UnauthorizedAccessException_When_Sensor_Belongs_To_Different_User()
+        {
+            var mockDbContext = new Mock<agpDBContext>();
+            var mockSensors = new Mock<IMongoCollection<Sensor>>();
+
+            var sensor = new Sensor { Id = 1, Code = "SENSOR-1", UserId = 7 };
+            MongoMockHelper.SetupFind(mockSensors, sensor);
+            mockDbContext.Setup(c => c.Sensors).Returns(mockSensors.Object);
+
+            var handler = new CreateReadHandler(mockDbContext.Object, AuthenticatedUser(99).Object);
+            var request = new CreateReadRequest { Code = "SENSOR-1", Value = 10m };
+
+            await Assert.ThrowsAsync<UnauthorizedAccessException>(() => handler.Handle(request, CancellationToken.None));
         }
     }
 }
