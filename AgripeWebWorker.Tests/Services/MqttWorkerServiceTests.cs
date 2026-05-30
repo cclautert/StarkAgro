@@ -126,17 +126,23 @@ namespace AgripeWebWorker.Tests.Services
                 Password = "s3cr3t"
             };
 
+            MqttClientOptions? capturedOptions = null;
+            _mockMqttClient
+                .Setup(c => c.ConnectAsync(It.IsAny<MqttClientOptions>(), It.IsAny<CancellationToken>()))
+                .Callback<MqttClientOptions, CancellationToken>((opts, _) => capturedOptions = opts)
+                .ReturnsAsync(new MqttClientConnectResult());
+
             var options = Options.Create(settingsWithCreds);
             var service = new MqttWorkerService(_mockServiceProvider.Object, options, _mockLogger.Object, _mockMqttClient.Object);
 
             var cts = new CancellationTokenSource();
             cts.CancelAfter(TimeSpan.FromSeconds(2));
-            try { await service.StartAsync(cts.Token); await Task.Delay(100); }
+            try { await service.StartAsync(cts.Token); await Task.Delay(200); }
             catch (OperationCanceledException) { }
 
-            _mockMqttClient.Verify(c => c.ConnectAsync(
-                It.Is<MqttClientOptions>(o => o.Credentials != null && o.Credentials.GetUserName(o) == "iot_device"),
-                It.IsAny<CancellationToken>()), Times.AtLeastOnce);
+            Assert.NotNull(capturedOptions);
+            Assert.NotNull(capturedOptions!.Credentials);
+            Assert.Equal("iot_device", capturedOptions.Credentials.GetUserName(capturedOptions));
 
             cts.Dispose();
             service.Dispose();
