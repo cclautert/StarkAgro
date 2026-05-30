@@ -5,10 +5,13 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
+import { MatBadgeModule } from '@angular/material/badge';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { filter, map, Observable, shareReplay } from 'rxjs';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { IdleTimeoutService } from '../../services/idle-timeout.service';
+import { AlertService } from '../../services/alert.service';
+import { UserAlert } from '../../models/alert.model';
 
 @Component({
   selector: 'app-layout',
@@ -20,6 +23,7 @@ import { IdleTimeoutService } from '../../services/idle-timeout.service';
     MatButtonModule,
     MatIconModule,
     MatListModule,
+    MatBadgeModule,
     RouterModule
   ],
   templateUrl: './layout.component.html',
@@ -27,24 +31,32 @@ import { IdleTimeoutService } from '../../services/idle-timeout.service';
 })
 export class LayoutComponent implements OnInit, OnDestroy {
   showLayout: boolean = false;
+  alertPanelOpen = false;
+
   @ViewChild('sidenav') sidenav!: MatSidenav;
 
   isSmallScreen$!: Observable<boolean>;
+  alerts$: Observable<UserAlert[]>;
+  loading$: Observable<boolean>;
+  error$: Observable<boolean>;
 
   constructor(
     private router: Router,
     private breakpointObserver: BreakpointObserver,
-    private idleTimeoutService: IdleTimeoutService
+    private idleTimeoutService: IdleTimeoutService,
+    public alertService: AlertService
   ) {
     this.isSmallScreen$ = this.breakpointObserver.observe(Breakpoints.Handset)
       .pipe(
         map(result => result.matches),
         shareReplay()
       );
+    this.alerts$ = this.alertService.alerts$;
+    this.loading$ = this.alertService.loading$;
+    this.error$ = this.alertService.error$;
   }
 
   ngOnInit(): void {
-    // Set initial state from current URL so menu shows on first load (e.g. /home)
     const url = this.router.url.replace(/^\//, '') || '';
     this.showLayout = !url.startsWith('login');
 
@@ -55,18 +67,46 @@ export class LayoutComponent implements OnInit, OnDestroy {
         this.showLayout = !isLogin;
         if (!isLogin) {
           this.idleTimeoutService.start();
+          this.alertService.startPolling();
         } else {
           this.idleTimeoutService.stop();
+          this.alertService.stopPolling();
         }
       });
 
     if (this.showLayout) {
       this.idleTimeoutService.start();
+      this.alertService.startPolling();
     }
   }
 
   ngOnDestroy(): void {
     this.idleTimeoutService.stop();
+    this.alertService.stopPolling();
+  }
+
+  toggleAlertPanel(): void {
+    this.alertPanelOpen = !this.alertPanelOpen;
+    if (this.alertPanelOpen) {
+      this.alertService.markAllRead();
+    }
+  }
+
+  closeAlertPanel(): void {
+    this.alertPanelOpen = false;
+  }
+
+  refreshAlerts(event: MouseEvent): void {
+    event.stopPropagation();
+    this.alertService.refresh();
+  }
+
+  alertTypeLabel(type: string): string {
+    const labels: Record<string, string> = {
+      MoistureLow: 'Umidade baixa',
+      AnomalyPersisted: 'Anomalia persistente'
+    };
+    return labels[type] ?? type;
   }
 
   logout(): void {
