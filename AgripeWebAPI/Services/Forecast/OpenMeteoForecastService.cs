@@ -1,10 +1,14 @@
 using AgripeWebAPI.Models;
+using AgripeWebAPI.Models.Interfaces;
 using System.Globalization;
 using System.Text.Json;
 
 namespace AgripeWebAPI.Services.Forecast
 {
-    public class OpenMeteoForecastService
+    /// <summary>Temperature + solar radiation snapshot used for ET0 calculation.</summary>
+    public record AgricultureWeatherData(double TempMax, double TempMin, double ShortwaveRadiationMJm2);
+
+    public class OpenMeteoForecastService : IAgricultureWeatherService
     {
         public const string SourceName = "OpenMeteo";
 
@@ -82,6 +86,50 @@ namespace AgripeWebAPI.Services.Forecast
                 ProbabilityOfPrecipitation = avgProbability,
                 IsAvailable = true
             };
+        }
+
+        /// <summary>
+        /// Fetches daily temperature max/min and shortwave radiation for the next
+        /// <paramref name="days"/> days. Used by the moisture-prediction algorithm to
+        /// compute ET0 (Hargreaves simplified). Returns null when the request fails.
+        /// </summary>
+        public async Task<AgricultureWeatherData?> GetAgricultureDataAsync(
+            double latitude, double longitude, int days, CancellationToken cancellationToken)
+        {
+            var path = $"v1/forecast?latitude={latitude.ToString(CultureInfo.InvariantCulture)}" +
+                       $"&longitude={longitude.ToString(CultureInfo.InvariantCulture)}" +
+                       $"&daily=temperature_2m_max,temperature_2m_min,shortwave_radiation_sum" +
+                       $"&forecast_days={days}&timezone=UTC";
+
+            try
+            {
+                using var response = await _httpClient.GetAsync(path, cancellationToken);
+                response.EnsureSuccessStatusCode();
+
+                await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
+                using var doc = await JsonDocument.ParseAsync(stream, cancellationToken: cancellationToken);
+
+                if (!doc.RootElement.TryGetProperty("daily", out var daily))
+                    return null;
+
+                static double FirstNumericOrZero(JsonElement el, string key)
+                {
+                    if (!el.TryGetProperty(key, out var arr)) return 0;
+                    var first = arr.EnumerateArray().FirstOrDefault();
+                    return first.ValueKind == JsonValueKind.Number ? first.GetDouble() : 0;
+                }
+
+                var tMax = FirstNumericOrZero(daily, "temperature_2m_max");
+                var tMin = FirstNumericOrZero(daily, "temperature_2m_min");
+                var rad = FirstNumericOrZero(daily, "shortwave_radiation_sum");
+
+                return new AgricultureWeatherData(tMax, tMin, rad);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "OpenMeteo agriculture data unavailable for {Lat},{Lon}", latitude, longitude);
+                return null;
+            }
         }
     }
 }
