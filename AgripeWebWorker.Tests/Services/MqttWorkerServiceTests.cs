@@ -24,6 +24,7 @@ namespace AgripeWebWorker.Tests.Services
 
         private Func<MqttApplicationMessageReceivedEventArgs, Task>? _capturedMessageHandler;
         private Func<MqttClientDisconnectedEventArgs, Task>? _capturedDisconnectedHandler;
+        private bool _subscribeAsyncCalled;
 
         public MqttWorkerServiceTests()
         {
@@ -56,6 +57,7 @@ namespace AgripeWebWorker.Tests.Services
             // SubscribeAsync should complete immediately - result is not inspected by the service
             _mockMqttClient
                 .Setup(c => c.SubscribeAsync(It.IsAny<MqttClientSubscribeOptions>(), It.IsAny<CancellationToken>()))
+                .Callback(() => _subscribeAsyncCalled = true)
                 .ReturnsAsync((MqttClientSubscribeResult)null!);
 
             var options = Options.Create(_mqttSettings);
@@ -165,9 +167,7 @@ namespace AgripeWebWorker.Tests.Services
         {
             await StartServiceAndCapture();
 
-            _mockMqttClient.Verify(c => c.SubscribeAsync(
-                It.IsAny<MqttClientSubscribeOptions>(),
-                It.IsAny<CancellationToken>()), Times.AtLeastOnce);
+            Assert.True(_subscribeAsyncCalled);
         }
 
         [Fact]
