@@ -232,10 +232,18 @@
         <span class="ai-icon">🤖</span>
         <span>Insights IA</span>
       </div>
-      <button class="btn-ai-analyze" (click)="loadAIInsights()" [disabled]="aiInsightsLoading">
-        <span *ngIf="!aiInsightsLoading">Analisar com IA</span>
-        <span *ngIf="aiInsightsLoading">Analisando...</span>
-      </button>
+      <div class="ai-panel-actions">
+        <button class="btn-ai-analyze" (click)="loadAIInsights()" [disabled]="aiInsightsLoading">
+          <span *ngIf="!aiInsightsLoading">Analisar com IA</span>
+          <span *ngIf="aiInsightsLoading">Analisando...</span>
+        </button>
+        <button *ngIf="aiInsights && !aiInsightsLoading"
+                class="btn-ai-toggle"
+                (click)="toggleAiExpanded()"
+                [attr.aria-expanded]="aiExpanded">
+          {{ aiExpanded ? '▲ Recolher' : '▼ Expandir' }}
+        </button>
+      </div>
     </div>
 
     <div *ngIf="aiInsightsLoading" class="ai-loading">
@@ -253,7 +261,7 @@
         </span>
         <span *ngIf="aiFromCache" class="ai-cache-badge">cache</span>
       </div>
-      <div class="ai-text">{{ aiInsights }}</div>
+      <div class="ai-text" [innerHTML]="aiInsightsHtml"></div>
     </div>
   </div>
 
