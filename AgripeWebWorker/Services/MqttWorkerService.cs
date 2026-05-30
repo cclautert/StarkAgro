@@ -127,11 +127,15 @@ namespace AgripeWebWorker.Services
 
         private async Task ConnectAsync(CancellationToken cancellationToken)
         {
-            var options = new MqttClientOptionsBuilder()
+            var optionsBuilder = new MqttClientOptionsBuilder()
                 .WithTcpServer(_mqttSettings.Host, _mqttSettings.Port)
                 .WithClientId(_mqttSettings.ClientId)
-                .WithCleanSession()
-                .Build();
+                .WithCleanSession();
+
+            if (!string.IsNullOrEmpty(_mqttSettings.Username))
+                optionsBuilder = optionsBuilder.WithCredentials(_mqttSettings.Username, _mqttSettings.Password);
+
+            var options = optionsBuilder.Build();
 
             _logger.LogInformation("Connecting to MQTT broker at {Host}:{Port}...", _mqttSettings.Host, _mqttSettings.Port);
 
