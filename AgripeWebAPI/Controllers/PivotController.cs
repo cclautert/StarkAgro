@@ -122,6 +122,7 @@ namespace AgripeWebAPI.Controllers
         public async Task<IActionResult> GetAnomalies(
             [FromServices] IMediator mediator,
             int pivotId,
+            [FromQuery] bool? acknowledged = null,
             [FromQuery] int pageSize = 20,
             [FromQuery] int pageIndex = 0,
             CancellationToken cancellationToken = default
@@ -131,6 +132,7 @@ namespace AgripeWebAPI.Controllers
             {
                 PivotId = pivotId,
                 UserId = GetCurrentUserId(),
+                AcknowledgedOnly = acknowledged,
                 PageSize = pageSize,
                 PageIndex = pageIndex
             };

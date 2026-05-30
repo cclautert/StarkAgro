@@ -142,5 +142,51 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Anomalies
             Assert.Empty(result);
             Assert.True(_notifier.HasNotification());
         }
+
+        [Fact]
+        public async Task Handle_AcknowledgedOnlyFilter_ShouldPassThroughFilter()
+        {
+            var pivot = new Pivot { Id = 1, UserId = 42, Name = "P1" };
+            var sensors = new List<Sensor> { new Sensor { Id = 10, PivoId = 1, UserId = 42 } };
+            var acknowledged = new List<SensorAnomaly>
+            {
+                new SensorAnomaly
+                {
+                    Id = 1, SensorId = 10, UserId = 42, ReadSensorId = 1,
+                    Value = 999m, ExpectedMin = 40m, ExpectedMax = 60m,
+                    Date = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    Acknowledged = true
+                }
+            };
+
+            MongoMockHelper.SetupFind(_mockPivots, pivot);
+            MongoMockHelper.SetupFindList(_mockSensors, sensors);
+            MongoMockHelper.SetupFindList(_mockSensorAnomalies, acknowledged);
+
+            var request = new GetPivotAnomaliesRequest { PivotId = 1, UserId = 42, AcknowledgedOnly = true };
+
+            var result = await _handler.Handle(request, CancellationToken.None);
+
+            Assert.Single(result);
+            Assert.True(result[0].Acknowledged);
+        }
+
+        [Fact]
+        public async Task Handle_NoAcknowledgedFilter_ShouldQueryAllAnomalies()
+        {
+            var pivot = new Pivot { Id = 1, UserId = 42, Name = "P1" };
+            var sensors = new List<Sensor> { new Sensor { Id = 10, PivoId = 1, UserId = 42 } };
+
+            MongoMockHelper.SetupFind(_mockPivots, pivot);
+            MongoMockHelper.SetupFindList(_mockSensors, sensors);
+            MongoMockHelper.SetupFindList(_mockSensorAnomalies, new List<SensorAnomaly>());
+
+            var request = new GetPivotAnomaliesRequest { PivotId = 1, UserId = 42, AcknowledgedOnly = null };
+
+            var result = await _handler.Handle(request, CancellationToken.None);
+
+            Assert.Empty(result);
+            Assert.False(_notifier.HasNotification());
+        }
     }
 }

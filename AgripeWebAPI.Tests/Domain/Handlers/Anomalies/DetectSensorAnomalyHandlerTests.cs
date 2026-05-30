@@ -2,9 +2,9 @@ using AgripeWebAPI.Domain.Commands.Requests.Anomalies;
 using AgripeWebAPI.Domain.Handlers.Anomalies;
 using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Entities;
+using AgripeWebAPI.Services;
 using AgripeWebAPI.Tests.Helpers;
 using MediatR;
-using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using Moq;
 
@@ -13,208 +13,98 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Anomalies
     public class DetectSensorAnomalyHandlerTests
     {
         private readonly Mock<agpDBContext> _mockDbContext;
+        private readonly Mock<IMongoCollection<Sensor>> _mockSensors;
         private readonly Mock<IMongoCollection<ReadSensor>> _mockReadSensors;
-        private readonly Mock<IMongoCollection<SensorAnomaly>> _mockSensorAnomalies;
-        private readonly Mock<ILogger<DetectSensorAnomalyHandler>> _mockLogger;
+        private readonly Mock<ISensorAnomalyService> _mockAnomalyService;
         private readonly DetectSensorAnomalyHandler _handler;
 
         public DetectSensorAnomalyHandlerTests()
         {
             _mockDbContext = new Mock<agpDBContext>();
+            _mockSensors = new Mock<IMongoCollection<Sensor>>();
             _mockReadSensors = new Mock<IMongoCollection<ReadSensor>>();
-            _mockSensorAnomalies = new Mock<IMongoCollection<SensorAnomaly>>();
-            _mockLogger = new Mock<ILogger<DetectSensorAnomalyHandler>>();
+            _mockAnomalyService = new Mock<ISensorAnomalyService>();
 
+            _mockDbContext.Setup(db => db.Sensors).Returns(_mockSensors.Object);
             _mockDbContext.Setup(db => db.ReadSensors).Returns(_mockReadSensors.Object);
-            _mockDbContext.Setup(db => db.SensorAnomalies).Returns(_mockSensorAnomalies.Object);
-            _mockDbContext.Setup(db => db.GetNextIdAsync("SensorAnomaly", It.IsAny<CancellationToken>()))
-                .ReturnsAsync(1);
 
-            _mockReadSensors
-                .Setup(c => c.UpdateOneAsync(
-                    It.IsAny<FilterDefinition<ReadSensor>>(),
-                    It.IsAny<UpdateDefinition<ReadSensor>>(),
-                    It.IsAny<UpdateOptions>(),
+            _mockAnomalyService
+                .Setup(s => s.DetectAndSaveAsync(
+                    It.IsAny<ReadSensor>(),
+                    It.IsAny<int>(),
+                    It.IsAny<IReadOnlyList<ReadSensor>>(),
                     It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new UpdateResult.Acknowledged(1, 1, null));
+                .ReturnsAsync(false);
 
-            _mockSensorAnomalies
-                .Setup(c => c.InsertOneAsync(It.IsAny<SensorAnomaly>(), It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()))
-                .Returns(Task.CompletedTask);
-
-            _handler = new DetectSensorAnomalyHandler(_mockDbContext.Object, _mockLogger.Object);
+            _handler = new DetectSensorAnomalyHandler(_mockDbContext.Object, _mockAnomalyService.Object);
         }
 
-        private static List<ReadSensor> BuildBaselineReadings(int count, decimal baseValue = 50m, decimal spread = 5m)
+        private static List<ReadSensor> BuildBaselineReadings(int count, decimal baseValue = 50m)
         {
-            var readings = new List<ReadSensor>();
-            var rng = new Random(42);
-            for (int i = 0; i < count; i++)
+            return Enumerable.Range(0, count).Select(i => new ReadSensor
             {
-                readings.Add(new ReadSensor
-                {
-                    Id = 1000 + i,
-                    SensorId = 1,
-                    UserId = 10,
-                    Value = baseValue + (decimal)(rng.NextDouble() * (double)spread * 2 - (double)spread),
-                    Date = DateTime.UtcNow.AddMinutes(-i),
-                    IsAnomaly = false
-                });
-            }
-            return readings;
+                Id = 1000 + i, SensorId = 1, UserId = 10, Value = baseValue, Date = DateTime.UtcNow.AddMinutes(-i)
+            }).ToList();
         }
 
         [Fact]
-        public async Task Handle_InsufficientBaseline_ShouldReturnWithoutDetecting()
+        public async Task Handle_SensorNotFound_ShouldReturnWithoutCallingService()
         {
+            MongoMockHelper.SetupFind<Sensor>(_mockSensors, null);
+
+            var request = new DetectSensorAnomalyRequest
+            {
+                ReadSensorId = 999, SensorId = 1, UserId = 10, Value = 99m
+            };
+
+            var result = await _handler.Handle(request, CancellationToken.None);
+
+            Assert.Equal(Unit.Value, result);
+            _mockAnomalyService.Verify(s => s.DetectAndSaveAsync(
+                It.IsAny<ReadSensor>(), It.IsAny<int>(), It.IsAny<IReadOnlyList<ReadSensor>>(), It.IsAny<CancellationToken>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task Handle_ValidSensor_ShouldFetchBaselineAndCallService()
+        {
+            var sensor = new Sensor { Id = 1, PivoId = 5, UserId = 10 };
+            MongoMockHelper.SetupFind(_mockSensors, sensor);
+            MongoMockHelper.SetupFindList(_mockReadSensors, BuildBaselineReadings(20));
+
+            var request = new DetectSensorAnomalyRequest
+            {
+                ReadSensorId = 999, SensorId = 1, UserId = 10, Value = 50m
+            };
+
+            var result = await _handler.Handle(request, CancellationToken.None);
+
+            Assert.Equal(Unit.Value, result);
+            _mockAnomalyService.Verify(s => s.DetectAndSaveAsync(
+                It.Is<ReadSensor>(r => r.Id == 999 && r.SensorId == 1 && r.UserId == 10 && r.Value == 50m),
+                5,
+                It.IsAny<IReadOnlyList<ReadSensor>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task Handle_ValidSensor_ShouldPassPivotIdToService()
+        {
+            var sensor = new Sensor { Id = 1, PivoId = 42, UserId = 10 };
+            MongoMockHelper.SetupFind(_mockSensors, sensor);
             MongoMockHelper.SetupFindList(_mockReadSensors, BuildBaselineReadings(5));
 
             var request = new DetectSensorAnomalyRequest
             {
-                ReadSensorId = 999,
-                SensorId = 1,
-                UserId = 10,
-                Value = 999m
-            };
-
-            var result = await _handler.Handle(request, CancellationToken.None);
-
-            Assert.Equal(Unit.Value, result);
-            _mockSensorAnomalies.Verify(c => c.InsertOneAsync(
-                It.IsAny<SensorAnomaly>(), It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()), Times.Never);
-        }
-
-        [Fact]
-        public async Task Handle_ValueWithinRange_ShouldNotSaveAnomaly()
-        {
-            MongoMockHelper.SetupFindList(_mockReadSensors, BuildBaselineReadings(20, baseValue: 50m, spread: 2m));
-
-            var request = new DetectSensorAnomalyRequest
-            {
-                ReadSensorId = 999,
-                SensorId = 1,
-                UserId = 10,
-                Value = 51m
-            };
-
-            var result = await _handler.Handle(request, CancellationToken.None);
-
-            Assert.Equal(Unit.Value, result);
-            _mockSensorAnomalies.Verify(c => c.InsertOneAsync(
-                It.IsAny<SensorAnomaly>(), It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()), Times.Never);
-        }
-
-        [Fact]
-        public async Task Handle_ValueFarOutsideRange_ShouldSaveAnomaly()
-        {
-            MongoMockHelper.SetupFindList(_mockReadSensors, BuildBaselineReadings(20, baseValue: 50m, spread: 2m));
-
-            var request = new DetectSensorAnomalyRequest
-            {
-                ReadSensorId = 999,
-                SensorId = 1,
-                UserId = 10,
-                Value = 150m
-            };
-
-            var result = await _handler.Handle(request, CancellationToken.None);
-
-            Assert.Equal(Unit.Value, result);
-            _mockSensorAnomalies.Verify(c => c.InsertOneAsync(
-                It.Is<SensorAnomaly>(a =>
-                    a.SensorId == 1 &&
-                    a.UserId == 10 &&
-                    a.ReadSensorId == 999 &&
-                    a.Value == 150m &&
-                    !a.Acknowledged),
-                It.IsAny<InsertOneOptions>(),
-                It.IsAny<CancellationToken>()), Times.Once);
-        }
-
-        [Fact]
-        public async Task Handle_AnomalyDetected_ShouldMarkReadSensorAsAnomaly()
-        {
-            MongoMockHelper.SetupFindList(_mockReadSensors, BuildBaselineReadings(20, baseValue: 50m, spread: 2m));
-
-            var request = new DetectSensorAnomalyRequest
-            {
-                ReadSensorId = 999,
-                SensorId = 1,
-                UserId = 10,
-                Value = 150m
+                ReadSensorId = 1, SensorId = 1, UserId = 10, Value = 50m
             };
 
             await _handler.Handle(request, CancellationToken.None);
 
-            _mockReadSensors.Verify(c => c.UpdateOneAsync(
-                It.IsAny<FilterDefinition<ReadSensor>>(),
-                It.IsAny<UpdateDefinition<ReadSensor>>(),
-                It.IsAny<UpdateOptions>(),
+            _mockAnomalyService.Verify(s => s.DetectAndSaveAsync(
+                It.IsAny<ReadSensor>(),
+                42,
+                It.IsAny<IReadOnlyList<ReadSensor>>(),
                 It.IsAny<CancellationToken>()), Times.Once);
-        }
-
-        [Fact]
-        public async Task Handle_AnomalyDetected_ShouldCallGetNextIdAsync()
-        {
-            MongoMockHelper.SetupFindList(_mockReadSensors, BuildBaselineReadings(20, baseValue: 50m, spread: 2m));
-
-            var request = new DetectSensorAnomalyRequest
-            {
-                ReadSensorId = 999,
-                SensorId = 1,
-                UserId = 10,
-                Value = 150m
-            };
-
-            await _handler.Handle(request, CancellationToken.None);
-
-            _mockDbContext.Verify(db => db.GetNextIdAsync("SensorAnomaly", It.IsAny<CancellationToken>()), Times.Once);
-        }
-
-        [Fact]
-        public async Task Handle_AnomalyDetected_ShouldSetExpectedRangeBounds()
-        {
-            MongoMockHelper.SetupFindList(_mockReadSensors, BuildBaselineReadings(20, baseValue: 50m, spread: 2m));
-
-            var request = new DetectSensorAnomalyRequest
-            {
-                ReadSensorId = 999,
-                SensorId = 1,
-                UserId = 10,
-                Value = 150m
-            };
-
-            await _handler.Handle(request, CancellationToken.None);
-
-            _mockSensorAnomalies.Verify(c => c.InsertOneAsync(
-                It.Is<SensorAnomaly>(a => a.ExpectedMin < a.ExpectedMax),
-                It.IsAny<InsertOneOptions>(),
-                It.IsAny<CancellationToken>()), Times.Once);
-        }
-
-        [Fact]
-        public async Task Handle_FlatDistribution_ShouldSkipDetection()
-        {
-            var flatReadings = Enumerable.Range(0, 20).Select(i => new ReadSensor
-            {
-                Id = 1000 + i, SensorId = 1, UserId = 10, Value = 50m, Date = DateTime.UtcNow.AddMinutes(-i), IsAnomaly = false
-            }).ToList();
-
-            MongoMockHelper.SetupFindList(_mockReadSensors, flatReadings);
-
-            var request = new DetectSensorAnomalyRequest
-            {
-                ReadSensorId = 999,
-                SensorId = 1,
-                UserId = 10,
-                Value = 9999m
-            };
-
-            var result = await _handler.Handle(request, CancellationToken.None);
-
-            Assert.Equal(Unit.Value, result);
-            _mockSensorAnomalies.Verify(c => c.InsertOneAsync(
-                It.IsAny<SensorAnomaly>(), It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()), Times.Never);
         }
     }
 }
