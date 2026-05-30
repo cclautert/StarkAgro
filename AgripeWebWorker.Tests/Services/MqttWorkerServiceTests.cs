@@ -24,7 +24,8 @@ namespace AgripeWebWorker.Tests.Services
 
         private Func<MqttApplicationMessageReceivedEventArgs, Task>? _capturedMessageHandler;
         private Func<MqttClientDisconnectedEventArgs, Task>? _capturedDisconnectedHandler;
-        private bool _subscribeAsyncCalled;
+        private readonly TaskCompletionSource _handlersRegisteredTcs = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        private readonly TaskCompletionSource _subscribeAsyncTcs = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
         public MqttWorkerServiceTests()
         {
@@ -47,7 +48,11 @@ namespace AgripeWebWorker.Tests.Services
 
             _mockMqttClient
                 .SetupAdd(c => c.DisconnectedAsync += It.IsAny<Func<MqttClientDisconnectedEventArgs, Task>>())
-                .Callback<Func<MqttClientDisconnectedEventArgs, Task>>(handler => _capturedDisconnectedHandler = handler);
+                .Callback<Func<MqttClientDisconnectedEventArgs, Task>>(handler =>
+                {
+                    _capturedDisconnectedHandler = handler;
+                    _handlersRegisteredTcs.TrySetResult();
+                });
 
             // ConnectAsync should complete immediately
             _mockMqttClient
@@ -57,7 +62,7 @@ namespace AgripeWebWorker.Tests.Services
             // SubscribeAsync should complete immediately - result is not inspected by the service
             _mockMqttClient
                 .Setup(c => c.SubscribeAsync(It.IsAny<MqttClientSubscribeOptions>(), It.IsAny<CancellationToken>()))
-                .Callback(() => _subscribeAsyncCalled = true)
+                .Callback(() => _subscribeAsyncTcs.TrySetResult())
                 .ReturnsAsync((MqttClientSubscribeResult)null!);
 
             var options = Options.Create(_mqttSettings);
@@ -70,14 +75,26 @@ namespace AgripeWebWorker.Tests.Services
             _service.Dispose();
         }
 
-        private async Task StartServiceAndCapture()
+        private async Task WaitForWorkerStartupAsync(TimeSpan timeout)
         {
-            _cts.CancelAfter(TimeSpan.FromSeconds(2));
+            await _handlersRegisteredTcs.Task.WaitAsync(timeout);
+            await _subscribeAsyncTcs.Task.WaitAsync(timeout);
+        }
+
+        private async Task StartServiceAndCapture(bool waitForStartup = true)
+        {
+            _cts.CancelAfter(TimeSpan.FromSeconds(15));
             try
             {
                 await _service.StartAsync(_cts.Token);
-                // Give ExecuteAsync a moment to wire up handlers
-                await Task.Delay(100);
+                if (waitForStartup)
+                {
+                    await WaitForWorkerStartupAsync(TimeSpan.FromSeconds(5));
+                }
+                else
+                {
+                    await Task.Delay(100);
+                }
             }
             catch (OperationCanceledException) { }
         }
@@ -136,8 +153,13 @@ namespace AgripeWebWorker.Tests.Services
             var service = new MqttWorkerService(_mockServiceProvider.Object, options, _mockLogger.Object, _mockMqttClient.Object);
 
             var cts = new CancellationTokenSource();
-            cts.CancelAfter(TimeSpan.FromSeconds(2));
-            try { await service.StartAsync(cts.Token); await Task.Delay(200); }
+            cts.CancelAfter(TimeSpan.FromSeconds(10));
+            try
+            {
+                await service.StartAsync(cts.Token);
+                await _handlersRegisteredTcs.Task.WaitAsync(TimeSpan.FromSeconds(5));
+                await _subscribeAsyncTcs.Task.WaitAsync(TimeSpan.FromSeconds(5));
+            }
             catch (OperationCanceledException) { }
 
             Assert.NotNull(capturedOptions);
@@ -173,7 +195,9 @@ namespace AgripeWebWorker.Tests.Services
         {
             await StartServiceAndCapture();
 
-            Assert.True(_subscribeAsyncCalled);
+            _mockMqttClient.Verify(c => c.SubscribeAsync(
+                It.IsAny<MqttClientSubscribeOptions>(),
+                It.IsAny<CancellationToken>()), Times.AtLeastOnce);
         }
 
         [Fact]
@@ -306,7 +330,7 @@ namespace AgripeWebWorker.Tests.Services
             try
             {
                 await service.StartAsync(nonCancelledCts.Token);
-                await Task.Delay(100);
+                await _handlersRegisteredTcs.Task.WaitAsync(TimeSpan.FromSeconds(5));
 
                 Assert.NotNull(_capturedDisconnectedHandler);
                 try
@@ -327,7 +351,7 @@ namespace AgripeWebWorker.Tests.Services
         {
             _cts.Cancel();
 
-            await StartServiceAndCapture();
+            await StartServiceAndCapture(waitForStartup: false);
 
             if (_capturedDisconnectedHandler != null)
             {
