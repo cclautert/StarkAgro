@@ -34,10 +34,8 @@ jobs:
             cd "${{ secrets.VPS_DEPLOY_PATH }}"
             git fetch origin main
             git reset --hard origin/main
-            docker compose -f docker/docker-compose.yml build agripewebapi agripewebui agripwebworker
-            docker compose -f docker/docker-compose.yml up -d db mqtt agripewebapi agripewebui agripwebworker
-            docker image prune -f
-            docker compose -f docker/docker-compose.yml ps
+            chmod +x scripts/deploy-hostinger-remote.sh
+            ./scripts/deploy-hostinger-remote.sh .
 
       - name: Health check
         uses: appleboy/ssh-action@v1.2.0
