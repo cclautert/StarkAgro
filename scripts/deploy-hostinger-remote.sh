@@ -5,6 +5,16 @@ set -euo pipefail
 ROOT="${1:-.}"
 cd "$ROOT"
 
+if [[ ! -d AgripeWebUI && -d agripeweb/AgripeWebUI ]]; then
+  echo "Detected nested clone; switching to agripeweb/"
+  cd agripeweb
+fi
+
+if [[ ! -d AgripeWebUI && -d /opt/agripeweb/AgripeWebUI ]]; then
+  echo "Detected repo at /opt/agripeweb"
+  cd /opt/agripeweb
+fi
+
 for dir in AgripeWebUI AgripeWebAPI AgripeWebWorker docker; do
   if [[ ! -d "$dir" ]]; then
     echo "WARN: missing $dir — restoring tracked files from git"

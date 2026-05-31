@@ -39,6 +39,9 @@ jobs:
           script: |
             set -euo pipefail
             cd "${{ secrets.VPS_DEPLOY_PATH }}"
+            if [[ ! -d AgripeWebUI && -d /opt/agripeweb/AgripeWebUI ]]; then
+              cd /opt/agripeweb
+            fi
             if [[ -d .env ]]; then rm -rf .env; fi
             if [[ ! -f .env ]]; then
               if [[ -x scripts/bootstrap-vps-env-from-secrets.sh ]]; then
