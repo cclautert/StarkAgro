@@ -5,6 +5,15 @@ set -euo pipefail
 ROOT="${1:-.}"
 cd "$ROOT"
 
+if [[ ! -d AgripeWebUI && -d /opt/agripeweb/AgripeWebUI ]]; then
+  echo "Detected repo at /opt/agripeweb"
+  if [[ -f .env && ! -f /opt/agripeweb/.env ]]; then
+    echo "Moving .env into /opt/agripeweb"
+    mv .env /opt/agripeweb/.env
+  fi
+  cd /opt/agripeweb
+fi
+
 if [[ -d .env ]]; then
   echo "Removing invalid .env directory (Docker bind-mount artifact)"
   rm -rf .env

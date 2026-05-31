@@ -40,6 +40,9 @@ jobs:
             set -euo pipefail
             cd "${{ secrets.VPS_DEPLOY_PATH }}"
             if [[ ! -d AgripeWebUI && -d /opt/agripeweb/AgripeWebUI ]]; then
+              if [[ -f .env && ! -f /opt/agripeweb/.env ]]; then
+                mv .env /opt/agripeweb/.env
+              fi
               cd /opt/agripeweb
             fi
             if [[ -d .env ]]; then rm -rf .env; fi
