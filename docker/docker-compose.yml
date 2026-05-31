@@ -8,7 +8,7 @@ services:
   agripewebapi:
     container_name: agripewebapi
     build:
-      context: ..
+      context: .
       dockerfile: AgripeWebAPI/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
@@ -29,7 +29,7 @@ services:
   agripewebui:
     container_name: agripewebui
     build:
-      context: ../AgripeWebUI
+      context: ./AgripeWebUI
       dockerfile: Dockerfile
     environment:
       - API_BASE_URL=http://agripewebapi:8080
@@ -41,7 +41,7 @@ services:
   agripewebui-mobile:
     container_name: agripewebui-mobile
     build:
-      context: ../AgripeWebUI-Mobile
+      context: ./AgripeWebUI-Mobile
       dockerfile: Dockerfile
       args:
         - EXPO_PUBLIC_API_BASE_URL=/api/v1/
@@ -82,7 +82,7 @@ services:
   agripwebworker:
     container_name: agripwebworker
     build:
-      context: ..
+      context: .
       dockerfile: AgripeWebWorker/Dockerfile
     environment:
       - MongoDb__ConnectionString=mongodb://db:27017
