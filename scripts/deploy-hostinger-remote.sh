@@ -31,7 +31,18 @@ if ((${#missing[@]} > 0)); then
   exit 1
 fi
 
-if [[ ! -f "$PASSWD_FILE" ]]; then
+if [[ -d "$PASSWD_FILE" ]]; then
+  echo "Removing invalid passwd directory at $PASSWD_FILE (Docker bind-mount artifact)"
+  rm -rf "$PASSWD_FILE"
+fi
+
+if [[ -f "$PASSWD_FILE" ]]; then
+  echo "Updating Mosquitto passwd at $PASSWD_FILE"
+  docker run --rm \
+    -v "$ROOT/docker/mosquitto:/mosquitto/config" \
+    eclipse-mosquitto:2 \
+    mosquitto_passwd -b "/mosquitto/config/passwd" "$MQTT_USERNAME" "$MQTT_PASSWORD"
+else
   echo "Generating Mosquitto passwd at $PASSWD_FILE"
   docker run --rm \
     -v "$ROOT/docker/mosquitto:/mosquitto/config" \
