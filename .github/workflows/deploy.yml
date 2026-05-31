@@ -39,101 +39,21 @@ jobs:
           script: |
             set -euo pipefail
             cd "${{ secrets.VPS_DEPLOY_PATH }}"
-
-            write_env_file() {
-              local jwt="$1" issuer="$2" audience="$3" gid="$4" gsec="$5" mqttu="$6" mqttp="$7"
-              umask 077
-              {
-                printf 'JWT_SECRET_KEY=%q\n' "$jwt"
-                printf 'JWT_ISSUER=%q\n' "$issuer"
-                printf 'JWT_AUDIENCE=%q\n' "$audience"
-                printf 'GOOGLE_CLIENT_ID=%q\n' "$gid"
-                printf 'GOOGLE_CLIENT_SECRET=%q\n' "$gsec"
-                printf 'MQTT_USERNAME=%q\n' "$mqttu"
-                printf 'MQTT_PASSWORD=%q\n' "$mqttp"
-              } > .env
-              chmod 600 .env
-            }
-
-            recover_env_from_containers() {
-              echo "Docker containers:"
-              docker ps -a --format 'table {{.Names}}\t{{.Status}}' || true
-
-              read_env_from_container() {
-                local container="$1"
-                local key="$2"
-                if docker ps --format '{{.Names}}' | grep -qx "$container"; then
-                  docker exec "$container" printenv "$key" 2>/dev/null || true
-                  return
-                fi
-                docker inspect -f '{{range .Config.Env}}{{println .}}{{end}}' "$container" 2>/dev/null \
-                  | sed -n "s/^${key}=//p" | head -1
-              }
-
-              if ! docker ps -a --format '{{.Names}}' | grep -qx agripewebapi; then
-                echo "WARN: agripewebapi container not found"
-                return 1
-              fi
-
-              echo "Recovering missing .env from container config"
-              local jwt gid gsec mqttu mqttp issuer audience
-              jwt="$(read_env_from_container agripewebapi JwtSettings__secretkey)"
-              issuer="$(read_env_from_container agripewebapi JwtSettings__issuer)"
-              audience="$(read_env_from_container agripewebapi JwtSettings__audience)"
-              gid="$(read_env_from_container agripewebapi OAuth__Google__ClientId)"
-              gsec="$(read_env_from_container agripewebapi OAuth__Google__ClientSecret)"
-              mqttu="$(read_env_from_container agripwebworker Mqtt__Username)"
-              mqttp="$(read_env_from_container agripwebworker Mqtt__Password)"
-
-              if [[ -z "$jwt$gid$gsec$mqttu$mqttp" ]]; then
-                echo "WARN: container env recovery incomplete"
-                return 1
-              fi
-
-              write_env_file "$jwt" "${issuer:-agripeweb.com}" "${audience:-https://agripeweb.com}" \
-                "$gid" "$gsec" "$mqttu" "$mqttp"
-              echo "Recovered .env from containers"
-            }
-
-            write_env_from_github_secrets() {
-              echo "Creating .env from GitHub Actions secrets"
-              local missing=()
-              for v in JWT_SECRET_KEY GOOGLE_CLIENT_ID GOOGLE_CLIENT_SECRET MQTT_USERNAME MQTT_PASSWORD; do
-                if [[ -z "${!v:-}" ]]; then
-                  missing+=("$v")
-                fi
-              done
-              if ((${#missing[@]} > 0)); then
-                echo "ERROR: GitHub secrets missing: ${missing[*]}" >&2
-                return 1
-              fi
-              write_env_file "$JWT_SECRET_KEY" "agripeweb.com" "https://agripeweb.com" \
-                "$GOOGLE_CLIENT_ID" "$GOOGLE_CLIENT_SECRET" "$MQTT_USERNAME" "$MQTT_PASSWORD"
-              echo "Created .env from GitHub Actions secrets"
-            }
-
+            if [[ -d .env ]]; then rm -rf .env; fi
             if [[ ! -f .env ]]; then
-              if [[ -x scripts/bootstrap-vps-env.sh ]]; then
-                ./scripts/bootstrap-vps-env.sh . || true
+              if [[ -x scripts/bootstrap-vps-env-from-secrets.sh ]]; then
+                scripts/bootstrap-vps-env-from-secrets.sh .
+              elif [[ -x scripts/bootstrap-vps-env.sh ]]; then
+                scripts/bootstrap-vps-env.sh . || true
               fi
-              if [[ ! -f .env ]]; then
-                recover_env_from_containers || true
-              fi
-              if [[ ! -f .env ]]; then
-                write_env_from_github_secrets
-              fi
-            else
-              echo ".env already present"
             fi
-
             git fetch origin main
             git reset --hard origin/main
-            chmod +x scripts/deploy-hostinger-remote.sh
-            if [[ -f scripts/bootstrap-vps-env.sh ]]; then
-              chmod +x scripts/bootstrap-vps-env.sh
-              ./scripts/bootstrap-vps-env.sh .
+            chmod +x scripts/bootstrap-vps-env.sh scripts/bootstrap-vps-env-from-secrets.sh scripts/vps-deploy-from-actions.sh scripts/deploy-hostinger-remote.sh
+            if [[ ! -f .env ]]; then
+              scripts/bootstrap-vps-env-from-secrets.sh .
             fi
-            ./scripts/deploy-hostinger-remote.sh .
+            scripts/vps-deploy-from-actions.sh .
 
       - name: Health check
         uses: appleboy/ssh-action@v1.2.0
