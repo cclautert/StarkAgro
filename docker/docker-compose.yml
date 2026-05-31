@@ -66,6 +66,9 @@ services:
   mqtt:
     image: eclipse-mosquitto:2
     container_name: agripeweb-mqtt
+    environment:
+      - MQTT_USERNAME=${MQTT_USERNAME}
+      - MQTT_PASSWORD=${MQTT_PASSWORD}
     volumes:
       - mosquitto-data:/mosquitto/data
       - ./docker/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
@@ -73,11 +76,11 @@ services:
     networks:
       - app-network
     healthcheck:
-      test: ["CMD-SHELL", "mosquitto_pub -h localhost -t healthcheck -m ping || exit 1"]
-      interval: 5s
+      test: ["CMD-SHELL", "mosquitto_sub -h localhost -u \"$$MQTT_USERNAME\" -P \"$$MQTT_PASSWORD\" -t '$$SYS/broker/uptime' -C 1 -W 3 || exit 1"]
+      interval: 10s
       timeout: 5s
-      retries: 5
-      start_period: 5s
+      retries: 6
+      start_period: 15s
 
   agripwebworker:
     container_name: agripwebworker
@@ -106,7 +109,7 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
       - certbot-webroot:/var/www/certbot:ro
       - letsencrypt-certs:/etc/letsencrypt:ro
     depends_on:
