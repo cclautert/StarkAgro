@@ -53,8 +53,8 @@ else
     mosquitto_passwd -b -c "/mosquitto/config/passwd" "$MQTT_USERNAME" "$MQTT_PASSWORD"
 fi
 
-COMPOSE=(docker compose --project-directory "$ROOT" -f "$ROOT/docker/docker-compose.yml")
-echo "Running compose from $ROOT"
+COMPOSE=(docker compose --project-directory . -f docker/docker-compose.yml)
+echo "Running compose from $(pwd)"
 "${COMPOSE[@]}" build agripewebapi agripewebui agripwebworker
 "${COMPOSE[@]}" up -d db mqtt agripewebapi agripewebui agripwebworker
 docker image prune -f
