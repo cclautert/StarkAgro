@@ -163,6 +163,7 @@ curl -fsS https://agripeweb.com/api/v1/health
 | Deploy falha no `docker build` (memória) | Considere fase 2 com GHCR (build no GitHub, `pull` na VPS) |
 | `agripeweb-mqtt exited (13)` / MQTT dependency failed | Confira `.env` na raiz (`JWT_*`, `MQTT_*`, Google OAuth) e `docker/mosquitto/passwd`; rode `./scripts/deploy-hostinger-remote.sh .` |
 | Warnings `JWT_SECRET_KEY` / `MQTT_*` variable is not set | `.env` ausente ou Compose sem `--project-directory .` — use o script de deploy |
+| `.env` perdido na VPS mas containers ainda rodando | `./scripts/bootstrap-vps-env.sh .` recria o arquivo a partir do env dos containers; depois `./scripts/deploy-hostinger-remote.sh .` |
 | OAuth não funciona após deploy | Confira `.env` na raiz do clone e reinicie só `agripewebapi` |
 | Health check 404 | Confirme nginx-proxy ativo e URL `/api/v1/health` |
 | `workflow_run` não dispara Deploy | Verifique se o workflow CI se chama exatamente `CI` e se o push foi em `main` |

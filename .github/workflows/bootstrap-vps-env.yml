@@ -1,0 +1,74 @@
+name: Bootstrap VPS .env
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: bootstrap-vps-env
+  cancel-in-progress: false
+
+jobs:
+  bootstrap-and-deploy:
+    name: Recover .env and deploy
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Bootstrap .env and deploy via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script_stop: true
+          script: |
+            set -euo pipefail
+            cd "${{ secrets.VPS_DEPLOY_PATH }}"
+
+            if [[ ! -f .env ]] && docker ps --format '{{.Names}}' | grep -qx agripewebapi; then
+              echo "Recovering missing .env from running containers"
+              container_env() { docker exec "$1" printenv "$2" 2>/dev/null || true; }
+              JWT_SECRET_KEY="$(container_env agripewebapi JwtSettings__secretkey)"
+              JWT_ISSUER="$(container_env agripewebapi JwtSettings__issuer)"
+              JWT_AUDIENCE="$(container_env agripewebapi JwtSettings__audience)"
+              GOOGLE_CLIENT_ID="$(container_env agripewebapi OAuth__Google__ClientId)"
+              GOOGLE_CLIENT_SECRET="$(container_env agripewebapi OAuth__Google__ClientSecret)"
+              MQTT_USERNAME="$(container_env agripwebworker Mqtt__Username)"
+              MQTT_PASSWORD="$(container_env agripwebworker Mqtt__Password)"
+              umask 077
+              {
+                printf 'JWT_SECRET_KEY=%q\n' "$JWT_SECRET_KEY"
+                printf 'JWT_ISSUER=%q\n' "${JWT_ISSUER:-agripeweb.com}"
+                printf 'JWT_AUDIENCE=%q\n' "${JWT_AUDIENCE:-https://agripeweb.com}"
+                printf 'GOOGLE_CLIENT_ID=%q\n' "$GOOGLE_CLIENT_ID"
+                printf 'GOOGLE_CLIENT_SECRET=%q\n' "$GOOGLE_CLIENT_SECRET"
+                printf 'MQTT_USERNAME=%q\n' "$MQTT_USERNAME"
+                printf 'MQTT_PASSWORD=%q\n' "$MQTT_PASSWORD"
+              } > .env
+              chmod 600 .env
+              echo "Recovered .env"
+            elif [[ -f .env ]]; then
+              echo ".env already present"
+            else
+              echo "ERROR: .env missing and agripewebapi not running" >&2
+              exit 1
+            fi
+
+            git fetch origin main
+            git reset --hard origin/main
+            chmod +x scripts/bootstrap-vps-env.sh scripts/deploy-hostinger-remote.sh 2>/dev/null || true
+            if [[ -x scripts/bootstrap-vps-env.sh ]]; then
+              ./scripts/bootstrap-vps-env.sh .
+            fi
+            ./scripts/deploy-hostinger-remote.sh .
+
+      - name: Health check
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script_stop: true
+          script: |
+            set -euo pipefail
+            sleep 15
+            curl -fsS https://agripeweb.com/api/v1/health
