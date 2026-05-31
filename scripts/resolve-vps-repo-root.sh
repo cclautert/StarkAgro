@@ -6,9 +6,10 @@ REQUIRED_DIRS=(AgripeWebUI AgripeWebAPI AgripeWebWorker docker)
 
 has_all_app_dirs() {
   local base="$1"
-  for d in "${REQUIRED_DIRS[@]}"; do
-    [[ -d "$base/$d" ]] || return 1
-  done
+  [[ -f "$base/AgripeWebUI/Dockerfile" ]] || return 1
+  [[ -f "$base/AgripeWebAPI/Dockerfile" ]] || return 1
+  [[ -f "$base/AgripeWebWorker/Dockerfile" ]] || return 1
+  [[ -f "$base/docker/docker-compose.yml" ]] || return 1
   return 0
 }
 
@@ -43,15 +44,9 @@ collect_candidates() {
   raw+=("/opt/agripeweb" "/opt")
 
   local found_ui
-  found_ui=$(find /opt -maxdepth 5 -type d -name AgripeWebUI 2>/dev/null | head -1 || true)
+  found_ui=$(find /opt -maxdepth 5 -type f -path '*/AgripeWebUI/Dockerfile' 2>/dev/null | head -1 || true)
   if [[ -n "$found_ui" ]]; then
-    raw+=("$(dirname "$found_ui")")
-  fi
-
-  local found_api
-  found_api=$(find /opt -maxdepth 5 -type d -name AgripeWebAPI 2>/dev/null | head -1 || true)
-  if [[ -n "$found_api" ]]; then
-    raw+=("$(dirname "$found_api")")
+    raw+=("$(dirname "$(dirname "$found_ui")")")
   fi
 
   local -A seen=()
@@ -62,35 +57,35 @@ collect_candidates() {
   done
 }
 
-main() {
+pick_repo_root() {
   local start="${1:-.}"
   local candidate
 
   while IFS= read -r candidate; do
-    if has_all_app_dirs "$candidate"; then
-      echo "Using complete repo root: $candidate" >&2
+    if [[ -d "$candidate/.git" ]] && has_all_app_dirs "$candidate"; then
+      echo "Using git repo root: $candidate" >&2
       echo "$candidate"
       return 0
     fi
   done < <(collect_candidates "$start")
 
   while IFS= read -r candidate; do
-    if [[ -d "$candidate/.git" && -d "$candidate/docker" ]]; then
+    if [[ -d "$candidate/.git" ]]; then
       restore_app_dirs "$candidate"
       if has_all_app_dirs "$candidate"; then
-        echo "Restored repo root: $candidate" >&2
+        echo "Restored git repo root: $candidate" >&2
         echo "$candidate"
         return 0
       fi
     fi
   done < <(collect_candidates "$start")
 
-  echo "ERROR: Could not resolve AgripeWeb repo root with AgripeWebUI, AgripeWebAPI, AgripeWebWorker, and docker" >&2
+  echo "ERROR: Could not resolve AgripeWeb git repo root with required app directories" >&2
   collect_candidates "$start" | while IFS= read -r candidate; do
-    echo "Candidate $candidate:" >&2
+    echo "Candidate $candidate (git=$([[ -d "$candidate/.git" ]] && echo yes || echo no)):" >&2
     ls -la "$candidate" >&2 || true
   done
   exit 1
 }
 
-main "$@"
+pick_repo_root "$@"

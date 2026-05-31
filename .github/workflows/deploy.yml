@@ -43,27 +43,18 @@ jobs:
             git fetch origin main
             git reset --hard origin/main
             chmod +x scripts/bootstrap-vps-env.sh scripts/bootstrap-vps-env-from-secrets.sh scripts/resolve-vps-repo-root.sh scripts/vps-deploy-from-actions.sh scripts/deploy-hostinger-remote.sh
-            REPO_ROOT="$(scripts/resolve-vps-repo-root.sh .)"
-            DEPLOY_PATH="$(pwd)"
-            if [[ "$REPO_ROOT" != "$DEPLOY_PATH" ]]; then
-              if [[ -f "$DEPLOY_PATH/.env" && ! -f "$REPO_ROOT/.env" ]]; then
-                echo "Moving .env from $DEPLOY_PATH to $REPO_ROOT"
-                mv "$DEPLOY_PATH/.env" "$REPO_ROOT/.env"
-              fi
-              cd "$REPO_ROOT"
-              git fetch origin main
-              git reset --hard origin/main
-              chmod +x scripts/bootstrap-vps-env.sh scripts/bootstrap-vps-env-from-secrets.sh scripts/resolve-vps-repo-root.sh scripts/vps-deploy-from-actions.sh scripts/deploy-hostinger-remote.sh
-            else
-              cd "$REPO_ROOT"
+            REPO_ROOT="$(scripts/resolve-vps-repo-root.sh . | tr -d '\r')"
+            if [[ -z "$REPO_ROOT" || ! -d "$REPO_ROOT/.git" ]]; then
+              echo "ERROR: resolve-vps-repo-root did not return a git checkout" >&2
+              exit 1
             fi
+            cd "$REPO_ROOT"
+            git fetch origin main
+            git reset --hard origin/main
+            chmod +x scripts/bootstrap-vps-env.sh scripts/bootstrap-vps-env-from-secrets.sh scripts/resolve-vps-repo-root.sh scripts/vps-deploy-from-actions.sh scripts/deploy-hostinger-remote.sh
             if [[ -d .env ]]; then rm -rf .env; fi
             if [[ ! -f .env ]]; then
-              if [[ -x scripts/bootstrap-vps-env-from-secrets.sh ]]; then
-                scripts/bootstrap-vps-env-from-secrets.sh "$REPO_ROOT"
-              elif [[ -x scripts/bootstrap-vps-env.sh ]]; then
-                scripts/bootstrap-vps-env.sh "$REPO_ROOT" || true
-              fi
+              scripts/bootstrap-vps-env.sh "$REPO_ROOT" || true
             fi
             if [[ ! -f .env ]]; then
               scripts/bootstrap-vps-env-from-secrets.sh "$REPO_ROOT"
