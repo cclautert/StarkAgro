@@ -2,57 +2,23 @@
 # Remote deploy steps for Hostinger VPS (invoked by GitHub Actions over SSH).
 set -euo pipefail
 
-ROOT="${1:-.}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT="$("$SCRIPT_DIR/resolve-vps-repo-root.sh" "${1:-.}")"
 cd "$ROOT"
 
-if [[ ! -d AgripeWebUI ]]; then
-  if [[ -d /opt/agripeweb/AgripeWebUI ]]; then
-    echo "Detected repo at /opt/agripeweb"
-    if [[ -f .env && ! -f /opt/agripeweb/.env ]]; then
-      echo "Moving .env into /opt/agripeweb"
-      mv .env /opt/agripeweb/.env
-    fi
-    cd /opt/agripeweb
-  else
-    FOUND_UI=$(find /opt -maxdepth 4 -type d -name AgripeWebUI 2>/dev/null | head -1 || true)
-    if [[ -n "$FOUND_UI" ]]; then
-      echo "Detected repo at $(dirname "$FOUND_UI")"
-      cd "$(dirname "$FOUND_UI")"
-    fi
-  fi
+if [[ -d .env ]]; then
+  echo "Removing invalid .env directory (Docker bind-mount artifact)"
+  rm -rf .env
 fi
 
-if [[ ! -d AgripeWebUI ]]; then
-  echo "Restoring tracked application directories from git"
-  git sparse-checkout disable >/dev/null 2>&1 || true
-  git checkout HEAD -- AgripeWebUI AgripeWebAPI AgripeWebWorker docker scripts
-fi
-
-for dir in AgripeWebUI AgripeWebAPI AgripeWebWorker docker; do
-  if [[ ! -d "$dir" ]]; then
-    echo "WARN: missing $dir — restoring tracked files from git"
-    git checkout HEAD -- "$dir"
-  fi
-done
-
-if [[ ! -d AgripeWebUI ]]; then
-  echo "ERROR: AgripeWebUI still missing under $ROOT; check VPS_DEPLOY_PATH and clone integrity" >&2
-  ls -la
-  exit 1
-fi
-
-COMPOSE=(docker compose --project-directory . -f docker/docker-compose.yml)
-ENV_FILE="$ROOT/.env"
-PASSWD_FILE="$ROOT/docker/mosquitto/passwd"
-
-if [[ ! -f "$ENV_FILE" ]]; then
-  echo "ERROR: Missing $ENV_FILE — copy docker/.env.example to repo root .env (see docs/deploy-hostinger.md)" >&2
+if [[ ! -f .env ]]; then
+  echo "ERROR: Missing $ROOT/.env — copy docker/.env.example to repo root .env (see docs/deploy-hostinger.md)" >&2
   exit 1
 fi
 
 set -a
 # shellcheck disable=SC1090
-source "$ENV_FILE"
+source "$ROOT/.env"
 set +a
 
 required=(JWT_SECRET_KEY GOOGLE_CLIENT_ID GOOGLE_CLIENT_SECRET MQTT_USERNAME MQTT_PASSWORD)
@@ -67,6 +33,7 @@ if ((${#missing[@]} > 0)); then
   exit 1
 fi
 
+PASSWD_FILE="$ROOT/docker/mosquitto/passwd"
 if [[ -d "$PASSWD_FILE" ]]; then
   echo "Removing invalid passwd directory at $PASSWD_FILE (Docker bind-mount artifact)"
   rm -rf "$PASSWD_FILE"
@@ -86,6 +53,8 @@ else
     mosquitto_passwd -b -c "/mosquitto/config/passwd" "$MQTT_USERNAME" "$MQTT_PASSWORD"
 fi
 
+COMPOSE=(docker compose --project-directory "$ROOT" -f "$ROOT/docker/docker-compose.yml")
+echo "Running compose from $ROOT"
 "${COMPOSE[@]}" build agripewebapi agripewebui agripwebworker
 "${COMPOSE[@]}" up -d db mqtt agripewebapi agripewebui agripwebworker
 docker image prune -f

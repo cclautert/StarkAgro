@@ -38,28 +38,37 @@ jobs:
           script_stop: true
           script: |
             set -euo pipefail
-            cd "${{ secrets.VPS_DEPLOY_PATH }}"
-            if [[ ! -d AgripeWebUI && -d /opt/agripeweb/AgripeWebUI ]]; then
-              if [[ -f .env && ! -f /opt/agripeweb/.env ]]; then
-                mv .env /opt/agripeweb/.env
+            export VPS_DEPLOY_PATH="${{ secrets.VPS_DEPLOY_PATH }}"
+            cd "$VPS_DEPLOY_PATH"
+            git fetch origin main
+            git reset --hard origin/main
+            chmod +x scripts/bootstrap-vps-env.sh scripts/bootstrap-vps-env-from-secrets.sh scripts/resolve-vps-repo-root.sh scripts/vps-deploy-from-actions.sh scripts/deploy-hostinger-remote.sh
+            REPO_ROOT="$(scripts/resolve-vps-repo-root.sh .)"
+            DEPLOY_PATH="$(pwd)"
+            if [[ "$REPO_ROOT" != "$DEPLOY_PATH" ]]; then
+              if [[ -f "$DEPLOY_PATH/.env" && ! -f "$REPO_ROOT/.env" ]]; then
+                echo "Moving .env from $DEPLOY_PATH to $REPO_ROOT"
+                mv "$DEPLOY_PATH/.env" "$REPO_ROOT/.env"
               fi
-              cd /opt/agripeweb
+              cd "$REPO_ROOT"
+              git fetch origin main
+              git reset --hard origin/main
+              chmod +x scripts/bootstrap-vps-env.sh scripts/bootstrap-vps-env-from-secrets.sh scripts/resolve-vps-repo-root.sh scripts/vps-deploy-from-actions.sh scripts/deploy-hostinger-remote.sh
+            else
+              cd "$REPO_ROOT"
             fi
             if [[ -d .env ]]; then rm -rf .env; fi
             if [[ ! -f .env ]]; then
               if [[ -x scripts/bootstrap-vps-env-from-secrets.sh ]]; then
-                scripts/bootstrap-vps-env-from-secrets.sh .
+                scripts/bootstrap-vps-env-from-secrets.sh "$REPO_ROOT"
               elif [[ -x scripts/bootstrap-vps-env.sh ]]; then
-                scripts/bootstrap-vps-env.sh . || true
+                scripts/bootstrap-vps-env.sh "$REPO_ROOT" || true
               fi
             fi
-            git fetch origin main
-            git reset --hard origin/main
-            chmod +x scripts/bootstrap-vps-env.sh scripts/bootstrap-vps-env-from-secrets.sh scripts/vps-deploy-from-actions.sh scripts/deploy-hostinger-remote.sh
             if [[ ! -f .env ]]; then
-              scripts/bootstrap-vps-env-from-secrets.sh .
+              scripts/bootstrap-vps-env-from-secrets.sh "$REPO_ROOT"
             fi
-            scripts/vps-deploy-from-actions.sh .
+            scripts/vps-deploy-from-actions.sh "$REPO_ROOT"
 
       - name: Health check
         uses: appleboy/ssh-action@v1.2.0
