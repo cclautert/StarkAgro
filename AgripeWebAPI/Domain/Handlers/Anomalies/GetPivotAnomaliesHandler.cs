@@ -49,9 +49,16 @@ namespace AgripeWebAPI.Domain.Handlers.Anomalies
 
             var sensorIds = sensors.Select(s => s.Id).ToList();
 
-            var filter = Builders<SensorAnomaly>.Filter.And(
+            var filterDefs = new List<FilterDefinition<SensorAnomaly>>
+            {
                 Builders<SensorAnomaly>.Filter.In(a => a.SensorId, sensorIds),
-                Builders<SensorAnomaly>.Filter.Eq(a => a.UserId, request.UserId));
+                Builders<SensorAnomaly>.Filter.Eq(a => a.UserId, request.UserId)
+            };
+
+            if (request.AcknowledgedOnly.HasValue)
+                filterDefs.Add(Builders<SensorAnomaly>.Filter.Eq(a => a.Acknowledged, request.AcknowledgedOnly.Value));
+
+            var filter = Builders<SensorAnomaly>.Filter.And(filterDefs);
 
             var anomalies = await _dbContext.SensorAnomalies
                 .Find(filter)
@@ -64,6 +71,7 @@ namespace AgripeWebAPI.Domain.Handlers.Anomalies
             {
                 Id = a.Id,
                 SensorId = a.SensorId,
+                PivotId = a.PivotId,
                 ReadSensorId = a.ReadSensorId,
                 Value = a.Value,
                 ExpectedMin = a.ExpectedMin,
