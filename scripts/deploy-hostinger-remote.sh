@@ -5,14 +5,27 @@ set -euo pipefail
 ROOT="${1:-.}"
 cd "$ROOT"
 
-if [[ ! -d AgripeWebUI && -d agripeweb/AgripeWebUI ]]; then
-  echo "Detected nested clone; switching to agripeweb/"
-  cd agripeweb
+if [[ ! -d AgripeWebUI ]]; then
+  if [[ -d /opt/agripeweb/AgripeWebUI ]]; then
+    echo "Detected repo at /opt/agripeweb"
+    if [[ -f .env && ! -f /opt/agripeweb/.env ]]; then
+      echo "Moving .env into /opt/agripeweb"
+      mv .env /opt/agripeweb/.env
+    fi
+    cd /opt/agripeweb
+  else
+    FOUND_UI=$(find /opt -maxdepth 4 -type d -name AgripeWebUI 2>/dev/null | head -1 || true)
+    if [[ -n "$FOUND_UI" ]]; then
+      echo "Detected repo at $(dirname "$FOUND_UI")"
+      cd "$(dirname "$FOUND_UI")"
+    fi
+  fi
 fi
 
-if [[ ! -d AgripeWebUI && -d /opt/agripeweb/AgripeWebUI ]]; then
-  echo "Detected repo at /opt/agripeweb"
-  cd /opt/agripeweb
+if [[ ! -d AgripeWebUI ]]; then
+  echo "Restoring tracked application directories from git"
+  git sparse-checkout disable >/dev/null 2>&1 || true
+  git checkout HEAD -- AgripeWebUI AgripeWebAPI AgripeWebWorker docker scripts
 fi
 
 for dir in AgripeWebUI AgripeWebAPI AgripeWebWorker docker; do
