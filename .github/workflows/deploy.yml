@@ -51,6 +51,8 @@ jobs:
             cd "$REPO_ROOT"
             git fetch origin main
             git reset --hard origin/main
+            git sparse-checkout disable >/dev/null 2>&1 || true
+            git checkout -f HEAD -- AgripeWebUI AgripeWebAPI AgripeWebWorker docker scripts
             chmod +x scripts/bootstrap-vps-env.sh scripts/bootstrap-vps-env-from-secrets.sh scripts/resolve-vps-repo-root.sh scripts/vps-deploy-from-actions.sh scripts/deploy-hostinger-remote.sh
             if [[ -d .env ]]; then rm -rf .env; fi
             if [[ ! -f .env ]]; then

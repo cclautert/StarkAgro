@@ -18,11 +18,11 @@ restore_app_dirs() {
   cd "$root"
   echo "Restoring tracked application directories under $root"
   git sparse-checkout disable >/dev/null 2>&1 || true
-  git checkout HEAD -- AgripeWebUI AgripeWebAPI AgripeWebWorker docker scripts
+  git checkout -f HEAD -- AgripeWebUI AgripeWebAPI AgripeWebWorker docker scripts
   for d in "${REQUIRED_DIRS[@]}"; do
     if [[ ! -d "$d" ]]; then
       echo "WARN: missing $d — restoring from git"
-      git checkout HEAD -- "$d"
+      git checkout -f HEAD -- "$d"
     fi
   done
 }
@@ -30,6 +30,8 @@ restore_app_dirs() {
 collect_candidates() {
   local start="${1:-.}"
   local -a raw=()
+
+  raw+=("/opt/agripeweb")
 
   if [[ "$start" != "." && -d "$start" ]]; then
     raw+=("$(cd "$start" && pwd)")
@@ -41,7 +43,7 @@ collect_candidates() {
     raw+=("$(cd "$VPS_DEPLOY_PATH" && pwd)")
   fi
 
-  raw+=("/opt/agripeweb" "/opt")
+  raw+=("/opt")
 
   local found_ui
   found_ui=$(find /opt -maxdepth 5 -type f -path '*/AgripeWebUI/Dockerfile' 2>/dev/null | head -1 || true)

@@ -3,8 +3,19 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT="$("$SCRIPT_DIR/resolve-vps-repo-root.sh" "${1:-.}")"
+ROOT="$("$SCRIPT_DIR/resolve-vps-repo-root.sh" "${1:-.}" | tr -d '\r')"
 cd "$ROOT"
+
+git sparse-checkout disable >/dev/null 2>&1 || true
+git checkout -f HEAD -- AgripeWebUI AgripeWebAPI AgripeWebWorker docker scripts
+for dir in AgripeWebUI AgripeWebAPI AgripeWebWorker docker; do
+  if [[ ! -d "$dir" ]]; then
+    echo "ERROR: $dir still missing under $(pwd) after git checkout" >&2
+    ls -la >&2
+    exit 1
+  fi
+done
+echo "App tree verified under $(pwd)"
 
 if [[ -d .env ]]; then
   echo "Removing invalid .env directory (Docker bind-mount artifact)"
