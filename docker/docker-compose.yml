@@ -68,8 +68,8 @@ services:
     container_name: agripeweb-mqtt
     volumes:
       - mosquitto-data:/mosquitto/data
-      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
-      - ./mosquitto/passwd:/mosquitto/config/passwd:ro
+      - ./docker/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - ./docker/mosquitto/passwd:/mosquitto/config/passwd:ro
     networks:
       - app-network
     healthcheck:
