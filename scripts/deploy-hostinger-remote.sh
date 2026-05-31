@@ -5,6 +5,19 @@ set -euo pipefail
 ROOT="${1:-.}"
 cd "$ROOT"
 
+for dir in AgripeWebUI AgripeWebAPI AgripeWebWorker docker; do
+  if [[ ! -d "$dir" ]]; then
+    echo "WARN: missing $dir — restoring tracked files from git"
+    git checkout HEAD -- "$dir"
+  fi
+done
+
+if [[ ! -d AgripeWebUI ]]; then
+  echo "ERROR: AgripeWebUI still missing under $ROOT; check VPS_DEPLOY_PATH and clone integrity" >&2
+  ls -la
+  exit 1
+fi
+
 COMPOSE=(docker compose --project-directory . -f docker/docker-compose.yml)
 ENV_FILE="$ROOT/.env"
 PASSWD_FILE="$ROOT/docker/mosquitto/passwd"
