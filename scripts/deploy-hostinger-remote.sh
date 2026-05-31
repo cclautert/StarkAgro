@@ -45,6 +45,22 @@ if ((${#missing[@]} > 0)); then
 fi
 
 PASSWD_FILE="$ROOT/docker/mosquitto/passwd"
+MOSQUITTO_CONF="$ROOT/docker/mosquitto/mosquitto.conf"
+for artifact in mosquitto nginx; do
+  if [[ -d "$ROOT/$artifact" && ! -d "$ROOT/docker/$artifact" ]]; then
+    echo "Removing legacy bind-mount artifact at $ROOT/$artifact"
+    rm -rf "$ROOT/$artifact"
+  fi
+done
+for artifact in "$PASSWD_FILE" "$MOSQUITTO_CONF"; do
+  if [[ -d "$artifact" ]]; then
+    echo "Removing invalid directory artifact at $artifact"
+    rm -rf "$artifact"
+  fi
+done
+if [[ ! -f "$MOSQUITTO_CONF" ]]; then
+  git checkout -f HEAD -- docker/mosquitto/mosquitto.conf
+fi
 if [[ -d "$PASSWD_FILE" ]]; then
   echo "Removing invalid passwd directory at $PASSWD_FILE (Docker bind-mount artifact)"
   rm -rf "$PASSWD_FILE"
@@ -63,10 +79,29 @@ else
     eclipse-mosquitto:2 \
     mosquitto_passwd -b -c "/mosquitto/config/passwd" "$MQTT_USERNAME" "$MQTT_PASSWORD"
 fi
+if [[ ! -s "$PASSWD_FILE" ]]; then
+  echo "ERROR: Mosquitto passwd missing or empty at $PASSWD_FILE" >&2
+  exit 1
+fi
+chmod 644 "$PASSWD_FILE"
 
 COMPOSE=(docker compose --project-directory . -f docker/docker-compose.yml)
 echo "Running compose from $(pwd)"
 "${COMPOSE[@]}" build agripewebapi agripewebui agripwebworker
-"${COMPOSE[@]}" up -d db mqtt agripewebapi agripewebui agripwebworker
+"${COMPOSE[@]}" up -d db mqtt
+for attempt in 1 2 3 4 5 6; do
+  mqtt_state="$(docker inspect -f '{{.State.Status}}' agripeweb-mqtt 2>/dev/null || echo missing)"
+  echo "MQTT container state (attempt $attempt): $mqtt_state"
+  if [[ "$mqtt_state" == "running" ]]; then
+    break
+  fi
+  if [[ "$mqtt_state" == "exited" || "$mqtt_state" == "dead" ]]; then
+    echo "MQTT container logs:" >&2
+    docker logs agripeweb-mqtt 2>&1 | tail -40 >&2 || true
+    exit 1
+  fi
+  sleep 5
+done
+"${COMPOSE[@]}" up -d agripewebapi agripewebui agripwebworker
 docker image prune -f
 "${COMPOSE[@]}" ps
