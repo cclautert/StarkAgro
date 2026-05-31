@@ -5,6 +5,8 @@ import { Subscription, interval } from 'rxjs';
 import { BaseChartDirective } from 'ng2-charts';
 import { Router, ActivatedRoute } from '@angular/router';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { HttpErrorResponse } from '@angular/common/http';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Sensor } from '../../models/sensor.model';
 import { SensorService } from '../../services/sensor.service';
 import { TrendAnalysisService, TrendStats, ProjectionPoint } from '../../services/trend-analysis.service';
@@ -216,7 +218,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private router: Router,
     private breakpointObserver: BreakpointObserver,
     private trendAnalysisService: TrendAnalysisService,
-    private pivotService: PivotService
+    private pivotService: PivotService,
+    private sanitizer: DomSanitizer
   ) {
     this.breakpointSub = this.breakpointObserver.observe([Breakpoints.Handset]).subscribe(result => {
       this.isMobile = result.matches;
@@ -293,11 +296,77 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.aiFromCache = res.fromCache;
         this.aiInsightsLoading = false;
       },
-      error: () => {
-        this.aiError = 'Assistente IA indisponível. Tente novamente em alguns minutos.';
+      error: (err: HttpErrorResponse) => {
+        if (err.status === 503) {
+          this.aiError = 'Serviço de IA temporariamente indisponível. Tente novamente em instantes.';
+        } else {
+          this.aiError = 'Não foi possível obter os insights. Verifique sua conexão e tente novamente.';
+        }
         this.aiInsightsLoading = false;
       }
     });
+  }
+
+  toggleAiExpanded(): void {
+    this.aiExpanded = !this.aiExpanded;
+  }
+
+  get aiInsightsHtml(): SafeHtml | null {
+    if (!this.aiInsights) return null;
+    return this.sanitizer.bypassSecurityTrustHtml(this.renderMarkdown(this.aiInsights));
+  }
+
+  private renderMarkdown(text: string): string {
+    const escape = (s: string) =>
+      s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+    const inline = (s: string) =>
+      escape(s)
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.+?)\*/g, '<em>$1</em>')
+        .replace(/`(.+?)`/g, '<code class="ai-code">$1</code>');
+
+    const lines = text.split('\n');
+    const out: string[] = [];
+    let inList = false;
+
+    for (const raw of lines) {
+      const line = raw.trimEnd();
+
+      if (!line) {
+        if (inList) { out.push('</ul>'); inList = false; }
+        out.push('<br>');
+        continue;
+      }
+
+      if (line.startsWith('### ')) {
+        if (inList) { out.push('</ul>'); inList = false; }
+        out.push(`<h5 class="ai-h5">${inline(line.slice(4))}</h5>`);
+        continue;
+      }
+      if (line.startsWith('## ')) {
+        if (inList) { out.push('</ul>'); inList = false; }
+        out.push(`<h4 class="ai-h4">${inline(line.slice(3))}</h4>`);
+        continue;
+      }
+      if (line.startsWith('# ')) {
+        if (inList) { out.push('</ul>'); inList = false; }
+        out.push(`<h3 class="ai-h3">${inline(line.slice(2))}</h3>`);
+        continue;
+      }
+
+      if (/^[-*] /.test(line)) {
+        if (!inList) { out.push('<ul class="ai-ul">'); inList = true; }
+        out.push(`<li>${inline(line.slice(2))}</li>`);
+        continue;
+      }
+
+      if (inList) { out.push('</ul>'); inList = false; }
+      out.push(`<p class="ai-p">${inline(line)}</p>`);
+    }
+
+    if (inList) out.push('</ul>');
+    return out.join('');
   }
 
   private loadForecast(pivotId: number): void {
