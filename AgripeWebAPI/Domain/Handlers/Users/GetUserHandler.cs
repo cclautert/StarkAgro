@@ -9,7 +9,7 @@ using MongoDB.Driver;
 
 namespace AgripeWebAPI.Domain.Handlers.Users
 {
-    public class GetUserHandler : IRequestHandler<GetUserRequest, GetUserResponse>
+    public class GetUserHandler : IRequestHandler<GetUserRequest, GetUserResponse?>
     {
         private readonly agpDBContext _dbContext;
         private readonly INotifier _notifier;

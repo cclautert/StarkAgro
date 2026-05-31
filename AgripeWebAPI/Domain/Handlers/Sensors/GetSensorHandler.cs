@@ -7,7 +7,7 @@ using MongoDB.Driver;
 
 namespace AgripeWebAPI.Domain.Handlers.Sensors
 {
-    public class GetSensorHandler : IRequestHandler<GetSensorRequest, GetSensorResponse>
+    public class GetSensorHandler : IRequestHandler<GetSensorRequest, GetSensorResponse?>
     {
         private readonly agpDBContext _dbContext;
 

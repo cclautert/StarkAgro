@@ -6,7 +6,7 @@ using MongoDB.Driver;
 
 namespace AgripeWebAPI.Domain.Handlers.Pivots
 {
-    public class GetPivotHandler : IRequestHandler<GetPivotRequest, GetPivotResponse>
+    public class GetPivotHandler : IRequestHandler<GetPivotRequest, GetPivotResponse?>
     {
         private readonly agpDBContext _dbContext;
 

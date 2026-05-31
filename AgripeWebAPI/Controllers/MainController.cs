@@ -22,7 +22,7 @@ namespace AgripeWebAPI.Controllers
             return !_notificador.HasNotification();
         }
 
-        protected ActionResult CustomResponse(object result = null, HttpStatusCode statusCode = HttpStatusCode.OK)
+        protected ActionResult CustomResponse(object? result = null, HttpStatusCode statusCode = HttpStatusCode.OK)
         {
             if (ValidOperation())
             {
