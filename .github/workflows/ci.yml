@@ -37,8 +37,36 @@ jobs:
       - name: Build
         run: dotnet build AgripeWeb.sln -c Release --no-restore
 
-      - name: Test
-        run: dotnet test AgripeWeb.sln -c Release --no-build --verbosity normal
+      - name: Test with coverage (Coverlet)
+        run: |
+          dotnet test AgripeWeb.sln -c Release --no-build --verbosity normal \
+            --settings coverlet.runsettings \
+            --collect:"XPlat Code Coverage" \
+            --results-directory ./TestResults/coverage
+
+      - name: Install ReportGenerator
+        run: dotnet tool install -g dotnet-reportgenerator-globaltool
+
+      - name: Generate coverage report
+        run: |
+          export PATH="$HOME/.dotnet/tools:$PATH"
+          reportgenerator \
+            -reports:"TestResults/coverage/**/coverage.cobertura.xml" \
+            -targetdir:"TestResults/CoverageReport" \
+            -reporttypes:"Html;TextSummary"
+
+      - name: Enforce 90% line coverage (AgripeWebAPI + Worker)
+        run: bash scripts/ci-enforce-line-coverage.sh TestResults/CoverageReport/Summary.txt 90
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: |
+            TestResults/CoverageReport/
+            TestResults/coverage/**/coverage.cobertura.xml
+          retention-days: 14
 
   frontend:
     name: Frontend (Angular)

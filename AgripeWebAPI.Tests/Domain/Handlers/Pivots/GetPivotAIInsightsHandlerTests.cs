@@ -5,6 +5,7 @@ using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Entities;
 using AgripeWebAPI.Models.Interfaces;
 using AgripeWebAPI.Services.AIInsights;
+using AgripeWebAPI.Services.Forecast;
 using AgripeWebAPI.Tests.Helpers;
 using AgripeWebAPI.Tests.Mocks;
 using Microsoft.Extensions.Caching.Memory;
@@ -214,6 +215,151 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Pivots
             Assert.Equal(30m, capturedContext.LimiteInferior);
             Assert.Equal(70m, capturedContext.LimiteSuperior);
             Assert.Equal("Pivot Sul", capturedContext.PivotName);
+        }
+
+        [Fact]
+        public async Task Handle_WithSensorsAndReadings_ShouldPopulateSensorReadingsContext()
+        {
+            var sensor = new Sensor { Id = 10, PivoId = 1, UserId = 42, Quadrante = 1, Code = "S10" };
+            var reading = new ReadSensor { Id = 100, SensorId = 10, UserId = 42, Value = 55.5m, Date = DateTime.UtcNow.AddHours(-1) };
+
+            MongoMockHelper.SetupFind(_mockPivots, DefaultPivot);
+            MongoMockHelper.SetupFind(_mockUsers, DefaultUser);
+            MongoMockHelper.SetupFindList(_mockSensors, new List<Sensor> { sensor });
+            MongoMockHelper.SetupFindList(_mockReadSensors, new List<ReadSensor> { reading });
+            MongoMockHelper.SetupFindList(_mockAnomalies, new List<SensorAnomaly>());
+
+            PivotAIContext? capturedContext = null;
+            _mockAI.Setup(ai => ai.GetInsightsAsync(It.IsAny<PivotAIContext>(), It.IsAny<CancellationToken>()))
+                .Callback<PivotAIContext, CancellationToken>((ctx, _) => capturedContext = ctx)
+                .ReturnsAsync("ok");
+
+            var result = await _handler.Handle(new GetPivotAIInsightsRequest { PivotId = 1, UserId = 42 }, CancellationToken.None);
+
+            Assert.NotNull(result);
+            Assert.NotNull(capturedContext);
+            Assert.Single(capturedContext.SensorReadings);
+            Assert.Equal("S10", capturedContext.SensorReadings[0].SensorCode);
+            Assert.Single(capturedContext.SensorReadings[0].Readings);
+            Assert.Equal(55.5m, capturedContext.SensorReadings[0].Readings[0].Value);
+        }
+
+        [Fact]
+        public async Task Handle_WithAnomalies_ShouldPopulateAnomaliesInContext()
+        {
+            var sensor = new Sensor { Id = 10, PivoId = 1, UserId = 42, Quadrante = 1, Code = "S10" };
+            var anomaly = new SensorAnomaly
+            {
+                Id = 1, SensorId = 10, PivotId = 1, UserId = 42,
+                Value = 15m, ExpectedMin = 30m, ExpectedMax = 70m,
+                Date = DateTime.UtcNow.AddMinutes(-30), Acknowledged = false
+            };
+
+            MongoMockHelper.SetupFind(_mockPivots, DefaultPivot);
+            MongoMockHelper.SetupFind(_mockUsers, DefaultUser);
+            MongoMockHelper.SetupFindList(_mockSensors, new List<Sensor> { sensor });
+            MongoMockHelper.SetupFindList(_mockReadSensors, new List<ReadSensor>());
+            MongoMockHelper.SetupFindList(_mockAnomalies, new List<SensorAnomaly> { anomaly });
+
+            PivotAIContext? capturedContext = null;
+            _mockAI.Setup(ai => ai.GetInsightsAsync(It.IsAny<PivotAIContext>(), It.IsAny<CancellationToken>()))
+                .Callback<PivotAIContext, CancellationToken>((ctx, _) => capturedContext = ctx)
+                .ReturnsAsync("ok");
+
+            var result = await _handler.Handle(new GetPivotAIInsightsRequest { PivotId = 1, UserId = 42 }, CancellationToken.None);
+
+            Assert.NotNull(result);
+            Assert.NotNull(capturedContext);
+            Assert.Single(capturedContext.RecentAnomalies);
+            Assert.Equal(10, capturedContext.RecentAnomalies[0].SensorId);
+            Assert.Equal(15m, capturedContext.RecentAnomalies[0].Value);
+            Assert.Equal(30m, capturedContext.RecentAnomalies[0].ExpectedMin);
+            Assert.Equal(70m, capturedContext.RecentAnomalies[0].ExpectedMax);
+        }
+
+        [Fact]
+        public async Task Handle_PivotWithLocationAndForecastAvailable_ShouldIncludeForecastSummary()
+        {
+            var pivotWithLocation = new Pivot
+            {
+                Id = 1, UserId = 42, Name = "Pivot Norte",
+                LimiteInferior = 30m, LimiteSuperior = 70m,
+                Latitude = -27.59, Longitude = -48.55
+            };
+            var forecast = new WeatherForecast
+            {
+                IsAvailable = true,
+                Source = "OpenMeteo",
+                TotalPrecipitationMm = 12.5,
+                DailyForecasts = new[]
+                {
+                    new DailyForecast(DateOnly.FromDateTime(DateTime.UtcNow), 6.0, 80.0),
+                    new DailyForecast(DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1)), 6.5, 60.0)
+                }
+            };
+
+            MongoMockHelper.SetupFind(_mockPivots, pivotWithLocation);
+            MongoMockHelper.SetupFind(_mockUsers, DefaultUser);
+            MongoMockHelper.SetupFindList(_mockSensors, new List<Sensor>());
+            MongoMockHelper.SetupFindList(_mockAnomalies, new List<SensorAnomaly>());
+            _mockForecast.Setup(f => f.GetForecastAsync(-27.59, -48.55, 7, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(forecast);
+
+            PivotAIContext? capturedContext = null;
+            _mockAI.Setup(ai => ai.GetInsightsAsync(It.IsAny<PivotAIContext>(), It.IsAny<CancellationToken>()))
+                .Callback<PivotAIContext, CancellationToken>((ctx, _) => capturedContext = ctx)
+                .ReturnsAsync("ok");
+
+            var result = await _handler.Handle(new GetPivotAIInsightsRequest { PivotId = 1, UserId = 42 }, CancellationToken.None);
+
+            Assert.NotNull(result);
+            Assert.NotNull(capturedContext);
+            Assert.NotNull(capturedContext.ForecastSummary);
+            Assert.Contains("12", capturedContext.ForecastSummary);
+        }
+
+        [Fact]
+        public async Task Handle_ForecastServiceThrows_ShouldContinueAndReturnInsights()
+        {
+            var pivotWithLocation = new Pivot
+            {
+                Id = 1, UserId = 42, Name = "Pivot Norte",
+                LimiteInferior = 30m, LimiteSuperior = 70m,
+                Latitude = -27.59, Longitude = -48.55
+            };
+            MongoMockHelper.SetupFind(_mockPivots, pivotWithLocation);
+            MongoMockHelper.SetupFind(_mockUsers, DefaultUser);
+            MongoMockHelper.SetupFindList(_mockSensors, new List<Sensor>());
+            MongoMockHelper.SetupFindList(_mockAnomalies, new List<SensorAnomaly>());
+            _mockForecast.Setup(f => f.GetForecastAsync(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
+                .ThrowsAsync(new HttpRequestException("Network error"));
+
+            var result = await _handler.Handle(new GetPivotAIInsightsRequest { PivotId = 1, UserId = 42 }, CancellationToken.None);
+
+            Assert.NotNull(result);
+            Assert.False(_notifier.HasNotification());
+        }
+
+        [Fact]
+        public async Task Handle_PivotLimitsNull_ShouldFallbackToUserLimits()
+        {
+            var pivotNoLimits = new Pivot { Id = 1, UserId = 42, Name = "P", LimiteInferior = null, LimiteSuperior = null };
+            var userWithLimits = new User { Id = 42, Name = "F", Email = "f@f.com", Password = "x", LimiteInferior = 20m, LimiteSuperior = 80m };
+            MongoMockHelper.SetupFind(_mockPivots, pivotNoLimits);
+            MongoMockHelper.SetupFind(_mockUsers, userWithLimits);
+            MongoMockHelper.SetupFindList(_mockSensors, new List<Sensor>());
+            MongoMockHelper.SetupFindList(_mockAnomalies, new List<SensorAnomaly>());
+
+            PivotAIContext? capturedContext = null;
+            _mockAI.Setup(ai => ai.GetInsightsAsync(It.IsAny<PivotAIContext>(), It.IsAny<CancellationToken>()))
+                .Callback<PivotAIContext, CancellationToken>((ctx, _) => capturedContext = ctx)
+                .ReturnsAsync("ok");
+
+            await _handler.Handle(new GetPivotAIInsightsRequest { PivotId = 1, UserId = 42 }, CancellationToken.None);
+
+            Assert.NotNull(capturedContext);
+            Assert.Equal(20m, capturedContext.LimiteInferior);
+            Assert.Equal(80m, capturedContext.LimiteSuperior);
         }
     }
 }
