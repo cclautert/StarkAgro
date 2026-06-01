@@ -72,5 +72,55 @@ namespace AgripeWebAPI.Tests.Services.Forecast
             Assert.True(result.IsAvailable);
             Assert.Equal(3.0, result.TotalPrecipitationMm, 1);
         }
+
+        [Fact]
+        public async Task GetAgricultureDataAsync_ParsesTemperatureAndRadiation()
+        {
+            var handler = new MockHttpMessageHandler();
+            handler.EnqueueResponse(HttpStatusCode.OK, """
+            {
+              "daily": {
+                "temperature_2m_max": [32.5],
+                "temperature_2m_min": [18.2],
+                "shortwave_radiation_sum": [22.1]
+              }
+            }
+            """);
+
+            var sut = BuildService(handler);
+
+            var result = await sut.GetAgricultureDataAsync(-27.59, -48.55, 1, CancellationToken.None);
+
+            Assert.NotNull(result);
+            Assert.Equal(32.5, result!.TempMax, 1);
+            Assert.Equal(18.2, result.TempMin, 1);
+            Assert.Equal(22.1, result.ShortwaveRadiationMJm2, 1);
+        }
+
+        [Fact]
+        public async Task GetAgricultureDataAsync_MissingDaily_ReturnsNull()
+        {
+            var handler = new MockHttpMessageHandler();
+            handler.EnqueueResponse(HttpStatusCode.OK, "{}");
+
+            var sut = BuildService(handler);
+
+            var result = await sut.GetAgricultureDataAsync(-27.59, -48.55, 1, CancellationToken.None);
+
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public async Task GetAgricultureDataAsync_HttpFailure_ReturnsNull()
+        {
+            var handler = new MockHttpMessageHandler();
+            handler.EnqueueResponse(HttpStatusCode.InternalServerError, "{}");
+
+            var sut = BuildService(handler);
+
+            var result = await sut.GetAgricultureDataAsync(-27.59, -48.55, 1, CancellationToken.None);
+
+            Assert.Null(result);
+        }
     }
 }
