@@ -1,6 +1,8 @@
 using System.Text;
 using System.Text.Json;
+using AgripeWebAPI.Domain.Commands.Requests.Anomalies;
 using AgripeWebAPI.Domain.Commands.Requests.Reads;
+using AgripeWebAPI.Domain.Commands.Responses.Reads;
 using AgripeWebWorker.Configuration;
 using AgripeWebWorker.Services;
 using MediatR;
@@ -217,6 +219,34 @@ namespace AgripeWebWorker.Tests.Services
         }
 
         // --- Message processing tests ---
+
+        [Fact]
+        public async Task MessageReceived_WhenReadCreated_TriggersAnomalyDetection()
+        {
+            var mockMediator = new Mock<IMediator>();
+            var mockScope = new Mock<IServiceScope>();
+            var mockScopeFactory = new Mock<IServiceScopeFactory>();
+            var mockScopedProvider = new Mock<IServiceProvider>();
+
+            mockScopedProvider.Setup(sp => sp.GetService(typeof(IMediator))).Returns(mockMediator.Object);
+            mockScope.Setup(s => s.ServiceProvider).Returns(mockScopedProvider.Object);
+            mockScopeFactory.Setup(f => f.CreateScope()).Returns(mockScope.Object);
+            _mockServiceProvider.Setup(sp => sp.GetService(typeof(IServiceScopeFactory))).Returns(mockScopeFactory.Object);
+
+            mockMediator
+                .Setup(m => m.Send(It.IsAny<CreateReadRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new CreateReadResponse { Id = 77, SensorId = 3, UserId = 1 });
+
+            await StartServiceAndCapture();
+            Assert.NotNull(_capturedMessageHandler);
+
+            var payload = JsonSerializer.Serialize(new { code = "SENS02", value = 40 });
+            await _capturedMessageHandler!(CreateMessageEventArgs(Encoding.UTF8.GetBytes(payload)));
+
+            mockMediator.Verify(m => m.Send(
+                It.Is<DetectSensorAnomalyRequest>(r => r.ReadSensorId == 77 && r.SensorId == 3 && r.UserId == 1 && r.Value == 40),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
 
         [Fact]
         public async Task MessageReceived_ValidPayload_ShouldSendCreateReadRequest()

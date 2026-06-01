@@ -30,5 +30,25 @@ namespace AgripeWebAPI.Tests.Domain.Commands.Responses.Pivot
             Assert.Equal(15.5m, response.LimiteInferior);
             Assert.Equal(85.0m, response.LimiteSuperior);
         }
+
+        [Fact]
+        public void LocationFields_SetAndGet()
+        {
+            var updatedAt = DateTime.UtcNow;
+            var response = new GetPivotResponse
+            {
+                Latitude = -27.5,
+                Longitude = -48.5,
+                Altitude = 820,
+                LocationAddress = "Chapecó, SC",
+                LocationUpdatedAt = updatedAt
+            };
+
+            Assert.Equal(-27.5, response.Latitude);
+            Assert.Equal(-48.5, response.Longitude);
+            Assert.Equal(820, response.Altitude);
+            Assert.Equal("Chapecó, SC", response.LocationAddress);
+            Assert.Equal(updatedAt, response.LocationUpdatedAt);
+        }
     }
 }
