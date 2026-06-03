@@ -25,6 +25,7 @@
     "@angular/ssr": "^19.2.12",
     "chart.js": "^4.4.9",
     "chartjs-adapter-date-fns": "^3.0.0",
+    "chartjs-plugin-annotation": "^3.1.0",
     "express": "^4.18.2",
     "jwt-decode": "^4.0.0",
     "latest": "^0.2.0",

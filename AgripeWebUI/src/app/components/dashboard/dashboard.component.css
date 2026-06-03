@@ -55,6 +55,107 @@
   background: #1d4ed8;
 }
 
+/* ── Prediction Alert Card ── */
+.prediction-card {
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  border: 1px solid #2d3f5e;
+  background: #1a2540;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+}
+
+.prediction-card--critical {
+  background: rgba(127, 29, 29, 0.15);
+  border-color: #ef4444;
+}
+
+.prediction-card--ok {
+  background: rgba(22, 101, 52, 0.1);
+  border-color: #22c55e;
+}
+
+.prediction-card--error {
+  background: rgba(30, 41, 59, 0.6);
+  border-color: #475569;
+}
+
+.prediction-loading {
+  color: #94a3b8;
+  font-style: italic;
+}
+
+.prediction-alert,
+.prediction-ok {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+}
+
+.prediction-icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.prediction-icon--warn {
+  color: #f87171;
+}
+
+.prediction-icon--ok {
+  color: #4ade80;
+}
+
+.prediction-text {
+  color: #e2e8f0;
+  line-height: 1.5;
+}
+
+.prediction-text strong {
+  display: inline;
+}
+
+.prediction-conf {
+  color: #94a3b8;
+  font-size: 0.82rem;
+  margin-left: 6px;
+}
+
+.prediction-no-coords {
+  color: #64748b;
+  font-size: 0.8rem;
+  display: inline;
+}
+
+.prediction-error-msg {
+  color: #f87171;
+  font-size: 0.88rem;
+}
+
+/* ── Legend area swatch ── */
+.legend-area {
+  width: 24px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+.legend-critical {
+  width: 24px;
+  height: 2.5px;
+  border-radius: 2px;
+  background: repeating-linear-gradient(
+    to right,
+    #ef4444 0,
+    #ef4444 5px,
+    transparent 5px,
+    transparent 9px
+  );
+}
+
 /* ── Sensor Selector ── */
 .selector-box {
   display: flex;

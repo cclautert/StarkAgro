@@ -12,6 +12,7 @@ import { SensorService } from '../../services/sensor.service';
 import { TrendAnalysisService, TrendStats, ProjectionPoint } from '../../services/trend-analysis.service';
 import { PivotService } from '../../services/pivot.service';
 import { PivotForecast } from '../../models/pivot-forecast.model';
+import { MoisturePrediction } from '../../models/moisture-prediction.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -62,6 +63,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
   showProjection = true;
   trendStats: TrendStats | null = null;
   projectionPoints: ProjectionPoint[] = [];
+
+  // ── Server-side moisture prediction ──────────────────────────────────────
+  moisturePrediction: MoisturePrediction | null = null;
+  predictionLoading = false;
+  predictionError: string | null = null;
+  private predictionSub: Subscription | null = null;
 
   // Dataset index constants for the toggle handlers
   private readonly DS_TREND    = 4;
@@ -208,7 +215,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }
       },
       y: { title: { display: true, text: '% Umidade' }, min: 0, max: 100 }
-    }
+    },
+    plugins: {
+      annotation: {
+        annotations: {}
+      }
+    } as any
   };
 
   constructor(
@@ -248,6 +260,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       const quadrante = this.quadrante;
 
       this.loadForecast(pivoId);
+      this.loadMoisturePrediction(pivoId);
 
       this.apiService.getReadsByPivotId(pivoId, 1).subscribe(pivot => {
         this.pivotName = pivot.name ?? null;
@@ -280,7 +293,146 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.readsSub?.unsubscribe();
     this.forecastSub?.unsubscribe();
     this.aiSub?.unsubscribe();
+    this.predictionSub?.unsubscribe();
   }
+
+  // ── Server-side moisture prediction ──────────────────────────────────────
+
+  private loadMoisturePrediction(pivotId: number): void {
+    this.predictionSub?.unsubscribe();
+    this.predictionLoading = true;
+    this.predictionError = null;
+    this.predictionSub = this.pivotService.getMoisturePrediction(pivotId).subscribe({
+      next: pred => {
+        this.moisturePrediction = pred;
+        this.predictionLoading = false;
+        // If reads have already loaded, rebuild the chart with server prediction
+        if (this.trendStats !== null) {
+          this.loadReads();
+        }
+      },
+      error: (err: HttpErrorResponse) => {
+        this.moisturePrediction = null;
+        this.predictionLoading = false;
+        if (err.status === 422 || err.status === 400) {
+          this.predictionError = 'Histórico insuficiente para predição (mínimo 24h de leituras).';
+        } else if (err.status !== 404) {
+          this.predictionError = 'Predição temporariamente indisponível.';
+        }
+        // Clear any stale annotation
+        this.applyCriticalAnnotation(null);
+        this.chart?.update();
+      }
+    });
+  }
+
+  /** Hours until critical moisture from now; null when EstimatedCriticalAt is absent. */
+  get hoursUntilCritical(): number | null {
+    if (!this.moisturePrediction?.estimatedCriticalAt) return null;
+    const ms = new Date(this.moisturePrediction.estimatedCriticalAt).getTime() - Date.now();
+    return ms > 0 ? Math.round(ms / 3600000) : 0;
+  }
+
+  /** Confidence as 0–100 integer percentage. */
+  get predictionConfidencePct(): number {
+    return Math.round((this.moisturePrediction?.confidence ?? 0) * 100);
+  }
+
+  /** True when the pivot has coordinates (derived from forecast response). */
+  get predictionHasCoordinates(): boolean {
+    return this.forecast?.hasCoordinates ?? false;
+  }
+
+  /**
+   * Aggregates the 72h hourly prediction into up to 3 daily ProjectionPoints.
+   * Returns an empty array when no server prediction is available.
+   */
+  private buildServerProjectionPoints(): ProjectionPoint[] {
+    if (!this.moisturePrediction || !this.moisturePrediction.predictedValues.length) return [];
+
+    const grouped = new Map<number, { mids: number[]; mins: number[]; maxs: number[] }>();
+    const values = this.moisturePrediction.predictedValues;
+
+    for (let i = 0; i < values.length; i++) {
+      const dayBucket = Math.min(3, Math.ceil((i + 1) / 24));
+      if (!grouped.has(dayBucket)) grouped.set(dayBucket, { mids: [], mins: [], maxs: [] });
+      const g = grouped.get(dayBucket)!;
+      g.mids.push(values[i].predictedMoisture);
+      g.mins.push(values[i].confidenceMin);
+      g.maxs.push(values[i].confidenceMax);
+    }
+
+    const avg = (a: number[]) =>
+      parseFloat((a.reduce((s, v) => s + v, 0) / a.length).toFixed(1));
+
+    return [1, 2, 3].map(d => {
+      const g = grouped.get(d) ?? { mids: [0], mins: [0], maxs: [0] };
+      return {
+        date: `+${d}d`,
+        projMin: avg(g.mins),
+        projMax: avg(g.maxs),
+        projMid: avg(g.mids)
+      };
+    });
+  }
+
+  /**
+   * Returns the projection label ('+1d', '+2d', '+3d') where EstimatedCriticalAt falls,
+   * or null when not applicable.
+   */
+  private criticalLabel(): string | null {
+    if (!this.moisturePrediction?.estimatedCriticalAt) return null;
+    const critTime = new Date(this.moisturePrediction.estimatedCriticalAt).getTime();
+    const values = this.moisturePrediction.predictedValues;
+
+    for (let i = 0; i < values.length; i++) {
+      if (new Date(values[i].date).getTime() >= critTime) {
+        const day = Math.min(3, Math.ceil((i + 1) / 24));
+        return `+${day}d`;
+      }
+    }
+    return '+1d';
+  }
+
+  /** Updates the Chart.js annotation plugin options for the critical vertical line. */
+  private applyCriticalAnnotation(label: string | null): void {
+    const annotationOpts = label === null
+      ? { annotations: {} }
+      : {
+          annotations: {
+            criticalLine: {
+              type: 'line',
+              scaleID: 'x',
+              value: label,
+              borderColor: '#ef4444',
+              borderWidth: 2,
+              borderDash: [6, 4],
+              label: {
+                display: true,
+                content: 'Umidade crítica',
+                position: 'start',
+                color: '#ef4444',
+                backgroundColor: 'rgba(239,68,68,0.08)',
+                font: { size: 11, weight: 'bold' }
+              }
+            }
+          }
+        };
+
+    // Store in bound options for chart re-initializations
+    const boundOpts = this.lineChartOptions as any;
+    if (!boundOpts.plugins) boundOpts.plugins = {};
+    boundOpts.plugins.annotation = annotationOpts;
+
+    // Also patch the live chart instance so that chart.update() picks up the change
+    if (this.chart?.chart) {
+      const liveOpts = this.chart.chart.options as any;
+      if (!liveOpts.plugins) liveOpts.plugins = {};
+      liveOpts.plugins.annotation = annotationOpts;
+    }
+  }
+
+  // ── AI Insights ───────────────────────────────────────────────────────────
 
   loadAIInsights(): void {
     if (!this.pivoId) return;
@@ -369,6 +521,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return out.join('');
   }
 
+  // ── Forecast ──────────────────────────────────────────────────────────────
+
   private loadForecast(pivotId: number): void {
     this.forecastSub?.unsubscribe();
     this.forecastLoading = true;
@@ -390,6 +544,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
 
+  // ── Chart ─────────────────────────────────────────────────────────────────
+
   loadReads(): void {
     this.readsSub?.unsubscribe();
     this.readsSub = this.apiService.getAllReadsBySensorId(
@@ -404,8 +560,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         return;
       }
 
-      // Compute trend analysis — requires limits to be set (they are, as this runs inside the
-      // getReadsByPivotId callback chain).
       const limInf = this.limiteInferior ?? 0;
       const limSup = this.limiteSuperior ?? 100;
 
@@ -415,18 +569,22 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.trendStats = stats;
       this.projectionPoints = projection;
 
-      // Build unified label array: historical day labels + projection labels
+      // Use server-side prediction when available; fall back to client projection
+      const serverProj = this.buildServerProjectionPoints();
+      const useServerPred = serverProj.length > 0;
+      const projToUse = useServerPred ? serverProj : projection;
+      const midLabel  = useServerPred ? 'Previsão 72h'     : 'Projecao (central)';
+      const bandLabel = useServerPred ? 'Banda de confiança' : 'Projecao (faixa)';
+
       const histLabels = points.map(p => p.date);
-      const projLabels = projection.map(p => p.date);
-      const allLabels = [...histLabels, ...projLabels];
-      const histLen = histLabels.length;
-      const totalLen = allLabels.length;
+      const projLabels = projToUse.map(p => p.date);
+      const allLabels  = [...histLabels, ...projLabels];
+      const histLen    = histLabels.length;
+      const totalLen   = allLabels.length;
 
-      // Null padding helpers
       const histNulls = new Array<null>(histLen).fill(null);
-      const projNulls = new Array<null>(projection.length).fill(null);
+      const projNulls = new Array<null>(projToUse.length).fill(null);
 
-      // Completely rebuild the datasets array on each load (avoids index-mutation bugs)
       this.lineChartData = {
         labels: allLabels,
         datasets: [
@@ -442,7 +600,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
             order: 0,
             spanGaps: false
           },
-          // [DS_LIMIT_LOW=1] Limite Inferior flat line (full range for zone fills)
+          // [DS_LIMIT_LOW=1] Limite Inferior flat line
           {
             data: new Array(totalLen).fill(limInf),
             label: 'Limite Inferior',
@@ -482,7 +640,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
             order: 3,
             spanGaps: false
           },
-          // [DS_TREND=4] Linear regression trend line — null in projection range
+          // [DS_TREND=4] Linear regression trend line
           {
             data: [...points.map(p => p.trend ?? null), ...projNulls],
             label: 'Tendencia (regressao linear)',
@@ -496,7 +654,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
             spanGaps: false,
             hidden: !this.showTrend
           },
-          // [DS_MA=5] 3-day moving average — null in projection range
+          // [DS_MA=5] 3-day moving average
           {
             data: [...points.map(p => p.movingAvg ?? null), ...projNulls],
             label: 'Media Movel (3d)',
@@ -509,9 +667,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
             spanGaps: false,
             hidden: !this.showMA
           },
-          // [DS_PROJ_MIN=6] Projection floor — null in historical range
+          // [DS_PROJ_MIN=6] Projection/prediction floor
           {
-            data: [...histNulls, ...projection.map(p => p.projMin)],
+            data: [...histNulls, ...projToUse.map(p => p.projMin)],
             label: '',
             borderColor: 'transparent',
             borderWidth: 0,
@@ -522,25 +680,25 @@ export class DashboardComponent implements OnInit, OnDestroy {
             spanGaps: false,
             hidden: !this.showProjection
           },
-          // [DS_PROJ_MAX=7] Projection ceiling fills down to DS_PROJ_MIN
+          // [DS_PROJ_MAX=7] Projection/prediction ceiling — fills down to DS_PROJ_MIN
           {
-            data: [...histNulls, ...projection.map(p => p.projMax)],
-            label: 'Projecao (faixa)',
+            data: [...histNulls, ...projToUse.map(p => p.projMax)],
+            label: bandLabel,
             borderColor: 'transparent',
             borderWidth: 0,
             pointRadius: 0,
             fill: '-1',
-            backgroundColor: 'rgba(251,146,60,0.18)',
+            backgroundColor: useServerPred ? 'rgba(251,146,60,0.25)' : 'rgba(251,146,60,0.18)',
             tension: 0,
             order: 8,
             spanGaps: false,
             hidden: !this.showProjection
           },
-          // [DS_PROJ_MID=8] Projection central dashed line — null in historical range
+          // [DS_PROJ_MID=8] Projection/prediction midline
           {
-            data: [...histNulls, ...projection.map(p => p.projMid)],
-            label: 'Projecao (central)',
-            borderColor: '#fb923c',
+            data: [...histNulls, ...projToUse.map(p => p.projMid)],
+            label: midLabel,
+            borderColor: useServerPred ? '#f97316' : '#fb923c',
             borderDash: [4, 4],
             borderWidth: 2,
             pointRadius: 3,
@@ -553,6 +711,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
         ]
       };
 
+      // Apply critical-line annotation
+      this.applyCriticalAnnotation(useServerPred ? this.criticalLabel() : null);
       this.chart?.update();
     });
   }
@@ -597,7 +757,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return { label: 'Caindo', cssClass: 'trend-badge-falling' };
   }
 
-  /** Absolute value of slope formatted to one decimal — used in the "Caindo" badge label. */
+  /** Absolute value of slope formatted to one decimal. */
   get slopeAbs(): number {
     return this.trendStats ? Math.abs(this.trendStats.slope) : 0;
   }
@@ -608,6 +768,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const s = this.trendStats.slope;
     if (Math.abs(s) < 0.3) return '#3b82f6';
     return s > 0 ? '#22c55e' : '#ef4444';
+  }
+
+  /** Label for the projection toggle — changes with server prediction. */
+  get projectionToggleLabel(): string {
+    return this.moisturePrediction ? 'Previsão 72h' : 'Projecao';
   }
 
   goHome(): void {
@@ -626,6 +791,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private clearChart(): void {
     this.lineChartData.datasets.forEach(d => (d.data = []));
     this.lineChartData.labels = [];
+    this.applyCriticalAnnotation(null);
     this.chart?.update();
   }
 }

@@ -45,6 +45,50 @@
     </ng-container>
   </div>
 
+  <!-- Prediction Alert Card -->
+  <div class="prediction-card"
+       *ngIf="predictionLoading || moisturePrediction || predictionError"
+       [ngClass]="{
+         'prediction-card--critical': hoursUntilCritical !== null,
+         'prediction-card--ok': moisturePrediction && hoursUntilCritical === null,
+         'prediction-card--error': !predictionLoading && !moisturePrediction
+       }">
+
+    <div *ngIf="predictionLoading" class="prediction-loading">
+      Calculando predição de umidade...
+    </div>
+
+    <ng-container *ngIf="!predictionLoading && moisturePrediction">
+      <!-- Critical alert -->
+      <div *ngIf="hoursUntilCritical !== null" class="prediction-alert">
+        <span class="prediction-icon prediction-icon--warn">&#9888;</span>
+        <div class="prediction-text">
+          <strong>Umidade crítica prevista em {{ hoursUntilCritical }}h</strong>
+          <span class="prediction-conf">(confiança: {{ predictionConfidencePct }}%)</span>
+          <span *ngIf="!predictionHasCoordinates" class="prediction-no-coords">
+            &nbsp;&mdash; predição baseada apenas em histórico (sem coordenadas)
+          </span>
+        </div>
+      </div>
+
+      <!-- No critical threshold expected -->
+      <div *ngIf="hoursUntilCritical === null" class="prediction-ok">
+        <span class="prediction-icon prediction-icon--ok">&#10003;</span>
+        <div class="prediction-text">
+          Sem previsão de irrigação necessária nas próximas 72h
+          <span class="prediction-conf">(confiança: {{ predictionConfidencePct }}%)</span>
+          <span *ngIf="!predictionHasCoordinates" class="prediction-no-coords">
+            &nbsp;&mdash; predição baseada apenas em histórico (sem coordenadas)
+          </span>
+        </div>
+      </div>
+    </ng-container>
+
+    <div *ngIf="!predictionLoading && predictionError" class="prediction-error-msg">
+      {{ predictionError }}
+    </div>
+  </div>
+
   <!-- Sensor Selector -->
   <div class="selector-box">
     <label for="sensor-select">Sensor</label>
@@ -138,9 +182,9 @@
             <input type="checkbox" [checked]="showMA" (change)="onToggleMA()" />
             Media Movel
           </label>
-          <label class="overlay-toggle" [style.color]="showProjection ? '#fb923c' : '#475569'">
+          <label class="overlay-toggle" [style.color]="showProjection ? '#f97316' : '#475569'">
             <input type="checkbox" [checked]="showProjection" (change)="onToggleProjection()" />
-            Projecao
+            {{ projectionToggleLabel }}
           </label>
         </div>
       </div>
@@ -168,9 +212,21 @@
         <div class="legend-line legend-solid" style="background: #a78bfa;"></div>
         <span>Media Movel (3d)</span>
       </div>
-      <div class="legend-item" *ngIf="showProjection">
+      <div class="legend-item" *ngIf="showProjection && moisturePrediction">
+        <div class="legend-line legend-dashed" style="--legend-color: #f97316;"></div>
+        <span>Previsão 72h</span>
+      </div>
+      <div class="legend-item" *ngIf="showProjection && moisturePrediction">
+        <div class="legend-area" style="background: rgba(251,146,60,0.25);"></div>
+        <span>Banda de confiança</span>
+      </div>
+      <div class="legend-item" *ngIf="showProjection && !moisturePrediction">
         <div class="legend-line legend-dashed" style="--legend-color: #fb923c;"></div>
         <span>Projecao futura</span>
+      </div>
+      <div class="legend-item" *ngIf="moisturePrediction?.estimatedCriticalAt">
+        <div class="legend-line legend-critical"></div>
+        <span>Umidade crítica</span>
       </div>
     </div>
   </div>
@@ -229,7 +285,7 @@
   <div class="ai-panel">
     <div class="ai-panel-header">
       <div class="ai-panel-title">
-        <span class="ai-icon">🤖</span>
+        <span class="ai-icon">&#129302;</span>
         <span>Insights IA</span>
       </div>
       <div class="ai-panel-actions">
@@ -241,7 +297,7 @@
                 class="btn-ai-toggle"
                 (click)="toggleAiExpanded()"
                 [attr.aria-expanded]="aiExpanded">
-          {{ aiExpanded ? '▲ Recolher' : '▼ Expandir' }}
+          {{ aiExpanded ? '&#9650; Recolher' : '&#9660; Expandir' }}
         </button>
       </div>
     </div>

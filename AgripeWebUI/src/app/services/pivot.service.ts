@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Pivot } from '../models/pivot.model';
 import { PivotForecast } from '../models/pivot-forecast.model';
+import { MoisturePrediction } from '../models/moisture-prediction.model';
 import { HttpClient, HttpParams } from '@angular/common/http';
 
 @Injectable({
@@ -71,5 +72,10 @@ export class PivotService {
     return this.http.post<{ insights: string; generatedAt: string; fromCache: boolean }>(
       `${this.baseUrl}pivot/${pivotId}/ai-insights`, {}
     );
+  }
+
+  // MOISTURE PREDICTION (server-side, 72h)
+  getMoisturePrediction(pivotId: number): Observable<MoisturePrediction> {
+    return this.http.get<MoisturePrediction>(`${this.baseUrl}pivot/${pivotId}/moisture-prediction`);
   }
 }
