@@ -15,10 +15,17 @@ jobs:
     steps:
       - name: Bootstrap .env and deploy via SSH
         uses: appleboy/ssh-action@v1.2.0
+        env:
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          MQTT_USERNAME: ${{ secrets.MQTT_USERNAME }}
+          MQTT_PASSWORD: ${{ secrets.MQTT_PASSWORD }}
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
+          envs: JWT_SECRET_KEY,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET,MQTT_USERNAME,MQTT_PASSWORD
           script_stop: true
           script: |
             set -euo pipefail
@@ -55,10 +62,9 @@ jobs:
 
             git fetch origin main
             git reset --hard origin/main
-            chmod +x scripts/bootstrap-vps-env.sh scripts/deploy-hostinger-remote.sh 2>/dev/null || true
-            if [[ -x scripts/bootstrap-vps-env.sh ]]; then
-              ./scripts/bootstrap-vps-env.sh .
-            fi
+            chmod +x scripts/bootstrap-vps-env.sh scripts/bootstrap-vps-env-from-secrets.sh scripts/deploy-hostinger-remote.sh 2>/dev/null || true
+            if [[ -d .env ]]; then rm -rf .env; fi
+            ./scripts/bootstrap-vps-env-from-secrets.sh . --force
             ./scripts/deploy-hostinger-remote.sh .
 
       - name: Health check

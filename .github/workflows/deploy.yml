@@ -55,12 +55,8 @@ jobs:
             git checkout -f HEAD -- AgripeWebUI AgripeWebAPI AgripeWebWorker docker scripts
             chmod +x scripts/bootstrap-vps-env.sh scripts/bootstrap-vps-env-from-secrets.sh scripts/resolve-vps-repo-root.sh scripts/vps-deploy-from-actions.sh scripts/deploy-hostinger-remote.sh
             if [[ -d .env ]]; then rm -rf .env; fi
-            if [[ ! -f .env ]]; then
-              scripts/bootstrap-vps-env.sh "$REPO_ROOT" || true
-            fi
-            if [[ ! -f .env ]]; then
-              scripts/bootstrap-vps-env-from-secrets.sh "$REPO_ROOT"
-            fi
+            # Sync .env from production GitHub secrets (supports rotation; idempotent rewrite).
+            scripts/bootstrap-vps-env-from-secrets.sh "$REPO_ROOT" --force
             scripts/vps-deploy-from-actions.sh "$REPO_ROOT"
 
       - name: Health check

@@ -2,15 +2,23 @@
 # Create repo-root .env from GitHub Actions secrets (production environment).
 set -euo pipefail
 
-ROOT="${1:-.}"
+FORCE=0
+ROOT="."
+for arg in "$@"; do
+  case "$arg" in
+    --force) FORCE=1 ;;
+    -*) echo "Unknown option: $arg" >&2; exit 2 ;;
+    *) ROOT="$arg" ;;
+  esac
+done
 cd "$ROOT"
 
 if [[ -d .env ]]; then
   rm -rf .env
 fi
 
-if [[ -f .env ]]; then
-  echo ".env already present"
+if [[ -f .env && "$FORCE" -eq 0 ]]; then
+  echo ".env already present (use --force to rewrite from GitHub secrets)"
   exit 0
 fi
 
@@ -36,4 +44,8 @@ umask 077
   printf 'MQTT_PASSWORD=%q\n' "$MQTT_PASSWORD"
 } > .env
 chmod 600 .env
-echo "Created .env from GitHub Actions secrets"
+if [[ -f .env && "$FORCE" -eq 1 ]]; then
+  echo "Rewrote .env from GitHub Actions secrets (--force)"
+else
+  echo "Created .env from GitHub Actions secrets"
+fi
