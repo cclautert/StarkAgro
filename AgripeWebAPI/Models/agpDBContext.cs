@@ -36,6 +36,7 @@ namespace AgripeWebAPI.Models
             Sensors = database.GetCollection<Sensor>("sensors");
             ReadSensors = database.GetCollection<ReadSensor>("read_sensors");
             SensorAnomalies = database.GetCollection<SensorAnomaly>("sensor_anomalies");
+            IrrigationAlerts = database.GetCollection<IrrigationAlert>("irrigation_alerts");
             _counters = database.GetCollection<CounterDocument>("counters");
 
             _ = Task.Run(async () =>
@@ -49,6 +50,11 @@ namespace AgripeWebAPI.Models
                             .Descending(a => a.Date)));
                     await SensorAnomalies.Indexes.CreateOneAsync(new CreateIndexModel<SensorAnomaly>(
                         Builders<SensorAnomaly>.IndexKeys.Ascending(a => a.Acknowledged)));
+                    await IrrigationAlerts.Indexes.CreateOneAsync(new CreateIndexModel<IrrigationAlert>(
+                        Builders<IrrigationAlert>.IndexKeys
+                            .Ascending(a => a.PivotId)
+                            .Ascending(a => a.AlertType)
+                            .Descending(a => a.Date)));
                 }
                 catch
                 {
@@ -62,6 +68,7 @@ namespace AgripeWebAPI.Models
         public virtual IMongoCollection<Sensor> Sensors { get; }
         public virtual IMongoCollection<ReadSensor> ReadSensors { get; }
         public virtual IMongoCollection<SensorAnomaly> SensorAnomalies { get; }
+        public virtual IMongoCollection<IrrigationAlert> IrrigationAlerts { get; }
 
         public virtual async Task<int> GetNextIdAsync(string entityName, CancellationToken cancellationToken = default)
         {
