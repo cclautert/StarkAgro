@@ -431,5 +431,99 @@ namespace AgripeWebWorker.Tests.Services
             var exception = await Record.ExceptionAsync(() => _service.StopAsync(CancellationToken.None));
             Assert.Null(exception);
         }
+
+        // --- Edge anomaly tests ---
+
+        [Fact]
+        public async Task MessageReceived_WithIsEdgeAnomalyTrue_ShouldForwardFlagToCreateReadRequest()
+        {
+            var mockMediator = new Mock<IMediator>();
+            var mockScope = new Mock<IServiceScope>();
+            var mockScopeFactory = new Mock<IServiceScopeFactory>();
+            var mockScopedProvider = new Mock<IServiceProvider>();
+
+            mockScopedProvider.Setup(sp => sp.GetService(typeof(IMediator))).Returns(mockMediator.Object);
+            mockScope.Setup(s => s.ServiceProvider).Returns(mockScopedProvider.Object);
+            mockScopeFactory.Setup(f => f.CreateScope()).Returns(mockScope.Object);
+            _mockServiceProvider.Setup(sp => sp.GetService(typeof(IServiceScopeFactory))).Returns(mockScopeFactory.Object);
+
+            mockMediator.Setup(m => m.Send(It.IsAny<CreateReadRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new AgripeWebAPI.Domain.Commands.Responses.Reads.CreateReadResponse { Id = 1, SensorId = 1, UserId = 1 });
+
+            await StartServiceAndCapture();
+            Assert.NotNull(_capturedMessageHandler);
+
+            var payload = JsonSerializer.Serialize(new { code = "SENS01", value = 42.5m, isEdgeAnomaly = true });
+            await _capturedMessageHandler!(CreateMessageEventArgs(Encoding.UTF8.GetBytes(payload)));
+
+            mockMediator.Verify(m => m.Send(
+                It.Is<CreateReadRequest>(r => r.Code == "SENS01" && r.IsEdgeAnomaly == true),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task MessageReceived_WithIsEdgeAnomalyFalse_ShouldPassFalseFlagToCreateReadRequest()
+        {
+            var mockMediator = new Mock<IMediator>();
+            var mockScope = new Mock<IServiceScope>();
+            var mockScopeFactory = new Mock<IServiceScopeFactory>();
+            var mockScopedProvider = new Mock<IServiceProvider>();
+
+            mockScopedProvider.Setup(sp => sp.GetService(typeof(IMediator))).Returns(mockMediator.Object);
+            mockScope.Setup(s => s.ServiceProvider).Returns(mockScopedProvider.Object);
+            mockScopeFactory.Setup(f => f.CreateScope()).Returns(mockScope.Object);
+            _mockServiceProvider.Setup(sp => sp.GetService(typeof(IServiceScopeFactory))).Returns(mockScopeFactory.Object);
+
+            mockMediator.Setup(m => m.Send(It.IsAny<CreateReadRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new AgripeWebAPI.Domain.Commands.Responses.Reads.CreateReadResponse { Id = 1, SensorId = 1, UserId = 1 });
+
+            await StartServiceAndCapture();
+            Assert.NotNull(_capturedMessageHandler);
+
+            var payload = JsonSerializer.Serialize(new { code = "SENS01", value = 42.5m });
+            await _capturedMessageHandler!(CreateMessageEventArgs(Encoding.UTF8.GetBytes(payload)));
+
+            mockMediator.Verify(m => m.Send(
+                It.Is<CreateReadRequest>(r => r.Code == "SENS01" && r.IsEdgeAnomaly == false),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task MessageReceived_WithEdgeStats_ShouldForwardStatsToCreateReadRequest()
+        {
+            var mockMediator = new Mock<IMediator>();
+            var mockScope = new Mock<IServiceScope>();
+            var mockScopeFactory = new Mock<IServiceScopeFactory>();
+            var mockScopedProvider = new Mock<IServiceProvider>();
+
+            mockScopedProvider.Setup(sp => sp.GetService(typeof(IMediator))).Returns(mockMediator.Object);
+            mockScope.Setup(s => s.ServiceProvider).Returns(mockScopedProvider.Object);
+            mockScopeFactory.Setup(f => f.CreateScope()).Returns(mockScope.Object);
+            _mockServiceProvider.Setup(sp => sp.GetService(typeof(IServiceScopeFactory))).Returns(mockScopeFactory.Object);
+
+            mockMediator.Setup(m => m.Send(It.IsAny<CreateReadRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new AgripeWebAPI.Domain.Commands.Responses.Reads.CreateReadResponse { Id = 1, SensorId = 1, UserId = 1 });
+
+            await StartServiceAndCapture();
+            Assert.NotNull(_capturedMessageHandler);
+
+            var payload = JsonSerializer.Serialize(new
+            {
+                code = "SENS02",
+                value = 99.9m,
+                isEdgeAnomaly = true,
+                edgeStats = new { mean = 50.0m, stdDev = 5.0m, windowSize = 10 }
+            });
+            await _capturedMessageHandler!(CreateMessageEventArgs(Encoding.UTF8.GetBytes(payload)));
+
+            mockMediator.Verify(m => m.Send(
+                It.Is<CreateReadRequest>(r =>
+                    r.IsEdgeAnomaly == true &&
+                    r.EdgeStats != null &&
+                    r.EdgeStats.Mean == 50.0m &&
+                    r.EdgeStats.StdDev == 5.0m &&
+                    r.EdgeStats.WindowSize == 10),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
     }
 }

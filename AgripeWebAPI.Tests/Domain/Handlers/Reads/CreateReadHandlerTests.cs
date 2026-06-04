@@ -148,5 +148,61 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Reads
 
             await Assert.ThrowsAsync<UnauthorizedAccessException>(() => handler.Handle(request, CancellationToken.None));
         }
+
+        [Fact]
+        public async Task Handle_WithIsEdgeAnomalyTrue_ShouldPersistIsEdgeAnomalyAndEdgeDetectedAt()
+        {
+            var mockDbContext = new Mock<agpDBContext>();
+            var mockSensors = new Mock<IMongoCollection<Sensor>>();
+            var mockReadSensors = new Mock<IMongoCollection<ReadSensor>>();
+
+            var sensor = new Sensor { Id = 1, Code = "SENSOR-1", UserId = 1 };
+            MongoMockHelper.SetupFind(mockSensors, sensor);
+            mockDbContext.Setup(c => c.Sensors).Returns(mockSensors.Object);
+            mockDbContext.Setup(c => c.ReadSensors).Returns(mockReadSensors.Object);
+            mockDbContext.Setup(c => c.GetNextIdAsync("ReadSensor", It.IsAny<CancellationToken>())).ReturnsAsync(10);
+            mockReadSensors.Setup(c => c.InsertOneAsync(It.IsAny<ReadSensor>(), It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
+
+            var before = DateTime.UtcNow;
+            var handler = new CreateReadHandler(mockDbContext.Object, AuthenticatedUser(1).Object);
+            var request = new CreateReadRequest { Code = "SENSOR-1", Value = 100m, IsEdgeAnomaly = true };
+
+            await handler.Handle(request, CancellationToken.None);
+
+            mockReadSensors.Verify(c => c.InsertOneAsync(
+                It.Is<ReadSensor>(rs =>
+                    rs.IsEdgeAnomaly == true &&
+                    rs.EdgeDetectedAt.HasValue &&
+                    rs.EdgeDetectedAt.Value >= before),
+                It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task Handle_WithIsEdgeAnomalyFalse_ShouldNotSetEdgeDetectedAt()
+        {
+            var mockDbContext = new Mock<agpDBContext>();
+            var mockSensors = new Mock<IMongoCollection<Sensor>>();
+            var mockReadSensors = new Mock<IMongoCollection<ReadSensor>>();
+
+            var sensor = new Sensor { Id = 1, Code = "SENSOR-1", UserId = 1 };
+            MongoMockHelper.SetupFind(mockSensors, sensor);
+            mockDbContext.Setup(c => c.Sensors).Returns(mockSensors.Object);
+            mockDbContext.Setup(c => c.ReadSensors).Returns(mockReadSensors.Object);
+            mockDbContext.Setup(c => c.GetNextIdAsync("ReadSensor", It.IsAny<CancellationToken>())).ReturnsAsync(11);
+            mockReadSensors.Setup(c => c.InsertOneAsync(It.IsAny<ReadSensor>(), It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
+
+            var handler = new CreateReadHandler(mockDbContext.Object, AuthenticatedUser(1).Object);
+            var request = new CreateReadRequest { Code = "SENSOR-1", Value = 100m, IsEdgeAnomaly = false };
+
+            await handler.Handle(request, CancellationToken.None);
+
+            mockReadSensors.Verify(c => c.InsertOneAsync(
+                It.Is<ReadSensor>(rs =>
+                    rs.IsEdgeAnomaly == false &&
+                    rs.EdgeDetectedAt == null),
+                It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
     }
 }

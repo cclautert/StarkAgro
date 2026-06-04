@@ -67,7 +67,14 @@ namespace AgripeWebWorker.Services
                     var createRequest = new CreateReadRequest
                     {
                         Code = message.Code,
-                        Value = message.Value
+                        Value = message.Value,
+                        IsEdgeAnomaly = message.IsEdgeAnomaly,
+                        EdgeStats = message.EdgeStats != null ? new AgripeWebAPI.Domain.Commands.Requests.Reads.EdgeStats
+                        {
+                            Mean = message.EdgeStats.Mean,
+                            StdDev = message.EdgeStats.StdDev,
+                            WindowSize = message.EdgeStats.WindowSize
+                        } : null
                     };
 
                     var createResponse = await mediator.Send(createRequest, stoppingToken);
@@ -166,6 +173,15 @@ namespace AgripeWebWorker.Services
         {
             public string Code { get; set; } = string.Empty;
             public decimal Value { get; set; }
+            public bool IsEdgeAnomaly { get; set; }
+            public MqttEdgeStats? EdgeStats { get; set; }
+        }
+
+        private sealed class MqttEdgeStats
+        {
+            public decimal? Mean { get; set; }
+            public decimal? StdDev { get; set; }
+            public int? WindowSize { get; set; }
         }
     }
 }

@@ -41,7 +41,9 @@ namespace AgripeWebAPI.Domain.Handlers.Reads
                 SensorId = sensor.Id,
                 UserId = sensor.UserId,
                 Value = request.Value,
-                Date = DateTime.UtcNow
+                Date = DateTime.UtcNow,
+                IsEdgeAnomaly = request.IsEdgeAnomaly,
+                EdgeDetectedAt = request.IsEdgeAnomaly ? DateTime.UtcNow : null
             };
 
             await _dbContext.ReadSensors.InsertOneAsync(read, cancellationToken: cancellationToken);
