@@ -70,6 +70,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   predictionError: string | null = null;
   private predictionSub: Subscription | null = null;
 
+  // ── Anomaly source counts (edge vs cloud) ─────────────────────────────
+  edgeAnomalyCount = 0;
+  cloudAnomalyCount = 0;
+
   // Dataset index constants for the toggle handlers
   private readonly DS_TREND    = 4;
   private readonly DS_MA       = 5;
@@ -556,6 +560,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
       if (!reads || reads.length === 0) {
         this.trendStats = null;
         this.projectionPoints = [];
+        this.edgeAnomalyCount = 0;
+        this.cloudAnomalyCount = 0;
         this.clearChart();
         return;
       }
@@ -568,6 +574,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
       this.trendStats = stats;
       this.projectionPoints = projection;
+
+      // Compute edge vs cloud breakdown for anomalous reads
+      const anomalousReads = reads.filter(r => r.value < limInf || r.value > limSup);
+      this.edgeAnomalyCount = anomalousReads.filter(r => r.isEdgeAnomaly === true).length;
+      this.cloudAnomalyCount = anomalousReads.length - this.edgeAnomalyCount;
 
       // Use server-side prediction when available; fall back to client projection
       const serverProj = this.buildServerProjectionPoints();

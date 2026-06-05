@@ -145,6 +145,16 @@
       <div class="metric-card-sub">
         {{ trendStats.alertCount > 0 ? 'fora dos limites' : 'dentro dos limites' }}
       </div>
+      <div class="anomaly-source-row" *ngIf="trendStats.alertCount > 0">
+        <span class="anomaly-source-chip anomaly-source-edge"
+              title="Detectado no dispositivo (edge)">
+          &#128225; {{ edgeAnomalyCount }}
+        </span>
+        <span class="anomaly-source-chip anomaly-source-cloud"
+              title="Detectado na nuvem">
+          &#9729; {{ cloudAnomalyCount }}
+        </span>
+      </div>
     </div>
   </div>
 

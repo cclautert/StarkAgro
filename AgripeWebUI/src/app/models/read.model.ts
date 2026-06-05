@@ -3,4 +3,6 @@ export interface Read {
   sensorId: number;
   value: number;
   date: Date;
+  isEdgeAnomaly?: boolean;
+  edgeDetectedAt?: string;
 }
