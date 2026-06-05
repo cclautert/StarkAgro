@@ -6,6 +6,10 @@ name: Bootstrap VPS Runner
 on:
   workflow_dispatch:
 
+permissions:
+  actions: write
+  contents: read
+
 concurrency:
   group: bootstrap-vps-runner
   cancel-in-progress: false
