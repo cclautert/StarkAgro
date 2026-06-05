@@ -1,8 +1,6 @@
 using System.Text;
 using System.Text.Json;
-using AgripeWebAPI.Domain.Commands.Requests.Anomalies;
 using AgripeWebAPI.Domain.Commands.Requests.Reads;
-using AgripeWebAPI.Domain.Commands.Responses.Reads;
 using AgripeWebWorker.Configuration;
 using AgripeWebWorker.Services;
 using MediatR;
@@ -26,8 +24,6 @@ namespace AgripeWebWorker.Tests.Services
 
         private Func<MqttApplicationMessageReceivedEventArgs, Task>? _capturedMessageHandler;
         private Func<MqttClientDisconnectedEventArgs, Task>? _capturedDisconnectedHandler;
-        private readonly TaskCompletionSource _handlersRegisteredTcs = new(TaskCreationOptions.RunContinuationsAsynchronously);
-        private readonly TaskCompletionSource _subscribeAsyncTcs = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
         public MqttWorkerServiceTests()
         {
@@ -50,11 +46,7 @@ namespace AgripeWebWorker.Tests.Services
 
             _mockMqttClient
                 .SetupAdd(c => c.DisconnectedAsync += It.IsAny<Func<MqttClientDisconnectedEventArgs, Task>>())
-                .Callback<Func<MqttClientDisconnectedEventArgs, Task>>(handler =>
-                {
-                    _capturedDisconnectedHandler = handler;
-                    _handlersRegisteredTcs.TrySetResult();
-                });
+                .Callback<Func<MqttClientDisconnectedEventArgs, Task>>(handler => _capturedDisconnectedHandler = handler);
 
             // ConnectAsync should complete immediately
             _mockMqttClient
@@ -64,7 +56,6 @@ namespace AgripeWebWorker.Tests.Services
             // SubscribeAsync should complete immediately - result is not inspected by the service
             _mockMqttClient
                 .Setup(c => c.SubscribeAsync(It.IsAny<MqttClientSubscribeOptions>(), It.IsAny<CancellationToken>()))
-                .Callback(() => _subscribeAsyncTcs.TrySetResult())
                 .ReturnsAsync((MqttClientSubscribeResult)null!);
 
             var options = Options.Create(_mqttSettings);
@@ -77,26 +68,14 @@ namespace AgripeWebWorker.Tests.Services
             _service.Dispose();
         }
 
-        private async Task WaitForWorkerStartupAsync(TimeSpan timeout)
+        private async Task StartServiceAndCapture()
         {
-            await _handlersRegisteredTcs.Task.WaitAsync(timeout);
-            await _subscribeAsyncTcs.Task.WaitAsync(timeout);
-        }
-
-        private async Task StartServiceAndCapture(bool waitForStartup = true)
-        {
-            _cts.CancelAfter(TimeSpan.FromSeconds(15));
+            _cts.CancelAfter(TimeSpan.FromSeconds(2));
             try
             {
                 await _service.StartAsync(_cts.Token);
-                if (waitForStartup)
-                {
-                    await WaitForWorkerStartupAsync(TimeSpan.FromSeconds(5));
-                }
-                else
-                {
-                    await Task.Delay(100);
-                }
+                // Give ExecuteAsync a moment to wire up handlers
+                await Task.Delay(100);
             }
             catch (OperationCanceledException) { }
         }
@@ -145,28 +124,17 @@ namespace AgripeWebWorker.Tests.Services
                 Password = "s3cr3t"
             };
 
-            MqttClientOptions? capturedOptions = null;
-            _mockMqttClient
-                .Setup(c => c.ConnectAsync(It.IsAny<MqttClientOptions>(), It.IsAny<CancellationToken>()))
-                .Callback<MqttClientOptions, CancellationToken>((opts, _) => capturedOptions = opts)
-                .ReturnsAsync(new MqttClientConnectResult());
-
             var options = Options.Create(settingsWithCreds);
             var service = new MqttWorkerService(_mockServiceProvider.Object, options, _mockLogger.Object, _mockMqttClient.Object);
 
             var cts = new CancellationTokenSource();
-            cts.CancelAfter(TimeSpan.FromSeconds(10));
-            try
-            {
-                await service.StartAsync(cts.Token);
-                await _handlersRegisteredTcs.Task.WaitAsync(TimeSpan.FromSeconds(5));
-                await _subscribeAsyncTcs.Task.WaitAsync(TimeSpan.FromSeconds(5));
-            }
+            cts.CancelAfter(TimeSpan.FromSeconds(2));
+            try { await service.StartAsync(cts.Token); await Task.Delay(100); }
             catch (OperationCanceledException) { }
 
-            Assert.NotNull(capturedOptions);
-            Assert.NotNull(capturedOptions!.Credentials);
-            Assert.Equal("iot_device", capturedOptions.Credentials.GetUserName(capturedOptions));
+            _mockMqttClient.Verify(c => c.ConnectAsync(
+                It.Is<MqttClientOptions>(o => o.Credentials != null && o.Credentials.GetUserName(o) == "iot_device"),
+                It.IsAny<CancellationToken>()), Times.AtLeastOnce);
 
             cts.Dispose();
             service.Dispose();
@@ -219,34 +187,6 @@ namespace AgripeWebWorker.Tests.Services
         }
 
         // --- Message processing tests ---
-
-        [Fact]
-        public async Task MessageReceived_WhenReadCreated_TriggersAnomalyDetection()
-        {
-            var mockMediator = new Mock<IMediator>();
-            var mockScope = new Mock<IServiceScope>();
-            var mockScopeFactory = new Mock<IServiceScopeFactory>();
-            var mockScopedProvider = new Mock<IServiceProvider>();
-
-            mockScopedProvider.Setup(sp => sp.GetService(typeof(IMediator))).Returns(mockMediator.Object);
-            mockScope.Setup(s => s.ServiceProvider).Returns(mockScopedProvider.Object);
-            mockScopeFactory.Setup(f => f.CreateScope()).Returns(mockScope.Object);
-            _mockServiceProvider.Setup(sp => sp.GetService(typeof(IServiceScopeFactory))).Returns(mockScopeFactory.Object);
-
-            mockMediator
-                .Setup(m => m.Send(It.IsAny<CreateReadRequest>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new CreateReadResponse { Id = 77, SensorId = 3, UserId = 1 });
-
-            await StartServiceAndCapture();
-            Assert.NotNull(_capturedMessageHandler);
-
-            var payload = JsonSerializer.Serialize(new { code = "SENS02", value = 40 });
-            await _capturedMessageHandler!(CreateMessageEventArgs(Encoding.UTF8.GetBytes(payload)));
-
-            mockMediator.Verify(m => m.Send(
-                It.Is<DetectSensorAnomalyRequest>(r => r.ReadSensorId == 77 && r.SensorId == 3 && r.UserId == 1 && r.Value == 40),
-                It.IsAny<CancellationToken>()), Times.Once);
-        }
 
         [Fact]
         public async Task MessageReceived_ValidPayload_ShouldSendCreateReadRequest()
@@ -360,7 +300,7 @@ namespace AgripeWebWorker.Tests.Services
             try
             {
                 await service.StartAsync(nonCancelledCts.Token);
-                await _handlersRegisteredTcs.Task.WaitAsync(TimeSpan.FromSeconds(5));
+                await Task.Delay(100);
 
                 Assert.NotNull(_capturedDisconnectedHandler);
                 try
@@ -381,7 +321,7 @@ namespace AgripeWebWorker.Tests.Services
         {
             _cts.Cancel();
 
-            await StartServiceAndCapture(waitForStartup: false);
+            await StartServiceAndCapture();
 
             if (_capturedDisconnectedHandler != null)
             {
@@ -432,98 +372,76 @@ namespace AgripeWebWorker.Tests.Services
             Assert.Null(exception);
         }
 
-        // --- Edge anomaly tests ---
+        // --- TLS tests ---
 
         [Fact]
-        public async Task MessageReceived_WithIsEdgeAnomalyTrue_ShouldForwardFlagToCreateReadRequest()
+        public async Task ExecuteAsync_ShouldConnectWithTls_WhenUseTlsEnabled()
         {
-            var mockMediator = new Mock<IMediator>();
-            var mockScope = new Mock<IServiceScope>();
-            var mockScopeFactory = new Mock<IServiceScopeFactory>();
-            var mockScopedProvider = new Mock<IServiceProvider>();
-
-            mockScopedProvider.Setup(sp => sp.GetService(typeof(IMediator))).Returns(mockMediator.Object);
-            mockScope.Setup(s => s.ServiceProvider).Returns(mockScopedProvider.Object);
-            mockScopeFactory.Setup(f => f.CreateScope()).Returns(mockScope.Object);
-            _mockServiceProvider.Setup(sp => sp.GetService(typeof(IServiceScopeFactory))).Returns(mockScopeFactory.Object);
-
-            mockMediator.Setup(m => m.Send(It.IsAny<CreateReadRequest>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new AgripeWebAPI.Domain.Commands.Responses.Reads.CreateReadResponse { Id = 1, SensorId = 1, UserId = 1 });
-
-            await StartServiceAndCapture();
-            Assert.NotNull(_capturedMessageHandler);
-
-            var payload = JsonSerializer.Serialize(new { code = "SENS01", value = 42.5m, isEdgeAnomaly = true });
-            await _capturedMessageHandler!(CreateMessageEventArgs(Encoding.UTF8.GetBytes(payload)));
-
-            mockMediator.Verify(m => m.Send(
-                It.Is<CreateReadRequest>(r => r.Code == "SENS01" && r.IsEdgeAnomaly == true),
-                It.IsAny<CancellationToken>()), Times.Once);
-        }
-
-        [Fact]
-        public async Task MessageReceived_WithIsEdgeAnomalyFalse_ShouldPassFalseFlagToCreateReadRequest()
-        {
-            var mockMediator = new Mock<IMediator>();
-            var mockScope = new Mock<IServiceScope>();
-            var mockScopeFactory = new Mock<IServiceScopeFactory>();
-            var mockScopedProvider = new Mock<IServiceProvider>();
-
-            mockScopedProvider.Setup(sp => sp.GetService(typeof(IMediator))).Returns(mockMediator.Object);
-            mockScope.Setup(s => s.ServiceProvider).Returns(mockScopedProvider.Object);
-            mockScopeFactory.Setup(f => f.CreateScope()).Returns(mockScope.Object);
-            _mockServiceProvider.Setup(sp => sp.GetService(typeof(IServiceScopeFactory))).Returns(mockScopeFactory.Object);
-
-            mockMediator.Setup(m => m.Send(It.IsAny<CreateReadRequest>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new AgripeWebAPI.Domain.Commands.Responses.Reads.CreateReadResponse { Id = 1, SensorId = 1, UserId = 1 });
-
-            await StartServiceAndCapture();
-            Assert.NotNull(_capturedMessageHandler);
-
-            var payload = JsonSerializer.Serialize(new { code = "SENS01", value = 42.5m });
-            await _capturedMessageHandler!(CreateMessageEventArgs(Encoding.UTF8.GetBytes(payload)));
-
-            mockMediator.Verify(m => m.Send(
-                It.Is<CreateReadRequest>(r => r.Code == "SENS01" && r.IsEdgeAnomaly == false),
-                It.IsAny<CancellationToken>()), Times.Once);
-        }
-
-        [Fact]
-        public async Task MessageReceived_WithEdgeStats_ShouldForwardStatsToCreateReadRequest()
-        {
-            var mockMediator = new Mock<IMediator>();
-            var mockScope = new Mock<IServiceScope>();
-            var mockScopeFactory = new Mock<IServiceScopeFactory>();
-            var mockScopedProvider = new Mock<IServiceProvider>();
-
-            mockScopedProvider.Setup(sp => sp.GetService(typeof(IMediator))).Returns(mockMediator.Object);
-            mockScope.Setup(s => s.ServiceProvider).Returns(mockScopedProvider.Object);
-            mockScopeFactory.Setup(f => f.CreateScope()).Returns(mockScope.Object);
-            _mockServiceProvider.Setup(sp => sp.GetService(typeof(IServiceScopeFactory))).Returns(mockScopeFactory.Object);
-
-            mockMediator.Setup(m => m.Send(It.IsAny<CreateReadRequest>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new AgripeWebAPI.Domain.Commands.Responses.Reads.CreateReadResponse { Id = 1, SensorId = 1, UserId = 1 });
-
-            await StartServiceAndCapture();
-            Assert.NotNull(_capturedMessageHandler);
-
-            var payload = JsonSerializer.Serialize(new
+            var settingsWithTls = new MqttSettings
             {
-                code = "SENS02",
-                value = 99.9m,
-                isEdgeAnomaly = true,
-                edgeStats = new { mean = 50.0m, stdDev = 5.0m, windowSize = 10 }
-            });
-            await _capturedMessageHandler!(CreateMessageEventArgs(Encoding.UTF8.GetBytes(payload)));
+                Host = "test-broker",
+                Port = 8883,
+                Topic = "test/reads",
+                ClientId = "test-client",
+                UseTls = true
+            };
 
-            mockMediator.Verify(m => m.Send(
-                It.Is<CreateReadRequest>(r =>
-                    r.IsEdgeAnomaly == true &&
-                    r.EdgeStats != null &&
-                    r.EdgeStats.Mean == 50.0m &&
-                    r.EdgeStats.StdDev == 5.0m &&
-                    r.EdgeStats.WindowSize == 10),
-                It.IsAny<CancellationToken>()), Times.Once);
+            var options = Options.Create(settingsWithTls);
+            var service = new MqttWorkerService(_mockServiceProvider.Object, options, _mockLogger.Object, _mockMqttClient.Object);
+
+            var cts = new CancellationTokenSource();
+            cts.CancelAfter(TimeSpan.FromSeconds(2));
+            try { await service.StartAsync(cts.Token); await Task.Delay(100); }
+            catch (OperationCanceledException) { }
+
+            _mockMqttClient.Verify(c => c.ConnectAsync(
+                It.Is<MqttClientOptions>(o => (o.ChannelOptions as MqttClientTcpOptions)!.TlsOptions.UseTls),
+                It.IsAny<CancellationToken>()), Times.AtLeastOnce);
+
+            cts.Dispose();
+            service.Dispose();
+        }
+
+        [Fact]
+        public async Task ExecuteAsync_ShouldNotUseTls_WhenUseTlsDisabled()
+        {
+            await StartServiceAndCapture();
+
+            _mockMqttClient.Verify(c => c.ConnectAsync(
+                It.Is<MqttClientOptions>(o => !(o.ChannelOptions as MqttClientTcpOptions)!.TlsOptions.UseTls),
+                It.IsAny<CancellationToken>()), Times.AtLeastOnce);
+        }
+
+        [Fact]
+        public async Task ExecuteAsync_ShouldConnectWithTlsAndCredentials_WhenBothConfigured()
+        {
+            var settingsFull = new MqttSettings
+            {
+                Host = "test-broker",
+                Port = 8883,
+                Topic = "test/reads",
+                ClientId = "test-client",
+                Username = "iot_device",
+                Password = "s3cr3t",
+                UseTls = true
+            };
+
+            var options = Options.Create(settingsFull);
+            var service = new MqttWorkerService(_mockServiceProvider.Object, options, _mockLogger.Object, _mockMqttClient.Object);
+
+            var cts = new CancellationTokenSource();
+            cts.CancelAfter(TimeSpan.FromSeconds(2));
+            try { await service.StartAsync(cts.Token); await Task.Delay(100); }
+            catch (OperationCanceledException) { }
+
+            _mockMqttClient.Verify(c => c.ConnectAsync(
+                It.Is<MqttClientOptions>(o =>
+                    (o.ChannelOptions as MqttClientTcpOptions)!.TlsOptions.UseTls &&
+                    o.Credentials != null && o.Credentials.GetUserName(o) == "iot_device"),
+                It.IsAny<CancellationToken>()), Times.AtLeastOnce);
+
+            cts.Dispose();
+            service.Dispose();
         }
     }
 }

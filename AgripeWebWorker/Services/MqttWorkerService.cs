@@ -1,3 +1,4 @@
+using System.Net.Security;
 using System.Text;
 using System.Text.Json;
 using AgripeWebWorker.Configuration;
@@ -142,9 +143,21 @@ namespace AgripeWebWorker.Services
             if (!string.IsNullOrEmpty(_mqttSettings.Username))
                 optionsBuilder = optionsBuilder.WithCredentials(_mqttSettings.Username, _mqttSettings.Password);
 
+            if (_mqttSettings.UseTls)
+            {
+                var allowUntrusted = _mqttSettings.AllowUntrustedCertificates;
+                if (allowUntrusted)
+                    _logger.LogWarning("MQTT TLS: AllowUntrustedCertificates=true — do not use in production");
+
+                optionsBuilder = optionsBuilder.WithTlsOptions(o =>
+                    o.WithCertificateValidationHandler(ctx =>
+                        allowUntrusted || ctx.SslPolicyErrors == SslPolicyErrors.None));
+            }
+
             var options = optionsBuilder.Build();
 
-            _logger.LogInformation("Connecting to MQTT broker at {Host}:{Port}...", _mqttSettings.Host, _mqttSettings.Port);
+            _logger.LogInformation("Connecting to MQTT broker at {Host}:{Port} (TLS={UseTls})...",
+                _mqttSettings.Host, _mqttSettings.Port, _mqttSettings.UseTls);
 
             await _mqttClient.ConnectAsync(options, cancellationToken);
 

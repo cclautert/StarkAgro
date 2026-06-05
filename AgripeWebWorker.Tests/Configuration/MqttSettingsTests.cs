@@ -54,5 +54,34 @@ namespace AgripeWebWorker.Tests.Configuration
             Assert.Equal("iot_device", settings.Username);
             Assert.Equal("s3cr3t", settings.Password);
         }
+
+        [Fact]
+        public void DefaultUseTls_ShouldBe_False()
+        {
+            var settings = new MqttSettings();
+            Assert.False(settings.UseTls);
+        }
+
+        [Fact]
+        public void DefaultAllowUntrustedCertificates_ShouldBe_False()
+        {
+            var settings = new MqttSettings();
+            Assert.False(settings.AllowUntrustedCertificates);
+        }
+
+        [Fact]
+        public void UseTls_ShouldAcceptTrue()
+        {
+            var settings = new MqttSettings { UseTls = true, Port = 8883 };
+            Assert.True(settings.UseTls);
+            Assert.Equal(8883, settings.Port);
+        }
+
+        [Fact]
+        public void AllowUntrustedCertificates_IsDevOnlyFlag_ShouldDefaultFalse()
+        {
+            var settings = new MqttSettings { UseTls = true };
+            Assert.False(settings.AllowUntrustedCertificates);
+        }
     }
 }

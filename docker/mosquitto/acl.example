@@ -1,0 +1,14 @@
+# Mosquitto ACL template — copy to docker/mosquitto/acl and set real usernames.
+# Enable by uncommenting `acl_file` in mosquitto.conf.
+#
+# Principle: each client may only publish/subscribe to its own topic.
+# IoT devices publish sensor readings; the worker only reads.
+
+# agripeweb-worker: subscribe only (reads sensor data)
+user agripeweb-worker
+topic read reads
+
+# iot_device: publish only (sends sensor readings)
+# Replace with the actual MQTT_USERNAME configured for your IoT device.
+user iot_device
+topic write reads
