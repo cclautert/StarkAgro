@@ -1,3 +1,11 @@
+# AgripeWeb — auto-deploy to Hostinger VPS after successful CI on main.
+#
+# Deploy modes (pick one on the VPS — see docs/deploy-hostinger.md):
+#   A) Self-hosted runner (recommended): infra/scripts/install-github-actions-runner.sh
+#      Labels: self-hosted, linux, agripeweb-prod — no inbound SSH from GitHub IPs required.
+#   B) SSH from GitHub-hosted runners: production secrets + port 22 open for GitHub Actions
+#      IP ranges (infra/scripts/sync-github-actions-ufw-ssh.sh or Hostinger hPanel firewall).
+
 name: Deploy
 
 on:
@@ -6,20 +14,102 @@ on:
     types: [completed]
     branches: [main]
   workflow_dispatch:
+    inputs:
+      deploy_mode:
+        description: "Deploy mode (auto prefers self-hosted when online)"
+        required: false
+        default: auto
+        type: choice
+        options:
+          - auto
+          - self-hosted
+          - ssh
+  pull_request:
+    paths:
+      - '.github/workflows/deploy.yml'
+      - 'infra/scripts/**'
+      - 'docs/deploy-hostinger.md'
 
 concurrency:
   group: deploy-production
   cancel-in-progress: false
 
+env:
+  VPS_DEPLOY_PATH: ${{ secrets.VPS_DEPLOY_PATH }}
+
 jobs:
-  deploy:
-    name: Deploy to Hostinger VPS
-    if: >
-      github.event_name == 'workflow_dispatch' ||
-      (github.event.workflow_run.conclusion == 'success' &&
-       github.event.workflow_run.event == 'push' &&
-       github.event.workflow_run.head_branch == 'main')
+  validate-deploy-script:
+    name: Validate deploy scripts
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Syntax-check deploy scripts
+        run: |
+          for script in infra/scripts/sync-github-actions-ufw-ssh.sh \
+                        infra/scripts/install-github-actions-runner.sh \
+                        scripts/deploy-hostinger-remote.sh \
+                        scripts/bootstrap-vps-env-from-secrets.sh; do
+            if grep -q $'\r' "$script"; then
+              echo "$script must use LF line endings (found CRLF)"
+              exit 1
+            fi
+            bash -n "$script"
+          done
+
+  deploy-self-hosted:
+    name: Deploy on VPS (self-hosted)
+    runs-on: [self-hosted, linux, agripeweb-prod]
+    if: >-
+      ${{
+        (github.event_name == 'workflow_dispatch' && (github.event.inputs.deploy_mode == 'auto' || github.event.inputs.deploy_mode == 'self-hosted'))
+        || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && vars.AGRIPEWEB_USE_SELF_HOSTED_DEPLOY == 'true')
+      }}
+    timeout-minutes: 90
+    environment: production
+    steps:
+      - name: Resolve deploy directory
+        id: paths
+        run: |
+          dir="${VPS_DEPLOY_PATH:-/opt/agripeweb}"
+          if [[ ! -d "$dir" ]]; then
+            echo "Deploy dir $dir missing — clone AgripeWeb to /opt/agripeweb on the VPS first." >&2
+            exit 1
+          fi
+          echo "dir=$dir" >> "$GITHUB_OUTPUT"
+
+      - name: Pull main and deploy
+        env:
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          MQTT_USERNAME: ${{ secrets.MQTT_USERNAME }}
+          MQTT_PASSWORD: ${{ secrets.MQTT_PASSWORD }}
+        working-directory: ${{ steps.paths.outputs.dir }}
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git reset --hard origin/main
+          chmod +x scripts/bootstrap-vps-env-from-secrets.sh scripts/deploy-hostinger-remote.sh
+          if [[ -d .env ]]; then rm -rf .env; fi
+          ./scripts/bootstrap-vps-env-from-secrets.sh . --force
+          ./scripts/deploy-hostinger-remote.sh .
+
+      - name: Health check
+        run: |
+          sleep 15
+          curl -fsS https://agripeweb.com/api/v1/health
+
+  deploy-ssh:
+    name: Deploy to Hostinger VPS
+    runs-on: ubuntu-latest
+    if: >-
+      ${{
+        (github.event_name == 'workflow_dispatch' && (github.event.inputs.deploy_mode == 'auto' || github.event.inputs.deploy_mode == 'ssh'))
+        || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && vars.AGRIPEWEB_USE_SELF_HOSTED_DEPLOY != 'true')
+      }}
+    timeout-minutes: 90
     environment: production
     steps:
       - name: Deploy via SSH
@@ -34,6 +124,8 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
+          timeout: 60s
+          command_timeout: 60m
           envs: JWT_SECRET_KEY,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET,MQTT_USERNAME,MQTT_PASSWORD
           script_stop: true
           script: |
@@ -52,10 +144,9 @@ jobs:
             git fetch origin main
             git reset --hard origin/main
             git sparse-checkout disable >/dev/null 2>&1 || true
-            git checkout -f HEAD -- AgripeWebUI AgripeWebAPI AgripeWebWorker docker scripts
+            git checkout -f HEAD -- AgripeWebUI AgripeWebAPI AgripeWebWorker docker scripts infra
             chmod +x scripts/bootstrap-vps-env.sh scripts/bootstrap-vps-env-from-secrets.sh scripts/resolve-vps-repo-root.sh scripts/vps-deploy-from-actions.sh scripts/deploy-hostinger-remote.sh
             if [[ -d .env ]]; then rm -rf .env; fi
-            # Sync .env from production GitHub secrets (supports rotation; idempotent rewrite).
             scripts/bootstrap-vps-env-from-secrets.sh "$REPO_ROOT" --force
             scripts/vps-deploy-from-actions.sh "$REPO_ROOT"
 
@@ -65,6 +156,7 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
+          timeout: 60s
           script_stop: true
           script: |
             set -euo pipefail

@@ -123,6 +123,15 @@ Em **Settings → Environments → production**:
 - Adicione os mesmos secrets se quiser isolá-los por ambiente.
 - Ative **Required reviewers** para exigir aprovação manual antes de cada deploy.
 
+## Modos de deploy (CI/CD)
+
+| Modo | Quando usar | Requisito na VPS |
+|------|-------------|------------------|
+| **Self-hosted runner** (recomendado) | Firewall bloqueia SSH inbound dos IPs GitHub | `infra/scripts/install-github-actions-runner.sh` + repo var `AGRIPEWEB_USE_SELF_HOSTED_DEPLOY=true` |
+| **SSH (`appleboy/ssh-action`)** | Porta 22 aberta para faixas `actions[]` da [GitHub meta API](https://api.github.com/meta) | `sudo ./infra/scripts/sync-github-actions-ufw-ssh.sh` ou regra equivalente no hPanel |
+
+No workflow **Deploy**, `workflow_dispatch` aceita input `deploy_mode`: `auto` (padrão), `self-hosted`, `ssh`.
+
 ## O que o deploy faz
 
 Em cada `push` bem-sucedido em `main`, após o CI passar:
@@ -168,6 +177,7 @@ curl -fsS https://agripeweb.com/api/v1/health
 | OAuth não funciona após deploy | Confira `.env` na raiz do clone e reinicie só `agripewebapi` |
 | Health check 404 | Confirme nginx-proxy ativo e URL `/api/v1/health` |
 | `workflow_run` não dispara Deploy | Verifique se o workflow CI se chama exatamente `CI` e se o push foi em `main` |
+| `dial tcp *:22: i/o timeout` no Deploy | Firewall Hostinger/UFW bloqueia runners GitHub. Na VPS: `sudo ./infra/scripts/sync-github-actions-ufw-ssh.sh` **ou** instale runner self-hosted: `sudo -E RUNNER_REG_TOKEN=… ./infra/scripts/install-github-actions-runner.sh` e defina repo var `AGRIPEWEB_USE_SELF_HOSTED_DEPLOY=true` |
 
 ### Rollback (produção)
 
