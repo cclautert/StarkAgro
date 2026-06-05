@@ -1,0 +1,67 @@
+# One-time (re-runnable) bootstrap: install self-hosted runner on AgripeWeb VPS.
+# Requires SSH reachability from GitHub-hosted runners (UFW or hPanel allowlist).
+
+name: Bootstrap VPS Runner
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: bootstrap-vps-runner
+  cancel-in-progress: false
+
+jobs:
+  install-runner:
+    name: Install self-hosted runner on VPS
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Get runner registration token
+        id: token
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          token=$(curl -fsSL -X POST \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/runners/registration-token" \
+            | python3 -c "import json,sys; print(json.load(sys.stdin)['token'])")
+          echo "::add-mask::$token"
+          echo "token=$token" >> "$GITHUB_OUTPUT"
+
+      - name: Bootstrap runner via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          timeout: 60s
+          command_timeout: 30m
+          script_stop: true
+          script: |
+            set -euo pipefail
+            cd "${{ secrets.VPS_DEPLOY_PATH }}"
+            git fetch origin main
+            git reset --hard origin/main
+            chmod +x infra/scripts/install-github-actions-runner.sh
+            export RUNNER_REG_TOKEN='${{ steps.token.outputs.token }}'
+            sudo -E ./infra/scripts/install-github-actions-runner.sh
+
+      - name: Verify runner online
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          sleep 20
+          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/runners" \
+            | python3 -c "
+import json,sys
+d=json.load(sys.stdin)
+runners=[r for r in d.get('runners',[]) if r.get('status')=='online']
+print('online_runners', len(runners))
+if not runners:
+    raise SystemExit('No online self-hosted runner registered')
+for r in runners:
+    print(r['name'], [l['name'] for l in r.get('labels',[])])
+"
