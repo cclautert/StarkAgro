@@ -55,13 +55,4 @@ jobs:
           curl -fsSL -H "Authorization: Bearer $GH_TOKEN" \
             -H "Accept: application/vnd.github+json" \
             "https://api.github.com/repos/${{ github.repository }}/actions/runners" \
-            | python3 -c "
-import json,sys
-d=json.load(sys.stdin)
-runners=[r for r in d.get('runners',[]) if r.get('status')=='online']
-print('online_runners', len(runners))
-if not runners:
-    raise SystemExit('No online self-hosted runner registered')
-for r in runners:
-    print(r['name'], [l['name'] for l in r.get('labels',[])])
-"
+            | python3 -c "import json,sys; d=json.load(sys.stdin); runners=[r for r in d.get('runners',[]) if r.get('status')=='online']; print('online_runners', len(runners)); (not runners) and sys.exit('No online self-hosted runner registered'); [print(r['name'], [l['name'] for l in r.get('labels',[])]) for r in runners]"
