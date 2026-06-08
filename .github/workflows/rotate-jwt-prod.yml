@@ -1,0 +1,134 @@
+# Production JWT rotation on AgripeWeb Hostinger VPS (STA-86).
+# Invalidates existing sessions — users must re-login.
+# Rollback: restore latest .env.bak.* on VPS, then ./scripts/deploy-hostinger-remote.sh .
+
+name: Rotate JWT (production)
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: "Type ROTATE to confirm production JWT invalidation"
+        required: true
+
+concurrency:
+  group: rotate-jwt-production
+  cancel-in-progress: false
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  rotate:
+    name: Rotate JWT and redeploy
+    if: github.event.inputs.confirm == 'ROTATE'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Generate new JWT secret
+        id: jwt
+        run: |
+          set -euo pipefail
+          new_jwt="$(openssl rand -base64 48 | tr -d '\n')"
+          jwt_sha="$(printf '%s' "$new_jwt" | sha256sum | awk '{print $1}')"
+          echo "jwt_sha256=$jwt_sha" >> "$GITHUB_OUTPUT"
+          {
+            echo "NEW_JWT_SECRET_KEY<<EOF"
+            echo "$new_jwt"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Rotate JWT on VPS and deploy
+        uses: appleboy/ssh-action@v1.2.5
+        env:
+          NEW_JWT_SECRET_KEY: ${{ steps.jwt.outputs.NEW_JWT_SECRET_KEY }}
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          command_timeout: 60m
+          envs: NEW_JWT_SECRET_KEY
+          script_stop: true
+          script: |
+            set -euo pipefail
+            cd "${{ secrets.VPS_DEPLOY_PATH }}"
+            git fetch origin main
+            git reset --hard origin/main
+            chmod +x scripts/deploy-hostinger-remote.sh scripts/resolve-vps-repo-root.sh
+            ENV_FILE=".env"
+            [[ -f "$ENV_FILE" ]] || { echo "missing .env"; exit 1; }
+            BACKUP="${ENV_FILE}.bak.$(date -u +%Y%m%dT%H%M%SZ)"
+            cp "$ENV_FILE" "$BACKUP"
+            chmod 600 "$BACKUP" 2>/dev/null || true
+            umask 077
+            grep -v '^JWT_SECRET_KEY=' "$ENV_FILE" > "${ENV_FILE}.new"
+            printf 'JWT_SECRET_KEY=%q\n' "$NEW_JWT_SECRET_KEY" >> "${ENV_FILE}.new"
+            mv "${ENV_FILE}.new" "$ENV_FILE"
+            chmod 600 "$ENV_FILE" 2>/dev/null || true
+            jwt_sha="$(printf '%s' "$NEW_JWT_SECRET_KEY" | sha256sum | awk '{print $1}')"
+            echo "rotated_at_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo "jwt_secret_sha256=${jwt_sha}"
+            echo "env_backup=${BACKUP}"
+            ./scripts/deploy-hostinger-remote.sh .
+
+      - name: Sync JWT secret to GitHub production environment
+        uses: actions/github-script@v7
+        env:
+          NEW_JWT_SECRET_KEY: ${{ steps.jwt.outputs.NEW_JWT_SECRET_KEY }}
+        with:
+          script: |
+            const sodium = require('tweetnacl');
+            const secret = process.env.NEW_JWT_SECRET_KEY;
+            const { data: key } = await github.rest.actions.getEnvironmentPublicKey({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              environment_name: 'production',
+            });
+            const messageBytes = Buffer.from(secret);
+            const keyBytes = Buffer.from(key.key, 'base64');
+            const encryptedBytes = sodium.sealedbox.seal(messageBytes, keyBytes);
+            const encrypted = Buffer.from(encryptedBytes).toString('base64');
+            await github.rest.actions.createOrUpdateEnvironmentSecret({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              environment_name: 'production',
+              secret_name: 'JWT_SECRET_KEY',
+              encrypted_value: encrypted,
+              key_id: key.key_id,
+            });
+            core.info('Updated production JWT_SECRET_KEY in GitHub environment');
+
+      - name: Verify compromised JWT is not active
+        uses: appleboy/ssh-action@v1.2.5
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script_stop: true
+          script: |
+            set -euo pipefail
+            compromised='Xr:Q2-Pv2mE@e(h#NNt<wJ-6U@X,onXZ'
+            live="$(docker exec agripewebapi printenv JwtSettings__secretkey 2>/dev/null || true)"
+            if [[ -z "$live" ]]; then
+              echo "FAIL: could not read JwtSettings__secretkey from agripewebapi" >&2
+              exit 1
+            fi
+            if [[ "$live" == "$compromised" ]]; then
+              echo "FAIL: compromised JWT secret still active in container" >&2
+              exit 1
+            fi
+            live_sha="$(printf '%s' "$live" | sha256sum | awk '{print $1}')"
+            echo "jwt_secret_sha256=${live_sha}"
+            echo "compromised_jwt_not_active=true"
+
+      - name: Public health check
+        run: |
+          set -euo pipefail
+          sleep 15
+          curl -fsS https://agripeweb.com/api/v1/health
+          code="$(curl -fsS -o /dev/null -w '%{http_code}' -X POST \
+            -H 'Content-Type: application/json' \
+            -d '{"email":"invalid@example.com","password":"wrong"}' \
+            https://agripeweb.com/api/v1/Auth/LogIn || echo 000)"
+          echo "POST /api/v1/Auth/LogIn HTTP $code"
+          [[ "$code" == "401" || "$code" == "400" || "$code" == "429" ]]

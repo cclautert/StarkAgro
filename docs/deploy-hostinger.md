@@ -174,6 +174,7 @@ curl -fsS https://agripeweb.com/api/v1/health
 | Warnings `JWT_SECRET_KEY` / `MQTT_*` variable is not set | `.env` ausente ou Compose sem `--project-directory .` — use o script de deploy |
 | `.env` perdido na VPS mas containers ainda rodando | `./scripts/bootstrap-vps-env.sh .` recria o arquivo a partir do env dos containers; depois `./scripts/deploy-hostinger-remote.sh .` |
 | Segredos rotacionados no GitHub mas VPS com `.env` antigo | Merge/deploy em `main` (regrava `.env` via `bootstrap-vps-env-from-secrets.sh --force`) ou dispare **Bootstrap VPS .env** (`workflow_dispatch`) |
+| Rotacionar JWT em produção (invalida sessões) | Actions → **Rotate JWT (production)** → input `ROTATE`. Rollback: restaurar `.env.bak.*` na VPS e `./scripts/deploy-hostinger-remote.sh .` |
 | OAuth não funciona após deploy | Confira `.env` na raiz do clone e reinicie só `agripewebapi` |
 | Health check 404 | Confirme nginx-proxy ativo e URL `/api/v1/health` |
 | `workflow_run` não dispara Deploy | Verifique se o workflow CI se chama exatamente `CI` e se o push foi em `main` |
