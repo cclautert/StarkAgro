@@ -37,6 +37,8 @@ namespace AgripeWebAPI.Models
             ReadSensors = database.GetCollection<ReadSensor>("read_sensors");
             SensorAnomalies = database.GetCollection<SensorAnomaly>("sensor_anomalies");
             IrrigationAlerts = database.GetCollection<IrrigationAlert>("irrigation_alerts");
+            WaterSources = database.GetCollection<WaterSource>("water_sources");
+            IrrigationProposals = database.GetCollection<IrrigationProposal>("irrigation_proposals");
             _counters = database.GetCollection<CounterDocument>("counters");
 
             _ = Task.Run(async () =>
@@ -55,6 +57,12 @@ namespace AgripeWebAPI.Models
                             .Ascending(a => a.PivotId)
                             .Ascending(a => a.AlertType)
                             .Descending(a => a.Date)));
+                    await WaterSources.Indexes.CreateOneAsync(new CreateIndexModel<WaterSource>(
+                        Builders<WaterSource>.IndexKeys.Ascending(w => w.UserId)));
+                    await IrrigationProposals.Indexes.CreateOneAsync(new CreateIndexModel<IrrigationProposal>(
+                        Builders<IrrigationProposal>.IndexKeys
+                            .Ascending(p => p.UserId)
+                            .Descending(p => p.CreatedAt)));
                     await ReadSensors.Indexes.CreateOneAsync(new CreateIndexModel<ReadSensor>(
                         Builders<ReadSensor>.IndexKeys.Ascending(r => r.IdempotencyKey),
                         new CreateIndexOptions { Unique = true, Sparse = true }));
@@ -72,6 +80,8 @@ namespace AgripeWebAPI.Models
         public virtual IMongoCollection<ReadSensor> ReadSensors { get; }
         public virtual IMongoCollection<SensorAnomaly> SensorAnomalies { get; }
         public virtual IMongoCollection<IrrigationAlert> IrrigationAlerts { get; }
+        public virtual IMongoCollection<WaterSource> WaterSources { get; }
+        public virtual IMongoCollection<IrrigationProposal> IrrigationProposals { get; }
 
         public virtual async Task<int> GetNextIdAsync(string entityName, CancellationToken cancellationToken = default)
         {
