@@ -204,5 +204,88 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Reads
                     rs.EdgeDetectedAt == null),
                 It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()), Times.Once);
         }
+
+        [Fact]
+        public async Task Handle_WithExistingIdempotencyKey_ReturnsExistingReadWithoutInserting()
+        {
+            var mockDbContext = new Mock<agpDBContext>();
+            var mockSensors = new Mock<IMongoCollection<Sensor>>();
+            var mockReadSensors = new Mock<IMongoCollection<ReadSensor>>();
+
+            var sensor = new Sensor { Id = 1, Code = "SENSOR-1", UserId = 1 };
+            var existingRead = new ReadSensor { Id = 99, SensorId = 1, UserId = 1, Value = 42m, IdempotencyKey = "device-abc-1234567890" };
+
+            MongoMockHelper.SetupFind(mockSensors, sensor);
+            MongoMockHelper.SetupFind(mockReadSensors, existingRead);
+            mockDbContext.Setup(c => c.Sensors).Returns(mockSensors.Object);
+            mockDbContext.Setup(c => c.ReadSensors).Returns(mockReadSensors.Object);
+
+            var handler = new CreateReadHandler(mockDbContext.Object, AuthenticatedUser(1).Object);
+            var request = new CreateReadRequest { Code = "SENSOR-1", Value = 100m, IdempotencyKey = "device-abc-1234567890" };
+
+            var result = await handler.Handle(request, CancellationToken.None);
+
+            Assert.Equal(99, result.Id);
+            Assert.Equal(1, result.SensorId);
+            Assert.Equal("device-abc-1234567890", result.IdempotencyKey);
+            mockReadSensors.Verify(c => c.InsertOneAsync(
+                It.IsAny<ReadSensor>(), It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task Handle_WithNewIdempotencyKey_InsertsAndReturnsWithKey()
+        {
+            var mockDbContext = new Mock<agpDBContext>();
+            var mockSensors = new Mock<IMongoCollection<Sensor>>();
+            var mockReadSensors = new Mock<IMongoCollection<ReadSensor>>();
+
+            var sensor = new Sensor { Id = 1, Code = "SENSOR-1", UserId = 1 };
+
+            MongoMockHelper.SetupFind(mockSensors, sensor);
+            MongoMockHelper.SetupFind<ReadSensor>(mockReadSensors, null);
+            mockDbContext.Setup(c => c.Sensors).Returns(mockSensors.Object);
+            mockDbContext.Setup(c => c.ReadSensors).Returns(mockReadSensors.Object);
+            mockDbContext.Setup(c => c.GetNextIdAsync("ReadSensor", It.IsAny<CancellationToken>())).ReturnsAsync(50);
+            mockReadSensors.Setup(c => c.InsertOneAsync(It.IsAny<ReadSensor>(), It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
+
+            var handler = new CreateReadHandler(mockDbContext.Object, AuthenticatedUser(1).Object);
+            var request = new CreateReadRequest { Code = "SENSOR-1", Value = 100m, IdempotencyKey = "device-abc-9999999999" };
+
+            var result = await handler.Handle(request, CancellationToken.None);
+
+            Assert.Equal(50, result.Id);
+            Assert.Equal("device-abc-9999999999", result.IdempotencyKey);
+            mockReadSensors.Verify(c => c.InsertOneAsync(
+                It.Is<ReadSensor>(rs => rs.IdempotencyKey == "device-abc-9999999999"),
+                It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task Handle_WithoutIdempotencyKey_InsertsWithoutIdempotencyCheck()
+        {
+            var mockDbContext = new Mock<agpDBContext>();
+            var mockSensors = new Mock<IMongoCollection<Sensor>>();
+            var mockReadSensors = new Mock<IMongoCollection<ReadSensor>>();
+
+            var sensor = new Sensor { Id = 1, Code = "SENSOR-1", UserId = 1 };
+            MongoMockHelper.SetupFind(mockSensors, sensor);
+            mockDbContext.Setup(c => c.Sensors).Returns(mockSensors.Object);
+            mockDbContext.Setup(c => c.ReadSensors).Returns(mockReadSensors.Object);
+            mockDbContext.Setup(c => c.GetNextIdAsync("ReadSensor", It.IsAny<CancellationToken>())).ReturnsAsync(60);
+            mockReadSensors.Setup(c => c.InsertOneAsync(It.IsAny<ReadSensor>(), It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
+
+            var handler = new CreateReadHandler(mockDbContext.Object, AuthenticatedUser(1).Object);
+            var request = new CreateReadRequest { Code = "SENSOR-1", Value = 55m };
+
+            var result = await handler.Handle(request, CancellationToken.None);
+
+            Assert.Equal(60, result.Id);
+            Assert.Null(result.IdempotencyKey);
+            mockReadSensors.Verify(c => c.InsertOneAsync(
+                It.Is<ReadSensor>(rs => rs.IdempotencyKey == null),
+                It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
     }
 }

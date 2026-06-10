@@ -55,6 +55,9 @@ namespace AgripeWebAPI.Models
                             .Ascending(a => a.PivotId)
                             .Ascending(a => a.AlertType)
                             .Descending(a => a.Date)));
+                    await ReadSensors.Indexes.CreateOneAsync(new CreateIndexModel<ReadSensor>(
+                        Builders<ReadSensor>.IndexKeys.Ascending(r => r.IdempotencyKey),
+                        new CreateIndexOptions { Unique = true, Sparse = true }));
                 }
                 catch
                 {

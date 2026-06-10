@@ -6,5 +6,6 @@
         public int SensorId { get; set; }
         public int UserId { get; set; }
         public string Content { get; set; } = string.Empty;
+        public string? IdempotencyKey { get; set; }
     }
 }
