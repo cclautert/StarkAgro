@@ -39,6 +39,30 @@ env:
   VPS_DEPLOY_PATH: ${{ secrets.VPS_DEPLOY_PATH }}
 
 jobs:
+  resolve-deploy-mode:
+    name: Resolve deploy mode (auto)
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.deploy_mode == 'auto'
+    runs-on: ubuntu-latest
+    outputs:
+      use_self_hosted: ${{ steps.pick.outputs.use_self_hosted }}
+    steps:
+      - name: Pick self-hosted vs SSH
+        id: pick
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          online="$(curl -fsSL -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/runners" \
+            | jq '[.runners[] | select(.status == "online")] | length')"
+          echo "online_runners=${online}"
+          if [[ "${online}" -gt 0 ]]; then
+            echo "use_self_hosted=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "use_self_hosted=false" >> "$GITHUB_OUTPUT"
+          fi
+
   validate-deploy-script:
     name: Validate deploy scripts
     if: github.event_name == 'pull_request'
@@ -61,11 +85,16 @@ jobs:
 
   deploy-self-hosted:
     name: Deploy on VPS (self-hosted)
+    needs: [resolve-deploy-mode]
     runs-on: [self-hosted, linux, agripeweb-prod]
     if: >-
       ${{
-        (github.event_name == 'workflow_dispatch' && (github.event.inputs.deploy_mode == 'auto' || github.event.inputs.deploy_mode == 'self-hosted'))
-        || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && vars.AGRIPEWEB_USE_SELF_HOSTED_DEPLOY == 'true')
+        always() &&
+        (
+          (github.event_name == 'workflow_dispatch' && github.event.inputs.deploy_mode == 'self-hosted')
+          || (github.event_name == 'workflow_dispatch' && github.event.inputs.deploy_mode == 'auto' && needs.resolve-deploy-mode.result == 'success' && needs.resolve-deploy-mode.outputs.use_self_hosted == 'true')
+          || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && vars.AGRIPEWEB_USE_SELF_HOSTED_DEPLOY == 'true')
+        )
       }}
     timeout-minutes: 90
     environment: production
@@ -104,11 +133,16 @@ jobs:
 
   deploy-ssh:
     name: Deploy to Hostinger VPS
+    needs: [resolve-deploy-mode]
     runs-on: ubuntu-latest
     if: >-
       ${{
-        (github.event_name == 'workflow_dispatch' && (github.event.inputs.deploy_mode == 'auto' || github.event.inputs.deploy_mode == 'ssh'))
-        || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && vars.AGRIPEWEB_USE_SELF_HOSTED_DEPLOY != 'true')
+        always() &&
+        (
+          (github.event_name == 'workflow_dispatch' && github.event.inputs.deploy_mode == 'ssh')
+          || (github.event_name == 'workflow_dispatch' && github.event.inputs.deploy_mode == 'auto' && (needs.resolve-deploy-mode.result != 'success' || needs.resolve-deploy-mode.outputs.use_self_hosted != 'true'))
+          || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && vars.AGRIPEWEB_USE_SELF_HOSTED_DEPLOY != 'true')
+        )
       }}
     timeout-minutes: 90
     environment: production

@@ -1,5 +1,7 @@
 # One-time (re-runnable) bootstrap: install self-hosted runner on AgripeWeb VPS.
 # Requires SSH reachability from GitHub-hosted runners (UFW or hPanel allowlist).
+# If this workflow times out on SSH, run on Hostinger VPS browser terminal instead:
+#   cd /opt/agripeweb && git pull && sudo -E RUNNER_REG_TOKEN=<token> ./infra/scripts/install-github-actions-runner.sh
 
 name: Bootstrap VPS Runner
 
