@@ -1,6 +1,8 @@
 using AgripeWebAPI.Configuration;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 
 namespace AgripeWebAPI.Tests.Configuration
 {
@@ -33,15 +35,36 @@ namespace AgripeWebAPI.Tests.Configuration
         }
 
         [Fact]
-        public void UseSwaggerConfiguration_DoesNotThrow()
+        public void UseSwaggerConfiguration_DoesNotThrow_InDevelopment()
         {
-            // Arrange — sem modo Development para não ativar validação estrita de serviços
+            // Arrange
             var builder = WebApplication.CreateBuilder();
             SwaggerConfig.AddSwaggerConfiguration(builder.Services);
             var app = builder.Build();
 
-            // Act — adiciona middlewares sem processar requests
-            var exception = Record.Exception(() => SwaggerConfig.UseSwaggerConfiguration(app));
+            var devEnv = new Mock<IWebHostEnvironment>();
+            devEnv.Setup(e => e.EnvironmentName).Returns("Development");
+
+            // Act
+            var exception = Record.Exception(() => SwaggerConfig.UseSwaggerConfiguration(app, devEnv.Object));
+
+            // Assert
+            Assert.Null(exception);
+        }
+
+        [Fact]
+        public void UseSwaggerConfiguration_DoesNotThrow_InProduction()
+        {
+            // Arrange
+            var builder = WebApplication.CreateBuilder();
+            SwaggerConfig.AddSwaggerConfiguration(builder.Services);
+            var app = builder.Build();
+
+            var prodEnv = new Mock<IWebHostEnvironment>();
+            prodEnv.Setup(e => e.EnvironmentName).Returns("Production");
+
+            // Act — Swagger must be skipped; no exception
+            var exception = Record.Exception(() => SwaggerConfig.UseSwaggerConfiguration(app, prodEnv.Object));
 
             // Assert
             Assert.Null(exception);
@@ -55,8 +78,11 @@ namespace AgripeWebAPI.Tests.Configuration
             SwaggerConfig.AddSwaggerConfiguration(builder.Services);
             var app = builder.Build();
 
+            var devEnv = new Mock<IWebHostEnvironment>();
+            devEnv.Setup(e => e.EnvironmentName).Returns("Development");
+
             // Act
-            SwaggerConfig.UseSwaggerConfiguration(app);
+            SwaggerConfig.UseSwaggerConfiguration(app, devEnv.Object);
 
             // Assert
             Assert.NotNull(app);

@@ -27,7 +27,7 @@ builder.Services.ResolveDependencies(jwtSettingsSection.Get<JwtSettings>());
 
 var app = builder.Build();
 
-app.UseSwaggerConfiguration();
+app.UseSwaggerConfiguration(app.Environment);
 
 app.UseApiConfiguration(app.Environment);
 

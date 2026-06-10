@@ -35,10 +35,13 @@ namespace AgripeWebAPI.Configuration
             });
         }
 
-        public static void UseSwaggerConfiguration(this IApplicationBuilder app)
+        public static void UseSwaggerConfiguration(this IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseSwagger();
-            app.UseSwaggerUI();
+            if (env.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
         }
     }
 }

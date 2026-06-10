@@ -13,7 +13,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_HTTP_PORTS=8080
-      - MongoDb__ConnectionString=mongodb://db:27017
+      - MongoDb__ConnectionString=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@db:27017/agripeweb?authSource=admin
       - MongoDb__DatabaseName=agripeweb
       - JwtSettings__secretkey=${JWT_SECRET_KEY}
       - JwtSettings__issuer=${JWT_ISSUER:-agripeweb.com}
@@ -58,6 +58,9 @@ services:
   db:
     image: mongo:8
     container_name: agripewebdb
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
     volumes:
       - mongo-data:/data/db
     networks:
@@ -89,7 +92,7 @@ services:
       context: ..
       dockerfile: AgripeWebWorker/Dockerfile
     environment:
-      - MongoDb__ConnectionString=mongodb://db:27017
+      - MongoDb__ConnectionString=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@db:27017/agripeweb?authSource=admin
       - MongoDb__DatabaseName=agripeweb
       - Mqtt__Host=mqtt
       - Mqtt__Port=1883
