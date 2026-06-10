@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { Pivot } from '../models/pivot.model';
 import { PivotForecast } from '../models/pivot-forecast.model';
 import { MoisturePrediction } from '../models/moisture-prediction.model';
+import { Anomaly } from '../models/anomaly.model';
 import { HttpClient, HttpParams } from '@angular/common/http';
 
 @Injectable({
@@ -60,11 +61,11 @@ export class PivotService {
   }
 
   // ANOMALIES
-  getAnomalies(pivotId: number, pageSize = 20, pageIndex = 0): Observable<any[]> {
+  getAnomalies(pivotId: number, pageSize = 20, pageIndex = 0): Observable<Anomaly[]> {
     const params = new HttpParams()
       .set('pageSize', pageSize.toString())
       .set('pageIndex', pageIndex.toString());
-    return this.http.get<any[]>(`${this.baseUrl}pivot/${pivotId}/anomalies`, { params });
+    return this.http.get<Anomaly[]>(`${this.baseUrl}pivot/${pivotId}/anomalies`, { params });
   }
 
   // AI INSIGHTS

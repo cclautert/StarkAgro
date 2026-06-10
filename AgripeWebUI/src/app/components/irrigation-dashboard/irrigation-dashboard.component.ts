@@ -5,6 +5,7 @@ import { BaseChartDirective } from 'ng2-charts';
 import { Pivot } from '../../models/pivot.model';
 import { ReadEntry } from '../../models/quadrante.model';
 import { IrrigationTrend } from '../../models/irrigation-trend.model';
+import { Anomaly } from '../../models/anomaly.model';
 import { ApiService } from '../../services/api.service';
 import { PivotService } from '../../services/pivot.service';
 
@@ -38,6 +39,8 @@ export class IrrigationDashboardComponent implements OnInit, OnDestroy {
   alerts: AlertInfo[] = [];
   irrigationTrend: IrrigationTrend | null = null;
   anomalyCount: number = 0;
+  anomalies: Anomaly[] = [];
+  anomalyModalOpen: boolean = false;
   private intervalSub!: Subscription;
 
   public chartData: ChartConfiguration<'line'>['data'] = {
@@ -84,7 +87,7 @@ export class IrrigationDashboardComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.intervalSub = interval(60000).subscribe(() => this.loadDashboard());
+    this.intervalSub = interval(30000).subscribe(() => this.loadDashboard());
   }
 
   ngOnDestroy(): void {
@@ -104,6 +107,14 @@ export class IrrigationDashboardComponent implements OnInit, OnDestroy {
     this.loadDashboard();
   }
 
+  openAnomalyModal(): void {
+    this.anomalyModalOpen = true;
+  }
+
+  closeAnomalyModal(): void {
+    this.anomalyModalOpen = false;
+  }
+
   loadDashboard(): void {
     this.apiService.getIrrigationTrend(this.selectedPivotId, this.numberOfDays).subscribe({
       next: trend => this.irrigationTrend = trend,
@@ -111,8 +122,14 @@ export class IrrigationDashboardComponent implements OnInit, OnDestroy {
     });
 
     this.pivotService.getAnomalies(this.selectedPivotId).subscribe({
-      next: anomalies => this.anomalyCount = anomalies.filter(a => !a.acknowledged).length,
-      error: () => this.anomalyCount = 0
+      next: anomalies => {
+        this.anomalies = anomalies.filter(a => !a.acknowledged);
+        this.anomalyCount = this.anomalies.length;
+      },
+      error: () => {
+        this.anomalies = [];
+        this.anomalyCount = 0;
+      }
     });
 
     this.apiService.getReadsByPivotId(this.selectedPivotId, this.numberOfDays).subscribe(pivot => {
