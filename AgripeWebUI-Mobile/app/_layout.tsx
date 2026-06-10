@@ -7,11 +7,13 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useAuthStore } from '../stores/authStore';
 import { Colors } from '../constants/colors';
+import { useOfflineBootstrap } from '../hooks/useOfflineBootstrap';
 
 export default function RootLayout() {
   const router = useRouter();
   const segments = useSegments();
   const { token, isHydrated, hydrate } = useAuthStore();
+  useOfflineBootstrap();
 
   useEffect(() => {
     hydrate();

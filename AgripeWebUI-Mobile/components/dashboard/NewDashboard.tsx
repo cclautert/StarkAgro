@@ -16,8 +16,11 @@ import { HumidityChart } from './HumidityChart';
 import { AlertBanner } from '../ui/AlertBanner';
 import { Card } from '../ui/Card';
 import { LoadingSpinner } from '../ui/LoadingSpinner';
+import { PendingSyncBadge } from '../ui/PendingSyncBadge';
 import { Colors } from '../../constants/colors';
 import { QUADRANT_NUMBER_TO_NAME } from '../../constants/api';
+import { useOfflineSync } from '../../hooks/useOfflineSync';
+import { useNetworkStatus } from '../../hooks/useNetworkStatus';
 
 const DAY_OPTIONS = [
   { label: '7 dias', value: 7 },
@@ -42,10 +45,12 @@ function getAvg(pivot: { quadrante?: Record<string, number | undefined> } | null
 
 export function NewDashboard() {
   const router = useRouter();
-  const { pivots, loading: pivotsLoading } = usePivots();
+  const { pivots, loading: pivotsLoading, fromCache: pivotsFromCache, error: pivotsError } = usePivots();
   const { humidityUpper, humidityLower } = useSettingsStore();
   const [selectedPivotId, setSelectedPivotId] = useState<number | null>(null);
   const [days, setDays] = useState(7);
+  const isOnline = useNetworkStatus();
+  const { pendingCount } = useOfflineSync();
 
   const selectedPivot = pivots.find((p) => p.id === selectedPivotId) ?? null;
 
@@ -55,7 +60,7 @@ export function NewDashboard() {
     }
   }, [pivots]);
 
-  const { pivot, chartData, loading } = useDashboardData(selectedPivotId, days);
+  const { pivot, chartData, loading, fromCache } = useDashboardData(selectedPivotId, days);
 
   const quadrantAvgs = [1, 2, 3, 4].map((q) => ({
     q,
@@ -80,6 +85,19 @@ export function NewDashboard() {
       <Text style={{ color: Colors.textSecondary, fontSize: 14, marginBottom: 16 }}>
         {selectedPivot?.name ?? 'Selecione um pivô'}
       </Text>
+
+      {(pivotsFromCache || fromCache || !isOnline || pendingCount > 0) && (
+        <Card style={{ marginBottom: 16, borderColor: Colors.warning }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+            <Text style={{ color: Colors.warning, flex: 1, fontWeight: '600' }}>
+              {!isOnline
+                ? 'Modo offline — exibindo cache local'
+                : pivotsError ?? (fromCache ? 'Dashboard em cache' : 'Dados atualizados')}
+            </Text>
+            {pendingCount > 0 && <PendingSyncBadge />}
+          </View>
+        </Card>
+      )}
 
       {/* Pivot selector */}
       <Card style={{ marginBottom: 16 }}>

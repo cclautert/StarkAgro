@@ -28,6 +28,22 @@ export interface ReadEntry {
   sensorId: number;
   value: number;
   date: string;
+  /** Local-only: queued offline and not yet synced */
+  pendingSync?: boolean;
+  /** Local queue item id for pending reads */
+  localQueueId?: string;
+}
+
+export interface CreateManualReadRequest {
+  code: string;
+  value: number;
+}
+
+export interface CreateManualReadResponse {
+  id: number;
+  sensorId: number;
+  userId: number;
+  value: number;
 }
 
 export interface User {

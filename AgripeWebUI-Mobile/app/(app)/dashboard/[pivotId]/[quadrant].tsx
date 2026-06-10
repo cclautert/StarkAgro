@@ -16,9 +16,14 @@ import { QUADRANT_NAME_TO_NUMBER, QUADRANT_LABELS } from '../../../../constants/
 import { Card } from '../../../../components/ui/Card';
 import { Picker } from '@react-native-picker/picker';
 import { useSettingsStore } from '../../../../stores/settingsStore';
-import { computeDailyData, TrendStats, TrendPoint, ProjectionPoint } from '../../../../services/trendAnalysis';
+import { computeDailyData } from '../../../../services/trendAnalysis';
 import { TrendChart } from '../../../../components/dashboard/TrendChart';
 import { TrendStatsPanel } from '../../../../components/dashboard/TrendStatsPanel';
+import { ManualReadForm } from '../../../../components/dashboard/ManualReadForm';
+import { PendingSyncBadge } from '../../../../components/ui/PendingSyncBadge';
+import { useOfflineSync } from '../../../../hooks/useOfflineSync';
+import { useNetworkStatus } from '../../../../hooks/useNetworkStatus';
+import { mergePendingReads } from '../../../../services/offline/mergePendingReads';
 
 const DAY_OPTIONS = [
   { label: '7 dias', value: 7 },
@@ -31,17 +36,37 @@ export default function QuadrantDetailScreen() {
   const { pivotId, quadrant } = useLocalSearchParams<{ pivotId: string; quadrant: string }>();
   const quadranteNumber = QUADRANT_NAME_TO_NUMBER[quadrant] ?? 1;
   const { humidityUpper, humidityLower } = useSettingsStore();
+  const isOnline = useNetworkStatus();
 
   const [sensors, setSensors] = useState<Sensor[]>([]);
   const [selectedSensorId, setSelectedSensorId] = useState<number | null>(null);
-  const [readings, setReadings] = useState<ReadEntry[]>([]);
+  const [serverReadings, setServerReadings] = useState<ReadEntry[]>([]);
+  const [localReadings, setLocalReadings] = useState<ReadEntry[]>([]);
   const [days, setDays] = useState(7);
   const [loading, setLoading] = useState(true);
 
-  // Overlay toggles
   const [showTrend, setShowTrend] = useState(true);
   const [showMovingAvg, setShowMovingAvg] = useState(true);
   const [showProjection, setShowProjection] = useState(true);
+
+  const refreshReadings = useCallback(async () => {
+    if (!selectedSensorId) {
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    try {
+      const data = await readsService.getAllBySensorId(selectedSensorId, quadranteNumber, days);
+      setServerReadings(data);
+      setLocalReadings((prev) => prev.filter((entry) => entry.pendingSync));
+    } catch {
+      /* keep cached/local readings when offline */
+    } finally {
+      setLoading(false);
+    }
+  }, [selectedSensorId, quadranteNumber, days]);
+
+  const { queueItems, pendingCount } = useOfflineSync(refreshReadings);
 
   const loadSensors = useCallback(async () => {
     if (!pivotId) return;
@@ -54,41 +79,40 @@ export default function QuadrantDetailScreen() {
     }
   }, [pivotId, quadranteNumber]);
 
-  const loadReadings = useCallback(async () => {
-    if (!selectedSensorId) {
-      setLoading(false);
-      return;
-    }
-    setLoading(true);
-    try {
-      const data = await readsService.getAllByPivotId(selectedSensorId, quadranteNumber, days);
-      setReadings(data);
-    } catch {
-      /* ignore */
-    } finally {
-      setLoading(false);
-    }
-  }, [selectedSensorId, quadranteNumber, days]);
-
   useEffect(() => { loadSensors(); }, [loadSensors]);
-  useEffect(() => { loadReadings(); }, [loadReadings]);
+  useEffect(() => { refreshReadings(); }, [refreshReadings]);
 
   useEffect(() => {
-    const interval = setInterval(loadReadings, 60000);
+    if (!isOnline) return undefined;
+    const interval = setInterval(refreshReadings, 60000);
     return () => clearInterval(interval);
-  }, [loadReadings]);
+  }, [refreshReadings, isOnline]);
 
-  // Trend analysis computed from readings
+  const readings = useMemo(() => {
+    if (!selectedSensorId) return localReadings;
+    const merged = mergePendingReads(serverReadings, queueItems, selectedSensorId, quadranteNumber);
+    const localOnly = localReadings.filter(
+      (entry) => !merged.some((item) => item.localQueueId && item.localQueueId === entry.localQueueId)
+    );
+    return [...localOnly, ...merged].sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
+  }, [serverReadings, queueItems, selectedSensorId, quadranteNumber, localReadings]);
+
   const { points, projection, stats } = useMemo(
     () => computeDailyData(readings, humidityLower, humidityUpper),
     [readings, humidityLower, humidityUpper]
   );
 
+  const selectedSensor = sensors.find((s) => s.id === selectedSensorId) ?? null;
   const qLabel = QUADRANT_LABELS[quadranteNumber] ?? quadrant;
+
+  const handleManualSaved = (entry: ReadEntry) => {
+    setLocalReadings((prev) => [entry, ...prev.filter((item) => item.localQueueId !== entry.localQueueId)]);
+  };
 
   return (
     <View style={{ flex: 1, backgroundColor: Colors.background }}>
-      {/* Header */}
       <View
         style={{
           flexDirection: 'row',
@@ -106,10 +130,27 @@ export default function QuadrantDetailScreen() {
         <Text style={{ color: Colors.textPrimary, fontSize: 18, fontWeight: '700', flex: 1 }}>
           {qLabel}
         </Text>
+        {pendingCount > 0 && <PendingSyncBadge />}
       </View>
 
       <ScrollView contentContainerStyle={{ padding: 16 }}>
-        {/* Sensor selector */}
+        {!isOnline && (
+          <Card style={{ marginBottom: 16, borderColor: Colors.warning }}>
+            <Text style={{ color: Colors.warning, fontWeight: '600' }}>
+              Sem conexão — leituras serão sincronizadas ao reconectar
+            </Text>
+          </Card>
+        )}
+
+        {selectedSensor && pivotId && (
+          <ManualReadForm
+            sensor={selectedSensor}
+            pivotId={parseInt(pivotId)}
+            quadrante={quadranteNumber}
+            onSaved={handleManualSaved}
+          />
+        )}
+
         {sensors.length > 1 && (
           <Card style={{ marginBottom: 16 }}>
             <Text style={{ color: Colors.textSecondary, fontSize: 13, marginBottom: 4 }}>Sensor</Text>
@@ -128,7 +169,6 @@ export default function QuadrantDetailScreen() {
           </Card>
         )}
 
-        {/* Day filter */}
         <View style={{ flexDirection: 'row', marginBottom: 16, gap: 8 }}>
           {DAY_OPTIONS.map((opt) => (
             <TouchableOpacity
@@ -151,29 +191,12 @@ export default function QuadrantDetailScreen() {
           ))}
         </View>
 
-        {/* Overlay toggles */}
         <View style={{ flexDirection: 'row', gap: 6, marginBottom: 16, flexWrap: 'wrap' }}>
-          <OverlayToggle
-            label="Tendência"
-            color={Colors.trendLine}
-            active={showTrend}
-            onPress={() => setShowTrend((v) => !v)}
-          />
-          <OverlayToggle
-            label="Méd. Móvel"
-            color={Colors.movingAvg}
-            active={showMovingAvg}
-            onPress={() => setShowMovingAvg((v) => !v)}
-          />
-          <OverlayToggle
-            label="Projeção"
-            color={Colors.projection}
-            active={showProjection}
-            onPress={() => setShowProjection((v) => !v)}
-          />
+          <OverlayToggle label="Tendência" color={Colors.trendLine} active={showTrend} onPress={() => setShowTrend((v) => !v)} />
+          <OverlayToggle label="Méd. Móvel" color={Colors.movingAvg} active={showMovingAvg} onPress={() => setShowMovingAvg((v) => !v)} />
+          <OverlayToggle label="Projeção" color={Colors.projection} active={showProjection} onPress={() => setShowProjection((v) => !v)} />
         </View>
 
-        {/* Chart */}
         <Card style={{ marginBottom: 16 }}>
           <Text style={{ color: Colors.textPrimary, fontSize: 16, fontWeight: '700', marginBottom: 16 }}>
             Leituras do Sensor
@@ -201,7 +224,37 @@ export default function QuadrantDetailScreen() {
           </View>
         </Card>
 
-        {/* Trend stats panel */}
+        {readings.length > 0 && (
+          <Card style={{ marginBottom: 16 }}>
+            <Text style={{ color: Colors.textPrimary, fontSize: 15, fontWeight: '700', marginBottom: 12 }}>
+              Histórico recente
+            </Text>
+            {readings.slice(0, 5).map((entry) => (
+              <View
+                key={`${entry.id}-${entry.date}`}
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  paddingVertical: 8,
+                  borderBottomWidth: 1,
+                  borderBottomColor: Colors.cardBorder,
+                }}
+              >
+                <View>
+                  <Text style={{ color: Colors.textPrimary, fontWeight: '600' }}>
+                    {entry.value.toFixed(1)}%
+                  </Text>
+                  <Text style={{ color: Colors.textSecondary, fontSize: 12 }}>
+                    {new Date(entry.date).toLocaleString('pt-BR')}
+                  </Text>
+                </View>
+                {entry.pendingSync && <PendingSyncBadge compact />}
+              </View>
+            ))}
+          </Card>
+        )}
+
         {!loading && points.length > 0 && (
           <Card style={{ marginBottom: 16 }}>
             <Text style={{ color: Colors.textPrimary, fontSize: 16, fontWeight: '700', marginBottom: 12 }}>

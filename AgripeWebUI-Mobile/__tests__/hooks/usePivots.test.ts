@@ -6,6 +6,21 @@ jest.mock('../../services/pivotService', () => ({
   pivotService: { getAll: mockGetAll },
 }));
 
+jest.mock('../../services/offline/networkMonitor', () => ({
+  networkMonitor: {
+    init: jest.fn().mockResolvedValue(undefined),
+    getIsOnline: jest.fn(() => true),
+    subscribe: jest.fn(() => () => {}),
+  },
+}));
+
+jest.mock('../../services/offline/offlineCache', () => ({
+  offlineCache: {
+    setPivots: jest.fn().mockResolvedValue(undefined),
+    getPivots: jest.fn().mockResolvedValue(null),
+  },
+}));
+
 beforeEach(() => {
   jest.useFakeTimers();
   mockGetAll.mockReset();

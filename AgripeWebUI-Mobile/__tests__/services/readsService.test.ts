@@ -64,4 +64,23 @@ describe('readsService', () => {
     await readsService.getAllBySensorId(10, 1);
     expect(mock.history.get[0].params.numberOfReads).toBe(7);
   });
+
+  it('createManualRead posts code and value', async () => {
+    mock.onPost(/reads\/Add/).reply(200, { id: 5, sensorId: 10, userId: 1 });
+    const { readsService } = require('../../services/readsService');
+    const result = await readsService.createManualRead({ code: 'SENS01', value: 42 });
+    expect(result.id).toBe(5);
+    expect(result.value).toBe(42);
+    expect(JSON.parse(mock.history.post[0].data)).toEqual({ code: 'SENS01', value: 42 });
+  });
+
+  it('getLatestBySensorId returns newest reading', async () => {
+    mock.onGet(/reads\/GetAllBySensorId/).reply(200, [
+      { id: 1, sensorId: 10, value: 40, date: '2026-06-05T10:00:00.000Z' },
+      { id: 2, sensorId: 10, value: 42, date: '2026-06-05T11:00:00.000Z' },
+    ]);
+    const { readsService } = require('../../services/readsService');
+    const latest = await readsService.getLatestBySensorId(10, 1);
+    expect(latest?.value).toBe(42);
+  });
 });

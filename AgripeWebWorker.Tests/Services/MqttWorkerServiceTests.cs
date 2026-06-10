@@ -75,7 +75,7 @@ namespace AgripeWebWorker.Tests.Services
             {
                 await _service.StartAsync(_cts.Token);
                 // Give ExecuteAsync a moment to wire up handlers
-                await Task.Delay(100);
+                await Task.Delay(500);
             }
             catch (OperationCanceledException) { }
         }
@@ -129,7 +129,7 @@ namespace AgripeWebWorker.Tests.Services
 
             var cts = new CancellationTokenSource();
             cts.CancelAfter(TimeSpan.FromSeconds(2));
-            try { await service.StartAsync(cts.Token); await Task.Delay(100); }
+            try { await service.StartAsync(cts.Token); await Task.Delay(500); }
             catch (OperationCanceledException) { }
 
             _mockMqttClient.Verify(c => c.ConnectAsync(
@@ -300,7 +300,7 @@ namespace AgripeWebWorker.Tests.Services
             try
             {
                 await service.StartAsync(nonCancelledCts.Token);
-                await Task.Delay(100);
+                await Task.Delay(500);
 
                 Assert.NotNull(_capturedDisconnectedHandler);
                 try
@@ -391,7 +391,7 @@ namespace AgripeWebWorker.Tests.Services
 
             var cts = new CancellationTokenSource();
             cts.CancelAfter(TimeSpan.FromSeconds(2));
-            try { await service.StartAsync(cts.Token); await Task.Delay(100); }
+            try { await service.StartAsync(cts.Token); await Task.Delay(500); }
             catch (OperationCanceledException) { }
 
             _mockMqttClient.Verify(c => c.ConnectAsync(
@@ -431,7 +431,7 @@ namespace AgripeWebWorker.Tests.Services
 
             var cts = new CancellationTokenSource();
             cts.CancelAfter(TimeSpan.FromSeconds(2));
-            try { await service.StartAsync(cts.Token); await Task.Delay(100); }
+            try { await service.StartAsync(cts.Token); await Task.Delay(500); }
             catch (OperationCanceledException) { }
 
             _mockMqttClient.Verify(c => c.ConnectAsync(

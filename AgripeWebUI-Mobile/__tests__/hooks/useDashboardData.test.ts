@@ -1,19 +1,34 @@
 import { renderHook, waitFor } from '@testing-library/react-native';
 
 const mockGetByPivotId = jest.fn();
-const mockGetAllByPivotId = jest.fn();
+const mockGetAllBySensorId = jest.fn();
 const mockGetAllSensorsByPivotId = jest.fn();
 
 jest.mock('../../services/readsService', () => ({
   readsService: {
     getByPivotId: mockGetByPivotId,
-    getAllByPivotId: mockGetAllByPivotId,
+    getAllBySensorId: mockGetAllBySensorId,
   },
 }));
 
 jest.mock('../../services/sensorService', () => ({
   sensorService: {
     getAllByPivotId: mockGetAllSensorsByPivotId,
+  },
+}));
+
+jest.mock('../../services/offline/networkMonitor', () => ({
+  networkMonitor: {
+    init: jest.fn().mockResolvedValue(undefined),
+    getIsOnline: jest.fn(() => true),
+    subscribe: jest.fn(() => () => {}),
+  },
+}));
+
+jest.mock('../../services/offline/offlineCache', () => ({
+  offlineCache: {
+    setDashboard: jest.fn().mockResolvedValue(undefined),
+    getDashboard: jest.fn().mockResolvedValue(null),
   },
 }));
 
@@ -28,7 +43,7 @@ const fakeReadings = [{ data: '2025-01-01', hora: '10:00', umidade: 60, quadrant
 beforeEach(() => {
   jest.useFakeTimers();
   mockGetByPivotId.mockReset();
-  mockGetAllByPivotId.mockReset();
+  mockGetAllBySensorId.mockReset();
   mockGetAllSensorsByPivotId.mockReset();
 });
 
@@ -40,7 +55,7 @@ describe('useDashboardData', () => {
   it('returns loading=false and chartData[4] on success', async () => {
     mockGetByPivotId.mockResolvedValue(fakePivotData);
     mockGetAllSensorsByPivotId.mockResolvedValue([{ id: 10, pivotId: 1, quadrante: 1 }]);
-    mockGetAllByPivotId.mockResolvedValue(fakeReadings);
+    mockGetAllBySensorId.mockResolvedValue(fakeReadings);
 
     const { useDashboardData } = require('../../hooks/useDashboardData');
     const { result } = renderHook(() => useDashboardData(1, 7));
@@ -53,7 +68,7 @@ describe('useDashboardData', () => {
   it('calls getByPivotId once', async () => {
     mockGetByPivotId.mockResolvedValue(fakePivotData);
     mockGetAllSensorsByPivotId.mockResolvedValue([]);
-    mockGetAllByPivotId.mockResolvedValue([]);
+    mockGetAllBySensorId.mockResolvedValue([]);
 
     const { useDashboardData } = require('../../hooks/useDashboardData');
     const { result } = renderHook(() => useDashboardData(1, 7));
@@ -69,7 +84,7 @@ describe('useDashboardData', () => {
       if (q === 1) return [{ id: 10, pivotId: 1, quadrante: 1 }];
       throw new Error('no sensors');
     });
-    mockGetAllByPivotId.mockResolvedValue(fakeReadings);
+    mockGetAllBySensorId.mockResolvedValue(fakeReadings);
 
     const { useDashboardData } = require('../../hooks/useDashboardData');
     const { result } = renderHook(() => useDashboardData(1, 7));
