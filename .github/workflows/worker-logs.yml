@@ -24,4 +24,4 @@ jobs:
           script_stop: true
           script: |
             cd "${{ secrets.VPS_DEPLOY_PATH }}"
-            docker compose -f docker/docker-compose.yml logs --tail ${{ github.event.inputs.lines }} worker
+            docker compose -f docker/docker-compose.yml logs --tail ${{ github.event.inputs.lines }} agripwebworker
