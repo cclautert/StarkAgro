@@ -89,7 +89,14 @@
       "Skill(commit-commands:commit-push-pr)",
       "mcp__plugin_github_github__get_me",
       "mcp__plugin_github_github__pull_request_read",
-      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(json.dumps\\({k:v for k,v in d.items\\(\\) if 'mcp' in k.lower\\(\\) or 'github' in str\\(v\\).lower\\(\\)}, indent=2\\)\\)\")"
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(json.dumps\\({k:v for k,v in d.items\\(\\) if 'mcp' in k.lower\\(\\) or 'github' in str\\(v\\).lower\\(\\)}, indent=2\\)\\)\")",
+      "mcp__mnemosine-remote__remember",
+      "Bash(gh auth *)",
+      "Bash(unset GITHUB_TOKEN)",
+      "Bash(gh run *)"
     ]
-  }
+  },
+  "enabledMcpjsonServers": [
+    "mnemosine"
+  ]
 }

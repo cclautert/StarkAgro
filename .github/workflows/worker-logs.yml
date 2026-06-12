@@ -12,6 +12,7 @@ jobs:
   logs:
     name: Fetch worker logs from VPS
     runs-on: ubuntu-latest
+    environment: production
     steps:
       - name: Fetch logs via SSH
         uses: appleboy/ssh-action@v1.2.5
@@ -23,4 +24,4 @@ jobs:
           script_stop: true
           script: |
             cd "${{ secrets.VPS_DEPLOY_PATH }}"
-            docker compose -f docker/docker-compose.yml logs --tail ${{ github.event.inputs.lines }} worker
+            docker compose -f docker/docker-compose.yml logs --tail ${{ github.event.inputs.lines }} agripwebworker
