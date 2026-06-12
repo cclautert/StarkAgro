@@ -25,8 +25,16 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
         {
             var startDate = DateTime.UtcNow.AddDays(-request.NumberOfReads);
 
+            var humidityFilter = Builders<Sensor>.Filter.And(
+                Builders<Sensor>.Filter.Eq(s => s.PivoId, request.PivotId),
+                Builders<Sensor>.Filter.Eq(s => s.UserId, request.UserId),
+                Builders<Sensor>.Filter.Or(
+                    Builders<Sensor>.Filter.Eq(s => s.MetricType, MetricType.Humidity),
+                    Builders<Sensor>.Filter.Exists(nameof(Sensor.MetricType), false)
+                )
+            );
             var sensors = await _dbContext.Sensors
-                .Find(s => s.PivoId == request.PivotId && s.UserId == request.UserId)
+                .Find(humidityFilter)
                 .Project(s => new SensorSummary(s.Id, s.Quadrante))
                 .ToListAsync(cancellationToken);
 

@@ -77,9 +77,21 @@ namespace AgripeWebAPI.Controllers
             [FromBody] EditSensorRequest command,
             CancellationToken cancellationToken
         )
-        { 
+        {
             if (!ModelState.IsValid) return CustomResponse(ModelState);
 
+            command.UserId = GetCurrentUserId();
+            return await mediator.Send(command, cancellationToken);
+        }
+
+        [Route("telemetry")]
+        [HttpGet]
+        public async Task<IList<SensorTelemetryResponse>> GetTelemetry(
+            [FromServices] IMediator mediator,
+            [FromQuery] GetSensorTelemetryRequest command,
+            CancellationToken cancellationToken
+        )
+        {
             command.UserId = GetCurrentUserId();
             return await mediator.Send(command, cancellationToken);
         }
