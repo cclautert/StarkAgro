@@ -82,7 +82,7 @@ services:
     networks:
       - app-network
     healthcheck:
-      test: ["CMD-SHELL", "mosquitto_pub -h localhost -p 1883 -u ${MQTT_USERNAME} -P ${MQTT_PASSWORD} -t healthcheck -m ping || exit 1"]
+      test: ["CMD", "mosquitto_pub", "-h", "localhost", "-p", "1883", "-u", "${MQTT_USERNAME}", "-P", "${MQTT_PASSWORD}", "-t", "healthcheck", "-m", "ping"]
       interval: 5s
       timeout: 5s
       retries: 5
