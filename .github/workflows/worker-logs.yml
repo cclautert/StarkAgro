@@ -1,0 +1,26 @@
+name: Worker Logs
+
+on:
+  workflow_dispatch:
+    inputs:
+      lines:
+        description: "Number of log lines"
+        required: false
+        default: "80"
+
+jobs:
+  logs:
+    name: Fetch worker logs from VPS
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch logs via SSH
+        uses: appleboy/ssh-action@v1.2.5
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          timeout: 30s
+          script_stop: true
+          script: |
+            cd "${{ secrets.VPS_DEPLOY_PATH }}"
+            docker compose -f docker/docker-compose.yml logs --tail ${{ github.event.inputs.lines }} worker
