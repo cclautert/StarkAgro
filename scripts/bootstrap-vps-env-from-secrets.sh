@@ -23,7 +23,7 @@ if [[ -f .env && "$FORCE" -eq 0 ]]; then
 fi
 
 missing=()
-for v in JWT_SECRET_KEY GOOGLE_CLIENT_ID GOOGLE_CLIENT_SECRET MQTT_USERNAME MQTT_PASSWORD MONGO_USER MONGO_PASSWORD; do
+for v in JWT_SECRET_KEY GOOGLE_CLIENT_ID GOOGLE_CLIENT_SECRET MQTT_USERNAME MQTT_PASSWORD; do
   if [[ -z "${!v:-}" ]]; then
     missing+=("$v")
   fi
@@ -42,8 +42,9 @@ umask 077
   printf 'GOOGLE_CLIENT_SECRET=%q\n' "$GOOGLE_CLIENT_SECRET"
   printf 'MQTT_USERNAME=%q\n' "$MQTT_USERNAME"
   printf 'MQTT_PASSWORD=%q\n' "$MQTT_PASSWORD"
-  printf 'MONGO_USER=%q\n' "$MONGO_USER"
-  printf 'MONGO_PASSWORD=%q\n' "$MONGO_PASSWORD"
+  # MONGO_USER/MONGO_PASSWORD are optional; empty = MongoDB without auth
+  printf 'MONGO_USER=%s\n' "${MONGO_USER:-}"
+  printf 'MONGO_PASSWORD=%s\n' "${MONGO_PASSWORD:-}"
 } > .env
 chmod 600 .env
 if [[ -f .env && "$FORCE" -eq 1 ]]; then

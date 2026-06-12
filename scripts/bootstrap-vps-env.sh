@@ -45,7 +45,7 @@ if [[ -z "${MONGO_USER:-}" ]] && docker ps --format '{{.Names}}' | grep -qx agri
   MONGO_PASSWORD="$(container_env agripewebdb MONGO_INITDB_ROOT_PASSWORD)"
 fi
 
-required=(JWT_SECRET_KEY GOOGLE_CLIENT_ID GOOGLE_CLIENT_SECRET MQTT_USERNAME MQTT_PASSWORD MONGO_USER MONGO_PASSWORD)
+required=(JWT_SECRET_KEY GOOGLE_CLIENT_ID GOOGLE_CLIENT_SECRET MQTT_USERNAME MQTT_PASSWORD)
 missing=()
 for v in "${required[@]}"; do
   if [[ -z "${!v:-}" ]]; then
@@ -56,6 +56,7 @@ if ((${#missing[@]} > 0)); then
   echo "ERROR: Could not recover required env vars: ${missing[*]}" >&2
   exit 1
 fi
+# MONGO_USER/MONGO_PASSWORD are optional (empty = MongoDB without auth)
 
 umask 077
 {
