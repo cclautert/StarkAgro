@@ -90,15 +90,16 @@ mkdir -p "$CERTS_DIR"
 if [[ ! -f "$CERTS_DIR/ca.crt" || ! -f "$CERTS_DIR/server.crt" || ! -f "$CERTS_DIR/server.key" ]]; then
   echo "Generating self-signed MQTT TLS certificates in $CERTS_DIR"
   openssl req -new -x509 -days 3650 -keyout "$CERTS_DIR/ca.key" -out "$CERTS_DIR/ca.crt" \
-    -subj "/CN=AgripeWeb-CA" -nodes 2>/dev/null
-  openssl genrsa -out "$CERTS_DIR/server.key" 2048 2>/dev/null
+    -subj "/CN=AgripeWeb-CA" -nodes
+  openssl genrsa -out "$CERTS_DIR/server.key" 2048
   openssl req -new -key "$CERTS_DIR/server.key" -out "$CERTS_DIR/server.csr" \
-    -subj "/CN=agripeweb-mqtt" 2>/dev/null
+    -subj "/CN=agripeweb-mqtt"
   openssl x509 -req -days 3650 -in "$CERTS_DIR/server.csr" \
     -CA "$CERTS_DIR/ca.crt" -CAkey "$CERTS_DIR/ca.key" -CAcreateserial \
-    -out "$CERTS_DIR/server.crt" 2>/dev/null
+    -out "$CERTS_DIR/server.crt"
   echo "TLS certificates generated"
 fi
+chmod 644 "$CERTS_DIR/ca.crt" "$CERTS_DIR/server.crt" "$CERTS_DIR/server.key" 2>/dev/null || true
 
 COMPOSE=(docker compose -f docker/docker-compose.yml --env-file "$ROOT/.env")
 echo "Running compose from $(pwd)"
