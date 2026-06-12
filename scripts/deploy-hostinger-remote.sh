@@ -83,7 +83,11 @@ if [[ ! -s "$PASSWD_FILE" ]]; then
   echo "ERROR: Mosquitto passwd missing or empty at $PASSWD_FILE" >&2
   exit 1
 fi
-chmod 644 "$PASSWD_FILE"
+# chmod via docker: file is root-owned (created inside container), agripeweb runner can't chmod it directly
+docker run --rm \
+  -v "$ROOT/docker/mosquitto:/mosquitto/config" \
+  eclipse-mosquitto:2 \
+  chmod 644 /mosquitto/config/passwd
 
 CERTS_DIR="$ROOT/docker/mosquitto/certs"
 mkdir -p "$CERTS_DIR"
