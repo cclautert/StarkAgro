@@ -85,7 +85,7 @@ if [[ ! -s "$PASSWD_FILE" ]]; then
 fi
 chmod 644 "$PASSWD_FILE"
 
-COMPOSE=(docker compose --project-directory . -f docker/docker-compose.yml)
+COMPOSE=(docker compose -f docker/docker-compose.yml --env-file "$ROOT/.env")
 echo "Running compose from $(pwd)"
 "${COMPOSE[@]}" build agripewebapi agripewebui agripwebworker
 "${COMPOSE[@]}" up -d db mqtt
