@@ -85,6 +85,21 @@ if [[ ! -s "$PASSWD_FILE" ]]; then
 fi
 chmod 644 "$PASSWD_FILE"
 
+CERTS_DIR="$ROOT/docker/mosquitto/certs"
+mkdir -p "$CERTS_DIR"
+if [[ ! -f "$CERTS_DIR/ca.crt" || ! -f "$CERTS_DIR/server.crt" || ! -f "$CERTS_DIR/server.key" ]]; then
+  echo "Generating self-signed MQTT TLS certificates in $CERTS_DIR"
+  openssl req -new -x509 -days 3650 -keyout "$CERTS_DIR/ca.key" -out "$CERTS_DIR/ca.crt" \
+    -subj "/CN=AgripeWeb-CA" -nodes 2>/dev/null
+  openssl genrsa -out "$CERTS_DIR/server.key" 2048 2>/dev/null
+  openssl req -new -key "$CERTS_DIR/server.key" -out "$CERTS_DIR/server.csr" \
+    -subj "/CN=agripeweb-mqtt" 2>/dev/null
+  openssl x509 -req -days 3650 -in "$CERTS_DIR/server.csr" \
+    -CA "$CERTS_DIR/ca.crt" -CAkey "$CERTS_DIR/ca.key" -CAcreateserial \
+    -out "$CERTS_DIR/server.crt" 2>/dev/null
+  echo "TLS certificates generated"
+fi
+
 COMPOSE=(docker compose -f docker/docker-compose.yml --env-file "$ROOT/.env")
 echo "Running compose from $(pwd)"
 "${COMPOSE[@]}" build agripewebapi agripewebui agripwebworker
