@@ -156,15 +156,19 @@ namespace AgripeWebWorker.Services
                 PropertyNameCaseInsensitive = true
             });
 
-            if (message == null || string.IsNullOrEmpty(message.Code))
+            var effectiveCode = message != null && !string.IsNullOrEmpty(message.Code)
+                ? message.Code
+                : message?.DevEUI ?? string.Empty;
+
+            if (message == null || string.IsNullOrEmpty(effectiveCode))
             {
-                _logger.LogWarning("Invalid MQTT message: missing 'code' field");
+                _logger.LogWarning("Invalid MQTT message: missing 'code' and 'DevEUI' fields");
                 return;
             }
 
             var createRequest = new CreateDeviceReadRequest
             {
-                Code = message.Code,
+                Code = effectiveCode,
                 Value = message.Value,
                 ReadAt = message.ReadAt,
                 IsEdgeAnomaly = message.IsEdgeAnomaly,
@@ -180,11 +184,11 @@ namespace AgripeWebWorker.Services
 
             if (createResponse == null)
             {
-                _logger.LogWarning("Read not persisted for sensor code '{Code}': sensor not registered", message.Code);
+                _logger.LogWarning("Read not persisted for sensor code '{Code}': sensor not registered", effectiveCode);
                 return;
             }
 
-            _logger.LogInformation("Successfully processed read for sensor '{Code}'", message.Code);
+            _logger.LogInformation("Successfully processed read for sensor '{Code}'", effectiveCode);
 
             if (createResponse.Id > 0)
             {
@@ -250,6 +254,10 @@ namespace AgripeWebWorker.Services
         private sealed class MqttReadMessage
         {
             public string Code { get; set; } = string.Empty;
+
+            [System.Text.Json.Serialization.JsonPropertyName("DevEUI")]
+            public string? DevEUI { get; set; }
+
             public decimal Value { get; set; }
             public bool IsEdgeAnomaly { get; set; }
             public MqttEdgeStats? EdgeStats { get; set; }
