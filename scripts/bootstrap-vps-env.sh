@@ -29,6 +29,8 @@ JWT_ISSUER="$(container_env agripewebapi JwtSettings__issuer)"
 JWT_AUDIENCE="$(container_env agripewebapi JwtSettings__audience)"
 GOOGLE_CLIENT_ID="$(container_env agripewebapi OAuth__Google__ClientId)"
 GOOGLE_CLIENT_SECRET="$(container_env agripewebapi OAuth__Google__ClientSecret)"
+MONGO_USER="$(container_env agripewebapi MongoDb__Username)"
+MONGO_PASSWORD="$(container_env agripewebapi MongoDb__Password)"
 
 MQTT_USERNAME=""
 MQTT_PASSWORD=""
@@ -37,7 +39,13 @@ if docker ps --format '{{.Names}}' | grep -qx agripwebworker; then
   MQTT_PASSWORD="$(container_env agripwebworker Mqtt__Password)"
 fi
 
-required=(JWT_SECRET_KEY GOOGLE_CLIENT_ID GOOGLE_CLIENT_SECRET MQTT_USERNAME MQTT_PASSWORD)
+# Fallback: recover MONGO_USER/MONGO_PASSWORD from the db container if not in API
+if [[ -z "${MONGO_USER:-}" ]] && docker ps --format '{{.Names}}' | grep -qx agripewebdb; then
+  MONGO_USER="$(container_env agripewebdb MONGO_INITDB_ROOT_USERNAME)"
+  MONGO_PASSWORD="$(container_env agripewebdb MONGO_INITDB_ROOT_PASSWORD)"
+fi
+
+required=(JWT_SECRET_KEY GOOGLE_CLIENT_ID GOOGLE_CLIENT_SECRET MQTT_USERNAME MQTT_PASSWORD MONGO_USER MONGO_PASSWORD)
 missing=()
 for v in "${required[@]}"; do
   if [[ -z "${!v:-}" ]]; then
@@ -58,6 +66,8 @@ umask 077
   printf 'GOOGLE_CLIENT_SECRET=%q\n' "$GOOGLE_CLIENT_SECRET"
   printf 'MQTT_USERNAME=%q\n' "$MQTT_USERNAME"
   printf 'MQTT_PASSWORD=%q\n' "$MQTT_PASSWORD"
+  printf 'MONGO_USER=%q\n' "$MONGO_USER"
+  printf 'MONGO_PASSWORD=%q\n' "$MONGO_PASSWORD"
 } > "$ENV_FILE"
 chmod 600 "$ENV_FILE"
 

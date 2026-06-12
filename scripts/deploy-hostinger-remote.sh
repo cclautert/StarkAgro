@@ -32,7 +32,7 @@ set -a
 source "$ROOT/.env"
 set +a
 
-required=(JWT_SECRET_KEY GOOGLE_CLIENT_ID GOOGLE_CLIENT_SECRET MQTT_USERNAME MQTT_PASSWORD)
+required=(JWT_SECRET_KEY GOOGLE_CLIENT_ID GOOGLE_CLIENT_SECRET MQTT_USERNAME MQTT_PASSWORD MONGO_USER MONGO_PASSWORD)
 missing=()
 for v in "${required[@]}"; do
   if [[ -z "${!v:-}" ]]; then
