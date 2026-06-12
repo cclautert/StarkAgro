@@ -65,10 +65,11 @@ namespace AgripeWebWorker.Services
                     using var scope = _serviceProvider.CreateScope();
                     var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-                    var createRequest = new CreateReadRequest
+                    var createRequest = new CreateDeviceReadRequest
                     {
                         Code = message.Code,
                         Value = message.Value,
+                        ReadAt = message.ReadAt,
                         IsEdgeAnomaly = message.IsEdgeAnomaly,
                         EdgeStats = message.EdgeStats != null ? new AgripeWebAPI.Domain.Commands.Requests.Reads.EdgeStats
                         {
@@ -79,6 +80,13 @@ namespace AgripeWebWorker.Services
                     };
 
                     var createResponse = await mediator.Send(createRequest, stoppingToken);
+
+                    if (createResponse == null)
+                    {
+                        _logger.LogWarning("Read not persisted for sensor code '{Code}': sensor not registered", message.Code);
+                        return;
+                    }
+
                     _logger.LogInformation("Successfully processed read for sensor '{Code}'", message.Code);
 
                     if (createResponse.Id > 0)
@@ -188,6 +196,9 @@ namespace AgripeWebWorker.Services
             public decimal Value { get; set; }
             public bool IsEdgeAnomaly { get; set; }
             public MqttEdgeStats? EdgeStats { get; set; }
+
+            [System.Text.Json.Serialization.JsonPropertyName("time")]
+            public DateTime? ReadAt { get; set; }
         }
 
         private sealed class MqttEdgeStats

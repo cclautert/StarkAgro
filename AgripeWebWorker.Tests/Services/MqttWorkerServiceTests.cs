@@ -189,12 +189,16 @@ namespace AgripeWebWorker.Tests.Services
         // --- Message processing tests ---
 
         [Fact]
-        public async Task MessageReceived_ValidPayload_ShouldSendCreateReadRequest()
+        public async Task MessageReceived_ValidPayload_ShouldSendCreateDeviceReadRequest()
         {
             var mockMediator = new Mock<IMediator>();
             var mockScope = new Mock<IServiceScope>();
             var mockScopeFactory = new Mock<IServiceScopeFactory>();
             var mockScopedProvider = new Mock<IServiceProvider>();
+
+            mockMediator
+                .Setup(m => m.Send(It.IsAny<CreateDeviceReadRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new AgripeWebAPI.Domain.Commands.Responses.Reads.CreateReadResponse { Id = 1, SensorId = 1, UserId = 10 });
 
             mockScopedProvider.Setup(sp => sp.GetService(typeof(IMediator))).Returns(mockMediator.Object);
             mockScope.Setup(s => s.ServiceProvider).Returns(mockScopedProvider.Object);
@@ -210,8 +214,69 @@ namespace AgripeWebWorker.Tests.Services
             await _capturedMessageHandler!(CreateMessageEventArgs(payloadBytes));
 
             mockMediator.Verify(m => m.Send(
-                It.Is<CreateReadRequest>(r => r.Code == "SENS01" && r.Value == 512),
+                It.Is<CreateDeviceReadRequest>(r => r.Code == "SENS01" && r.Value == 512),
                 It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task MessageReceived_ValidPayload_PropagatesReadAt_WhenTimePresent()
+        {
+            var mockMediator = new Mock<IMediator>();
+            var mockScope = new Mock<IServiceScope>();
+            var mockScopeFactory = new Mock<IServiceScopeFactory>();
+            var mockScopedProvider = new Mock<IServiceProvider>();
+
+            mockMediator
+                .Setup(m => m.Send(It.IsAny<CreateDeviceReadRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new AgripeWebAPI.Domain.Commands.Responses.Reads.CreateReadResponse { Id = 1, SensorId = 1, UserId = 10 });
+
+            mockScopedProvider.Setup(sp => sp.GetService(typeof(IMediator))).Returns(mockMediator.Object);
+            mockScope.Setup(s => s.ServiceProvider).Returns(mockScopedProvider.Object);
+            mockScopeFactory.Setup(f => f.CreateScope()).Returns(mockScope.Object);
+            _mockServiceProvider.Setup(sp => sp.GetService(typeof(IServiceScopeFactory))).Returns(mockScopeFactory.Object);
+
+            await StartServiceAndCapture();
+            Assert.NotNull(_capturedMessageHandler);
+
+            var payload = """{"code":"SENS01","value":22.7,"time":"2026-06-11T23:29:02Z"}""";
+            var payloadBytes = Encoding.UTF8.GetBytes(payload);
+
+            await _capturedMessageHandler!(CreateMessageEventArgs(payloadBytes));
+
+            var expectedTime = new DateTime(2026, 6, 11, 23, 29, 2, DateTimeKind.Utc);
+            mockMediator.Verify(m => m.Send(
+                It.Is<CreateDeviceReadRequest>(r => r.ReadAt != null && r.ReadAt.Value.ToUniversalTime() == expectedTime),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task MessageReceived_UnregisteredSensor_LogsWarning_SkipsAnomalyDispatch()
+        {
+            var mockMediator = new Mock<IMediator>();
+            var mockScope = new Mock<IServiceScope>();
+            var mockScopeFactory = new Mock<IServiceScopeFactory>();
+            var mockScopedProvider = new Mock<IServiceProvider>();
+
+            mockMediator
+                .Setup(m => m.Send(It.IsAny<CreateDeviceReadRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync((AgripeWebAPI.Domain.Commands.Responses.Reads.CreateReadResponse?)null);
+
+            mockScopedProvider.Setup(sp => sp.GetService(typeof(IMediator))).Returns(mockMediator.Object);
+            mockScope.Setup(s => s.ServiceProvider).Returns(mockScopedProvider.Object);
+            mockScopeFactory.Setup(f => f.CreateScope()).Returns(mockScope.Object);
+            _mockServiceProvider.Setup(sp => sp.GetService(typeof(IServiceScopeFactory))).Returns(mockScopeFactory.Object);
+
+            await StartServiceAndCapture();
+            Assert.NotNull(_capturedMessageHandler);
+
+            var payload = JsonSerializer.Serialize(new { code = "NOTFOUND_H", value = 50 });
+            var payloadBytes = Encoding.UTF8.GetBytes(payload);
+
+            await _capturedMessageHandler!(CreateMessageEventArgs(payloadBytes));
+
+            mockMediator.Verify(m => m.Send(
+                It.IsAny<AgripeWebAPI.Domain.Commands.Requests.Anomalies.DetectSensorAnomalyRequest>(),
+                It.IsAny<CancellationToken>()), Times.Never);
         }
 
         [Fact]
@@ -235,7 +300,7 @@ namespace AgripeWebWorker.Tests.Services
 
             await _capturedMessageHandler!(CreateMessageEventArgs(payloadBytes));
 
-            mockMediator.Verify(m => m.Send(It.IsAny<CreateReadRequest>(), It.IsAny<CancellationToken>()), Times.Never);
+            mockMediator.Verify(m => m.Send(It.IsAny<CreateDeviceReadRequest>(), It.IsAny<CancellationToken>()), Times.Never);
         }
 
         [Fact]
