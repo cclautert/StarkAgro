@@ -89,6 +89,10 @@ Run `dotnet build AgripeWebAPI/AgripeWebAPI.csproj` to verify.
 
 Write unit tests for every handler and controller action added.
 
+**Coverage & deletion rules (non-negotiable):**
+- **Minimum 90% line coverage** on all production code added or modified in this issue (measure with `--collect:"XPlat Code Coverage"`; see `agripeweb-test-writer` skill).
+- **Do not delete, disable, or remove existing unit tests** without **explicit approval from the user**. Fix or update tests instead.
+
 **Conventions:**
 - Framework: xUnit + Moq (no FluentAssertions)
 - Mock `agpDBContext` via `Mock<agpDBContext>` + `Mock<IMongoCollection<T>>`
@@ -105,6 +109,12 @@ Required coverage per handler:
 - ID generation — `GetNextIdAsync` is called once before `InsertOneAsync` on new entities
 
 Run `dotnet test AgripeWebAPI.Tests/AgripeWebAPI.Tests.csproj` and fix any failures.
+
+Then run with coverage and verify **≥ 90% line coverage** on touched production files:
+```bash
+dotnet test AgripeWebAPI.Tests/AgripeWebAPI.Tests.csproj --collect:"XPlat Code Coverage" --logger "console;verbosity=normal"
+```
+Do not proceed to Step 5 if coverage is below 90% or if any unit test was removed without user approval.
 
 ---
 

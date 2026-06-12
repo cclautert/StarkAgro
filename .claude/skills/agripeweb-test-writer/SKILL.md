@@ -15,6 +15,22 @@ Write high-quality unit tests following the project's exact patterns. Never modi
 
 **Framework:** xUnit + Moq — **no FluentAssertions** (use xUnit's built-in `Assert.*` methods).
 
+## Coverage policy (mandatory)
+
+- **Minimum line coverage: 90%** for all production code touched by the current task (handlers, controllers, services, validators). If the task spans multiple files, each touched file must meet 90% or you must add tests until it does.
+- Measure after writing tests:
+  ```bash
+  dotnet test AgripeWebAPI.Tests/AgripeWebAPI.Tests.csproj --collect:"XPlat Code Coverage" --logger "console;verbosity=normal"
+  ```
+- Parse the coverage report (Coverlet / `coverage.cobertura.xml` under `TestResults/`). If overall or per-file line coverage for touched production files is **below 90%**, add tests for uncovered branches and report the gap — do not mark the task done.
+- Prefer meaningful tests over coverage gaming (no empty assertions, no testing only getters).
+
+## Test deletion policy (mandatory)
+
+- **Never delete, rename away, or comment out existing unit tests** (files, classes, or `[Fact]` / `[Theory]` methods) without **explicit approval from the user**.
+- If a test is wrong or obsolete, explain why and ask the user before removing or replacing it. You may fix assertions or update mocks, but keep the test intent unless the user approves removal.
+- Do not “clean up” failing tests by deleting them — fix production code or fix the test.
+
 ## Step 1: Read before writing
 
 1. Read the production file(s) to test — understand every public method and its behavior
@@ -165,6 +181,8 @@ Test files go in `AgripeWebAPI.Tests/` mirroring the production folder:
 
 ## After writing
 
-Run `dotnet test AgripeWebAPI.Tests/AgripeWebAPI.Tests.csproj --logger "console;verbosity=normal"` and fix any failures.
+1. Run `dotnet test AgripeWebAPI.Tests/AgripeWebAPI.Tests.csproj --logger "console;verbosity=normal"` and fix any failures.
+2. Run coverage (command above) and confirm **≥ 90% line coverage** on all production files touched. If below 90%, add tests and re-run until the threshold is met or you report a specific blocker to the user.
+3. Confirm no unit tests were removed without user approval.
 
 Flag any scenario that requires a production code change to be testable (missing interface, untestable static call).

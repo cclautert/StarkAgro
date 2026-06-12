@@ -56,6 +56,8 @@ When the user asks for backend help:
 ## 7. Testing
 
 - Write and maintain unit tests (xUnit, NUnit, Jest, etc.) that cover critical logic.
+- **Target ≥ 90% line coverage** on production code touched by the change; measure with the project's coverage tooling before considering work complete.
+- **Never delete or remove existing unit tests** without **explicit approval from the user** — fix or update tests instead of dropping them.
 - Implement integration tests for real interactions with databases and external services where needed.
 - Use mocking frameworks to isolate dependencies and test in realistic scenarios.
 - Understand TDD concepts and when to apply test-first or test-guided development.

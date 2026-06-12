@@ -28,7 +28,20 @@ namespace AgripeWebAPI.Models
                 throw new InvalidOperationException("MongoDB database name is not configured.");
             }
 
-            var client = new MongoClient(settings.Value.ConnectionString);
+            MongoClient client;
+            if (!string.IsNullOrEmpty(settings.Value.Username))
+            {
+                var clientSettings = MongoClientSettings.FromConnectionString(settings.Value.ConnectionString);
+                clientSettings.Credential = MongoCredential.CreateCredential(
+                    "admin",
+                    settings.Value.Username,
+                    settings.Value.Password);
+                client = new MongoClient(clientSettings);
+            }
+            else
+            {
+                client = new MongoClient(settings.Value.ConnectionString);
+            }
             var database = client.GetDatabase(settings.Value.DatabaseName);
 
             Users = database.GetCollection<User>("users");

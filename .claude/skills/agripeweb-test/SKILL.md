@@ -55,7 +55,11 @@ docker ps --filter name=mongo
 ```
 If not running: "MongoDB container is not running. Start it with: `docker compose -f docker/docker-compose.yml up -d mongo`"
 
-If `--coverage` was used, parse the coverage summary, list the files with lowest coverage, and ask if the user wants to invoke the `agripeweb-test-writer` skill to fill the gaps.
+If `--coverage` was used, parse the coverage summary and report line coverage per file.
+
+**Coverage gate:** the project requires **≥ 90% line coverage** on production code under test. If any file is below 90%, list it as **FAIL** (not just a suggestion) and invoke or recommend the `agripeweb-test-writer` skill to close the gap.
+
+**Test deletion:** if the diff removes unit test files or test methods, flag as **BLOCKED** unless the user has explicitly approved the removal in this conversation.
 
 ## Output format
 
