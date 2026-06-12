@@ -6,6 +6,7 @@ import { Pivot } from '../models/pivot.model';
 import { User } from '../models/user.model';
 import { Sensor } from '../models/sensor.model';
 import { IrrigationTrend } from '../models/irrigation-trend.model';
+import { SensorTelemetry } from '../models/sensor-telemetry.model';
 import { HttpParams } from '@angular/common/http';
 
 @Injectable({
@@ -60,6 +61,11 @@ export class ApiService {
       .set('NumberOfReads', numberOfReads.toString());
 
     return this.http.get<IrrigationTrend>(`${this.baseUrl}pivot/getIrrigationTrend`, { params });
+  }
+
+  getSensorTelemetry(pivotId: number): Observable<SensorTelemetry[]> {
+    const params = new HttpParams().set('PivotId', pivotId.toString());
+    return this.http.get<SensorTelemetry[]>(`${this.baseUrl}sensor/telemetry`, { params });
   }
 
   addUser(user: User): Observable<any> {

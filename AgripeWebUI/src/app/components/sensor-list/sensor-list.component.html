@@ -4,25 +4,101 @@
     <button class="btn-add" [routerLink]="['/sensores/novo']">+ Novo Sensor</button>
   </div>
 
-  <ng-container *ngIf="sensores$ | async as sensores; else loading">
-    <div class="sensor-grid">
-      <div class="sensor-card" *ngFor="let sensor of sensores">
-        <div class="sensor-card-info">
-          <span class="sensor-icon">📡</span>
-          <div class="sensor-details">
-            <span class="sensor-name">{{ sensor.name }}</span>
-            <span class="sensor-meta">Pivô: {{ sensor.pivot.name }} &nbsp;|&nbsp; Quadrante: {{ sensor.quadrante }} &nbsp;|&nbsp; Código: {{ sensor.code }}</span>
+  <ng-container *ngIf="!isLoading; else loading">
+
+    <!-- LoRaWAN device groups -->
+    <ng-container *ngIf="devices.length > 0">
+      <h2 class="section-title">Dispositivos LoRaWAN</h2>
+      <div class="sensor-grid">
+        <div class="device-card" *ngFor="let device of devices">
+          <div class="device-header">
+            <span class="device-icon">📡</span>
+            <div class="device-info">
+              <span class="device-eui">{{ device.deviceEui }}</span>
+              <span class="device-meta">
+                Pivô: {{ device.pivotName }} &nbsp;|&nbsp; Quadrante: {{ device.quadrante }}
+              </span>
+            </div>
+            <div class="metric-chips">
+              <span class="chip chip-h" *ngIf="device.hSensor" title="Umidade">H</span>
+              <span class="chip chip-t" *ngIf="device.tSensor" title="Temperatura">T</span>
+              <span class="chip chip-b" *ngIf="device.bSensor" title="Bateria">B</span>
+            </div>
+          </div>
+
+          <div class="device-telemetry" *ngIf="device.telemetry">
+            <div class="tele-row">
+              <span class="tele-label">💧 Umidade:</span>
+              <strong>{{ device.telemetry.humidity !== null ? (device.telemetry.humidity | number:'1.0-1') + '%' : 'N/A' }}</strong>
+            </div>
+            <div class="tele-row">
+              <span class="tele-label">🌡️ Temperatura:</span>
+              <strong>{{ device.telemetry.temperature !== null ? (device.telemetry.temperature | number:'1.1-1') + '°C' : 'N/A' }}</strong>
+            </div>
+            <div class="tele-row">
+              <mat-icon class="tele-battery-icon">{{ batteryIcon(device.telemetry.batteryPercent) }}</mat-icon>
+              <span class="tele-label">Bateria:</span>
+              <strong>{{ device.telemetry.batteryPercent !== null ? (device.telemetry.batteryPercent | number:'1.0-0') + '%' : 'N/A' }}</strong>
+            </div>
+            <div class="tele-timestamp" *ngIf="device.telemetry.readAt">
+              Última leitura: {{ device.telemetry.readAt | date:'dd/MM/yyyy HH:mm' }}
+            </div>
+          </div>
+          <div class="device-no-telemetry" *ngIf="!device.telemetry">
+            Sem leituras recentes
+          </div>
+
+          <div class="device-sensors">
+            <div class="sub-sensor" *ngIf="device.hSensor">
+              <span class="sub-code">{{ device.hSensor.code }}</span>
+              <div class="sensor-card-actions">
+                <button class="btn-action btn-edit" (click)="editarSensor(device.hSensor.id!)">Editar</button>
+                <button class="btn-action btn-delete" (click)="excluirSensor(device.hSensor.id!)">Excluir</button>
+              </div>
+            </div>
+            <div class="sub-sensor" *ngIf="device.tSensor">
+              <span class="sub-code">{{ device.tSensor.code }}</span>
+              <div class="sensor-card-actions">
+                <button class="btn-action btn-edit" (click)="editarSensor(device.tSensor.id!)">Editar</button>
+                <button class="btn-action btn-delete" (click)="excluirSensor(device.tSensor.id!)">Excluir</button>
+              </div>
+            </div>
+            <div class="sub-sensor" *ngIf="device.bSensor">
+              <span class="sub-code">{{ device.bSensor.code }}</span>
+              <div class="sensor-card-actions">
+                <button class="btn-action btn-edit" (click)="editarSensor(device.bSensor.id!)">Editar</button>
+                <button class="btn-action btn-delete" (click)="excluirSensor(device.bSensor.id!)">Excluir</button>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="sensor-card-actions">
-          <button class="btn-action btn-edit" (click)="editarSensor(sensor.id!)">Editar</button>
-          <button class="btn-action btn-delete" (click)="excluirSensor(sensor.id!)">Excluir</button>
+      </div>
+    </ng-container>
+
+    <!-- Legacy sensors -->
+    <ng-container *ngIf="legacySensors.length > 0">
+      <h2 class="section-title" *ngIf="devices.length > 0">Sensores Legados</h2>
+      <div class="sensor-grid">
+        <div class="sensor-card" *ngFor="let sensor of legacySensors">
+          <div class="sensor-card-info">
+            <span class="sensor-icon">📡</span>
+            <div class="sensor-details">
+              <span class="sensor-name">{{ sensor.name }}</span>
+              <span class="sensor-meta">Pivô: {{ sensor.pivot.name }} &nbsp;|&nbsp; Quadrante: {{ sensor.quadrante }} &nbsp;|&nbsp; Código: {{ sensor.code }}</span>
+            </div>
+          </div>
+          <div class="sensor-card-actions">
+            <button class="btn-action btn-edit" (click)="editarSensor(sensor.id!)">Editar</button>
+            <button class="btn-action btn-delete" (click)="excluirSensor(sensor.id!)">Excluir</button>
+          </div>
         </div>
       </div>
-      <div class="empty-state" *ngIf="sensores.length === 0">
-        <span>Nenhum sensor cadastrado.</span>
-      </div>
+    </ng-container>
+
+    <div class="empty-state" *ngIf="devices.length === 0 && legacySensors.length === 0">
+      <span>Nenhum sensor cadastrado.</span>
     </div>
+
   </ng-container>
 
   <ng-template #loading>
