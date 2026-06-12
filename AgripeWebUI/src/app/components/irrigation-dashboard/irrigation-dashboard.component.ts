@@ -1,17 +1,22 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { ChartConfiguration } from 'chart.js';
-import { interval, Subscription } from 'rxjs';
+import { forkJoin, interval, of, Subscription } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { BaseChartDirective } from 'ng2-charts';
 import { Pivot } from '../../models/pivot.model';
 import { ReadEntry } from '../../models/quadrante.model';
 import { IrrigationTrend } from '../../models/irrigation-trend.model';
 import { Anomaly } from '../../models/anomaly.model';
+import { SensorTelemetry } from '../../models/sensor-telemetry.model';
 import { ApiService } from '../../services/api.service';
 import { PivotService } from '../../services/pivot.service';
 
 interface QuadrantInfo {
   label: string;
   value: number | null;
+  temperature: number | null;
+  batteryPercent: number | null;
+  batteryIcon: string;
   statusLabel: string;
   badgeClass: string;
   valueClass: string;
@@ -132,47 +137,79 @@ export class IrrigationDashboardComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.apiService.getReadsByPivotId(this.selectedPivotId, this.numberOfDays).subscribe(pivot => {
-      const q = pivot.quadrante;
-      const limInf = pivot.limiteInferior ?? 25;
-      const limSup = pivot.limiteSuperior ?? 75;
+    forkJoin([
+      this.apiService.getReadsByPivotId(this.selectedPivotId, this.numberOfDays),
+      this.apiService.getSensorTelemetry(this.selectedPivotId).pipe(catchError(() => of([] as SensorTelemetry[])))
+    ]).subscribe({
+      next: ([pivot, telemetry]) => {
+        const q = pivot.quadrante;
+        const limInf = pivot.limiteInferior ?? 25;
+        const limSup = pivot.limiteSuperior ?? 75;
 
-      // Build quadrant cards
-      const rawValues = [
-        q?.topRightAvg ?? null,    // Quadrante 1
-        q?.bottomRightAvg ?? null, // Quadrante 2
-        q?.bottomLeftAvg ?? null,  // Quadrante 3
-        q?.topLeftAvg ?? null      // Quadrante 4
-      ];
-      this.quadrants = rawValues.map((val, i) => this.buildQuadrantInfo(this.QUADRANT_LABELS[i], val, limInf, limSup));
-      this.alerts = this.buildAlerts(limInf, limSup);
+        const telemetryMap = new Map<number, SensorTelemetry>(telemetry.map(t => [t.quadrante, t]));
 
-      // Build time-series chart from reads embedded in the response
-      const readGroups: ReadEntry[][] = [
-        q?.topRightReads ?? [],    // Quadrante 1
-        q?.bottomRightReads ?? [], // Quadrante 2
-        q?.bottomLeftReads ?? [],  // Quadrante 3
-        q?.topLeftReads ?? []      // Quadrante 4
-      ];
-      this.buildChart(readGroups, limInf, limSup);
+        const rawValues = [
+          q?.topRightAvg ?? null,    // Quadrante 1
+          q?.bottomRightAvg ?? null, // Quadrante 2
+          q?.bottomLeftAvg ?? null,  // Quadrante 3
+          q?.topLeftAvg ?? null      // Quadrante 4
+        ];
+
+        this.quadrants = rawValues.map((val, i) => {
+          const quadNum = i + 1;
+          const t = telemetryMap.get(quadNum);
+          return this.buildQuadrantInfo(
+            this.QUADRANT_LABELS[i], val,
+            t?.temperature ?? null,
+            t?.batteryPercent ?? null,
+            limInf, limSup
+          );
+        });
+        this.alerts = this.buildAlerts(limInf, limSup);
+
+        const readGroups: ReadEntry[][] = [
+          q?.topRightReads ?? [],    // Quadrante 1
+          q?.bottomRightReads ?? [], // Quadrante 2
+          q?.bottomLeftReads ?? [],  // Quadrante 3
+          q?.topLeftReads ?? []      // Quadrante 4
+        ];
+        this.buildChart(readGroups, limInf, limSup);
+      }
     });
   }
 
-  private buildQuadrantInfo(label: string, value: number | null, limInf: number, limSup: number): QuadrantInfo {
+  private buildQuadrantInfo(
+    label: string,
+    value: number | null,
+    temperature: number | null,
+    batteryPercent: number | null,
+    limInf: number, limSup: number
+  ): QuadrantInfo {
+    const batteryIcon = this.batteryIconFromPercent(batteryPercent);
     if (value === null) {
-      return { label, value: null, statusLabel: 'Sem dados', badgeClass: 'badge-gray', valueClass: 'value-gray' };
+      return { label, value: null, temperature, batteryPercent, batteryIcon, statusLabel: 'Sem dados', badgeClass: 'badge-gray', valueClass: 'value-gray' };
     }
     if (value < limInf) {
-      return { label, value, statusLabel: 'Alerta: Umidade Baixa!', badgeClass: 'badge-orange', valueClass: 'value-orange' };
+      return { label, value, temperature, batteryPercent, batteryIcon, statusLabel: 'Alerta: Umidade Baixa!', badgeClass: 'badge-orange', valueClass: 'value-orange' };
     }
     const midPoint = (limInf + limSup) / 2;
     if (value < midPoint) {
-      return { label, value, statusLabel: 'Normal', badgeClass: 'badge-green', valueClass: 'value-green' };
+      return { label, value, temperature, batteryPercent, batteryIcon, statusLabel: 'Normal', badgeClass: 'badge-green', valueClass: 'value-green' };
     }
     if (value <= limSup) {
-      return { label, value, statusLabel: 'Ótimo', badgeClass: 'badge-blue', valueClass: 'value-blue' };
+      return { label, value, temperature, batteryPercent, batteryIcon, statusLabel: 'Ótimo', badgeClass: 'badge-blue', valueClass: 'value-blue' };
     }
-    return { label, value, statusLabel: 'Alerta: Umidade Alta!', badgeClass: 'badge-red', valueClass: 'value-red' };
+    return { label, value, temperature, batteryPercent, batteryIcon, statusLabel: 'Alerta: Umidade Alta!', badgeClass: 'badge-red', valueClass: 'value-red' };
+  }
+
+  private batteryIconFromPercent(pct: number | null): string {
+    if (pct === null) return 'battery_unknown';
+    if (pct >= 95) return 'battery_full';
+    if (pct >= 75) return 'battery_6_bar';
+    if (pct >= 55) return 'battery_4_bar';
+    if (pct >= 35) return 'battery_3_bar';
+    if (pct >= 15) return 'battery_1_bar';
+    return 'battery_alert';
   }
 
   private buildAlerts(limInf: number, limSup: number): AlertInfo[] {
@@ -188,7 +225,6 @@ export class IrrigationDashboardComponent implements OnInit, OnDestroy {
   }
 
   private buildChart(readGroups: ReadEntry[][], limInf: number, limSup: number): void {
-    // Collect all unique day labels sorted chronologically
     const daySet = new Set<string>();
     readGroups.forEach(reads => {
       reads.forEach(r => daySet.add(this.toDayLabel(new Date(r.date))));
@@ -199,7 +235,6 @@ export class IrrigationDashboardComponent implements OnInit, OnDestroy {
       return ma !== mb ? ma - mb : da - db;
     });
 
-    // Build one dataset per quadrant
     const quadrantDatasets = readGroups.map((reads, i) => {
       const byDay = new Map<string, number[]>();
       reads.forEach(r => {
@@ -224,7 +259,6 @@ export class IrrigationDashboardComponent implements OnInit, OnDestroy {
       };
     });
 
-    // Reference lines
     const upperRef = {
       data: labels.map(() => limSup),
       label: `Limite Superior ${limSup}%`,

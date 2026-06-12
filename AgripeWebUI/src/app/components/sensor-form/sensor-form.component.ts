@@ -7,7 +7,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { SensorService } from '../../services/sensor.service';
 import { PivotService } from '../../services/pivot.service';
-import { Sensor } from '../../models/sensor.model';
+import { Sensor, MetricType } from '../../models/sensor.model';
 import { Pivot } from '../../models/pivot.model';
 import { forkJoin } from 'rxjs';
 
@@ -32,8 +32,13 @@ export class SensorFormComponent implements OnInit {
   isEditMode = false;
   private sensorId: number | undefined;
 
-  // Lista para popular o <select> no HTML
   pivotsDisponiveis: Pivot[] = [];
+
+  readonly metricTypeOptions = [
+    { value: MetricType.Humidity, label: 'Umidade (_H)' },
+    { value: MetricType.Temperature, label: 'Temperatura (_T)' },
+    { value: MetricType.Battery, label: 'Bateria (_B)' },
+  ];
 
   constructor() {
     // Definindo o novo formulário com os campos 'quadrante' e 'code'
@@ -55,14 +60,13 @@ export class SensorFormComponent implements OnInit {
       this.carregarPivots();
     }
 
-    // Atualiza a definição do formulário para incluir o campo 'pivot'
     this.sensorForm = this.fb.group({
-      // O valor inicial de um objeto deve ser null
       id: [null],
       name: ['', Validators.required],
       pivot: [null, Validators.required],
       code: ['', [Validators.required]],
-      quadrante: [null, [Validators.required, Validators.min(1)]]
+      quadrante: [null, [Validators.required, Validators.min(1)]],
+      metricType: [MetricType.Humidity, Validators.required]
     });
 
     // A lógica para obter o ID da rota permanece a mesma
@@ -126,9 +130,10 @@ export class SensorFormComponent implements OnInit {
         // 2. AGORA, com a lista já carregada, preenche o formulário
         this.sensorForm.patchValue({
           name: sensor.name,
-          pivot: sensor.pivot, // O objeto pivot inteiro
+          pivot: sensor.pivot,
           code: sensor.code,
-          quadrante: sensor.quadrante
+          quadrante: sensor.quadrante,
+          metricType: sensor.metricType ?? MetricType.Humidity
         });
       },
       error: err => {
@@ -159,6 +164,7 @@ export class SensorFormComponent implements OnInit {
   get pivot() { return this.sensorForm.get('pivot'); }
   get code() { return this.sensorForm.get('code'); }
   get quadrante() { return this.sensorForm.get('quadrante'); }
+  get metricType() { return this.sensorForm.get('metricType'); }
 
   async scanQrCode(): Promise<void> {
     if (this.isScanning) return;

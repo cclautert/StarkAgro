@@ -23,11 +23,22 @@
   <div class="quadrant-grid">
     <div class="quadrant-card" *ngFor="let q of quadrants">
       <h3 class="quadrant-title">{{ q.label }}</h3>
-      <div class="quadrant-body">
-        <span class="plant-icon">🌱</span>
-        <span class="humidity-label">
-          Umidade: <strong [class]="q.valueClass">{{ q.value !== null ? (q.value | number:'1.0-0') + '%' : 'N/A' }}</strong>
-        </span>
+      <div class="quadrant-metrics">
+        <div class="metric-row">
+          <span class="metric-icon">🌱</span>
+          <span class="metric-label">Umidade:</span>
+          <strong [class]="q.valueClass">{{ q.value !== null ? (q.value | number:'1.0-0') + '%' : 'N/A' }}</strong>
+        </div>
+        <div class="metric-row">
+          <span class="metric-icon">🌡️</span>
+          <span class="metric-label">Temperatura:</span>
+          <strong class="value-cyan">{{ q.temperature !== null ? (q.temperature | number:'1.1-1') + '°C' : 'N/A' }}</strong>
+        </div>
+        <div class="metric-row">
+          <mat-icon class="battery-icon" [title]="q.batteryPercent !== null ? (q.batteryPercent | number:'1.0-0') + '%' : 'N/A'">{{ q.batteryIcon }}</mat-icon>
+          <span class="metric-label">Bateria:</span>
+          <strong class="value-gray">{{ q.batteryPercent !== null ? (q.batteryPercent | number:'1.0-0') + '%' : 'N/A' }}</strong>
+        </div>
       </div>
       <div class="status-badge" [ngClass]="q.badgeClass">{{ q.statusLabel }}</div>
     </div>
