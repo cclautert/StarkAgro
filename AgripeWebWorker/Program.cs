@@ -32,6 +32,9 @@ var builder = Host.CreateDefaultBuilder(args)
         // Alert email — no-op until Backend Lead's AlertEmailService issue is merged
         services.AddScoped<IAlertEmailService, NoOpAlertEmailService>();
 
+        // LoRaWAN parser
+        services.AddSingleton<ILoRaWanUplinkParser, LoRaWanUplinkParser>();
+
         // Hosted services
         services.AddHostedService<MqttWorkerService>();
         services.AddHostedService<IrrigationAlertScheduler>();

@@ -18,17 +18,20 @@ namespace AgripeWebWorker.Services
         private readonly MqttSettings _mqttSettings;
         private readonly ILogger<MqttWorkerService> _logger;
         private readonly IMqttClientWrapper _mqttClient;
+        private readonly ILoRaWanUplinkParser _loRaWanParser;
 
         public MqttWorkerService(
             IServiceProvider serviceProvider,
             IOptions<MqttSettings> mqttSettings,
             ILogger<MqttWorkerService> logger,
-            IMqttClientWrapper mqttClient)
+            IMqttClientWrapper mqttClient,
+            ILoRaWanUplinkParser loRaWanParser)
         {
             _serviceProvider = serviceProvider;
             _mqttSettings = mqttSettings.Value;
             _logger = logger;
             _mqttClient = mqttClient;
+            _loRaWanParser = loRaWanParser;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -51,53 +54,16 @@ namespace AgripeWebWorker.Services
                         return;
                     }
 
-                    var message = JsonSerializer.Deserialize<MqttReadMessage>(payload, new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    });
-
-                    if (message == null || string.IsNullOrEmpty(message.Code))
-                    {
-                        _logger.LogWarning("Invalid MQTT message: missing 'code' field");
-                        return;
-                    }
-
                     using var scope = _serviceProvider.CreateScope();
                     var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-                    var createRequest = new CreateDeviceReadRequest
+                    if (IsLoRaWanPayload(payload))
                     {
-                        Code = message.Code,
-                        Value = message.Value,
-                        ReadAt = message.ReadAt,
-                        IsEdgeAnomaly = message.IsEdgeAnomaly,
-                        EdgeStats = message.EdgeStats != null ? new AgripeWebAPI.Domain.Commands.Requests.Reads.EdgeStats
-                        {
-                            Mean = message.EdgeStats.Mean,
-                            StdDev = message.EdgeStats.StdDev,
-                            WindowSize = message.EdgeStats.WindowSize
-                        } : null
-                    };
-
-                    var createResponse = await mediator.Send(createRequest, stoppingToken);
-
-                    if (createResponse == null)
-                    {
-                        _logger.LogWarning("Read not persisted for sensor code '{Code}': sensor not registered", message.Code);
-                        return;
+                        await ProcessLoRaWanUplinkAsync(payload, mediator, stoppingToken);
                     }
-
-                    _logger.LogInformation("Successfully processed read for sensor '{Code}'", message.Code);
-
-                    if (createResponse.Id > 0)
+                    else
                     {
-                        await mediator.Send(new DetectSensorAnomalyRequest
-                        {
-                            ReadSensorId = createResponse.Id,
-                            SensorId = createResponse.SensorId,
-                            UserId = createResponse.UserId,
-                            Value = message.Value
-                        }, stoppingToken);
+                        await ProcessLegacyMessageAsync(payload, mediator, stoppingToken);
                     }
                 }
                 catch (Exception ex)
@@ -137,8 +103,99 @@ namespace AgripeWebWorker.Services
                 }
             }
 
-            // Keep the service running
             await Task.Delay(Timeout.Infinite, stoppingToken);
+        }
+
+        private static bool IsLoRaWanPayload(string payload)
+        {
+            try
+            {
+                using var doc = JsonDocument.Parse(payload);
+                return doc.RootElement.EnumerateObject()
+                    .Any(p => p.Name.Equals("DevEUI", StringComparison.OrdinalIgnoreCase));
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private async Task ProcessLoRaWanUplinkAsync(string payload, IMediator mediator, CancellationToken cancellationToken)
+        {
+            var reads = _loRaWanParser.Parse(payload);
+            if (reads.Count == 0) return;
+
+            foreach (var read in reads)
+            {
+                var response = await mediator.Send(read, cancellationToken);
+                if (response == null)
+                {
+                    _logger.LogWarning("Read not persisted for sensor code '{Code}': sensor not registered", read.Code);
+                    continue;
+                }
+
+                _logger.LogInformation("Successfully processed read for sensor '{Code}'", read.Code);
+
+                if (response.Id > 0 && read.Code.EndsWith("_H", StringComparison.OrdinalIgnoreCase))
+                {
+                    await mediator.Send(new DetectSensorAnomalyRequest
+                    {
+                        ReadSensorId = response.Id,
+                        SensorId = response.SensorId,
+                        UserId = response.UserId,
+                        Value = read.Value
+                    }, cancellationToken);
+                }
+            }
+        }
+
+        private async Task ProcessLegacyMessageAsync(string payload, IMediator mediator, CancellationToken cancellationToken)
+        {
+            var message = JsonSerializer.Deserialize<MqttReadMessage>(payload, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+
+            if (message == null || string.IsNullOrEmpty(message.Code))
+            {
+                _logger.LogWarning("Invalid MQTT message: missing 'code' field");
+                return;
+            }
+
+            var createRequest = new CreateDeviceReadRequest
+            {
+                Code = message.Code,
+                Value = message.Value,
+                ReadAt = message.ReadAt,
+                IsEdgeAnomaly = message.IsEdgeAnomaly,
+                EdgeStats = message.EdgeStats != null ? new EdgeStats
+                {
+                    Mean = message.EdgeStats.Mean,
+                    StdDev = message.EdgeStats.StdDev,
+                    WindowSize = message.EdgeStats.WindowSize
+                } : null
+            };
+
+            var createResponse = await mediator.Send(createRequest, cancellationToken);
+
+            if (createResponse == null)
+            {
+                _logger.LogWarning("Read not persisted for sensor code '{Code}': sensor not registered", message.Code);
+                return;
+            }
+
+            _logger.LogInformation("Successfully processed read for sensor '{Code}'", message.Code);
+
+            if (createResponse.Id > 0)
+            {
+                await mediator.Send(new DetectSensorAnomalyRequest
+                {
+                    ReadSensorId = createResponse.Id,
+                    SensorId = createResponse.SensorId,
+                    UserId = createResponse.UserId,
+                    Value = message.Value
+                }, cancellationToken);
+            }
         }
 
         private async Task ConnectAsync(CancellationToken cancellationToken)
