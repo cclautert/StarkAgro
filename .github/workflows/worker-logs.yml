@@ -12,6 +12,7 @@ jobs:
   logs:
     name: Fetch worker logs from VPS
     runs-on: ubuntu-latest
+    environment: production
     steps:
       - name: Fetch logs via SSH
         uses: appleboy/ssh-action@v1.2.5
