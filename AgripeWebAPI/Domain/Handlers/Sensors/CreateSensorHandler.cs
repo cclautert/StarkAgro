@@ -38,7 +38,8 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
                 PivoId = request.Pivot.Id,
                 UserId = userId,
                 Code = request.Code,
-                Quadrante = request.Quadrante
+                Quadrante = request.Quadrante,
+                MetricType = request.MetricType
             };
 
             await _dbContext.Sensors.InsertOneAsync(sensor, cancellationToken: cancellationToken);

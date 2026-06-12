@@ -60,8 +60,16 @@ namespace AgripeWebAPI.Domain.Handlers.Pivots
             var limiteSuperior = pivot.LimiteSuperior ?? user?.LimiteSuperior ?? 75m;
             var rainThreshold = pivot.RainThresholdMm ?? user?.RainThresholdMm ?? _settings.RainThresholdMm;
 
+            var humidityFilter = Builders<Sensor>.Filter.And(
+                Builders<Sensor>.Filter.Eq(s => s.PivoId, pivot.Id),
+                Builders<Sensor>.Filter.Eq(s => s.UserId, request.UserId),
+                Builders<Sensor>.Filter.Or(
+                    Builders<Sensor>.Filter.Eq(s => s.MetricType, MetricType.Humidity),
+                    Builders<Sensor>.Filter.Exists(nameof(Sensor.MetricType), false)
+                )
+            );
             var sensors = await _dbContext.Sensors
-                .Find(s => s.PivoId == pivot.Id && s.UserId == request.UserId)
+                .Find(humidityFilter)
                 .ToListAsync(cancellationToken);
 
             decimal? currentAverage = null;
