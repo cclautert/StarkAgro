@@ -2,7 +2,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace AgripeWebAPI.Models.Entities
 {
-    [BsonIgnoreExtraElements]
+    [BsonIgnoreExtraElements(Inherited = true)]
     public abstract class Entity
     {
         protected Entity()
