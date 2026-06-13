@@ -109,6 +109,11 @@ jobs:
           fi
           echo "dir=$dir" >> "$GITHUB_OUTPUT"
 
+      - name: Fix .git ownership
+        working-directory: ${{ steps.paths.outputs.dir }}
+        run: |
+          sudo chown -R "$(id -un):$(id -gn)" .git || true
+
       - name: Pull main and deploy
         env:
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
