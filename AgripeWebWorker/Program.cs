@@ -2,6 +2,7 @@ using AgripeWebAPI.Configuration;
 using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Interfaces;
 using AgripeWebAPI.Notifications;
+using AgripeWebAPI.Services;
 using AgripeWebWorker.Configuration;
 using AgripeWebWorker.Services;
 
@@ -31,6 +32,9 @@ var builder = Host.CreateDefaultBuilder(args)
 
         // Alert email — no-op until Backend Lead's AlertEmailService issue is merged
         services.AddScoped<IAlertEmailService, NoOpAlertEmailService>();
+
+        // Anomaly detection
+        services.AddScoped<ISensorAnomalyService, SensorAnomalyService>();
 
         // LoRaWAN parser
         services.AddSingleton<ILoRaWanUplinkParser, LoRaWanUplinkParser>();
