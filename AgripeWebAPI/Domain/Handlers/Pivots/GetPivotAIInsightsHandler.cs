@@ -83,8 +83,14 @@ namespace AgripeWebAPI.Domain.Handlers.Pivots
                 .Find(u => u.Id == pivot.UserId)
                 .FirstOrDefaultAsync(cancellationToken);
 
-            var limiteInferior = pivot.LimiteInferior ?? user?.LimiteInferior ?? 25m;
-            var limiteSuperior = pivot.LimiteSuperior ?? user?.LimiteSuperior ?? 75m;
+            if (string.IsNullOrWhiteSpace(user?.GeminiApiKey))
+            {
+                _notifier.Handle(new Notification("Configure sua chave da API Gemini em Configurações para usar esta funcionalidade."));
+                return null;
+            }
+
+            var limiteInferior = pivot.LimiteInferior ?? user.LimiteInferior ?? 25m;
+            var limiteSuperior = pivot.LimiteSuperior ?? user.LimiteSuperior ?? 75m;
 
             var sensors = await _dbContext.Sensors
                 .Find(s => s.PivoId == pivot.Id && s.UserId == pivot.UserId)
@@ -149,12 +155,6 @@ namespace AgripeWebAPI.Domain.Handlers.Pivots
                     ExpectedMax = a.ExpectedMax,
                     Date = a.Date
                 }).ToList();
-            }
-
-            if (string.IsNullOrWhiteSpace(user?.GeminiApiKey))
-            {
-                _notifier.Handle(new Notification("Configure sua chave da API Gemini em Configurações para usar esta funcionalidade."));
-                return null;
             }
 
             var context = new PivotAIContext
