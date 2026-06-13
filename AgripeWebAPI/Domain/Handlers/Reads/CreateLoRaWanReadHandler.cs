@@ -39,7 +39,10 @@ namespace AgripeWebAPI.Domain.Handlers.Reads
                 Date = request.ReadAt ?? DateTime.UtcNow,
                 Humidity = request.Humidity,
                 Temperature = request.Temperature,
-                BatteryVoltage = request.BatteryVoltage
+                BatteryVoltage = request.BatteryVoltage,
+                IdempotencyKey = request.Fcnt.HasValue
+                    ? $"{request.Code.ToUpperInvariant()}:{request.Fcnt}"
+                    : Guid.NewGuid().ToString()
             };
 
             await _dbContext.ReadSensors.InsertOneAsync(read, cancellationToken: cancellationToken);

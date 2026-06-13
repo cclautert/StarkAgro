@@ -10,5 +10,6 @@ namespace AgripeWebAPI.Domain.Commands.Requests.Reads
         public decimal? Temperature { get; set; }
         public decimal? BatteryVoltage { get; set; }
         public DateTime? ReadAt { get; set; }
+        public int? Fcnt { get; set; }
     }
 }
