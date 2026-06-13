@@ -10,6 +10,7 @@ namespace AgripeWebAPI.Services.AIInsights
         public List<SensorReadingContext> SensorReadings { get; set; } = [];
         public string? ForecastSummary { get; set; }
         public List<AnomalyContext> RecentAnomalies { get; set; } = [];
+        public string? ApiKeyOverride { get; set; }
     }
 
     public class SensorReadingContext

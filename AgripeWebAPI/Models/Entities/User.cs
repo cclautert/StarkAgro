@@ -11,5 +11,6 @@ namespace AgripeWebAPI.Models.Entities
         public decimal LimiteInferior { get; set; } = 25m;
         public decimal LimiteSuperior { get; set; } = 75m;
         public double? RainThresholdMm { get; set; }
+        public string? GeminiApiKey { get; set; }
     }
 }

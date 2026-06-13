@@ -30,7 +30,8 @@ namespace AgripeWebAPI.Services.AIInsights
 
         public async Task<string?> GetInsightsAsync(PivotAIContext context, CancellationToken cancellationToken)
         {
-            var endpoint = $"v1beta/models/{_settings.Model}:generateContent?key={_settings.GeminiApiKey}";
+            var key = !string.IsNullOrWhiteSpace(context.ApiKeyOverride) ? context.ApiKeyOverride : _settings.GeminiApiKey;
+            var endpoint = $"v1beta/models/{_settings.Model}:generateContent?key={key}";
 
             var requestBody = new
             {

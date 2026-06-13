@@ -7,4 +7,5 @@ export interface User {
   limiteInferior?: number;
   limiteSuperior?: number;
   rainThresholdMm?: number | null;
+  geminiApiKey?: string | null;
 }

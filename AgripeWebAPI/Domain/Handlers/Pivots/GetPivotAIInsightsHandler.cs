@@ -160,7 +160,8 @@ namespace AgripeWebAPI.Domain.Handlers.Pivots
                 Longitude = pivot.Longitude,
                 SensorReadings = sensorReadings,
                 ForecastSummary = forecastSummary,
-                RecentAnomalies = recentAnomalies
+                RecentAnomalies = recentAnomalies,
+                ApiKeyOverride = user?.GeminiApiKey
             };
 
             var insights = await _aiService.GetInsightsAsync(context, cancellationToken);

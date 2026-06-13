@@ -20,11 +20,14 @@ export class GlobalConfigComponent implements OnInit {
 
   configForm: FormGroup;
 
+  showApiKey = false;
+
   constructor() {
     this.configForm = this.fb.group({
       limiteInferior: [25, [Validators.required, Validators.min(0), Validators.max(100)]],
       limiteSuperior: [75, [Validators.required, Validators.min(0), Validators.max(100)]],
       rainThresholdMm: [null, [Validators.min(0)]],
+      geminiApiKey: [null],
     });
   }
 
@@ -37,6 +40,7 @@ export class GlobalConfigComponent implements OnInit {
             limiteInferior: user.limiteInferior ?? 25,
             limiteSuperior: user.limiteSuperior ?? 75,
             rainThresholdMm: user.rainThresholdMm ?? null,
+            geminiApiKey: user.geminiApiKey ?? null,
           });
         }
       });
@@ -46,9 +50,9 @@ export class GlobalConfigComponent implements OnInit {
   onSubmit(): void {
     if (this.configForm.invalid) return;
 
-    const { limiteInferior, limiteSuperior, rainThresholdMm } = this.configForm.value;
+    const { limiteInferior, limiteSuperior, rainThresholdMm, geminiApiKey } = this.configForm.value;
 
-    this.userService.updateLimits(limiteInferior, limiteSuperior, rainThresholdMm).subscribe({
+    this.userService.updateLimits(limiteInferior, limiteSuperior, rainThresholdMm, geminiApiKey).subscribe({
       next: () => {
         this.snackBar.open('Configuração salva com sucesso!', 'OK', { duration: 3000 });
         this.router.navigate(['/home']);

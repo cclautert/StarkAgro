@@ -27,6 +27,7 @@ namespace AgripeWebAPI.Domain.Handlers.Users
             user.LimiteInferior = request.LimiteInferior;
             user.LimiteSuperior = request.LimiteSuperior;
             user.RainThresholdMm = request.RainThresholdMm;
+            user.GeminiApiKey = request.GeminiApiKey?.Trim();
 
             await _dbContext.Users.ReplaceOneAsync(u => u.Id == user.Id, user, cancellationToken: cancellationToken);
 

@@ -41,7 +41,8 @@ namespace AgripeWebAPI.Domain.Handlers.Users
                     Email = x.Email,
                     LimiteInferior = x.LimiteInferior,
                     LimiteSuperior = x.LimiteSuperior,
-                    RainThresholdMm = x.RainThresholdMm
+                    RainThresholdMm = x.RainThresholdMm,
+                    GeminiApiKey = x.GeminiApiKey
                 })
                 .FirstOrDefaultAsync(cancellationToken);
 

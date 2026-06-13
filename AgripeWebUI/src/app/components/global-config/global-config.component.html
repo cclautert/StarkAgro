@@ -19,6 +19,29 @@
       <input id="rainThresholdMm" type="number" formControlName="rainThresholdMm" step="0.1" min="0" placeholder="Padrão global: 5 mm">
     </div>
 
+    <hr class="section-divider">
+
+    <h3 class="section-title">Inteligência Artificial</h3>
+    <p class="subtitle">
+      Chave gratuita do Google AI Studio (até 1.500 análises/dia).
+      <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Obter chave gratuita</a>
+    </p>
+
+    <div class="form-group">
+      <label for="geminiApiKey">Chave da API Gemini</label>
+      <div class="input-with-toggle">
+        <input
+          id="geminiApiKey"
+          [type]="showApiKey ? 'text' : 'password'"
+          formControlName="geminiApiKey"
+          placeholder="Cole aqui sua chave do Google AI Studio"
+          autocomplete="off">
+        <button type="button" class="btn-toggle-key" (click)="showApiKey = !showApiKey" [attr.aria-label]="showApiKey ? 'Ocultar chave' : 'Mostrar chave'">
+          {{ showApiKey ? 'Ocultar' : 'Mostrar' }}
+        </button>
+      </div>
+    </div>
+
     <div class="form-actions">
       <button type="submit" class="btn btn-primary" [disabled]="configForm.invalid">Salvar</button>
       <button type="button" class="btn btn-secondary" (click)="cancelar()">Cancelar</button>
