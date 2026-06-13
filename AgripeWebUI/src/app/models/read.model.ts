@@ -5,4 +5,7 @@ export interface Read {
   date: Date;
   isEdgeAnomaly?: boolean;
   edgeDetectedAt?: string;
+  humidity?: number | null;
+  temperature?: number | null;
+  batteryVoltage?: number | null;
 }

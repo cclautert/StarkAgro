@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Read } from '../models/read.model';
 import { Pivot } from '../models/pivot.model';
 import { User } from '../models/user.model';
@@ -45,7 +46,9 @@ export class ApiService {
     .set('NumberOfReads', numberOfReads.toString())
     .set('Quadrante', quadrante.toString())
     .set('SensorId', sensorId.toString());
-    return this.http.get<Read[]>(`${this.baseUrl}reads/GetAllBySensorId`, { params });
+    return this.http.get<Read[]>(`${this.baseUrl}reads/GetAllBySensorId`, { params }).pipe(
+      map(reads => reads.map(r => ({ ...r, value: r.humidity ?? r.value })))
+    );
   }
   getReadsByPivotId(pivotId: number, numberOfReads: number): Observable<Pivot> {
     const params = new HttpParams()
