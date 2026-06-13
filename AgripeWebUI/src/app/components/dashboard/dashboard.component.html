@@ -158,6 +158,28 @@
     </div>
   </div>
 
+  <!-- LoRaWAN extra metrics (temperature + battery) -->
+  <div class="lorawan-metrics" *ngIf="lastTemperature !== null || lastBatteryVoltage !== null">
+    <div class="metric-card" *ngIf="lastTemperature !== null">
+      <div class="metric-card-label">Temperatura</div>
+      <div class="metric-card-value" style="color: #f97316;">
+        {{ lastTemperature!.toFixed(1) }}<span class="metric-card-unit">°C</span>
+      </div>
+      <div class="metric-card-sub">última leitura</div>
+    </div>
+    <div class="metric-card" *ngIf="lastBatteryVoltage !== null">
+      <div class="metric-card-label">Bateria</div>
+      <div class="metric-card-value"
+           [style.color]="lastBatteryVoltage! < 3.3 ? '#f87171' : lastBatteryVoltage! < 3.6 ? '#facc15' : '#4ade80'">
+        {{ lastBatteryVoltage!.toFixed(2) }}<span class="metric-card-unit">V</span>
+      </div>
+      <div class="metric-card-sub"
+           [style.color]="lastBatteryVoltage! < 3.3 ? '#f87171' : lastBatteryVoltage! < 3.6 ? '#facc15' : '#94a3b8'">
+        {{ lastBatteryVoltage! < 3.3 ? 'bateria baixa' : lastBatteryVoltage! < 3.6 ? 'bateria média' : 'bateria ok' }}
+      </div>
+    </div>
+  </div>
+
   <!-- Chart Card -->
   <div class="chart-card">
     <div class="chart-header">

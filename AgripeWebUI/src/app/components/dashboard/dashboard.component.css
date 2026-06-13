@@ -188,6 +188,14 @@
   border-color: #2563eb;
 }
 
+/* ── LoRaWAN extra metrics ── */
+.lorawan-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
 /* ── Metric Cards ── */
 .metric-cards-grid {
   display: flex;

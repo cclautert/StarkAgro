@@ -74,6 +74,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   edgeAnomalyCount = 0;
   cloudAnomalyCount = 0;
 
+  // ── LoRaWAN extra metrics ─────────────────────────────────────────────
+  lastTemperature: number | null = null;
+  lastBatteryVoltage: number | null = null;
+
   // Dataset index constants for the toggle handlers
   private readonly DS_TREND    = 4;
   private readonly DS_MA       = 5;
@@ -562,9 +566,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.projectionPoints = [];
         this.edgeAnomalyCount = 0;
         this.cloudAnomalyCount = 0;
+        this.lastTemperature = null;
+        this.lastBatteryVoltage = null;
         this.clearChart();
         return;
       }
+
+      const latestWithTemp = reads.find(r => r.temperature != null);
+      const latestWithBatt = reads.find(r => r.batteryVoltage != null);
+      this.lastTemperature = latestWithTemp?.temperature ?? null;
+      this.lastBatteryVoltage = latestWithBatt?.batteryVoltage ?? null;
 
       const limInf = this.limiteInferior ?? 0;
       const limSup = this.limiteSuperior ?? 100;
