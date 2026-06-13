@@ -35,9 +35,9 @@ export class SensorFormComponent implements OnInit {
   pivotsDisponiveis: Pivot[] = [];
 
   readonly metricTypeOptions = [
-    { value: MetricType.Humidity, label: 'Umidade (_H)' },
-    { value: MetricType.Temperature, label: 'Temperatura (_T)' },
-    { value: MetricType.Battery, label: 'Bateria (_B)' },
+    { value: MetricType.Humidity, label: 'Umidade' },
+    { value: MetricType.Temperature, label: 'Temperatura' },
+    { value: MetricType.Battery, label: 'Bateria' },
   ];
 
   constructor() {

@@ -37,7 +37,7 @@
           <mat-icon>{{ isScanning ? 'hourglass_empty' : 'qr_code_scanner' }}</mat-icon>
         </button>
       </div>
-      <div class="hint">Para sensores LoRaWAN use o sufixo: <code>_H</code> umidade, <code>_T</code> temperatura, <code>_B</code> bateria. Ex: <code>AABBCCDD_H</code></div>
+      <div class="hint">Para sensores LoRaWAN use o DevEUI como código. Ex: <code>AABBCCDD11223344</code></div>
       <div *ngIf="code?.invalid && (code?.dirty || code?.touched)" class="error">
         <div *ngIf="code?.errors?.['required']">Código é obrigatório.</div>
       </div>
