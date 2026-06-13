@@ -44,13 +44,6 @@
     </div>
 
     <div class="form-group">
-      <label for="metricType">Tipo de Métrica</label>
-      <select id="metricType" formControlName="metricType">
-        <option *ngFor="let opt of metricTypeOptions" [ngValue]="opt.value">{{ opt.label }}</option>
-      </select>
-    </div>
-
-    <div class="form-group">
       <label for="quadrante">Quadrante</label>
       <input id="quadrante" type="number" formControlName="quadrante" required min="1" max="4">
       <div *ngIf="quadrante?.invalid && (quadrante?.dirty || quadrante?.touched)" class="error">

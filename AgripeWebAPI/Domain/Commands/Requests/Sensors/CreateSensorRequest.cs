@@ -13,6 +13,5 @@ namespace AgripeWebAPI.Domain.Commands.Requests.Sensors
         [Required]
         public string? Code { get; set; }
         public int Quadrante { get; set; }
-        public MetricType MetricType { get; set; } = MetricType.Humidity;
     }
 }
