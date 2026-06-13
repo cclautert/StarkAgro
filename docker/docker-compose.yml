@@ -23,6 +23,7 @@ services:
       - OAuth__Google__ClientId=${GOOGLE_CLIENT_ID}
       - OAuth__Google__ClientSecret=${GOOGLE_CLIENT_SECRET}
       - OAuth__Google__AllowedRedirectUris=https://agripeweb.com/login/callback,agripeweb://callback
+      - AISettings__AnthropicApiKey=${ANTHROPIC_API_KEY}
     depends_on:
       - db
     networks:
