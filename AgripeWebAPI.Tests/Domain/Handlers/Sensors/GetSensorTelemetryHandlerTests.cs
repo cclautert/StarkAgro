@@ -125,13 +125,13 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Sensors
         }
 
         [Fact]
-        public async Task Handle_LegacySensors_Omitted()
+        public async Task Handle_UnifiedSensorWithNoRead_Omitted()
         {
+            // Only a legacy _H sensor with a read — unified sensor has no read and should be skipped
             SetupSensors(
-                new Sensor { Id = 1, PivoId = 10, UserId = 1, Quadrante = 1, Code = "SENSOR_LEGACY" },
-                new Sensor { Id = 2, PivoId = 10, UserId = 1, Quadrante = 1, Code = "AABB_H" }
+                new Sensor { Id = 1, PivoId = 10, UserId = 1, Quadrante = 1, Code = "AABB_H" }
             );
-            SetupLatestRead(2, new ReadSensor { SensorId = 2, Value = 60m, Date = DateTime.UtcNow });
+            SetupLatestRead(1, new ReadSensor { SensorId = 1, Value = 60m, Date = DateTime.UtcNow });
 
             var result = await _handler.Handle(new GetSensorTelemetryRequest { PivotId = 10 }, CancellationToken.None);
 

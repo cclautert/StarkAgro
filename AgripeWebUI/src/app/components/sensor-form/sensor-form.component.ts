@@ -7,7 +7,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { SensorService } from '../../services/sensor.service';
 import { PivotService } from '../../services/pivot.service';
-import { Sensor, MetricType } from '../../models/sensor.model';
+import { Sensor } from '../../models/sensor.model';
 import { Pivot } from '../../models/pivot.model';
 import { forkJoin } from 'rxjs';
 
@@ -34,12 +34,6 @@ export class SensorFormComponent implements OnInit {
 
   pivotsDisponiveis: Pivot[] = [];
 
-  readonly metricTypeOptions = [
-    { value: MetricType.Humidity, label: 'Umidade' },
-    { value: MetricType.Temperature, label: 'Temperatura' },
-    { value: MetricType.Battery, label: 'Bateria' },
-  ];
-
   constructor() {
     // Definindo o novo formulário com os campos 'quadrante' e 'code'
     this.sensorForm = this.fb.group({
@@ -65,8 +59,7 @@ export class SensorFormComponent implements OnInit {
       name: ['', Validators.required],
       pivot: [null, Validators.required],
       code: ['', [Validators.required]],
-      quadrante: [null, [Validators.required, Validators.min(1)]],
-      metricType: [MetricType.Humidity, Validators.required]
+      quadrante: [null, [Validators.required, Validators.min(1)]]
     });
 
     // A lógica para obter o ID da rota permanece a mesma
@@ -132,8 +125,7 @@ export class SensorFormComponent implements OnInit {
           name: sensor.name,
           pivot: sensor.pivot,
           code: sensor.code,
-          quadrante: sensor.quadrante,
-          metricType: sensor.metricType ?? MetricType.Humidity
+          quadrante: sensor.quadrante
         });
       },
       error: err => {
@@ -164,7 +156,6 @@ export class SensorFormComponent implements OnInit {
   get pivot() { return this.sensorForm.get('pivot'); }
   get code() { return this.sensorForm.get('code'); }
   get quadrante() { return this.sensorForm.get('quadrante'); }
-  get metricType() { return this.sensorForm.get('metricType'); }
 
   async scanQrCode(): Promise<void> {
     if (this.isScanning) return;
