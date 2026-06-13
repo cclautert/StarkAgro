@@ -31,20 +31,26 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
                 .Find(s => s.PivoId == request.PivotId && s.UserId == userId)
                 .ToListAsync(cancellationToken);
 
-            // Only LoRaWAN sensors following the {DevEUI}_{H/T/B} convention
-            var loraSensors = sensors
+            // Old convention: separate sensors per metric ({DevEUI}_H, _T, _B)
+            var legacySensors = sensors
                 .Where(s => s.Code != null && (
                     s.Code.EndsWith("_H", StringComparison.OrdinalIgnoreCase) ||
                     s.Code.EndsWith("_T", StringComparison.OrdinalIgnoreCase) ||
                     s.Code.EndsWith("_B", StringComparison.OrdinalIgnoreCase)))
                 .ToList();
 
-            // Group by DevEUI prefix (code without last 2 chars: "_H", "_T", "_B")
-            var groups = loraSensors
+            // New convention: single sensor with all metrics in one ReadSensor (DevEUI as code)
+            var unifiedSensors = sensors
+                .Where(s => s.Code != null && !s.Code.EndsWith("_H", StringComparison.OrdinalIgnoreCase)
+                         && !s.Code.EndsWith("_T", StringComparison.OrdinalIgnoreCase)
+                         && !s.Code.EndsWith("_B", StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            var groups = legacySensors
                 .GroupBy(s => s.Code![..^2].ToUpperInvariant())
                 .ToList();
 
-            var result = new List<SensorTelemetryResponse>(groups.Count);
+            var result = new List<SensorTelemetryResponse>(groups.Count + unifiedSensors.Count);
 
             foreach (var group in groups)
             {
@@ -79,6 +85,28 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
                     BatteryVoltage = batV,
                     BatteryPercent = batPercent,
                     ReadAt = readAt == default ? null : readAt
+                });
+            }
+
+            foreach (var sensor in unifiedSensors)
+            {
+                var read = await GetLatestReadAsync(sensor.Id, cancellationToken);
+                if (read == null) continue;
+
+                var batV = read.BatteryVoltage;
+                decimal? batPercent = batV.HasValue
+                    ? Math.Clamp(Math.Round((batV.Value - BatMin) / (BatMax - BatMin) * 100m, 1), 0m, 100m)
+                    : null;
+
+                result.Add(new SensorTelemetryResponse
+                {
+                    Quadrante = sensor.Quadrante,
+                    DeviceEui = sensor.Code!.ToUpperInvariant(),
+                    Humidity = read.Humidity,
+                    Temperature = read.Temperature,
+                    BatteryVoltage = batV,
+                    BatteryPercent = batPercent,
+                    ReadAt = read.Date
                 });
             }
 
