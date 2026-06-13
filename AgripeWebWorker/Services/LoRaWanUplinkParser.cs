@@ -65,7 +65,8 @@ namespace AgripeWebWorker.Services
                 Humidity = uplink.Data.HumSHT,
                 Temperature = uplink.Data.TempCSHT,
                 BatteryVoltage = uplink.Data.BatV,
-                ReadAt = uplink.Time
+                ReadAt = uplink.Time,
+                Fcnt = uplink.Fcnt
             };
         }
 

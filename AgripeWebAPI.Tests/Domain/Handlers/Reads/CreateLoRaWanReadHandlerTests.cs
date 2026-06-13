@@ -72,7 +72,8 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Reads
                 Humidity = 75.0m,
                 Temperature = 22.7m,
                 BatteryVoltage = 3.582m,
-                ReadAt = new DateTime(2026, 6, 11, 23, 29, 2, DateTimeKind.Utc)
+                ReadAt = new DateTime(2026, 6, 11, 23, 29, 2, DateTimeKind.Utc),
+                Fcnt = 126
             };
 
             var result = await _handler.Handle(request, CancellationToken.None);
@@ -88,6 +89,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Reads
             Assert.Equal(3.582m, inserted.BatteryVoltage);
             Assert.Equal(0m, inserted.Value);
             Assert.Equal(new DateTime(2026, 6, 11, 23, 29, 2, DateTimeKind.Utc), inserted.Date.ToUniversalTime());
+            Assert.Equal("A84041691D5F1794:126", inserted.IdempotencyKey);
         }
 
         [Fact]
@@ -109,6 +111,8 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Reads
 
             Assert.NotNull(inserted);
             Assert.InRange(inserted!.Date.ToUniversalTime(), before, after);
+            Assert.NotNull(inserted.IdempotencyKey);
+            Assert.True(Guid.TryParse(inserted.IdempotencyKey, out _));
         }
 
         [Fact]
@@ -130,6 +134,8 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Reads
             Assert.Equal(65m, inserted!.Humidity);
             Assert.Null(inserted.Temperature);
             Assert.Null(inserted.BatteryVoltage);
+            Assert.NotNull(inserted.IdempotencyKey);
+            Assert.True(Guid.TryParse(inserted.IdempotencyKey, out _));
         }
     }
 }
