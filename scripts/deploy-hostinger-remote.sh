@@ -125,3 +125,7 @@ done
 "${COMPOSE[@]}" up -d agripewebapi agripewebui agripwebworker
 docker image prune -f
 "${COMPOSE[@]}" ps
+# Reload nginx-proxy so it re-resolves container IPs after recreate
+if docker inspect nginx-proxy >/dev/null 2>&1; then
+  docker exec nginx-proxy nginx -s reload || true
+fi
