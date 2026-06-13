@@ -33,9 +33,9 @@ namespace AgripeWebAPI.Configuration
             });
             services.AddScoped<IWeatherForecastService, WeatherForecastOrchestrator>();
 
-            services.AddHttpClient<IAIInsightsService, ClaudeInsightsService>(client =>
+            services.AddHttpClient<IAIInsightsService, GeminiInsightsService>(client =>
             {
-                client.BaseAddress = new Uri("https://api.anthropic.com/");
+                client.BaseAddress = new Uri("https://generativelanguage.googleapis.com/");
                 client.Timeout = TimeSpan.FromSeconds(30);
             });
 

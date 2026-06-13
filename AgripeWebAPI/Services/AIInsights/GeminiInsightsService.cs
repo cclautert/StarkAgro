@@ -7,7 +7,7 @@ using System.Text.Json;
 
 namespace AgripeWebAPI.Services.AIInsights
 {
-    public class ClaudeInsightsService : IAIInsightsService
+    public class GeminiInsightsService : IAIInsightsService
     {
         private const string SystemPrompt =
             "Você é um agrônomo especialista em irrigação por pivô central. " +
@@ -16,12 +16,12 @@ namespace AgripeWebAPI.Services.AIInsights
 
         private readonly HttpClient _http;
         private readonly AISettings _settings;
-        private readonly ILogger<ClaudeInsightsService> _logger;
+        private readonly ILogger<GeminiInsightsService> _logger;
 
-        public ClaudeInsightsService(
+        public GeminiInsightsService(
             HttpClient http,
             IOptions<AISettings> settings,
-            ILogger<ClaudeInsightsService> logger)
+            ILogger<GeminiInsightsService> logger)
         {
             _http = http ?? throw new ArgumentNullException(nameof(http));
             _settings = settings?.Value ?? throw new ArgumentNullException(nameof(settings));
@@ -30,25 +30,34 @@ namespace AgripeWebAPI.Services.AIInsights
 
         public async Task<string?> GetInsightsAsync(PivotAIContext context, CancellationToken cancellationToken)
         {
+            var endpoint = $"v1beta/models/{_settings.Model}:generateContent?key={_settings.GeminiApiKey}";
+
             var requestBody = new
             {
-                model = _settings.Model,
-                max_tokens = _settings.MaxTokens,
-                system = SystemPrompt,
-                messages = new[]
+                system_instruction = new
                 {
-                    new { role = "user", content = BuildUserMessage(context) }
+                    parts = new[] { new { text = SystemPrompt } }
+                },
+                contents = new[]
+                {
+                    new
+                    {
+                        role = "user",
+                        parts = new[] { new { text = BuildUserMessage(context) } }
+                    }
+                },
+                generationConfig = new
+                {
+                    maxOutputTokens = _settings.MaxTokens
                 }
             };
 
             var json = JsonSerializer.Serialize(requestBody, new JsonSerializerOptions
             {
-                PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             });
 
-            using var request = new HttpRequestMessage(HttpMethod.Post, "v1/messages");
-            request.Headers.Add("x-api-key", _settings.AnthropicApiKey);
-            request.Headers.Add("anthropic-version", "2023-06-01");
+            using var request = new HttpRequestMessage(HttpMethod.Post, endpoint);
             request.Content = new StringContent(json, Encoding.UTF8, "application/json");
 
             HttpResponseMessage response;
@@ -58,14 +67,14 @@ namespace AgripeWebAPI.Services.AIInsights
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
-                _logger.LogError(ex, "HTTP error calling Anthropic API");
+                _logger.LogError(ex, "HTTP error calling Gemini API");
                 return null;
             }
 
             if (!response.IsSuccessStatusCode)
             {
                 var errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
-                _logger.LogError("Anthropic API returned {StatusCode}: {Body}", (int)response.StatusCode, errorBody);
+                _logger.LogError("Gemini API returned {StatusCode}: {Body}", (int)response.StatusCode, errorBody);
                 return null;
             }
 
@@ -74,13 +83,15 @@ namespace AgripeWebAPI.Services.AIInsights
             {
                 using var doc = JsonDocument.Parse(responseJson);
                 return doc.RootElement
-                    .GetProperty("content")[0]
+                    .GetProperty("candidates")[0]
+                    .GetProperty("content")
+                    .GetProperty("parts")[0]
                     .GetProperty("text")
                     .GetString();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to parse Anthropic API response");
+                _logger.LogError(ex, "Failed to parse Gemini API response");
                 return null;
             }
         }

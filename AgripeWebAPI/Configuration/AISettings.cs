@@ -4,8 +4,8 @@ namespace AgripeWebAPI.Configuration
     {
         public const string SectionName = "AI";
 
-        public string AnthropicApiKey { get; set; } = "CHANGE_ME";
-        public string Model { get; set; } = "claude-sonnet-4-6";
+        public string GeminiApiKey { get; set; } = "CHANGE_ME";
+        public string Model { get; set; } = "gemini-1.5-flash";
         public int MaxTokens { get; set; } = 1024;
         public int CacheDurationMinutes { get; set; } = 30;
     }

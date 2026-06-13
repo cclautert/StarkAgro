@@ -7,22 +7,22 @@ using System.Net;
 
 namespace AgripeWebAPI.Tests.Services.AIInsights
 {
-    public class ClaudeInsightsServiceTests
+    public class GeminiInsightsServiceTests
     {
         private static readonly AISettings DefaultSettings = new()
         {
-            AnthropicApiKey = "test-key",
-            Model = "claude-sonnet-4-6",
+            GeminiApiKey = "test-key",
+            Model = "gemini-1.5-flash",
             MaxTokens = 1024
         };
 
-        private static ClaudeInsightsService BuildService(MockHttpMessageHandler handler)
+        private static GeminiInsightsService BuildService(MockHttpMessageHandler handler)
         {
-            var http = new HttpClient(handler) { BaseAddress = new Uri("https://api.anthropic.com/") };
-            return new ClaudeInsightsService(
+            var http = new HttpClient(handler) { BaseAddress = new Uri("https://generativelanguage.googleapis.com/") };
+            return new GeminiInsightsService(
                 http,
                 Options.Create(DefaultSettings),
-                NullLogger<ClaudeInsightsService>.Instance);
+                NullLogger<GeminiInsightsService>.Instance);
         }
 
         private static PivotAIContext BuildContext(bool withReadings = false, bool withAnomalies = false, bool withForecast = false)
@@ -66,17 +66,23 @@ namespace AgripeWebAPI.Tests.Services.AIInsights
             return ctx;
         }
 
+        private const string GeminiResponse = """
+            {
+              "candidates": [
+                {
+                  "content": {
+                    "parts": [{ "text": "Recomendação: irrigar amanhã." }]
+                  }
+                }
+              ]
+            }
+            """;
+
         [Fact]
         public async Task GetInsightsAsync_SuccessResponse_ReturnsText()
         {
             var handler = new MockHttpMessageHandler();
-            handler.EnqueueResponse(HttpStatusCode.OK, """
-                {
-                  "content": [
-                    { "type": "text", "text": "Recomendação: irrigar amanhã." }
-                  ]
-                }
-                """);
+            handler.EnqueueResponse(HttpStatusCode.OK, GeminiResponse);
 
             var sut = BuildService(handler);
             var result = await sut.GetInsightsAsync(BuildContext(), CancellationToken.None);
@@ -90,8 +96,12 @@ namespace AgripeWebAPI.Tests.Services.AIInsights
             var handler = new MockHttpMessageHandler();
             handler.EnqueueResponse(HttpStatusCode.OK, """
                 {
-                  "content": [
-                    { "type": "text", "text": "Anomalia detectada. Irrigar." }
+                  "candidates": [
+                    {
+                      "content": {
+                        "parts": [{ "text": "Anomalia detectada. Irrigar." }]
+                      }
+                    }
                   ]
                 }
                 """);
@@ -106,7 +116,7 @@ namespace AgripeWebAPI.Tests.Services.AIInsights
         public async Task GetInsightsAsync_HttpError_ReturnsNull()
         {
             var handler = new MockHttpMessageHandler();
-            handler.EnqueueResponse(HttpStatusCode.Unauthorized, """{"error": "unauthorized"}""");
+            handler.EnqueueResponse(HttpStatusCode.Unauthorized, """{"error": {"message": "invalid key"}}""");
 
             var sut = BuildService(handler);
             var result = await sut.GetInsightsAsync(BuildContext(), CancellationToken.None);
@@ -130,11 +140,11 @@ namespace AgripeWebAPI.Tests.Services.AIInsights
         public async Task GetInsightsAsync_HttpException_ReturnsNull()
         {
             var handler = new ThrowingHttpMessageHandler(new HttpRequestException("Connection refused"));
-            var http = new HttpClient(handler) { BaseAddress = new Uri("https://api.anthropic.com/") };
-            var sut = new ClaudeInsightsService(
+            var http = new HttpClient(handler) { BaseAddress = new Uri("https://generativelanguage.googleapis.com/") };
+            var sut = new GeminiInsightsService(
                 http,
                 Options.Create(DefaultSettings),
-                NullLogger<ClaudeInsightsService>.Instance);
+                NullLogger<GeminiInsightsService>.Instance);
 
             var result = await sut.GetInsightsAsync(BuildContext(), CancellationToken.None);
 
@@ -147,8 +157,12 @@ namespace AgripeWebAPI.Tests.Services.AIInsights
             var handler = new MockHttpMessageHandler();
             handler.EnqueueResponse(HttpStatusCode.OK, """
                 {
-                  "content": [
-                    { "type": "text", "text": "Sem leituras. Verifique sensores." }
+                  "candidates": [
+                    {
+                      "content": {
+                        "parts": [{ "text": "Sem leituras. Verifique sensores." }]
+                      }
+                    }
                   ]
                 }
                 """);
