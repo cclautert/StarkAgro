@@ -2,9 +2,10 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace AgripeWebAPI.Models.Entities
 {
+    [BsonIgnoreExtraElements]
     public abstract class Entity
     {
-        protected Entity() 
+        protected Entity()
         {
         }
 
