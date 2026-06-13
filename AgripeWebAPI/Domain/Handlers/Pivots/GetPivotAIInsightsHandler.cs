@@ -151,6 +151,12 @@ namespace AgripeWebAPI.Domain.Handlers.Pivots
                 }).ToList();
             }
 
+            if (string.IsNullOrWhiteSpace(user?.GeminiApiKey))
+            {
+                _notifier.Handle(new Notification("Configure sua chave da API Gemini em Configurações para usar esta funcionalidade."));
+                return null;
+            }
+
             var context = new PivotAIContext
             {
                 PivotName = pivot.Name ?? pivot.Id.ToString(),
@@ -161,7 +167,7 @@ namespace AgripeWebAPI.Domain.Handlers.Pivots
                 SensorReadings = sensorReadings,
                 ForecastSummary = forecastSummary,
                 RecentAnomalies = recentAnomalies,
-                ApiKeyOverride = user?.GeminiApiKey
+                ApiKeyOverride = user.GeminiApiKey
             };
 
             var insights = await _aiService.GetInsightsAsync(context, cancellationToken);
