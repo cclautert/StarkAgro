@@ -89,8 +89,8 @@ namespace AgripeWebAPI.Domain.Handlers.Pivots
                 return null;
             }
 
-            var limiteInferior = pivot.LimiteInferior ?? user.LimiteInferior ?? 25m;
-            var limiteSuperior = pivot.LimiteSuperior ?? user.LimiteSuperior ?? 75m;
+            var limiteInferior = pivot.LimiteInferior ?? user?.LimiteInferior ?? 25m;
+            var limiteSuperior = pivot.LimiteSuperior ?? user?.LimiteSuperior ?? 75m;
 
             var sensors = await _dbContext.Sensors
                 .Find(s => s.PivoId == pivot.Id && s.UserId == pivot.UserId)
