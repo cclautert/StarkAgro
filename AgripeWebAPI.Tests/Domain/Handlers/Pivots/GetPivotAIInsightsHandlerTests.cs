@@ -39,7 +39,8 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Pivots
 
         private static readonly User DefaultUser = new()
         {
-            Id = 42, Name = "Fazendeiro", Email = "test@test.com", Password = "x"
+            Id = 42, Name = "Fazendeiro", Email = "test@test.com", Password = "x",
+            GeminiApiKey = "test-gemini-key"
         };
 
         public GetPivotAIInsightsHandlerTests()
@@ -341,10 +342,24 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Pivots
         }
 
         [Fact]
+        public async Task Handle_UserHasNoGeminiApiKey_ShouldNotifyAndReturnNull()
+        {
+            var userNoKey = new User { Id = 42, Name = "F", Email = "f@f.com", Password = "x" };
+            MongoMockHelper.SetupFind(_mockPivots, DefaultPivot);
+            MongoMockHelper.SetupFind(_mockUsers, userNoKey);
+
+            var result = await _handler.Handle(new GetPivotAIInsightsRequest { PivotId = 1, UserId = 42 }, CancellationToken.None);
+
+            Assert.Null(result);
+            Assert.True(_notifier.HasNotification());
+            _mockAI.Verify(ai => ai.GetInsightsAsync(It.IsAny<PivotAIContext>(), It.IsAny<CancellationToken>()), Times.Never);
+        }
+
+        [Fact]
         public async Task Handle_PivotLimitsNull_ShouldFallbackToUserLimits()
         {
             var pivotNoLimits = new Pivot { Id = 1, UserId = 42, Name = "P", LimiteInferior = null, LimiteSuperior = null };
-            var userWithLimits = new User { Id = 42, Name = "F", Email = "f@f.com", Password = "x", LimiteInferior = 20m, LimiteSuperior = 80m };
+            var userWithLimits = new User { Id = 42, Name = "F", Email = "f@f.com", Password = "x", LimiteInferior = 20m, LimiteSuperior = 80m, GeminiApiKey = "test-gemini-key" };
             MongoMockHelper.SetupFind(_mockPivots, pivotNoLimits);
             MongoMockHelper.SetupFind(_mockUsers, userWithLimits);
             MongoMockHelper.SetupFindList(_mockSensors, new List<Sensor>());
