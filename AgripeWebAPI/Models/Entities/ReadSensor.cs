@@ -16,6 +16,9 @@ namespace AgripeWebAPI.Models.Entities
         public bool IsEdgeAnomaly { get; set; }
         public DateTime? EdgeDetectedAt { get; set; }
         public string? IdempotencyKey { get; set; }
+        public decimal? Humidity { get; set; }
+        public decimal? Temperature { get; set; }
+        public decimal? BatteryVoltage { get; set; }
 
         public virtual Sensor? Sensor { get; set; }
     }

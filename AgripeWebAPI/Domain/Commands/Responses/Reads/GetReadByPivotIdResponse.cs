@@ -4,6 +4,7 @@ namespace AgripeWebAPI.Domain.Commands.Responses.Reads
     {
         public decimal Value { get; set; }
         public DateTime Date { get; set; }
+        public decimal? Humidity { get; set; }
     }
 
     public class GetReadByPivotIdResponse

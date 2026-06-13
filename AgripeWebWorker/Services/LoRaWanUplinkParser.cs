@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using AgripeWebAPI.Domain.Commands.Requests.Reads;
 
@@ -6,7 +6,7 @@ namespace AgripeWebWorker.Services
 {
     public interface ILoRaWanUplinkParser
     {
-        IReadOnlyList<CreateDeviceReadRequest> Parse(string json);
+        CreateLoRaWanReadRequest? Parse(string json);
     }
 
     public class LoRaWanUplinkParser : ILoRaWanUplinkParser
@@ -23,7 +23,7 @@ namespace AgripeWebWorker.Services
             _logger = logger;
         }
 
-        public IReadOnlyList<CreateDeviceReadRequest> Parse(string json)
+        public CreateLoRaWanReadRequest? Parse(string json)
         {
             LoRaWanUplinkMessage? uplink;
             try
@@ -33,40 +33,40 @@ namespace AgripeWebWorker.Services
             catch (JsonException ex)
             {
                 _logger.LogWarning(ex, "Failed to parse LoRaWAN uplink JSON");
-                return [];
+                return null;
             }
 
             if (uplink == null || string.IsNullOrEmpty(uplink.DevEUI))
             {
                 _logger.LogWarning("LoRaWAN uplink missing DevEUI — ignored");
-                return [];
+                return null;
             }
 
             if (uplink.Data == null)
             {
                 _logger.LogWarning("LoRaWAN uplink from DevEUI '{DevEUI}' has no data object — ignored", uplink.DevEUI);
-                return [];
+                return null;
             }
 
             var eui = uplink.DevEUI.ToUpperInvariant();
-            var readAt = uplink.Time;
-            var results = new List<CreateDeviceReadRequest>(3);
 
-            if (uplink.Data.HumSHT.HasValue)
-                results.Add(new CreateDeviceReadRequest { Code = $"{eui}_H", Value = uplink.Data.HumSHT.Value, ReadAt = readAt });
-
-            if (uplink.Data.TempCSHT.HasValue)
-                results.Add(new CreateDeviceReadRequest { Code = $"{eui}_T", Value = uplink.Data.TempCSHT.Value, ReadAt = readAt });
-
-            if (uplink.Data.BatV.HasValue)
-                results.Add(new CreateDeviceReadRequest { Code = $"{eui}_B", Value = uplink.Data.BatV.Value, ReadAt = readAt });
-
-            if (results.Count == 0)
+            if (!uplink.Data.HumSHT.HasValue && !uplink.Data.TempCSHT.HasValue && !uplink.Data.BatV.HasValue)
+            {
                 _logger.LogWarning("LoRaWAN uplink from DevEUI '{DevEUI}' fcnt={Fcnt}: no valid metrics found", uplink.DevEUI, uplink.Fcnt);
-            else
-                _logger.LogInformation("LoRaWAN uplink from DevEUI '{DevEUI}' fcnt={Fcnt}: {Count} metric(s) parsed", uplink.DevEUI, uplink.Fcnt, results.Count);
+                return null;
+            }
 
-            return results;
+            _logger.LogInformation("LoRaWAN uplink from DevEUI '{DevEUI}' fcnt={Fcnt}: humidity={H} temperature={T} battery={B}",
+                uplink.DevEUI, uplink.Fcnt, uplink.Data.HumSHT, uplink.Data.TempCSHT, uplink.Data.BatV);
+
+            return new CreateLoRaWanReadRequest
+            {
+                Code = eui,
+                Humidity = uplink.Data.HumSHT,
+                Temperature = uplink.Data.TempCSHT,
+                BatteryVoltage = uplink.Data.BatV,
+                ReadAt = uplink.Time
+            };
         }
 
         private sealed class LoRaWanUplinkMessage

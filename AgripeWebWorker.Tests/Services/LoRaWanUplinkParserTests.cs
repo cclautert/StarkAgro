@@ -1,4 +1,4 @@
-﻿using AgripeWebWorker.Services;
+using AgripeWebWorker.Services;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -24,56 +24,56 @@ namespace AgripeWebWorker.Tests.Services
         }
 
         [Fact]
-        public void Parse_ValidUplink_ReturnsThreeReads()
+        public void Parse_ValidUplink_ReturnsSingleRequest()
         {
             var result = _parser.Parse(FullUplinkJson);
 
-            Assert.Equal(3, result.Count);
+            Assert.NotNull(result);
         }
 
         [Fact]
-        public void Parse_ValidUplink_HumidityReadCorrect()
+        public void Parse_ValidUplink_CodeIsDevEUIWithoutSuffix()
         {
             var result = _parser.Parse(FullUplinkJson);
 
-            var hum = result.Single(r => r.Code.EndsWith("_H"));
-            Assert.Equal("A84041691D5F1794_H", hum.Code);
-            Assert.Equal(75.0m, hum.Value);
-            Assert.Equal(new DateTime(2026, 6, 11, 23, 29, 2, DateTimeKind.Utc), hum.ReadAt!.Value.ToUniversalTime());
+            Assert.Equal("A84041691D5F1794", result!.Code);
         }
 
         [Fact]
-        public void Parse_ValidUplink_TemperatureReadCorrect()
+        public void Parse_ValidUplink_HumidityCorrect()
         {
             var result = _parser.Parse(FullUplinkJson);
 
-            var temp = result.Single(r => r.Code.EndsWith("_T"));
-            Assert.Equal("A84041691D5F1794_T", temp.Code);
-            Assert.Equal(22.7m, temp.Value);
+            Assert.Equal(75.0m, result!.Humidity);
         }
 
         [Fact]
-        public void Parse_ValidUplink_BatteryReadCorrect()
+        public void Parse_ValidUplink_TemperatureCorrect()
         {
             var result = _parser.Parse(FullUplinkJson);
 
-            var bat = result.Single(r => r.Code.EndsWith("_B"));
-            Assert.Equal("A84041691D5F1794_B", bat.Code);
-            Assert.Equal(3.582m, bat.Value);
+            Assert.Equal(22.7m, result!.Temperature);
         }
 
         [Fact]
-        public void Parse_NullStringMetric_IsIgnored()
+        public void Parse_ValidUplink_BatteryCorrect()
         {
-            // TempC1: "NULL" in FullUplinkJson — should not appear in output
             var result = _parser.Parse(FullUplinkJson);
 
-            Assert.DoesNotContain(result, r => r.Code.Contains("TempC1") || r.Code.Contains("C1"));
-            Assert.Equal(3, result.Count);
+            Assert.Equal(3.582m, result!.BatteryVoltage);
         }
 
         [Fact]
-        public void Parse_NullJsonMetric_IsIgnored()
+        public void Parse_ValidUplink_TimestampCorrect()
+        {
+            var result = _parser.Parse(FullUplinkJson);
+
+            var expected = new DateTime(2026, 6, 11, 23, 29, 2, DateTimeKind.Utc);
+            Assert.Equal(expected, result!.ReadAt!.Value.ToUniversalTime());
+        }
+
+        [Fact]
+        public void Parse_NullJsonMetric_FieldIsNull()
         {
             var json = """
                 {
@@ -86,12 +86,14 @@ namespace AgripeWebWorker.Tests.Services
 
             var result = _parser.Parse(json);
 
-            Assert.Equal(2, result.Count);
-            Assert.DoesNotContain(result, r => r.Code.EndsWith("_B"));
+            Assert.NotNull(result);
+            Assert.Null(result!.BatteryVoltage);
+            Assert.Equal(60.0m, result.Humidity);
+            Assert.Equal(20.0m, result.Temperature);
         }
 
         [Fact]
-        public void Parse_AbsentMetric_IsIgnored()
+        public void Parse_AbsentMetrics_FieldsAreNull()
         {
             var json = """
                 {
@@ -104,8 +106,10 @@ namespace AgripeWebWorker.Tests.Services
 
             var result = _parser.Parse(json);
 
-            Assert.Single(result);
-            Assert.EndsWith("_H", result[0].Code);
+            Assert.NotNull(result);
+            Assert.Equal(65.0m, result!.Humidity);
+            Assert.Null(result.Temperature);
+            Assert.Null(result.BatteryVoltage);
         }
 
         [Fact]
@@ -122,35 +126,35 @@ namespace AgripeWebWorker.Tests.Services
 
             var result = _parser.Parse(json);
 
-            Assert.Equal("A84041691D5F1794_H", result[0].Code);
+            Assert.Equal("A84041691D5F1794", result!.Code);
         }
 
         [Fact]
-        public void Parse_InvalidJson_ReturnsEmpty()
+        public void Parse_InvalidJson_ReturnsNull()
         {
             var result = _parser.Parse("not-valid-json{{{");
 
-            Assert.Empty(result);
+            Assert.Null(result);
         }
 
         [Fact]
-        public void Parse_MissingDevEUI_ReturnsEmpty()
+        public void Parse_MissingDevEUI_ReturnsNull()
         {
             var json = """{ "data": { "Hum_SHT": 50.0 }, "fcnt": 1 }""";
 
             var result = _parser.Parse(json);
 
-            Assert.Empty(result);
+            Assert.Null(result);
         }
 
         [Fact]
-        public void Parse_MissingData_ReturnsEmpty()
+        public void Parse_MissingData_ReturnsNull()
         {
             var json = """{ "DevEUI": "aabbccdd11223344", "fcnt": 1 }""";
 
             var result = _parser.Parse(json);
 
-            Assert.Empty(result);
+            Assert.Null(result);
         }
 
         [Fact]
@@ -166,12 +170,12 @@ namespace AgripeWebWorker.Tests.Services
 
             var result = _parser.Parse(json);
 
-            Assert.Single(result);
-            Assert.Null(result[0].ReadAt);
+            Assert.NotNull(result);
+            Assert.Null(result!.ReadAt);
         }
 
         [Fact]
-        public void Parse_AllMetricsNull_ReturnsEmpty()
+        public void Parse_AllMetricsNull_ReturnsNull()
         {
             var json = """
                 {
@@ -183,16 +187,7 @@ namespace AgripeWebWorker.Tests.Services
 
             var result = _parser.Parse(json);
 
-            Assert.Empty(result);
-        }
-
-        [Fact]
-        public void Parse_SameTimestampPropagatedToAllReads()
-        {
-            var result = _parser.Parse(FullUplinkJson);
-
-            var expected = new DateTime(2026, 6, 11, 23, 29, 2, DateTimeKind.Utc);
-            Assert.All(result, r => Assert.Equal(expected, r.ReadAt!.Value.ToUniversalTime()));
+            Assert.Null(result);
         }
     }
 }

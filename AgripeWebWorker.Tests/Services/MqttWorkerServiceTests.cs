@@ -487,54 +487,58 @@ namespace AgripeWebWorker.Tests.Services
         }
 
         [Fact]
-        public async Task MessageReceived_LoRaWanPayload_ParsesAndSendsThreeRequests()
+        public async Task MessageReceived_LoRaWanPayload_ParsesAndSendsSingleRequest()
         {
             var (mockMediator, _, _, _) = SetupMediatorScope();
 
-            var reads = new[]
+            var loRaRead = new AgripeWebAPI.Domain.Commands.Requests.Reads.CreateLoRaWanReadRequest
             {
-                new AgripeWebAPI.Domain.Commands.Requests.Reads.CreateDeviceReadRequest { Code = "AABBCCDD_H", Value = 75m },
-                new AgripeWebAPI.Domain.Commands.Requests.Reads.CreateDeviceReadRequest { Code = "AABBCCDD_T", Value = 22.7m },
-                new AgripeWebAPI.Domain.Commands.Requests.Reads.CreateDeviceReadRequest { Code = "AABBCCDD_B", Value = 3.58m }
+                Code = "AABBCCDD",
+                Humidity = 75m,
+                Temperature = 22.7m,
+                BatteryVoltage = 3.58m
             };
 
-            _mockParser.Setup(p => p.Parse(It.IsAny<string>())).Returns(reads);
+            _mockParser.Setup(p => p.Parse(It.IsAny<string>())).Returns(loRaRead);
 
             mockMediator
-                .Setup(m => m.Send(It.IsAny<CreateDeviceReadRequest>(), It.IsAny<CancellationToken>()))
+                .Setup(m => m.Send(It.IsAny<AgripeWebAPI.Domain.Commands.Requests.Reads.CreateLoRaWanReadRequest>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new AgripeWebAPI.Domain.Commands.Responses.Reads.CreateReadResponse { Id = 1, SensorId = 1, UserId = 10 });
 
             await StartServiceAndCapture();
             Assert.NotNull(_capturedMessageHandler);
 
-            var payload = """{"DevEUI":"aabbccdd","data":{"Hum_SHT":75},"fcnt":1}""";
+            var payload = """{"DevEUI":"aabbccdd","data":{"Hum_SHT":75,"TempC_SHT":22.7,"BatV":3.58},"fcnt":1}""";
             await _capturedMessageHandler!(CreateMessageEventArgs(Encoding.UTF8.GetBytes(payload)));
 
-            mockMediator.Verify(m => m.Send(It.IsAny<CreateDeviceReadRequest>(), It.IsAny<CancellationToken>()), Times.Exactly(3));
+            mockMediator.Verify(m => m.Send(
+                It.IsAny<AgripeWebAPI.Domain.Commands.Requests.Reads.CreateLoRaWanReadRequest>(),
+                It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
-        public async Task MessageReceived_LoRaWanPayload_AnomalyOnlyForHumidity()
+        public async Task MessageReceived_LoRaWanPayload_AnomalyDispatchedWhenHumidityPresent()
         {
             var (mockMediator, _, _, _) = SetupMediatorScope();
 
-            var reads = new[]
+            var loRaRead = new AgripeWebAPI.Domain.Commands.Requests.Reads.CreateLoRaWanReadRequest
             {
-                new AgripeWebAPI.Domain.Commands.Requests.Reads.CreateDeviceReadRequest { Code = "AABBCCDD_H", Value = 75m },
-                new AgripeWebAPI.Domain.Commands.Requests.Reads.CreateDeviceReadRequest { Code = "AABBCCDD_T", Value = 22.7m },
-                new AgripeWebAPI.Domain.Commands.Requests.Reads.CreateDeviceReadRequest { Code = "AABBCCDD_B", Value = 3.58m }
+                Code = "AABBCCDD",
+                Humidity = 75m,
+                Temperature = 22.7m,
+                BatteryVoltage = 3.58m
             };
 
-            _mockParser.Setup(p => p.Parse(It.IsAny<string>())).Returns(reads);
+            _mockParser.Setup(p => p.Parse(It.IsAny<string>())).Returns(loRaRead);
 
             mockMediator
-                .Setup(m => m.Send(It.IsAny<CreateDeviceReadRequest>(), It.IsAny<CancellationToken>()))
+                .Setup(m => m.Send(It.IsAny<AgripeWebAPI.Domain.Commands.Requests.Reads.CreateLoRaWanReadRequest>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new AgripeWebAPI.Domain.Commands.Responses.Reads.CreateReadResponse { Id = 1, SensorId = 1, UserId = 10 });
 
             await StartServiceAndCapture();
             Assert.NotNull(_capturedMessageHandler);
 
-            var payload = """{"DevEUI":"aabbccdd","data":{"Hum_SHT":75},"fcnt":1}""";
+            var payload = """{"DevEUI":"aabbccdd","data":{"Hum_SHT":75,"TempC_SHT":22.7,"BatV":3.58},"fcnt":1}""";
             await _capturedMessageHandler!(CreateMessageEventArgs(Encoding.UTF8.GetBytes(payload)));
 
             mockMediator.Verify(m => m.Send(

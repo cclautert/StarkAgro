@@ -27,7 +27,10 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
                     Id = x.Id,
                     SensorId = x.SensorId,
                     Value = x.Value,
-                    Date = x.Date
+                    Date = x.Date,
+                    Humidity = x.Humidity,
+                    Temperature = x.Temperature,
+                    BatteryVoltage = x.BatteryVoltage
                 })
                 .ToListAsync(cancellationToken);
 

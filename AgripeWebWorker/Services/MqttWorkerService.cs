@@ -122,30 +122,27 @@ namespace AgripeWebWorker.Services
 
         private async Task ProcessLoRaWanUplinkAsync(string payload, IMediator mediator, CancellationToken cancellationToken)
         {
-            var reads = _loRaWanParser.Parse(payload);
-            if (reads.Count == 0) return;
+            var read = _loRaWanParser.Parse(payload);
+            if (read == null) return;
 
-            foreach (var read in reads)
+            var response = await mediator.Send(read, cancellationToken);
+            if (response == null)
             {
-                var response = await mediator.Send(read, cancellationToken);
-                if (response == null)
-                {
-                    _logger.LogWarning("Read not persisted for sensor code '{Code}': sensor not registered", read.Code);
-                    continue;
-                }
+                _logger.LogWarning("Read not persisted for sensor code '{Code}': sensor not registered", read.Code);
+                return;
+            }
 
-                _logger.LogInformation("Successfully processed read for sensor '{Code}'", read.Code);
+            _logger.LogInformation("Successfully processed read for sensor '{Code}'", read.Code);
 
-                if (response.Id > 0 && read.Code.EndsWith("_H", StringComparison.OrdinalIgnoreCase))
+            if (response.Id > 0 && read.Humidity.HasValue)
+            {
+                await mediator.Send(new DetectSensorAnomalyRequest
                 {
-                    await mediator.Send(new DetectSensorAnomalyRequest
-                    {
-                        ReadSensorId = response.Id,
-                        SensorId = response.SensorId,
-                        UserId = response.UserId,
-                        Value = read.Value
-                    }, cancellationToken);
-                }
+                    ReadSensorId = response.Id,
+                    SensorId = response.SensorId,
+                    UserId = response.UserId,
+                    Value = read.Humidity.Value
+                }, cancellationToken);
             }
         }
 
