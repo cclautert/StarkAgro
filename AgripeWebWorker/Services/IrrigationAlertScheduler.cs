@@ -107,14 +107,14 @@ namespace AgripeWebWorker.Services
             // Current average: latest non-anomaly reading per sensor
             var latestPerSensor = readings
                 .GroupBy(r => r.SensorId)
-                .Select(g => (double)g.OrderByDescending(r => r.Date).First().Value)
+                .Select(g => (double)(g.OrderByDescending(r => r.Date).First().Humidity ?? 0))
                 .ToList();
 
             var currentAverage = latestPerSensor.Average();
 
             // Linear regression over all 6h readings to compute slope (units/hour)
             var points = readings
-                .Select(r => ((r.Date - windowStart).TotalHours, (double)r.Value))
+                .Select(r => ((r.Date - windowStart).TotalHours, (double)(r.Humidity ?? 0)))
                 .ToList();
 
             var slope = ComputeSlope(points);
