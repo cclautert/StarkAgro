@@ -37,7 +37,7 @@ export class SensorFormComponent implements OnInit {
   constructor() {
     // Definindo o novo formulário com os campos 'quadrante' e 'code'
     this.sensorForm = this.fb.group({
-      quadrante: [null, [Validators.required, Validators.min(1)]],
+      quadrante: [null, [Validators.required]],
       code: ['', Validators.required]
     });
   }
@@ -59,7 +59,7 @@ export class SensorFormComponent implements OnInit {
       name: ['', Validators.required],
       pivot: [null, Validators.required],
       code: ['', [Validators.required]],
-      quadrante: [null, [Validators.required, Validators.min(1)]]
+      quadrante: [null, [Validators.required]]
     });
 
     // A lógica para obter o ID da rota permanece a mesma

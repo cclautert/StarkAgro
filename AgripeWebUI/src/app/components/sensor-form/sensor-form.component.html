@@ -45,10 +45,12 @@
 
     <div class="form-group">
       <label for="quadrante">Quadrante</label>
-      <input id="quadrante" type="number" formControlName="quadrante" required min="1" max="4">
+      <select id="quadrante" formControlName="quadrante" required>
+        <option value="">Selecione um Quadrante</option>
+        <option [value]="q" *ngFor="let q of [1,2,3,4]">{{ q }}</option>
+      </select>
       <div *ngIf="quadrante?.invalid && (quadrante?.dirty || quadrante?.touched)" class="error">
         <div *ngIf="quadrante?.errors?.['required']">Quadrante é obrigatório.</div>
-        <div *ngIf="quadrante?.errors?.['min']">O quadrante deve ser no mínimo 1.</div>
       </div>
     </div>
 
