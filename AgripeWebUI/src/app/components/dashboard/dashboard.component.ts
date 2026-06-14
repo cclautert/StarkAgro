@@ -457,7 +457,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.aiInsightsLoading = false;
       },
       error: (err: HttpErrorResponse) => {
-        if (err.status === 503) {
+        const serverMsg = err.error?.errors?.[0];
+        if (serverMsg) {
+          this.aiError = serverMsg;
+        } else if (err.status === 503) {
           this.aiError = 'Serviço de IA temporariamente indisponível. Tente novamente em instantes.';
         } else {
           this.aiError = 'Não foi possível obter os insights. Verifique sua conexão e tente novamente.';
