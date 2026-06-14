@@ -45,7 +45,7 @@ namespace AgripeWebAPI.Domain.Handlers.Anomalies
                 Id = request.ReadSensorId,
                 SensorId = request.SensorId,
                 UserId = request.UserId,
-                Value = request.Value
+                Humidity = request.Humidity
             };
 
             await _anomalyService.DetectAndSaveAsync(reading, sensor.PivoId, baselineReadings, cancellationToken);

@@ -141,7 +141,7 @@ namespace AgripeWebWorker.Services
                     ReadSensorId = response.Id,
                     SensorId = response.SensorId,
                     UserId = response.UserId,
-                    Value = read.Humidity.Value
+                    Humidity = read.Humidity
                 }, cancellationToken);
             }
         }
@@ -194,7 +194,7 @@ namespace AgripeWebWorker.Services
                     ReadSensorId = createResponse.Id,
                     SensorId = createResponse.SensorId,
                     UserId = createResponse.UserId,
-                    Value = message.Value
+                    Humidity = message.Value
                 }, cancellationToken);
             }
         }

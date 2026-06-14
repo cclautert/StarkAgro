@@ -63,7 +63,7 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
                 var tRead = tSensor != null ? await GetLatestReadAsync(tSensor.Id, cancellationToken) : null;
                 var bRead = bSensor != null ? await GetLatestReadAsync(bSensor.Id, cancellationToken) : null;
 
-                var batV = bRead?.Value;
+                var batV = bRead?.BatteryVoltage ?? bRead?.Humidity;
                 decimal? batPercent = batV.HasValue
                     ? Math.Clamp(Math.Round((batV.Value - BatMin) / (BatMax - BatMin) * 100m, 1), 0m, 100m)
                     : null;
@@ -80,8 +80,8 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
                 {
                     Quadrante = quadrante,
                     DeviceEui = deviceEui,
-                    Humidity = hRead?.Value,
-                    Temperature = tRead?.Value,
+                    Humidity = hRead?.Humidity,
+                    Temperature = tRead?.Temperature,
                     BatteryVoltage = batV,
                     BatteryPercent = batPercent,
                     ReadAt = readAt == default ? null : readAt

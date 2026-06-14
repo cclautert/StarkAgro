@@ -86,7 +86,7 @@ namespace AgripeWebAPI.Domain.Handlers.Pivots
             var hourlyAverages = readings
                 .GroupBy(r => new DateTime(r.Date.Year, r.Date.Month, r.Date.Day, r.Date.Hour, 0, 0, DateTimeKind.Utc))
                 .OrderBy(g => g.Key)
-                .Select(g => (Hour: g.Key, Value: g.Average(r => (double)r.Value)))
+                .Select(g => (Hour: g.Key, Value: g.Average(r => (double)(r.Humidity ?? 0))))
                 .ToList();
 
             if (hourlyAverages.Count < 2)

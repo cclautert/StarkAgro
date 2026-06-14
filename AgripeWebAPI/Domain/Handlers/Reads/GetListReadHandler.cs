@@ -34,7 +34,7 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
                 {
                     Id = x.Id,
                     SensorId = x.SensorId,
-                    Value = x.Value,
+                    Value = x.Humidity ?? 0,
                     Date = x.Date
                 })
                 .ToListAsync(cancellationToken);

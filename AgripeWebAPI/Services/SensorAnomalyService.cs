@@ -27,7 +27,7 @@ namespace AgripeWebAPI.Services
             if (lastNReadings.Count < MinSamples)
                 return false;
 
-            var values = lastNReadings.Select(r => (double)r.Value).ToList();
+            var values = lastNReadings.Select(r => (double)(r.Humidity ?? 0)).ToList();
             var mean = values.Average();
             var variance = values.Sum(v => Math.Pow(v - mean, 2)) / values.Count;
             var stddev = Math.Sqrt(variance);
@@ -38,7 +38,7 @@ namespace AgripeWebAPI.Services
 
             var lowerBound = mean - Threshold * stddev;
             var upperBound = mean + Threshold * stddev;
-            var currentValue = (double)reading.Value;
+            var currentValue = (double)(reading.Humidity ?? 0);
 
             if (currentValue >= lowerBound && currentValue <= upperBound)
                 return false;
@@ -54,7 +54,7 @@ namespace AgripeWebAPI.Services
                 PivotId = pivotId,
                 UserId = reading.UserId,
                 ReadSensorId = reading.Id,
-                Value = reading.Value,
+                Value = reading.Humidity ?? 0,
                 ExpectedMin = (decimal)Math.Round(lowerBound, 4),
                 ExpectedMax = (decimal)Math.Round(upperBound, 4),
                 Date = DateTime.UtcNow,
@@ -65,7 +65,7 @@ namespace AgripeWebAPI.Services
 
             _logger.LogWarning(
                 "Anomaly detected for sensor {SensorId} (pivot {PivotId}, user {UserId}): value {Value} outside [{Min:F4}, {Max:F4}]",
-                reading.SensorId, pivotId, reading.UserId, reading.Value, lowerBound, upperBound);
+                reading.SensorId, pivotId, reading.UserId, reading.Humidity ?? 0, lowerBound, upperBound);
 
             return true;
         }

@@ -131,7 +131,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Pivots
             });
             MongoMockHelper.SetupFind(users, new User { Id = OwnerUserId, LimiteInferior = 25m, LimiteSuperior = 75m });
             MongoMockHelper.SetupFindList(sensors, new List<Sensor> { new() { Id = 10, UserId = OwnerUserId, PivoId = 1, Quadrante = 1 } });
-            MongoMockHelper.SetupFind(reads, new ReadSensor { Id = 100, SensorId = 10, Value = 18m, Date = DateTime.UtcNow });
+            MongoMockHelper.SetupFind(reads, new ReadSensor { Id = 100, SensorId = 10, Humidity = 18m, Date = DateTime.UtcNow });
 
             var forecast = new Mock<IWeatherForecastService>();
             var handler = BuildHandler(db.Object, forecast.Object, notifier);
@@ -158,7 +158,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Pivots
             });
             MongoMockHelper.SetupFind(users, new User { Id = OwnerUserId, LimiteInferior = 25m, LimiteSuperior = 75m });
             MongoMockHelper.SetupFindList(sensors, new List<Sensor> { new() { Id = 10, UserId = OwnerUserId, PivoId = 1, Quadrante = 1 } });
-            MongoMockHelper.SetupFind(reads, new ReadSensor { Id = 100, SensorId = 10, Value = 20m, Date = DateTime.UtcNow });
+            MongoMockHelper.SetupFind(reads, new ReadSensor { Id = 100, SensorId = 10, Humidity = 20m, Date = DateTime.UtcNow });
 
             var forecast = new Mock<IWeatherForecastService>();
             forecast
@@ -198,7 +198,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Pivots
             });
             MongoMockHelper.SetupFind(users, new User { Id = OwnerUserId, LimiteInferior = 25m, LimiteSuperior = 75m });
             MongoMockHelper.SetupFindList(sensors, new List<Sensor> { new() { Id = 10, UserId = OwnerUserId, PivoId = 1, Quadrante = 1 } });
-            MongoMockHelper.SetupFind(reads, new ReadSensor { Id = 100, SensorId = 10, Value = 20m, Date = DateTime.UtcNow });
+            MongoMockHelper.SetupFind(reads, new ReadSensor { Id = 100, SensorId = 10, Humidity = 20m, Date = DateTime.UtcNow });
 
             var forecast = new Mock<IWeatherForecastService>();
             forecast
@@ -238,7 +238,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Pivots
             });
             MongoMockHelper.SetupFind(users, new User { Id = OwnerUserId, LimiteInferior = 25m, LimiteSuperior = 75m, RainThresholdMm = 8.0 });
             MongoMockHelper.SetupFindList(sensors, new List<Sensor> { new() { Id = 10, UserId = OwnerUserId, PivoId = 1, Quadrante = 1 } });
-            MongoMockHelper.SetupFind(reads, new ReadSensor { Id = 100, SensorId = 10, Value = 18m, Date = DateTime.UtcNow });
+            MongoMockHelper.SetupFind(reads, new ReadSensor { Id = 100, SensorId = 10, Humidity = 18m, Date = DateTime.UtcNow });
 
             var forecast = new Mock<IWeatherForecastService>();
             forecast
@@ -272,7 +272,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Pivots
             });
             MongoMockHelper.SetupFind(users, new User { Id = OwnerUserId, LimiteInferior = 25m, LimiteSuperior = 75m, RainThresholdMm = 2.0 });
             MongoMockHelper.SetupFindList(sensors, new List<Sensor> { new() { Id = 10, UserId = OwnerUserId, PivoId = 1, Quadrante = 1 } });
-            MongoMockHelper.SetupFind(reads, new ReadSensor { Id = 100, SensorId = 10, Value = 18m, Date = DateTime.UtcNow });
+            MongoMockHelper.SetupFind(reads, new ReadSensor { Id = 100, SensorId = 10, Humidity = 18m, Date = DateTime.UtcNow });
 
             var forecast = new Mock<IWeatherForecastService>();
             forecast
@@ -306,7 +306,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Pivots
             });
             MongoMockHelper.SetupFind(users, new User { Id = OwnerUserId, LimiteInferior = 25m, LimiteSuperior = 75m, RainThresholdMm = null });
             MongoMockHelper.SetupFindList(sensors, new List<Sensor> { new() { Id = 10, UserId = OwnerUserId, PivoId = 1, Quadrante = 1 } });
-            MongoMockHelper.SetupFind(reads, new ReadSensor { Id = 100, SensorId = 10, Value = 18m, Date = DateTime.UtcNow });
+            MongoMockHelper.SetupFind(reads, new ReadSensor { Id = 100, SensorId = 10, Humidity = 18m, Date = DateTime.UtcNow });
 
             var forecast = new Mock<IWeatherForecastService>();
             forecast
@@ -340,7 +340,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Pivots
             });
             MongoMockHelper.SetupFind(users, new User { Id = OwnerUserId, LimiteInferior = 25m, LimiteSuperior = 75m });
             MongoMockHelper.SetupFindList(sensors, new List<Sensor> { new() { Id = 10, UserId = OwnerUserId, PivoId = 1, Quadrante = 1 } });
-            MongoMockHelper.SetupFind(reads, new ReadSensor { Id = 100, SensorId = 10, Value = 18m, Date = DateTime.UtcNow });
+            MongoMockHelper.SetupFind(reads, new ReadSensor { Id = 100, SensorId = 10, Humidity = 18m, Date = DateTime.UtcNow });
 
             var forecast = new Mock<IWeatherForecastService>();
             forecast

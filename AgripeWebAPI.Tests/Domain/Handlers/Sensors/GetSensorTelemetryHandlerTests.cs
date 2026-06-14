@@ -53,9 +53,9 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Sensors
                 new Sensor { Id = 3, PivoId = 10, UserId = 1, Quadrante = 1, Code = "AABB_B" }
             );
             var ts = new DateTime(2026, 6, 11, 10, 0, 0, DateTimeKind.Utc);
-            SetupLatestRead(1, new ReadSensor { SensorId = 1, Value = 75m, Date = ts });
-            SetupLatestRead(2, new ReadSensor { SensorId = 2, Value = 22.7m, Date = ts });
-            SetupLatestRead(3, new ReadSensor { SensorId = 3, Value = 3.6m, Date = ts });
+            SetupLatestRead(1, new ReadSensor { SensorId = 1, Humidity = 75m, Date = ts });
+            SetupLatestRead(2, new ReadSensor { SensorId = 2, Temperature = 22.7m, Date = ts });
+            SetupLatestRead(3, new ReadSensor { SensorId = 3, BatteryVoltage = 3.6m, Date = ts });
 
             var result = await _handler.Handle(new GetSensorTelemetryRequest { PivotId = 10 }, CancellationToken.None);
 
@@ -67,7 +67,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Sensors
         public async Task Handle_HumidityValue_Correct()
         {
             SetupSensors(new Sensor { Id = 1, PivoId = 10, UserId = 1, Quadrante = 1, Code = "AABB_H" });
-            SetupLatestRead(1, new ReadSensor { SensorId = 1, Value = 67.5m, Date = DateTime.UtcNow });
+            SetupLatestRead(1, new ReadSensor { SensorId = 1, Humidity = 67.5m, Date = DateTime.UtcNow });
 
             var result = await _handler.Handle(new GetSensorTelemetryRequest { PivotId = 10 }, CancellationToken.None);
 
@@ -78,7 +78,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Sensors
         public async Task Handle_BatteryPercent_FullCharge()
         {
             SetupSensors(new Sensor { Id = 3, PivoId = 10, UserId = 1, Quadrante = 1, Code = "AABB_B" });
-            SetupLatestRead(3, new ReadSensor { SensorId = 3, Value = 3.6m, Date = DateTime.UtcNow });
+            SetupLatestRead(3, new ReadSensor { SensorId = 3, BatteryVoltage = 3.6m, Date = DateTime.UtcNow });
 
             var result = await _handler.Handle(new GetSensorTelemetryRequest { PivotId = 10 }, CancellationToken.None);
 
@@ -89,7 +89,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Sensors
         public async Task Handle_BatteryPercent_Empty()
         {
             SetupSensors(new Sensor { Id = 3, PivoId = 10, UserId = 1, Quadrante = 1, Code = "AABB_B" });
-            SetupLatestRead(3, new ReadSensor { SensorId = 3, Value = 3.0m, Date = DateTime.UtcNow });
+            SetupLatestRead(3, new ReadSensor { SensorId = 3, BatteryVoltage = 3.0m, Date = DateTime.UtcNow });
 
             var result = await _handler.Handle(new GetSensorTelemetryRequest { PivotId = 10 }, CancellationToken.None);
 
@@ -100,7 +100,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Sensors
         public async Task Handle_BatteryPercent_Half()
         {
             SetupSensors(new Sensor { Id = 3, PivoId = 10, UserId = 1, Quadrante = 1, Code = "AABB_B" });
-            SetupLatestRead(3, new ReadSensor { SensorId = 3, Value = 3.3m, Date = DateTime.UtcNow });
+            SetupLatestRead(3, new ReadSensor { SensorId = 3, BatteryVoltage = 3.3m, Date = DateTime.UtcNow });
 
             var result = await _handler.Handle(new GetSensorTelemetryRequest { PivotId = 10 }, CancellationToken.None);
 
@@ -116,8 +116,8 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Sensors
             );
             var older = new DateTime(2026, 6, 10, 0, 0, 0, DateTimeKind.Utc);
             var newer = new DateTime(2026, 6, 11, 12, 0, 0, DateTimeKind.Utc);
-            SetupLatestRead(1, new ReadSensor { SensorId = 1, Value = 70m, Date = older });
-            SetupLatestRead(2, new ReadSensor { SensorId = 2, Value = 22m, Date = newer });
+            SetupLatestRead(1, new ReadSensor { SensorId = 1, Humidity = 70m, Date = older });
+            SetupLatestRead(2, new ReadSensor { SensorId = 2, Temperature = 22m, Date = newer });
 
             var result = await _handler.Handle(new GetSensorTelemetryRequest { PivotId = 10 }, CancellationToken.None);
 
@@ -131,7 +131,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Sensors
             SetupSensors(
                 new Sensor { Id = 1, PivoId = 10, UserId = 1, Quadrante = 1, Code = "AABB_H" }
             );
-            SetupLatestRead(1, new ReadSensor { SensorId = 1, Value = 60m, Date = DateTime.UtcNow });
+            SetupLatestRead(1, new ReadSensor { SensorId = 1, Humidity = 60m, Date = DateTime.UtcNow });
 
             var result = await _handler.Handle(new GetSensorTelemetryRequest { PivotId = 10 }, CancellationToken.None);
 
@@ -154,7 +154,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Sensors
         public async Task Handle_PartialMetrics_ReturnsAvailable()
         {
             SetupSensors(new Sensor { Id = 1, PivoId = 10, UserId = 1, Quadrante = 2, Code = "AABB_H" });
-            SetupLatestRead(1, new ReadSensor { SensorId = 1, Value = 55m, Date = DateTime.UtcNow });
+            SetupLatestRead(1, new ReadSensor { SensorId = 1, Humidity = 55m, Date = DateTime.UtcNow });
 
             var result = await _handler.Handle(new GetSensorTelemetryRequest { PivotId = 10 }, CancellationToken.None);
 
@@ -185,8 +185,8 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Sensors
                 new Sensor { Id = 2, PivoId = 10, UserId = 1, Quadrante = 3, Code = "CCDD_H" },
                 new Sensor { Id = 1, PivoId = 10, UserId = 1, Quadrante = 1, Code = "AABB_H" }
             );
-            SetupLatestRead(1, new ReadSensor { SensorId = 1, Value = 60m, Date = DateTime.UtcNow });
-            SetupLatestRead(2, new ReadSensor { SensorId = 2, Value = 70m, Date = DateTime.UtcNow });
+            SetupLatestRead(1, new ReadSensor { SensorId = 1, Humidity = 60m, Date = DateTime.UtcNow });
+            SetupLatestRead(2, new ReadSensor { SensorId = 2, Humidity = 70m, Date = DateTime.UtcNow });
 
             var result = await _handler.Handle(new GetSensorTelemetryRequest { PivotId = 10 }, CancellationToken.None);
 

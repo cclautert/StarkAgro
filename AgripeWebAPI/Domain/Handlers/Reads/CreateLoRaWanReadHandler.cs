@@ -35,7 +35,6 @@ namespace AgripeWebAPI.Domain.Handlers.Reads
                 Id = await _dbContext.GetNextIdAsync(nameof(ReadSensor), cancellationToken),
                 SensorId = sensor.Id,
                 UserId = sensor.UserId,
-                Value = 0,
                 Date = request.ReadAt ?? DateTime.UtcNow,
                 Humidity = request.Humidity,
                 Temperature = request.Temperature,

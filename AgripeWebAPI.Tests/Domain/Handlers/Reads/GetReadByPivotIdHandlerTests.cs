@@ -165,8 +165,8 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Reads
             var now = DateTime.UtcNow;
             var readsList = new List<ReadSensor>
             {
-                new ReadSensor { Id = 1, SensorId = 10, Value = 30m, Date = now.AddHours(-1) },
-                new ReadSensor { Id = 2, SensorId = 11, Value = 80m, Date = now }
+                new ReadSensor { Id = 1, SensorId = 10, Humidity = 30m, Date = now.AddHours(-1) },
+                new ReadSensor { Id = 2, SensorId = 11, Humidity = 80m, Date = now }
             };
             // Call order: 1) ToListAsync for all reads, 2) FirstOrDefault for sensor 10, 3) FirstOrDefault for sensor 11
             mockReads.SetupSequence(c => c.FindAsync(
@@ -213,7 +213,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Reads
 
             MongoMockHelper.SetupFindProjection<Sensor, SensorSummary>(mockSensors, sensorSummaries);
 
-            var readEntry = new ReadSensor { Id = 1, SensorId = 5, Value = 10m, Date = DateTime.UtcNow };
+            var readEntry = new ReadSensor { Id = 1, SensorId = 5, Humidity = 10m, Date = DateTime.UtcNow };
             MongoMockHelper.SetupFindList<ReadSensor>(mockReads, new List<ReadSensor> { readEntry });
             mockReads.Setup(c => c.FindAsync(
                     It.IsAny<FilterDefinition<ReadSensor>>(),
@@ -259,9 +259,9 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Reads
             MongoMockHelper.SetupFindProjection<Sensor, SensorSummary>(mockSensors, sensorSummaries);
 
             var now = DateTime.UtcNow;
-            var read1 = new ReadSensor { Id = 1, SensorId = 1, Value = 50m, Date = now };
-            var read2 = new ReadSensor { Id = 2, SensorId = 2, Value = 50m, Date = now };
-            var read3 = new ReadSensor { Id = 3, SensorId = 3, Value = 50m, Date = now };
+            var read1 = new ReadSensor { Id = 1, SensorId = 1, Humidity = 50m, Date = now };
+            var read2 = new ReadSensor { Id = 2, SensorId = 2, Humidity = 50m, Date = now };
+            var read3 = new ReadSensor { Id = 3, SensorId = 3, Humidity = 50m, Date = now };
             var allReads = new List<ReadSensor> { read1, read2, read3 };
 
             // First call: ToListAsync for all reads in date range
