@@ -87,7 +87,6 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Reads
             Assert.Equal(75.0m, inserted!.Humidity);
             Assert.Equal(22.7m, inserted.Temperature);
             Assert.Equal(3.582m, inserted.BatteryVoltage);
-            Assert.Equal(0m, inserted.Value);
             Assert.Equal(new DateTime(2026, 6, 11, 23, 29, 2, DateTimeKind.Utc), inserted.Date.ToUniversalTime());
             Assert.Equal("A84041691D5F1794:126", inserted.IdempotencyKey);
         }

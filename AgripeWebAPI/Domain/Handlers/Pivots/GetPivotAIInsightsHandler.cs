@@ -111,7 +111,7 @@ namespace AgripeWebAPI.Domain.Handlers.Pivots
                 {
                     SensorCode = sensor.Code,
                     Quadrante = sensor.Quadrante,
-                    Readings = readings.Select(r => new ReadingPoint { Value = r.Value, Date = r.Date }).ToList()
+                    Readings = readings.Select(r => new ReadingPoint { Value = r.Humidity ?? 0, Date = r.Date }).ToList()
                 });
             }
 

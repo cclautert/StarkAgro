@@ -48,7 +48,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Reads
             Assert.Equal(99, result!.UserId);
             Assert.Equal(5, result.SensorId);
             _mockReadSensors.Verify(c => c.InsertOneAsync(
-                It.Is<ReadSensor>(r => r.UserId == 99 && r.SensorId == 5 && r.Value == 75.0m),
+                It.Is<ReadSensor>(r => r.UserId == 99 && r.SensorId == 5 && r.Humidity == 75.0m),
                 It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 

@@ -9,7 +9,8 @@ namespace AgripeWebAPI.Domain.Commands.Requests.Reads
     {
         public int? UserId { get; set; }
         public string Code { get; set; }
-        public decimal Value { get; set; }
+        public decimal Value { get; set; }    // firmware legacy — mapped to Humidity on save
+        public decimal? Humidity { get; set; }
         public bool IsEdgeAnomaly { get; set; }
         public EdgeStats? EdgeStats { get; set; }
 

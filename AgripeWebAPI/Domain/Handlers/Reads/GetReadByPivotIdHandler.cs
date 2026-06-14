@@ -49,7 +49,7 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
                 .ToDictionary(
                     g => g.Key,
                     g => g.OrderBy(r => r.Date)
-                          .Select(r => new ReadEntry { Value = r.Humidity ?? r.Value, Date = r.Date, Humidity = r.Humidity })
+                          .Select(r => new ReadEntry { Value = r.Humidity ?? 0, Date = r.Date, Humidity = r.Humidity })
                           .ToList()
                 );
 
@@ -84,7 +84,7 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
                 .Select(group => new
                 {
                     NumeroQuadrante = group.Key,
-                    Media = group.Average(read => (double)(read.Humidity ?? read.Value))
+                    Media = group.Average(read => (double)(read.Humidity ?? 0))
                 })
                 .ToDictionary(
                     result => result.NumeroQuadrante,

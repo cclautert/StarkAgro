@@ -222,7 +222,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Pivots
         public async Task Handle_WithSensorsAndReadings_ShouldPopulateSensorReadingsContext()
         {
             var sensor = new Sensor { Id = 10, PivoId = 1, UserId = 42, Quadrante = 1, Code = "S10" };
-            var reading = new ReadSensor { Id = 100, SensorId = 10, UserId = 42, Value = 55.5m, Date = DateTime.UtcNow.AddHours(-1) };
+            var reading = new ReadSensor { Id = 100, SensorId = 10, UserId = 42, Humidity = 55.5m, Date = DateTime.UtcNow.AddHours(-1) };
 
             MongoMockHelper.SetupFind(_mockPivots, DefaultPivot);
             MongoMockHelper.SetupFind(_mockUsers, DefaultUser);

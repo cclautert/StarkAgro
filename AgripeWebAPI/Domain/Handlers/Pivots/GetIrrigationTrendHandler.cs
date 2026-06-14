@@ -83,7 +83,7 @@ namespace AgripeWebAPI.Domain.Handlers.Pivots
                         .SortByDescending(r => r.Date)
                         .Limit(1)
                         .FirstOrDefaultAsync(cancellationToken);
-                    if (latest is not null) latestPerSensor.Add(latest.Value);
+                    if (latest is not null) latestPerSensor.Add(latest.Humidity ?? 0);
                 }
                 if (latestPerSensor.Count > 0)
                 {

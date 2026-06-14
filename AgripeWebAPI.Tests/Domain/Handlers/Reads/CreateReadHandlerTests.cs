@@ -92,7 +92,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Reads
 
             Assert.NotNull(result);
             mockReadSensors.Verify(c => c.InsertOneAsync(
-                It.Is<ReadSensor>(rs => rs.Value == 512),
+                It.Is<ReadSensor>(rs => rs.Humidity == 512),
                 It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
@@ -213,7 +213,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Reads
             var mockReadSensors = new Mock<IMongoCollection<ReadSensor>>();
 
             var sensor = new Sensor { Id = 1, Code = "SENSOR-1", UserId = 1 };
-            var existingRead = new ReadSensor { Id = 99, SensorId = 1, UserId = 1, Value = 42m, IdempotencyKey = "device-abc-1234567890" };
+            var existingRead = new ReadSensor { Id = 99, SensorId = 1, UserId = 1, Humidity = 42m, IdempotencyKey = "device-abc-1234567890" };
 
             MongoMockHelper.SetupFind(mockSensors, sensor);
             MongoMockHelper.SetupFind(mockReadSensors, existingRead);

@@ -58,7 +58,7 @@ namespace AgripeWebAPI.Domain.Handlers.Reads
                 Id = await _dbContext.GetNextIdAsync(nameof(ReadSensor), cancellationToken),
                 SensorId = sensor.Id,
                 UserId = sensor.UserId,
-                Value = request.Value,
+                Humidity = request.Humidity ?? request.Value,
                 Date = DateTime.UtcNow,
                 IsEdgeAnomaly = request.IsEdgeAnomaly,
                 EdgeDetectedAt = request.IsEdgeAnomaly ? DateTime.UtcNow : null,

@@ -63,7 +63,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Pivots
                     Id = i + 1,
                     SensorId = sensorId,
                     UserId = userId,
-                    Value = (decimal)(startMoisture + slopePerHour * (i * step)),
+                    Humidity = (decimal)(startMoisture + slopePerHour * (i * step)),
                     Date = start.AddHours(i * step),
                     IsAnomaly = false
                 });
@@ -150,8 +150,8 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Pivots
             // Only 2 readings 12 hours apart — below 24h threshold
             var shortReadings = new List<ReadSensor>
             {
-                new() { Id = 1, SensorId = 10, UserId = OwnerUserId, Value = 60m, Date = DateTime.UtcNow.AddHours(-12), IsAnomaly = false },
-                new() { Id = 2, SensorId = 10, UserId = OwnerUserId, Value = 58m, Date = DateTime.UtcNow.AddHours(-6),  IsAnomaly = false }
+                new() { Id = 1, SensorId = 10, UserId = OwnerUserId, Humidity = 60m, Date = DateTime.UtcNow.AddHours(-12), IsAnomaly = false },
+                new() { Id = 2, SensorId = 10, UserId = OwnerUserId, Humidity = 58m, Date = DateTime.UtcNow.AddHours(-6),  IsAnomaly = false }
             };
             MongoMockHelper.SetupFindList(reads, shortReadings);
             var notifier = new Notificator();

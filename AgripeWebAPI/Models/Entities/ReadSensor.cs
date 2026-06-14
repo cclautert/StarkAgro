@@ -10,7 +10,6 @@ namespace AgripeWebAPI.Models.Entities
         public int SensorId { get; set; }
         [ForeignKey("User")]
         public int UserId { get; set; }
-        public Decimal Value { get; set; }
         public DateTime Date { get; set; }
         public bool IsAnomaly { get; set; }
         public bool IsEdgeAnomaly { get; set; }

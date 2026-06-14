@@ -43,7 +43,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Anomalies
         {
             return Enumerable.Range(0, count).Select(i => new ReadSensor
             {
-                Id = 1000 + i, SensorId = 1, UserId = 10, Value = baseValue, Date = DateTime.UtcNow.AddMinutes(-i)
+                Id = 1000 + i, SensorId = 1, UserId = 10, Humidity = baseValue, Date = DateTime.UtcNow.AddMinutes(-i)
             }).ToList();
         }
 
@@ -54,7 +54,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Anomalies
 
             var request = new DetectSensorAnomalyRequest
             {
-                ReadSensorId = 999, SensorId = 1, UserId = 10, Value = 99m
+                ReadSensorId = 999, SensorId = 1, UserId = 10, Humidity = 99m
             };
 
             var result = await _handler.Handle(request, CancellationToken.None);
@@ -73,14 +73,14 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Anomalies
 
             var request = new DetectSensorAnomalyRequest
             {
-                ReadSensorId = 999, SensorId = 1, UserId = 10, Value = 50m
+                ReadSensorId = 999, SensorId = 1, UserId = 10, Humidity = 50m
             };
 
             var result = await _handler.Handle(request, CancellationToken.None);
 
             Assert.Equal(Unit.Value, result);
             _mockAnomalyService.Verify(s => s.DetectAndSaveAsync(
-                It.Is<ReadSensor>(r => r.Id == 999 && r.SensorId == 1 && r.UserId == 10 && r.Value == 50m),
+                It.Is<ReadSensor>(r => r.Id == 999 && r.SensorId == 1 && r.UserId == 10 && r.Humidity == 50m),
                 5,
                 It.IsAny<IReadOnlyList<ReadSensor>>(),
                 It.IsAny<CancellationToken>()), Times.Once);
@@ -95,7 +95,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Anomalies
 
             var request = new DetectSensorAnomalyRequest
             {
-                ReadSensorId = 1, SensorId = 1, UserId = 10, Value = 50m
+                ReadSensorId = 1, SensorId = 1, UserId = 10, Humidity = 50m
             };
 
             await _handler.Handle(request, CancellationToken.None);

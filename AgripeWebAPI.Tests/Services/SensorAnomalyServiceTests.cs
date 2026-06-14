@@ -43,7 +43,7 @@ namespace AgripeWebAPI.Tests.Services
         }
 
         private static ReadSensor MakeReading(decimal value, int id = 999, int sensorId = 1, int userId = 10) =>
-            new ReadSensor { Id = id, SensorId = sensorId, UserId = userId, Value = value, Date = DateTime.UtcNow };
+            new ReadSensor { Id = id, SensorId = sensorId, UserId = userId, Humidity = value, Date = DateTime.UtcNow };
 
         private static List<ReadSensor> BuildStableBaseline(int count, decimal baseValue = 50m, decimal spread = 2m)
         {
@@ -51,7 +51,7 @@ namespace AgripeWebAPI.Tests.Services
             return Enumerable.Range(0, count).Select(i => new ReadSensor
             {
                 Id = 1000 + i, SensorId = 1, UserId = 10,
-                Value = baseValue + (decimal)(rng.NextDouble() * (double)(spread * 2) - (double)spread),
+                Humidity = baseValue + (decimal)(rng.NextDouble() * (double)(spread * 2) - (double)spread),
                 Date = DateTime.UtcNow.AddMinutes(-i)
             }).ToList();
         }
@@ -129,7 +129,7 @@ namespace AgripeWebAPI.Tests.Services
         {
             var baseline = Enumerable.Range(0, 20).Select(i => new ReadSensor
             {
-                Id = 1000 + i, SensorId = 1, UserId = 10, Value = 50m, Date = DateTime.UtcNow.AddMinutes(-i)
+                Id = 1000 + i, SensorId = 1, UserId = 10, Humidity = 50m, Date = DateTime.UtcNow.AddMinutes(-i)
             }).ToList();
 
             var result = await _service.DetectAndSaveAsync(MakeReading(9999m), pivotId: 1, baseline, CancellationToken.None);

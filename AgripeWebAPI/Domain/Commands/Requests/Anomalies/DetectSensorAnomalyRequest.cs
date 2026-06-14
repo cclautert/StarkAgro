@@ -7,6 +7,6 @@ namespace AgripeWebAPI.Domain.Commands.Requests.Anomalies
         public int ReadSensorId { get; set; }
         public int SensorId { get; set; }
         public int UserId { get; set; }
-        public decimal Value { get; set; }
+        public decimal? Humidity { get; set; }
     }
 }
