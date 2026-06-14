@@ -93,7 +93,7 @@ namespace AgripeWebWorker.Tests.Handlers
             await _handler.Handle(request, CancellationToken.None);
 
             _mockReadSensors.Verify(c => c.InsertOneAsync(
-                It.Is<ReadSensor>(r => r.Value == 512),
+                It.Is<ReadSensor>(r => r.Humidity == 512),
                 It.IsAny<InsertOneOptions>(),
                 It.IsAny<CancellationToken>()), Times.Once);
         }

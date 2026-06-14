@@ -126,9 +126,9 @@ namespace AgripeWebWorker.Tests.Services
             // Readings showing humidity increasing: 40 → 50 → 60
             MongoMockHelper.SetupFindList(reads, new List<ReadSensor>
             {
-                new() { SensorId = 5, Value = 40m, Date = now.AddHours(-4), IsAnomaly = false },
-                new() { SensorId = 5, Value = 50m, Date = now.AddHours(-2), IsAnomaly = false },
-                new() { SensorId = 5, Value = 60m, Date = now.AddHours(-1), IsAnomaly = false },
+                new() { SensorId = 5, Humidity =40m, Date = now.AddHours(-4), IsAnomaly = false },
+                new() { SensorId = 5, Humidity =50m, Date = now.AddHours(-2), IsAnomaly = false },
+                new() { SensorId = 5, Humidity =60m, Date = now.AddHours(-1), IsAnomaly = false },
             });
 
             // LimiteInferior = 30; projected ≈ 60 + positive_slope * 4 >> 30 — no alert
@@ -153,9 +153,9 @@ namespace AgripeWebWorker.Tests.Services
             // Humidity declining from 50 → 40 → 32 over 5 hours; projected 4h further < 30
             MongoMockHelper.SetupFindList(reads, new List<ReadSensor>
             {
-                new() { SensorId = 5, Value = 50m, Date = now.AddHours(-5), IsAnomaly = false },
-                new() { SensorId = 5, Value = 40m, Date = now.AddHours(-3), IsAnomaly = false },
-                new() { SensorId = 5, Value = 32m, Date = now.AddHours(-0.5), IsAnomaly = false },
+                new() { SensorId = 5, Humidity =50m, Date = now.AddHours(-5), IsAnomaly = false },
+                new() { SensorId = 5, Humidity =40m, Date = now.AddHours(-3), IsAnomaly = false },
+                new() { SensorId = 5, Humidity =32m, Date = now.AddHours(-0.5), IsAnomaly = false },
             });
 
             // No recent dedup alert
@@ -192,8 +192,8 @@ namespace AgripeWebWorker.Tests.Services
 
             MongoMockHelper.SetupFindList(reads, new List<ReadSensor>
             {
-                new() { SensorId = 5, Value = 50m, Date = now.AddHours(-5), IsAnomaly = false },
-                new() { SensorId = 5, Value = 32m, Date = now.AddHours(-0.5), IsAnomaly = false },
+                new() { SensorId = 5, Humidity =50m, Date = now.AddHours(-5), IsAnomaly = false },
+                new() { SensorId = 5, Humidity =32m, Date = now.AddHours(-0.5), IsAnomaly = false },
             });
 
             // Return an existing recent alert (dedup should suppress)
@@ -228,8 +228,8 @@ namespace AgripeWebWorker.Tests.Services
 
             MongoMockHelper.SetupFindList(reads, new List<ReadSensor>
             {
-                new() { SensorId = 5, Value = 50m, Date = now.AddHours(-5), IsAnomaly = false },
-                new() { SensorId = 5, Value = 32m, Date = now.AddHours(-0.5), IsAnomaly = false },
+                new() { SensorId = 5, Humidity =50m, Date = now.AddHours(-5), IsAnomaly = false },
+                new() { SensorId = 5, Humidity =32m, Date = now.AddHours(-0.5), IsAnomaly = false },
             });
 
             MongoMockHelper.SetupFind(alerts, (IrrigationAlert?)null);
