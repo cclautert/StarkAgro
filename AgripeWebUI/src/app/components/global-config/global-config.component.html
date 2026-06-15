@@ -21,6 +21,17 @@
 
     <hr class="section-divider">
 
+    <h3 class="section-title">IoT / LoRaWAN</h3>
+
+    <div class="form-group">
+      <label for="uplinkIntervalSeconds">Intervalo de Leitura Padrão (s)</label>
+      <input id="uplinkIntervalSeconds" type="number" formControlName="uplinkIntervalSeconds" step="60" min="60"
+             placeholder="10800">
+      <div class="hint">Padrão global para sensores DTL-300. Pode ser sobrescrito por sensor. Padrão: 10800 s (3 h).</div>
+    </div>
+
+    <hr class="section-divider">
+
     <h3 class="section-title">Inteligência Artificial</h3>
     <p class="subtitle">
       Chave gratuita do Google AI Studio (até 1.500 análises/dia).

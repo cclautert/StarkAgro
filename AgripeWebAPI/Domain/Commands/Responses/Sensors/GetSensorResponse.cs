@@ -10,5 +10,6 @@ namespace AgripeWebAPI.Domain.Commands.Responses.Sensors
         public Pivot Pivot { get; set; }
         public int Quadrante { get; set; }
         public string? Code { get; set; }
+        public int? UplinkIntervalSeconds { get; set; }
     }
 }

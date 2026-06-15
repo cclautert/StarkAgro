@@ -6,4 +6,5 @@ export interface Sensor {
   pivot: Pivot;
   quadrante: number;
   code: string;
+  uplinkIntervalSeconds?: number | null;
 }

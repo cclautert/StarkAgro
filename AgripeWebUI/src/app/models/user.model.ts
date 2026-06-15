@@ -8,4 +8,5 @@ export interface User {
   limiteSuperior?: number;
   rainThresholdMm?: number | null;
   geminiApiKey?: string | null;
+  uplinkIntervalSeconds?: number | null;
 }

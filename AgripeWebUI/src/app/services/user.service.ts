@@ -31,8 +31,8 @@ export class UserService {
   }
 
   // UPDATE LIMITS
-  updateLimits(limiteInferior: number, limiteSuperior: number, rainThresholdMm?: number | null, geminiApiKey?: string | null): Observable<any> {
-    return this.http.put(`${this.baseUrl}user/updateLimits`, { limiteInferior, limiteSuperior, rainThresholdMm, geminiApiKey });
+  updateLimits(limiteInferior: number, limiteSuperior: number, rainThresholdMm?: number | null, geminiApiKey?: string | null, uplinkIntervalSeconds?: number | null): Observable<any> {
+    return this.http.put(`${this.baseUrl}user/updateLimits`, { limiteInferior, limiteSuperior, rainThresholdMm, geminiApiKey, uplinkIntervalSeconds });
   }
 
   // DELETE

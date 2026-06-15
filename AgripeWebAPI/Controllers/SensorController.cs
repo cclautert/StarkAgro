@@ -84,6 +84,19 @@ namespace AgripeWebAPI.Controllers
             return await mediator.Send(command, cancellationToken);
         }
 
+        [Route("sync-downlink")]
+        [HttpPost]
+        public async Task<ActionResult<SendSensorDownlinkResponse>> SyncDownlink(
+            [FromServices] IMediator mediator,
+            [FromBody] SendSensorDownlinkRequest command,
+            CancellationToken cancellationToken
+        )
+        {
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
+            var result = await mediator.Send(command, cancellationToken);
+            return CustomResponse(result);
+        }
+
         [Route("telemetry")]
         [HttpGet]
         public async Task<IList<SensorTelemetryResponse>> GetTelemetry(
