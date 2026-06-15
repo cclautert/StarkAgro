@@ -13,5 +13,6 @@ namespace AgripeWebAPI.Domain.Commands.Requests.Sensors
         [Required]
         public string? Code { get; set; }
         public int Quadrante { get; set; }
+        public int? UplinkIntervalSeconds { get; set; } = 10800;
     }
 }

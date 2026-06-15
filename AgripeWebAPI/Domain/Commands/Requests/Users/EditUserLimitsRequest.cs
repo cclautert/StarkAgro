@@ -10,5 +10,6 @@ namespace AgripeWebAPI.Domain.Commands.Requests.Users
         public decimal LimiteSuperior { get; set; }
         public double? RainThresholdMm { get; set; }
         public string? GeminiApiKey { get; set; }
+        public int? UplinkIntervalSeconds { get; set; }
     }
 }

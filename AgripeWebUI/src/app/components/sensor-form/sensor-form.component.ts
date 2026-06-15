@@ -27,6 +27,7 @@ export class SensorFormComponent implements OnInit {
   private snackBar = inject(MatSnackBar);
 
   isScanning = false;
+  isSyncing = false;
 
   sensorForm: FormGroup;
   isEditMode = false;
@@ -59,7 +60,8 @@ export class SensorFormComponent implements OnInit {
       name: ['', Validators.required],
       pivot: [null, Validators.required],
       code: ['', [Validators.required]],
-      quadrante: [null, [Validators.required]]
+      quadrante: [null, [Validators.required]],
+      uplinkIntervalSeconds: [10800]
     });
 
     // A lógica para obter o ID da rota permanece a mesma
@@ -125,7 +127,8 @@ export class SensorFormComponent implements OnInit {
           name: sensor.name,
           pivot: sensor.pivot,
           code: sensor.code,
-          quadrante: sensor.quadrante
+          quadrante: sensor.quadrante,
+          uplinkIntervalSeconds: sensor.uplinkIntervalSeconds ?? 10800
         });
       },
       error: err => {
@@ -151,11 +154,22 @@ export class SensorFormComponent implements OnInit {
     return p1 && p2 ? p1.name === p2.name : p1 === p2;
   }
 
+  syncDownlink(): void {
+    if (!this.sensorId || this.isSyncing) return;
+    this.isSyncing = true;
+    this.sensorService.syncDownlink(this.sensorId).subscribe({
+      next: (res) => this.snackBar.open(res.message, 'OK', { duration: 5000 }),
+      error: (err) => this.snackBar.open(err?.error?.message ?? 'Erro ao sincronizar downlink.', 'Fechar', { duration: 5000 }),
+      complete: () => { this.isSyncing = false; }
+    });
+  }
+
   // Getters para facilitar o acesso aos controles no template
   get name() { return this.sensorForm.get('name'); }
   get pivot() { return this.sensorForm.get('pivot'); }
   get code() { return this.sensorForm.get('code'); }
   get quadrante() { return this.sensorForm.get('quadrante'); }
+  get uplinkIntervalSeconds() { return this.sensorForm.get('uplinkIntervalSeconds'); }
 
   async scanQrCode(): Promise<void> {
     if (this.isScanning) return;

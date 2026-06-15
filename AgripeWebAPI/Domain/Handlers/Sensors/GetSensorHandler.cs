@@ -43,7 +43,8 @@ namespace AgripeWebAPI.Domain.Handlers.Sensors
                 Name = sensor.Name,
                 Code = sensor.Code,
                 Pivot = pivot,
-                Quadrante = sensor.Quadrante
+                Quadrante = sensor.Quadrante,
+                UplinkIntervalSeconds = sensor.UplinkIntervalSeconds
             };
         }
     }

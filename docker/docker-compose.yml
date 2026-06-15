@@ -24,8 +24,14 @@ services:
       - OAuth__Google__ClientSecret=${GOOGLE_CLIENT_SECRET}
       - OAuth__Google__AllowedRedirectUris=https://agripeweb.com/login/callback,agripeweb://callback
       - AISettings__GeminiApiKey=${GEMINI_API_KEY}
+      - MqttDownlink__Host=mqtt
+      - MqttDownlink__Port=1883
+      - MqttDownlink__Username=${MQTT_USERNAME}
+      - MqttDownlink__Password=${MQTT_PASSWORD}
+      - MqttDownlink__UseTls=false
     depends_on:
       - db
+      - mqtt
     networks:
       - app-network
 

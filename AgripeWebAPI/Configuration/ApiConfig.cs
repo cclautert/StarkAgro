@@ -3,6 +3,7 @@ using AgripeWebAPI.Models.Entities;
 using AgripeWebAPI.Models.Interfaces;
 using AgripeWebAPI.Services.AIInsights;
 using AgripeWebAPI.Services.Forecast;
+using AgripeWebAPI.Services.LoRaWan;
 using Microsoft.AspNetCore.RateLimiting;
 using MongoDB.Driver;
 using System.Reflection;
@@ -17,6 +18,7 @@ namespace AgripeWebAPI.Configuration
             services.Configure<MongoDbSettings>(configuration.GetSection(MongoDbSettings.SectionName));
             services.Configure<WeatherForecastSettings>(configuration.GetSection(WeatherForecastSettings.SectionName));
             services.Configure<AISettings>(configuration.GetSection(AISettings.SectionName));
+            services.Configure<MqttDownlinkSettings>(configuration.GetSection(MqttDownlinkSettings.SectionName));
             services.AddScoped<agpDBContext>();
             services.AddMemoryCache();
 
@@ -38,6 +40,8 @@ namespace AgripeWebAPI.Configuration
                 client.BaseAddress = new Uri("https://generativelanguage.googleapis.com/");
                 client.Timeout = TimeSpan.FromSeconds(30);
             });
+
+            services.AddSingleton<ILoRaWanDownlinkService, MqttDownlinkService>();
 
             services.AddControllers()
                 .AddJsonOptions(options =>

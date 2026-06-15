@@ -44,6 +44,12 @@ export class SensorService {
     return this.http.put(`${this.baseUrl}sensor/update`, updatedSensor);
   }
 
+  syncDownlink(sensorId: number): Observable<{ success: boolean; message: string }> {
+    return this.http.post<{ success: boolean; message: string }>(
+      `${this.baseUrl}sensor/sync-downlink`, { sensorId }
+    );
+  }
+
   // DELETE
   deleteSensor(id: number): Observable<{}> {
     const params = new HttpParams()
