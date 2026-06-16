@@ -36,10 +36,13 @@ export class SensorFormComponent implements OnInit {
   pivotsDisponiveis: Pivot[] = [];
 
   constructor() {
-    // Definindo o novo formulário com os campos 'quadrante' e 'code'
     this.sensorForm = this.fb.group({
+      id: [null],
+      name: ['', Validators.required],
+      pivot: [null, Validators.required],
+      code: ['', [Validators.required]],
       quadrante: [null, [Validators.required]],
-      code: ['', Validators.required]
+      uplinkIntervalSeconds: [10800]
     });
   }
 
@@ -51,28 +54,7 @@ export class SensorFormComponent implements OnInit {
       this.carregarDadosParaEdicao();
     } else {
       this.isEditMode = false;
-      // Para um novo sensor, só precisa carregar a lista de pivôs
       this.carregarPivots();
-    }
-
-    this.sensorForm = this.fb.group({
-      id: [null],
-      name: ['', Validators.required],
-      pivot: [null, Validators.required],
-      code: ['', [Validators.required]],
-      quadrante: [null, [Validators.required]],
-      uplinkIntervalSeconds: [10800]
-    });
-
-    // A lógica para obter o ID da rota permanece a mesma
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.isEditMode = true;
-      this.sensorId = +id;
-      this.sensorService.getSensorById(this.sensorId).subscribe(sensor => {
-        // Preenche o formulário com os dados do sensor buscado
-        this.sensorForm.patchValue(sensor);
-      });
     }
   }
 
@@ -159,7 +141,10 @@ export class SensorFormComponent implements OnInit {
     this.isSyncing = true;
     this.sensorService.syncDownlink(this.sensorId).subscribe({
       next: (res) => this.snackBar.open(res.message, 'OK', { duration: 5000 }),
-      error: (err) => this.snackBar.open(err?.error?.message ?? 'Erro ao sincronizar downlink.', 'Fechar', { duration: 5000 }),
+      error: (err) => {
+        this.isSyncing = false;
+        this.snackBar.open(err?.error?.message ?? 'Erro ao sincronizar downlink.', 'Fechar', { duration: 5000 });
+      },
       complete: () => { this.isSyncing = false; }
     });
   }
