@@ -278,6 +278,7 @@
 .chart-wrapper {
   position: relative;
   height: 320px;
+  cursor: pointer;
 }
 
 /* Alert banners */

@@ -423,6 +423,7 @@
 .chart-wrapper {
   position: relative;
   height: 360px;
+  cursor: pointer;
 }
 
 canvas {
