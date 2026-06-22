@@ -12,6 +12,8 @@ interface HumidityChartProps {
   chartData: Array<{ quadrante: number; readings: ReadEntry[] }>;
   humidityUpper: number;
   humidityLower: number;
+  overrideWidth?: number;
+  overrideHeight?: number;
 }
 
 function formatDateShort(dateStr: string): string {
@@ -21,9 +23,9 @@ function formatDateShort(dateStr: string): string {
   return `${day}/${month}`;
 }
 
-export function HumidityChart({ chartData, humidityUpper, humidityLower }: HumidityChartProps) {
-  const chartWidth = width - 64;
-  const chartHeight = 180;
+export function HumidityChart({ chartData, humidityUpper, humidityLower, overrideWidth, overrideHeight }: HumidityChartProps) {
+  const chartWidth = overrideWidth ?? width - 64;
+  const chartHeight = overrideHeight ?? 180;
   const paddingLeft = 32;
   const paddingBottom = 20;
   const innerWidth = chartWidth - paddingLeft;

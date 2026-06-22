@@ -5,6 +5,7 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
+  Dimensions,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -21,6 +22,7 @@ import { TrendChart } from '../../../../components/dashboard/TrendChart';
 import { TrendStatsPanel } from '../../../../components/dashboard/TrendStatsPanel';
 import { ManualReadForm } from '../../../../components/dashboard/ManualReadForm';
 import { PendingSyncBadge } from '../../../../components/ui/PendingSyncBadge';
+import { ChartFullscreenModal } from '../../../../components/ui/ChartFullscreenModal';
 import { useOfflineSync } from '../../../../hooks/useOfflineSync';
 import { useNetworkStatus } from '../../../../hooks/useNetworkStatus';
 import { mergePendingReads } from '../../../../services/offline/mergePendingReads';
@@ -48,6 +50,9 @@ export default function QuadrantDetailScreen() {
   const [showTrend, setShowTrend] = useState(true);
   const [showMovingAvg, setShowMovingAvg] = useState(true);
   const [showProjection, setShowProjection] = useState(true);
+  const [chartFullscreen, setChartFullscreen] = useState(false);
+
+  const { width: screenWidth } = Dimensions.get('window');
 
   const refreshReadings = useCallback(async () => {
     if (!selectedSensorId) {
@@ -197,32 +202,55 @@ export default function QuadrantDetailScreen() {
           <OverlayToggle label="Projeção" color={Colors.projection} active={showProjection} onPress={() => setShowProjection((v) => !v)} />
         </View>
 
-        <Card style={{ marginBottom: 16 }}>
-          <Text style={{ color: Colors.textPrimary, fontSize: 16, fontWeight: '700', marginBottom: 16 }}>
-            Leituras do Sensor
-          </Text>
-          {loading ? (
-            <ActivityIndicator color={Colors.primary} style={{ paddingVertical: 40 }} />
-          ) : (
-            <TrendChart
-              points={points}
-              projection={projection}
-              humidityUpper={humidityUpper}
-              humidityLower={humidityLower}
-              showTrend={showTrend}
-              showMovingAvg={showMovingAvg}
-              showProjection={showProjection}
-            />
-          )}
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 8 }}>
-            <Text style={{ color: Colors.textSecondary, fontSize: 12 }}>
-              {readings.length} leituras
-            </Text>
-            <Text style={{ color: Colors.textSecondary, fontSize: 12 }}>
-              Últ. {days} dias
-            </Text>
-          </View>
-        </Card>
+        <TouchableOpacity activeOpacity={0.85} onPress={() => !loading && setChartFullscreen(true)}>
+          <Card style={{ marginBottom: 16 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
+              <Text style={{ color: Colors.textPrimary, fontSize: 16, fontWeight: '700', flex: 1 }}>
+                Leituras do Sensor
+              </Text>
+              {!loading && <Ionicons name="expand-outline" size={18} color={Colors.textSecondary} />}
+            </View>
+            {loading ? (
+              <ActivityIndicator color={Colors.primary} style={{ paddingVertical: 40 }} />
+            ) : (
+              <TrendChart
+                points={points}
+                projection={projection}
+                humidityUpper={humidityUpper}
+                humidityLower={humidityLower}
+                showTrend={showTrend}
+                showMovingAvg={showMovingAvg}
+                showProjection={showProjection}
+              />
+            )}
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 8 }}>
+              <Text style={{ color: Colors.textSecondary, fontSize: 12 }}>
+                {readings.length} leituras
+              </Text>
+              <Text style={{ color: Colors.textSecondary, fontSize: 12 }}>
+                Últ. {days} dias
+              </Text>
+            </View>
+          </Card>
+        </TouchableOpacity>
+
+        <ChartFullscreenModal
+          visible={chartFullscreen}
+          onClose={() => setChartFullscreen(false)}
+          title="Leituras do Sensor"
+        >
+          <TrendChart
+            points={points}
+            projection={projection}
+            humidityUpper={humidityUpper}
+            humidityLower={humidityLower}
+            showTrend={showTrend}
+            showMovingAvg={showMovingAvg}
+            showProjection={showProjection}
+            overrideWidth={screenWidth - 32}
+            overrideHeight={320}
+          />
+        </ChartFullscreenModal>
 
         {readings.length > 0 && (
           <Card style={{ marginBottom: 16 }}>
