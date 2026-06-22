@@ -45,13 +45,19 @@
   </div>
 
   <!-- Time-series chart -->
-  <div class="chart-card">
+  <div class="chart-card" [class.fullscreen]="chartFullscreen">
     <div class="chart-header">
       <h2 class="chart-title">Níveis de Umidade do Solo</h2>
-      <div class="period-selector">
-        <button class="period-btn" [class.active]="numberOfDays === 7" (click)="setDays(7)">Últimos 7 Dias</button>
-        <button class="period-btn" [class.active]="numberOfDays === 14" (click)="setDays(14)">14 Dias</button>
-        <button class="period-btn" [class.active]="numberOfDays === 30" (click)="setDays(30)">30 Dias</button>
+      <div class="chart-header-actions">
+        <div class="period-selector">
+          <button class="period-btn" [class.active]="numberOfDays === 7" (click)="setDays(7)">Últimos 7 Dias</button>
+          <button class="period-btn" [class.active]="numberOfDays === 14" (click)="setDays(14)">14 Dias</button>
+          <button class="period-btn" [class.active]="numberOfDays === 30" (click)="setDays(30)">30 Dias</button>
+        </div>
+        <button class="btn-fullscreen" (click)="toggleChartFullscreen()" [title]="chartFullscreen ? 'Fechar' : 'Tela cheia'">
+          <span *ngIf="!chartFullscreen">&#x26F6;</span>
+          <span *ngIf="chartFullscreen">&#x2715;</span>
+        </button>
       </div>
     </div>
     <div class="chart-wrapper">

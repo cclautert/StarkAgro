@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, HostListener } from '@angular/core';
 import { ChartConfiguration } from 'chart.js';
 import { ApiService } from '../../services/api.service';
 import { Subscription, interval } from 'rxjs';
@@ -56,6 +56,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
   aiError: string | null = null;
   aiExpanded = false;
   private aiSub: Subscription | null = null;
+
+  // ── Chart fullscreen ──────────────────────────────────────────────────────
+  chartFullscreen = false;
+
+  toggleChartFullscreen(): void {
+    this.chartFullscreen = !this.chartFullscreen;
+    setTimeout(() => this.chart?.chart?.resize(), 50);
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    if (this.chartFullscreen) this.chartFullscreen = false;
+  }
 
   // ── Trend-analysis overlay state ──────────────────────────────────────────
   showTrend = true;

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, HostListener } from '@angular/core';
 import { ChartConfiguration } from 'chart.js';
 import { forkJoin, interval, of, Subscription } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -46,7 +46,18 @@ export class IrrigationDashboardComponent implements OnInit, OnDestroy {
   anomalyCount: number = 0;
   anomalies: Anomaly[] = [];
   anomalyModalOpen: boolean = false;
+  chartFullscreen: boolean = false;
   private intervalSub!: Subscription;
+
+  toggleChartFullscreen(): void {
+    this.chartFullscreen = !this.chartFullscreen;
+    setTimeout(() => this.chart?.chart?.resize(), 50);
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    if (this.chartFullscreen) this.chartFullscreen = false;
+  }
 
   public chartData: ChartConfiguration<'line'>['data'] = {
     datasets: [],

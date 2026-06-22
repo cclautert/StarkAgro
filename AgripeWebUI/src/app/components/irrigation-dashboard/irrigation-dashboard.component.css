@@ -195,6 +195,47 @@
   margin-bottom: 20px;
 }
 
+.chart-card.fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  border-radius: 0;
+  margin: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-card.fullscreen .chart-wrapper {
+  flex: 1;
+  height: auto;
+  min-height: 60vh;
+}
+
+.chart-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btn-fullscreen {
+  background: none;
+  border: 1px solid #3a4f75;
+  border-radius: 6px;
+  color: #94a3b8;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  padding: 4px 8px;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.btn-fullscreen:hover {
+  color: #e2e8f0;
+  border-color: #64748b;
+}
+
 .chart-header {
   display: flex;
   align-items: center;
