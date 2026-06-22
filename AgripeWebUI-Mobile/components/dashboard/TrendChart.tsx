@@ -20,6 +20,8 @@ interface TrendChartProps {
   showTrend: boolean;
   showMovingAvg: boolean;
   showProjection: boolean;
+  overrideWidth?: number;
+  overrideHeight?: number;
 }
 
 export function TrendChart({
@@ -30,9 +32,11 @@ export function TrendChart({
   showTrend,
   showMovingAvg,
   showProjection,
+  overrideWidth,
+  overrideHeight,
 }: TrendChartProps) {
-  const chartWidth = width - 64;
-  const chartHeight = 200;
+  const chartWidth = overrideWidth ?? width - 64;
+  const chartHeight = overrideHeight ?? 200;
   const innerWidth = chartWidth - PADDING_LEFT - PADDING_RIGHT;
   const innerHeight = chartHeight - PADDING_TOP - PADDING_BOTTOM;
 

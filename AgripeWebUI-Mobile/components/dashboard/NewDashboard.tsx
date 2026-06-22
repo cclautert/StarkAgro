@@ -5,8 +5,10 @@ import {
   ScrollView,
   ActivityIndicator,
   TouchableOpacity,
+  Dimensions,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { Picker } from '@react-native-picker/picker';
 import { usePivots } from '../../hooks/usePivots';
 import { useDashboardData } from '../../hooks/useDashboardData';
@@ -15,6 +17,7 @@ import { QuadrantCard } from './QuadrantCard';
 import { HumidityChart } from './HumidityChart';
 import { AlertBanner } from '../ui/AlertBanner';
 import { Card } from '../ui/Card';
+import { ChartFullscreenModal } from '../ui/ChartFullscreenModal';
 import { LoadingSpinner } from '../ui/LoadingSpinner';
 import { PendingSyncBadge } from '../ui/PendingSyncBadge';
 import { Colors } from '../../constants/colors';
@@ -49,6 +52,8 @@ export function NewDashboard() {
   const { humidityUpper, humidityLower } = useSettingsStore();
   const [selectedPivotId, setSelectedPivotId] = useState<number | null>(null);
   const [days, setDays] = useState(7);
+  const [chartFullscreen, setChartFullscreen] = useState(false);
+  const { width: screenWidth } = Dimensions.get('window');
   const isOnline = useNetworkStatus();
   const { pendingCount } = useOfflineSync();
 
@@ -154,7 +159,7 @@ export function NewDashboard() {
           <Text style={{ color: Colors.textPrimary, fontSize: 15, fontWeight: '700' }}>
             Níveis de Umidade do Solo
           </Text>
-          <View style={{ flexDirection: 'row', gap: 4 }}>
+          <View style={{ flexDirection: 'row', gap: 4, alignItems: 'center' }}>
             {DAY_OPTIONS.map((opt) => (
               <TouchableOpacity
                 key={opt.value}
@@ -169,19 +174,40 @@ export function NewDashboard() {
                 <Text style={{ color: '#fff', fontSize: 11, fontWeight: '600' }}>{opt.label}</Text>
               </TouchableOpacity>
             ))}
+            {!loading && (
+              <TouchableOpacity onPress={() => setChartFullscreen(true)} style={{ marginLeft: 4 }}>
+                <Ionicons name="expand-outline" size={18} color={Colors.textSecondary} />
+              </TouchableOpacity>
+            )}
           </View>
         </View>
 
-        {loading ? (
-          <ActivityIndicator color={Colors.primary} style={{ paddingVertical: 40 }} />
-        ) : (
-          <HumidityChart
-            chartData={chartData}
-            humidityUpper={humidityUpper}
-            humidityLower={humidityLower}
-          />
-        )}
+        <TouchableOpacity activeOpacity={0.85} onPress={() => !loading && setChartFullscreen(true)}>
+          {loading ? (
+            <ActivityIndicator color={Colors.primary} style={{ paddingVertical: 40 }} />
+          ) : (
+            <HumidityChart
+              chartData={chartData}
+              humidityUpper={humidityUpper}
+              humidityLower={humidityLower}
+            />
+          )}
+        </TouchableOpacity>
       </Card>
+
+      <ChartFullscreenModal
+        visible={chartFullscreen}
+        onClose={() => setChartFullscreen(false)}
+        title="Níveis de Umidade do Solo"
+      >
+        <HumidityChart
+          chartData={chartData}
+          humidityUpper={humidityUpper}
+          humidityLower={humidityLower}
+          overrideWidth={screenWidth - 32}
+          overrideHeight={280}
+        />
+      </ChartFullscreenModal>
 
       {/* Alert banners */}
       {alerts.length > 0 && (
