@@ -227,7 +227,7 @@
       </div>
     </div>
 
-    <div class="chart-wrapper">
+    <div class="chart-wrapper" (click)="toggleChartFullscreen()" [title]="chartFullscreen ? 'Clique para fechar' : 'Clique para ampliar'">
       <canvas baseChart
         [data]="lineChartData"
         [options]="lineChartOptions"
