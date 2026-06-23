@@ -11,7 +11,7 @@ namespace AgripeWebAPI.Domain.Handlers.Pivots
 {
     public class GetMoisturePredictionHandler : IRequestHandler<GetMoisturePredictionRequest, MoisturePredictionResponse?>
     {
-        private const int HistoryWindowHours = 72;
+        private const int HistoryWindowHours = 168;
         private const int MinHistoryHours = 24;
         private const int ProjectionHours = 72;
         // ET0 data covers the next 3 days, which matches the projection window.
