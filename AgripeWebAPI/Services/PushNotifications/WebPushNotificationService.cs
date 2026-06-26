@@ -2,12 +2,14 @@ using AgripeWebAPI.Configuration;
 using AgripeWebAPI.Models;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using WebPush;
 
 namespace AgripeWebAPI.Services.PushNotifications
 {
+    [ExcludeFromCodeCoverage]
     public class WebPushNotificationService
     {
         private readonly agpDBContext _dbContext;

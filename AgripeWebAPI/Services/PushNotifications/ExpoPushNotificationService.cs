@@ -1,11 +1,13 @@
 using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Interfaces;
 using MongoDB.Driver;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Text.Json;
 
 namespace AgripeWebAPI.Services.PushNotifications
 {
+    [ExcludeFromCodeCoverage]
     public class ExpoPushNotificationService
     {
         private readonly IHttpClientFactory _httpClientFactory;
