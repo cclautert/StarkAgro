@@ -29,6 +29,9 @@ services:
       - MqttDownlink__Username=${MQTT_USERNAME}
       - MqttDownlink__Password=${MQTT_PASSWORD}
       - MqttDownlink__UseTls=false
+      - Vapid__Subject=${VAPID_SUBJECT:-mailto:admin@agripeweb.com}
+      - Vapid__PublicKey=${VAPID_PUBLIC_KEY}
+      - Vapid__PrivateKey=${VAPID_PRIVATE_KEY}
     depends_on:
       - db
       - mqtt
@@ -113,6 +116,9 @@ services:
       # For Docker-internal connections the bridge network is isolated; TLS is optional.
       - Mqtt__UseTls=false
       - Mqtt__AllowUntrustedCertificates=false
+      - Vapid__Subject=${VAPID_SUBJECT:-mailto:admin@agripeweb.com}
+      - Vapid__PublicKey=${VAPID_PUBLIC_KEY}
+      - Vapid__PrivateKey=${VAPID_PRIVATE_KEY}
     depends_on:
       db:
         condition: service_started
