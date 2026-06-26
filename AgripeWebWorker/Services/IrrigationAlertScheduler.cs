@@ -46,6 +46,7 @@ namespace AgripeWebWorker.Services
             using var scope = _serviceProvider.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<agpDBContext>();
             var emailService = scope.ServiceProvider.GetRequiredService<IAlertEmailService>();
+            var pushService = scope.ServiceProvider.GetRequiredService<IPushNotificationService>();
 
             var pivots = await db.Pivots
                 .Find(p => p.LimiteInferior != null)
@@ -57,7 +58,7 @@ namespace AgripeWebWorker.Services
             {
                 try
                 {
-                    await EvaluatePivotAsync(pivot, db, emailService, cancellationToken);
+                    await EvaluatePivotAsync(pivot, db, emailService, pushService, cancellationToken);
                 }
                 catch (Exception ex)
                 {
@@ -70,6 +71,7 @@ namespace AgripeWebWorker.Services
             Pivot pivot,
             agpDBContext db,
             IAlertEmailService emailService,
+            IPushNotificationService pushService,
             CancellationToken cancellationToken)
         {
             var limiteInferior = pivot.LimiteInferior!.Value;
@@ -175,6 +177,22 @@ namespace AgripeWebWorker.Services
             {
                 _logger.LogError(ex,
                     "IrrigationAlertScheduler: email send failed for pivot {PivotId}; alert was still saved",
+                    pivot.Id);
+            }
+
+            try
+            {
+                var pivotName = pivot.Name ?? pivot.Id.ToString();
+                await pushService.SendAsync(
+                    pivot.UserId,
+                    "Alerta de Irrigação",
+                    $"Pivô {pivotName}: umidade projetada {alert.ProjectedValue:F1}% < limite {alert.LimiteInferior:F1}%",
+                    cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex,
+                    "IrrigationAlertScheduler: push notification failed for pivot {PivotId}",
                     pivot.Id);
             }
         }

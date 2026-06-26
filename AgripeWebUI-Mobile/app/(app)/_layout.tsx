@@ -4,6 +4,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '../../stores/authStore';
 import { Colors } from '../../constants/colors';
 import { useIdleTimeout } from '../../hooks/useIdleTimeout';
+import { useEffect } from 'react';
+import { registerForPushNotificationsAsync, registerTokenWithBackend } from '../../services/pushNotificationService';
 
 type IoniconsName = React.ComponentProps<typeof Ionicons>['name'];
 
@@ -15,6 +17,17 @@ export default function AppLayout() {
   const router = useRouter();
   const { logout } = useAuthStore();
   const { resetActivity } = useIdleTimeout();
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const token = await registerForPushNotificationsAsync();
+        if (token) await registerTokenWithBackend(token);
+      } catch {
+        // Non-critical — push registration failure must not impact the app
+      }
+    })();
+  }, []);
 
   const handleLogout = async () => {
     await logout();

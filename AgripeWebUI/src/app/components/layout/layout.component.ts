@@ -11,6 +11,7 @@ import { filter, map, Observable, shareReplay } from 'rxjs';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { IdleTimeoutService } from '../../services/idle-timeout.service';
 import { AlertService } from '../../services/alert.service';
+import { WebPushService } from '../../services/web-push.service';
 import { UserAlert } from '../../models/alert.model';
 
 @Component({
@@ -44,7 +45,8 @@ export class LayoutComponent implements OnInit, OnDestroy {
     private router: Router,
     private breakpointObserver: BreakpointObserver,
     private idleTimeoutService: IdleTimeoutService,
-    public alertService: AlertService
+    public alertService: AlertService,
+    private webPushService: WebPushService
   ) {
     this.isSmallScreen$ = this.breakpointObserver.observe(Breakpoints.Handset)
       .pipe(
@@ -77,6 +79,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
     if (this.showLayout) {
       this.idleTimeoutService.start();
       this.alertService.startPolling();
+      this.webPushService.initialize().catch(() => {});
     }
   }
 

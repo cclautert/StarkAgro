@@ -1,6 +1,7 @@
 using AgripeWebAPI.Domain.Commands.Requests.Anomalies;
 using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Entities;
+using AgripeWebAPI.Models.Interfaces;
 using AgripeWebAPI.Services;
 using MediatR;
 using MongoDB.Driver;
@@ -13,11 +14,16 @@ namespace AgripeWebAPI.Domain.Handlers.Anomalies
 
         private readonly agpDBContext _dbContext;
         private readonly ISensorAnomalyService _anomalyService;
+        private readonly IPushNotificationService _pushService;
 
-        public DetectSensorAnomalyHandler(agpDBContext dbContext, ISensorAnomalyService anomalyService)
+        public DetectSensorAnomalyHandler(
+            agpDBContext dbContext,
+            ISensorAnomalyService anomalyService,
+            IPushNotificationService pushService)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             _anomalyService = anomalyService ?? throw new ArgumentNullException(nameof(anomalyService));
+            _pushService = pushService ?? throw new ArgumentNullException(nameof(pushService));
         }
 
         public async Task<Unit> Handle(DetectSensorAnomalyRequest request, CancellationToken cancellationToken)
@@ -48,7 +54,18 @@ namespace AgripeWebAPI.Domain.Handlers.Anomalies
                 Humidity = request.Humidity
             };
 
-            await _anomalyService.DetectAndSaveAsync(reading, sensor.PivoId, baselineReadings, cancellationToken);
+            var isAnomaly = await _anomalyService.DetectAndSaveAsync(reading, sensor.PivoId, baselineReadings, cancellationToken);
+
+            if (isAnomaly)
+            {
+                var quadrante = sensor.Quadrante.ToString();
+                var code = sensor.Code ?? sensor.Id.ToString();
+                await _pushService.SendAsync(
+                    request.UserId,
+                    "Anomalia de Sensor",
+                    $"Sensor {code} — Quadrante {quadrante}: {request.Humidity:F1}% fora dos limites esperados.",
+                    cancellationToken);
+            }
 
             return Unit.Value;
         }

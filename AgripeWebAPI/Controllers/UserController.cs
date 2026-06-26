@@ -4,6 +4,7 @@ using AgripeWebAPI.Models.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace AgripeWebAPI.Controllers
 {
@@ -62,10 +63,38 @@ namespace AgripeWebAPI.Controllers
             [FromBody] EditUserRequest command,
             CancellationToken cancellationToken
         )
-        { 
+        {
             if (!ModelState.IsValid) return CustomResponse(ModelState);
 
             return await mediator.Send(command, cancellationToken);
+        }
+
+        [Route("pushToken")]
+        [HttpPut]
+        public async Task<ActionResult> RegisterPushToken(
+            [FromServices] IMediator mediator,
+            [FromBody] RegisterExpoPushTokenRequest command,
+            CancellationToken cancellationToken)
+        {
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
+
+            command.UserId = GetCurrentUserId();
+            await mediator.Send(command, cancellationToken);
+            return CustomResponse(null, HttpStatusCode.NoContent);
+        }
+
+        [Route("webPushSubscription")]
+        [HttpPut]
+        public async Task<ActionResult> RegisterWebPushSubscription(
+            [FromServices] IMediator mediator,
+            [FromBody] RegisterWebPushSubscriptionRequest command,
+            CancellationToken cancellationToken)
+        {
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
+
+            command.UserId = GetCurrentUserId();
+            await mediator.Send(command, cancellationToken);
+            return CustomResponse(null, HttpStatusCode.NoContent);
         }
     }
 }
