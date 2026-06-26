@@ -34,10 +34,12 @@ namespace AgripeWebAPI.Tests.Configuration
             var weatherSection = new Mock<IConfigurationSection>();
             var aiSection = new Mock<IConfigurationSection>();
             var mqttDownlinkSection = new Mock<IConfigurationSection>();
+            var vapidSection = new Mock<IConfigurationSection>();
             configMock.Setup(c => c.GetSection("MongoDb")).Returns(mongoSection.Object);
             configMock.Setup(c => c.GetSection("WeatherForecast")).Returns(weatherSection.Object);
             configMock.Setup(c => c.GetSection("AI")).Returns(aiSection.Object);
             configMock.Setup(c => c.GetSection("MqttDownlink")).Returns(mqttDownlinkSection.Object);
+            configMock.Setup(c => c.GetSection("Vapid")).Returns(vapidSection.Object);
 
             // Act
             services.AddApiConfiguration(configMock.Object);

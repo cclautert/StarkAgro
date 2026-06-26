@@ -2,6 +2,7 @@ using AgripeWebAPI.Domain.Commands.Requests.Anomalies;
 using AgripeWebAPI.Domain.Handlers.Anomalies;
 using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Entities;
+using AgripeWebAPI.Models.Interfaces;
 using AgripeWebAPI.Services;
 using AgripeWebAPI.Tests.Helpers;
 using MediatR;
@@ -16,6 +17,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Anomalies
         private readonly Mock<IMongoCollection<Sensor>> _mockSensors;
         private readonly Mock<IMongoCollection<ReadSensor>> _mockReadSensors;
         private readonly Mock<ISensorAnomalyService> _mockAnomalyService;
+        private readonly Mock<IPushNotificationService> _mockPushService;
         private readonly DetectSensorAnomalyHandler _handler;
 
         public DetectSensorAnomalyHandlerTests()
@@ -24,6 +26,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Anomalies
             _mockSensors = new Mock<IMongoCollection<Sensor>>();
             _mockReadSensors = new Mock<IMongoCollection<ReadSensor>>();
             _mockAnomalyService = new Mock<ISensorAnomalyService>();
+            _mockPushService = new Mock<IPushNotificationService>();
 
             _mockDbContext.Setup(db => db.Sensors).Returns(_mockSensors.Object);
             _mockDbContext.Setup(db => db.ReadSensors).Returns(_mockReadSensors.Object);
@@ -36,7 +39,11 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Anomalies
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(false);
 
-            _handler = new DetectSensorAnomalyHandler(_mockDbContext.Object, _mockAnomalyService.Object);
+            _mockPushService
+                .Setup(p => p.SendAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
+
+            _handler = new DetectSensorAnomalyHandler(_mockDbContext.Object, _mockAnomalyService.Object, _mockPushService.Object);
         }
 
         private static List<ReadSensor> BuildBaselineReadings(int count, decimal baseValue = 50m)

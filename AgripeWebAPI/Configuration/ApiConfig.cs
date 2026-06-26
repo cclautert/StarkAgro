@@ -4,6 +4,7 @@ using AgripeWebAPI.Models.Interfaces;
 using AgripeWebAPI.Services.AIInsights;
 using AgripeWebAPI.Services.Forecast;
 using AgripeWebAPI.Services.LoRaWan;
+using AgripeWebAPI.Services.PushNotifications;
 using Microsoft.AspNetCore.RateLimiting;
 using MongoDB.Driver;
 using System.Reflection;
@@ -19,6 +20,7 @@ namespace AgripeWebAPI.Configuration
             services.Configure<WeatherForecastSettings>(configuration.GetSection(WeatherForecastSettings.SectionName));
             services.Configure<AISettings>(configuration.GetSection(AISettings.SectionName));
             services.Configure<MqttDownlinkSettings>(configuration.GetSection(MqttDownlinkSettings.SectionName));
+            services.Configure<VapidSettings>(configuration.GetSection(VapidSettings.SectionName));
             services.AddScoped<agpDBContext>();
             services.AddMemoryCache();
 
@@ -42,6 +44,15 @@ namespace AgripeWebAPI.Configuration
             });
 
             services.AddSingleton<ILoRaWanDownlinkService, MqttDownlinkService>();
+
+            services.AddHttpClient("expo_push", client =>
+            {
+                client.BaseAddress = new Uri("https://exp.host/");
+                client.Timeout = TimeSpan.FromSeconds(10);
+            });
+            services.AddScoped<ExpoPushNotificationService>();
+            services.AddScoped<WebPushNotificationService>();
+            services.AddScoped<IPushNotificationService, CompositePushNotificationService>();
 
             services.AddControllers()
                 .AddJsonOptions(options =>

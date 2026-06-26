@@ -3,6 +3,7 @@ using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Interfaces;
 using AgripeWebAPI.Notifications;
 using AgripeWebAPI.Services;
+using AgripeWebAPI.Services.PushNotifications;
 using AgripeWebWorker.Configuration;
 using AgripeWebWorker.Services;
 
@@ -32,6 +33,17 @@ var builder = Host.CreateDefaultBuilder(args)
 
         // Alert email — no-op until Backend Lead's AlertEmailService issue is merged
         services.AddScoped<IAlertEmailService, NoOpAlertEmailService>();
+
+        // Push notifications
+        services.Configure<VapidSettings>(context.Configuration.GetSection(VapidSettings.SectionName));
+        services.AddHttpClient("expo_push", client =>
+        {
+            client.BaseAddress = new Uri("https://exp.host/");
+            client.Timeout = TimeSpan.FromSeconds(10);
+        });
+        services.AddScoped<ExpoPushNotificationService>();
+        services.AddScoped<WebPushNotificationService>();
+        services.AddScoped<IPushNotificationService, CompositePushNotificationService>();
 
         // Anomaly detection
         services.AddScoped<ISensorAnomalyService, SensorAnomalyService>();
