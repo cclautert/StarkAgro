@@ -73,6 +73,14 @@ namespace AgripeWebWorker.Tests.Services
             return (db, sensors, reads, alerts);
         }
 
+        private static Mock<IPushNotificationService> BuildPushMock()
+        {
+            var push = new Mock<IPushNotificationService>();
+            push.Setup(p => p.SendAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
+            return push;
+        }
+
         private static IrrigationAlertScheduler BuildScheduler()
         {
             var sp = new Mock<IServiceProvider>();
@@ -91,7 +99,7 @@ namespace AgripeWebWorker.Tests.Services
             var pivot = new Pivot { Id = 1, UserId = 10, LimiteInferior = 30m };
             var scheduler = BuildScheduler();
 
-            await scheduler.EvaluatePivotAsync(pivot, db.Object, emailService.Object, CancellationToken.None);
+            await scheduler.EvaluatePivotAsync(pivot, db.Object, emailService.Object, BuildPushMock().Object, CancellationToken.None);
 
             alerts.Verify(a => a.InsertOneAsync(It.IsAny<IrrigationAlert>(), It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()), Times.Never);
         }
@@ -108,7 +116,7 @@ namespace AgripeWebWorker.Tests.Services
             var pivot = new Pivot { Id = 1, UserId = 10, LimiteInferior = 30m };
             var scheduler = BuildScheduler();
 
-            await scheduler.EvaluatePivotAsync(pivot, db.Object, emailService.Object, CancellationToken.None);
+            await scheduler.EvaluatePivotAsync(pivot, db.Object, emailService.Object, BuildPushMock().Object, CancellationToken.None);
 
             alerts.Verify(a => a.InsertOneAsync(It.IsAny<IrrigationAlert>(), It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()), Times.Never);
         }
@@ -135,7 +143,7 @@ namespace AgripeWebWorker.Tests.Services
             var pivot = new Pivot { Id = 1, UserId = 10, LimiteInferior = 30m };
             var scheduler = BuildScheduler();
 
-            await scheduler.EvaluatePivotAsync(pivot, db.Object, emailService.Object, CancellationToken.None);
+            await scheduler.EvaluatePivotAsync(pivot, db.Object, emailService.Object, BuildPushMock().Object, CancellationToken.None);
 
             alerts.Verify(a => a.InsertOneAsync(It.IsAny<IrrigationAlert>(), It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()), Times.Never);
         }
@@ -167,7 +175,7 @@ namespace AgripeWebWorker.Tests.Services
             var pivot = new Pivot { Id = 1, UserId = 10, LimiteInferior = 30m };
             var scheduler = BuildScheduler();
 
-            await scheduler.EvaluatePivotAsync(pivot, db.Object, emailService.Object, CancellationToken.None);
+            await scheduler.EvaluatePivotAsync(pivot, db.Object, emailService.Object, BuildPushMock().Object, CancellationToken.None);
 
             alerts.Verify(a => a.InsertOneAsync(
                 It.Is<IrrigationAlert>(al => al.PivotId == 1 && al.UserId == 10 && al.AlertType == "humidity_low_projected"),
@@ -207,7 +215,7 @@ namespace AgripeWebWorker.Tests.Services
             var pivot = new Pivot { Id = 1, UserId = 10, LimiteInferior = 30m };
             var scheduler = BuildScheduler();
 
-            await scheduler.EvaluatePivotAsync(pivot, db.Object, emailService.Object, CancellationToken.None);
+            await scheduler.EvaluatePivotAsync(pivot, db.Object, emailService.Object, BuildPushMock().Object, CancellationToken.None);
 
             alerts.Verify(a => a.InsertOneAsync(It.IsAny<IrrigationAlert>(), It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()), Times.Never);
             emailService.Verify(e => e.SendIrrigationAlertAsync(
@@ -248,7 +256,7 @@ namespace AgripeWebWorker.Tests.Services
 
             // Must not throw
             var ex = await Record.ExceptionAsync(() =>
-                scheduler.EvaluatePivotAsync(pivot, db.Object, emailService.Object, CancellationToken.None));
+                scheduler.EvaluatePivotAsync(pivot, db.Object, emailService.Object, BuildPushMock().Object, CancellationToken.None));
 
             Assert.Null(ex);
 
