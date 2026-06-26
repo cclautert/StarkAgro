@@ -28,8 +28,8 @@ export interface TrendStats {
 }
 
 export function toDayLabel(date: Date): string {
-  const day = date.getUTCDate().toString().padStart(2, '0');
-  const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
   return `${day}/${month}`;
 }
 
@@ -102,7 +102,7 @@ export function computeDailyData(
     (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
   );
 
-  // Group by UTC calendar day — keep last reading per day
+  // Group by local calendar day — keep last reading per day
   const byDay = new Map<string, ReadEntry>();
   for (const r of sorted) {
     const label = toDayLabel(new Date(r.date));
