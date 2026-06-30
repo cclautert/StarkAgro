@@ -24,7 +24,8 @@ namespace AgripeWebAPI.Services
                 new Claim("id", user.Id.ToString()),
                 new Claim("name", user.Name ?? string.Empty),
                 new Claim("email", user.Email ?? string.Empty),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim("isAdmin", user.IsAdmin.ToString().ToLower())
             };
 
             var secretKey = _configuration["JwtSettings:secretkey"] ?? throw new InvalidOperationException("JWT secret key must be configured.");

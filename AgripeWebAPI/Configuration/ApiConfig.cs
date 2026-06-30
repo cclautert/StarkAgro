@@ -180,6 +180,70 @@ namespace AgripeWebAPI.Configuration
             });
 
             _ = Task.Run(() => SeedMongoDatabase(app.ApplicationServices));
+            _ = Task.Run(() => SeedAdminUserAsync(app.ApplicationServices));
+            _ = Task.Run(() => SeedPlatformAiSettingsAsync(app.ApplicationServices));
+        }
+
+        private static async Task SeedAdminUserAsync(IServiceProvider serviceProvider)
+        {
+            try
+            {
+                using var scope = serviceProvider.CreateScope();
+                var dbContext = scope.ServiceProvider.GetRequiredService<agpDBContext>();
+
+                const string adminEmail = "lautertdev@gmail.com";
+                var existing = await dbContext.Users.Find(u => u.Email == adminEmail).FirstOrDefaultAsync();
+
+                if (existing == null)
+                {
+                    var password = BCrypt.Net.BCrypt.HashPassword("Admin@2024!", BCrypt.Net.BCrypt.GenerateSalt(12));
+                    var adminUser = new User
+                    {
+                        Id = await dbContext.GetNextIdAsync(nameof(User)),
+                        Name = "Administrador",
+                        Email = adminEmail,
+                        Password = password,
+                        Active = true,
+                        IsAdmin = true
+                    };
+                    await dbContext.Users.InsertOneAsync(adminUser);
+                    Console.WriteLine($"[Seed] Usuário admin criado: {adminEmail}");
+                }
+                else if (!existing.IsAdmin)
+                {
+                    var update = Builders<User>.Update.Set(u => u.IsAdmin, true);
+                    await dbContext.Users.UpdateOneAsync(u => u.Id == existing.Id, update);
+                    Console.WriteLine($"[Seed] Usuário {adminEmail} promovido a admin.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[Seed] SeedAdminUserAsync ignorado: {ex.Message}");
+            }
+        }
+
+        private static async Task SeedPlatformAiSettingsAsync(IServiceProvider serviceProvider)
+        {
+            try
+            {
+                using var scope = serviceProvider.CreateScope();
+                var dbContext = scope.ServiceProvider.GetRequiredService<agpDBContext>();
+
+                var exists = await dbContext.PlatformAiSettings.Find(x => x.Id == 1).AnyAsync();
+                if (!exists)
+                {
+                    await dbContext.PlatformAiSettings.InsertOneAsync(new Models.Entities.PlatformAiSettings
+                    {
+                        Id = 1,
+                        ActiveProvider = "gemini"
+                    });
+                    Console.WriteLine("[Seed] Configurações de IA da plataforma criadas.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[Seed] SeedPlatformAiSettingsAsync ignorado: {ex.Message}");
+            }
         }
 
         private static async Task SeedMongoDatabase(IServiceProvider serviceProvider)

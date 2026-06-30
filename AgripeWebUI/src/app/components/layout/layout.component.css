@@ -76,6 +76,22 @@
   color: #60a5fa !important;
 }
 
+/* ── Admin section ── */
+.nav-section {
+  margin-top: 8px;
+  border-top: 1px solid #2d3f5e;
+  padding-top: 6px;
+}
+
+.nav-section-label {
+  padding: 8px 16px 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
 .logout-link {
   margin-top: 8px;
   border-top: 1px solid #2d3f5e;

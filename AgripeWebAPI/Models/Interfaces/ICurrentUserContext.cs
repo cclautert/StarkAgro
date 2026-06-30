@@ -17,6 +17,11 @@ namespace AgripeWebAPI.Models.Interfaces
         /// Indicates whether there is an authenticated user associated with the current request.
         /// </summary>
         bool IsAuthenticated { get; }
+
+        /// <summary>
+        /// Indicates whether the current user has administrator privileges.
+        /// </summary>
+        bool IsAdmin { get; }
     }
 }
 

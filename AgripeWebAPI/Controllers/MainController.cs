@@ -61,10 +61,13 @@ namespace AgripeWebAPI.Controllers
             return 0;
         }
 
+        protected bool GetCurrentUserIsAdmin()
+            => User?.Claims?.FirstOrDefault(c => c.Type == "isAdmin")?.Value == "true";
+
         private string getUserIdFromClaim()
         {
             var userClaim = User?.Claims?.FirstOrDefault(c => c.Type == "id")?.Value;
-            
+
             if (!string.IsNullOrEmpty(userClaim))
             {
                 return userClaim;

@@ -7,6 +7,7 @@ interface DecodedToken {
   id: number;
   name: string;
   email: string;
+  isAdmin: boolean;
 }
 
 @Component({
@@ -60,6 +61,7 @@ export class AuthCallbackComponent implements OnInit {
               if (userId != null) {
                 if (typeof localStorage !== 'undefined') {
                   localStorage.setItem('userId', String(userId));
+                  localStorage.setItem('isAdmin', (decoded.isAdmin === true).toString());
                 }
               }
             } catch {

@@ -1,0 +1,130 @@
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #e2e8f0;
+  margin: 0;
+}
+
+.btn-add {
+  padding: 9px 20px;
+  background-color: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s;
+  white-space: nowrap;
+}
+
+.btn-add:hover { background-color: #1d4ed8; }
+
+.user-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.user-card {
+  background: #1a2540;
+  border: 1px solid #2d3f5e;
+  border-radius: 10px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  transition: border-color 0.15s;
+}
+
+.user-card:hover { border-color: #3a4f75; }
+
+.user-card-info { flex: 1; min-width: 0; }
+
+.user-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  margin-bottom: 2px;
+}
+
+.user-email {
+  font-size: 0.85rem;
+  color: #a0aec0;
+  margin-bottom: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.badges { display: flex; gap: 6px; flex-wrap: wrap; }
+
+.badge {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge-active   { background: rgba(34,197,94,0.15); color: #22c55e; border: 1px solid #22c55e; }
+.badge-inactive { background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid #ef4444; }
+.badge-admin    { background: rgba(37,99,235,0.15); color: #60a5fa; border: 1px solid #3b82f6; }
+
+.user-card-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.btn-action {
+  padding: 7px 14px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.btn-action:hover { opacity: 0.85; }
+
+.btn-edit      { background: #253152; color: #93c5fd; border: 1px solid #3a4f75; }
+.btn-deactivate { background: #78350f; color: #fcd34d; border: 1px solid #d97706; }
+.btn-activate  { background: #14532d; color: #86efac; border: 1px solid #16a34a; }
+.btn-delete    { background: #7f1d1d; color: #fca5a5; border: 1px solid #dc2626; }
+
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: #a0aec0;
+  font-size: 1rem;
+}
+
+.loading-text {
+  color: #a0aec0;
+  text-align: center;
+  padding: 40px;
+}
+
+@media (max-width: 600px) {
+  .user-card { flex-direction: column; align-items: flex-start; }
+  .user-card-actions { width: 100%; }
+  .btn-action { flex: 1; text-align: center; }
+}

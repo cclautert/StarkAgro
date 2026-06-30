@@ -6,6 +6,7 @@ import { SensorFormComponent } from './components/sensor-form/sensor-form.compon
 import { LoginComponent } from './components/login/login.component';
 import { AuthCallbackComponent } from './components/login/auth-callback.component';
 import { AuthGuard } from './guards/auth.guard';
+import { AdminGuard } from './guards/admin.guard';
 import { PivotListComponent } from './components/pivot-list/pivot-list.component';
 import { SensorListComponent } from './components/sensor-list/sensor-list.component';
 import { LayoutComponent } from './components/layout/layout.component';
@@ -13,6 +14,9 @@ import { HomeComponent } from './components/home/home.component';
 import { IrrigationDashboardComponent } from './components/irrigation-dashboard/irrigation-dashboard.component';
 import { PivotConfigComponent } from './components/pivot-config/pivot-config.component';
 import { GlobalConfigComponent } from './components/global-config/global-config.component';
+import { AdminUserListComponent } from './components/admin/user-list/admin-user-list.component';
+import { AdminUserFormComponent } from './components/admin/user-form/admin-user-form.component';
+import { AdminAiSettingsComponent } from './components/admin/ai-settings/admin-ai-settings.component';
 
 export const routes: Routes = [
   // Login routes outside the main layout
@@ -37,6 +41,12 @@ export const routes: Routes = [
       { path: 'sensores', component: SensorListComponent, canActivate: [AuthGuard] },
       { path: 'sensores/novo', component: SensorFormComponent, canActivate: [AuthGuard] },
       { path: 'sensores/editar/:id', component: SensorFormComponent, canActivate: [AuthGuard] },
+
+      // Rotas de administração (apenas super usuário)
+      { path: 'admin/usuarios', component: AdminUserListComponent, canActivate: [AuthGuard, AdminGuard] },
+      { path: 'admin/usuarios/novo', component: AdminUserFormComponent, canActivate: [AuthGuard, AdminGuard] },
+      { path: 'admin/usuarios/editar/:id', component: AdminUserFormComponent, canActivate: [AuthGuard, AdminGuard] },
+      { path: 'admin/ia', component: AdminAiSettingsComponent, canActivate: [AuthGuard, AdminGuard] },
 
       // Default child route inside layout
       { path: '', redirectTo: 'home', pathMatch: 'full' }

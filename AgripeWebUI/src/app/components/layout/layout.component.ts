@@ -33,6 +33,7 @@ import { UserAlert } from '../../models/alert.model';
 export class LayoutComponent implements OnInit, OnDestroy {
   showLayout: boolean = false;
   alertPanelOpen = false;
+  isAdmin = typeof window !== 'undefined' && localStorage.getItem('isAdmin') === 'true';
 
   @ViewChild('sidenav') sidenav!: MatSidenav;
 
@@ -115,6 +116,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
   logout(): void {
     if (typeof window !== 'undefined' && typeof window.localStorage !== 'undefined') {
       localStorage.removeItem('token');
+      localStorage.removeItem('isAdmin');
     }
     this.router.navigate(['/login']);
   }

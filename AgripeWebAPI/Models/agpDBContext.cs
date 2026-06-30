@@ -52,6 +52,7 @@ namespace AgripeWebAPI.Models
             IrrigationAlerts = database.GetCollection<IrrigationAlert>("irrigation_alerts");
             WaterSources = database.GetCollection<WaterSource>("water_sources");
             IrrigationProposals = database.GetCollection<IrrigationProposal>("irrigation_proposals");
+            PlatformAiSettings = database.GetCollection<PlatformAiSettings>("platform_ai_settings");
             _counters = database.GetCollection<CounterDocument>("counters");
 
             _ = Task.Run(async () =>
@@ -95,6 +96,7 @@ namespace AgripeWebAPI.Models
         public virtual IMongoCollection<IrrigationAlert> IrrigationAlerts { get; }
         public virtual IMongoCollection<WaterSource> WaterSources { get; }
         public virtual IMongoCollection<IrrigationProposal> IrrigationProposals { get; }
+        public virtual IMongoCollection<PlatformAiSettings> PlatformAiSettings { get; }
 
         public virtual async Task<int> GetNextIdAsync(string entityName, CancellationToken cancellationToken = default)
         {

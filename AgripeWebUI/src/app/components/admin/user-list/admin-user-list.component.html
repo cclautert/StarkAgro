@@ -1,0 +1,37 @@
+<div class="container">
+  <div class="page-header">
+    <h1 class="page-title">Usuários</h1>
+    <button class="btn-add" [routerLink]="['/admin/usuarios/novo']">+ Novo Usuário</button>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-text">Carregando usuários...</div>
+
+  <ng-container *ngIf="!isLoading">
+    <div *ngIf="users.length === 0" class="empty-state">Nenhum usuário cadastrado.</div>
+
+    <div class="user-grid">
+      <div class="user-card" *ngFor="let user of users">
+        <div class="user-card-info">
+          <div class="user-name">{{ user.name }}</div>
+          <div class="user-email">{{ user.email }}</div>
+          <div class="badges">
+            <span class="badge" [ngClass]="user.active ? 'badge-active' : 'badge-inactive'">
+              {{ user.active ? 'Ativo' : 'Inativo' }}
+            </span>
+            <span class="badge badge-admin" *ngIf="user.isAdmin">Admin</span>
+          </div>
+        </div>
+        <div class="user-card-actions">
+          <button class="btn-action btn-edit" (click)="editarUsuario(user.id)">Editar</button>
+          <button class="btn-action btn-toggle"
+                  [class.btn-activate]="!user.active"
+                  [class.btn-deactivate]="user.active"
+                  (click)="toggleActive(user)">
+            {{ user.active ? 'Desativar' : 'Ativar' }}
+          </button>
+          <button class="btn-action btn-delete" (click)="excluirUsuario(user)">Excluir</button>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>
