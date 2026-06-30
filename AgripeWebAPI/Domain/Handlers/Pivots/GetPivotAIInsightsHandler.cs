@@ -10,7 +10,6 @@ using MediatR;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
-using System.Globalization;
 using System.Text;
 
 namespace AgripeWebAPI.Domain.Handlers.Pivots
@@ -22,7 +21,7 @@ namespace AgripeWebAPI.Domain.Handlers.Pivots
         private const int RecentAnomalies = 10;
 
         private readonly agpDBContext _dbContext;
-        private readonly IAIInsightsService _aiService;
+        private readonly IAIInsightsServiceFactory _serviceFactory;
         private readonly IWeatherForecastService _forecastService;
         private readonly ICurrentUserContext _currentUser;
         private readonly INotifier _notifier;
@@ -32,7 +31,7 @@ namespace AgripeWebAPI.Domain.Handlers.Pivots
 
         public GetPivotAIInsightsHandler(
             agpDBContext dbContext,
-            IAIInsightsService aiService,
+            IAIInsightsServiceFactory serviceFactory,
             IWeatherForecastService forecastService,
             ICurrentUserContext currentUser,
             INotifier notifier,
@@ -41,7 +40,7 @@ namespace AgripeWebAPI.Domain.Handlers.Pivots
             ILogger<GetPivotAIInsightsHandler> logger)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
-            _aiService = aiService ?? throw new ArgumentNullException(nameof(aiService));
+            _serviceFactory = serviceFactory ?? throw new ArgumentNullException(nameof(serviceFactory));
             _forecastService = forecastService ?? throw new ArgumentNullException(nameof(forecastService));
             _currentUser = currentUser ?? throw new ArgumentNullException(nameof(currentUser));
             _notifier = notifier ?? throw new ArgumentNullException(nameof(notifier));
@@ -87,7 +86,28 @@ namespace AgripeWebAPI.Domain.Handlers.Pivots
                 .Find(_ => true)
                 .FirstOrDefaultAsync(cancellationToken);
 
-            if (string.IsNullOrWhiteSpace(aiSettings?.GeminiKey))
+            if (aiSettings == null)
+            {
+                _notifier.Handle(new Notification("Chave da API de IA não configurada. Contate o administrador."));
+                return null;
+            }
+
+            var aiService = _serviceFactory.GetService(aiSettings.ActiveProvider);
+            if (aiService == null)
+            {
+                _notifier.Handle(new Notification($"Provider de IA '{aiSettings.ActiveProvider}' não é suportado."));
+                return null;
+            }
+
+            var (apiKey, modelOverride) = aiSettings.ActiveProvider.ToLower() switch
+            {
+                "gemini"    => (aiSettings.GeminiKey,    aiSettings.GeminiModel),
+                "anthropic" => (aiSettings.AnthropicKey, aiSettings.AnthropicModel),
+                "openai"    => (aiSettings.OpenAiKey,    aiSettings.OpenAiModel),
+                _           => ((string?)null, (string?)null)
+            };
+
+            if (string.IsNullOrWhiteSpace(apiKey))
             {
                 _notifier.Handle(new Notification("Chave da API de IA não configurada. Contate o administrador."));
                 return null;
@@ -171,11 +191,11 @@ namespace AgripeWebAPI.Domain.Handlers.Pivots
                 SensorReadings = sensorReadings,
                 ForecastSummary = forecastSummary,
                 RecentAnomalies = recentAnomalies,
-                ApiKeyOverride = aiSettings.GeminiKey,
-                ModelOverride  = aiSettings.GeminiModel
+                ApiKeyOverride = apiKey,
+                ModelOverride  = modelOverride
             };
 
-            var insights = await _aiService.GetInsightsAsync(context, cancellationToken);
+            var insights = await aiService.GetInsightsAsync(context, cancellationToken);
             if (string.IsNullOrWhiteSpace(insights))
             {
                 _notifier.Handle(new Notification("Assistente IA indisponível. Tente novamente em alguns minutos."));

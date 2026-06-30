@@ -20,6 +20,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Pivots
     {
         private readonly Mock<agpDBContext> _mockDb;
         private readonly Mock<IAIInsightsService> _mockAI;
+        private readonly Mock<IAIInsightsServiceFactory> _mockFactory;
         private readonly Mock<IWeatherForecastService> _mockForecast;
         private readonly Mock<ICurrentUserContext> _mockUser;
         private readonly Mock<IMongoCollection<Pivot>> _mockPivots;
@@ -52,6 +53,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Pivots
         {
             _mockDb = new Mock<agpDBContext>();
             _mockAI = new Mock<IAIInsightsService>();
+            _mockFactory = new Mock<IAIInsightsServiceFactory>();
             _mockForecast = new Mock<IWeatherForecastService>();
             _mockUser = new Mock<ICurrentUserContext>();
             _mockPivots = new Mock<IMongoCollection<Pivot>>();
@@ -73,6 +75,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Pivots
 
             MongoMockHelper.SetupFind(_mockPlatformAiSettings, DefaultAiSettings);
 
+            _mockFactory.Setup(f => f.GetService(It.IsAny<string>())).Returns(_mockAI.Object);
             _mockAI.Setup(ai => ai.GetInsightsAsync(It.IsAny<PivotAIContext>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync("Recomendação: irrigar o pivot.");
 
@@ -86,12 +89,12 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Pivots
 
         private GetPivotAIInsightsHandler CreateHandler() => new(
             _mockDb.Object,
-            _mockAI.Object,
+            _mockFactory.Object,
             _mockForecast.Object,
             _mockUser.Object,
             _notifier,
             _cache,
-            Options.Create(new AISettings { CacheDurationMinutes = 30, Model = "claude-sonnet-4-6", MaxTokens = 1024 }),
+            Options.Create(new AISettings { CacheDurationMinutes = 30, Model = "gemini-1.5-flash", MaxTokens = 1024 }),
             Mock.Of<ILogger<GetPivotAIInsightsHandler>>());
 
         private void SetupHappyPath()
