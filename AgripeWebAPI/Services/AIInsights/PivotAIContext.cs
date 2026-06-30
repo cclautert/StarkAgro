@@ -11,6 +11,7 @@ namespace AgripeWebAPI.Services.AIInsights
         public string? ForecastSummary { get; set; }
         public List<AnomalyContext> RecentAnomalies { get; set; } = [];
         public string? ApiKeyOverride { get; set; }
+        public string? ModelOverride { get; set; }
     }
 
     public class SensorReadingContext

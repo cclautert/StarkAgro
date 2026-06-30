@@ -83,9 +83,13 @@ namespace AgripeWebAPI.Domain.Handlers.Pivots
                 .Find(u => u.Id == pivot.UserId)
                 .FirstOrDefaultAsync(cancellationToken);
 
-            if (string.IsNullOrWhiteSpace(user?.GeminiApiKey))
+            var aiSettings = await _dbContext.PlatformAiSettings
+                .Find(_ => true)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            if (string.IsNullOrWhiteSpace(aiSettings?.GeminiKey))
             {
-                _notifier.Handle(new Notification("Configure sua chave da API Gemini em Configurações para usar esta funcionalidade."));
+                _notifier.Handle(new Notification("Chave da API de IA não configurada. Contate o administrador."));
                 return null;
             }
 
@@ -167,7 +171,8 @@ namespace AgripeWebAPI.Domain.Handlers.Pivots
                 SensorReadings = sensorReadings,
                 ForecastSummary = forecastSummary,
                 RecentAnomalies = recentAnomalies,
-                ApiKeyOverride = user.GeminiApiKey
+                ApiKeyOverride = aiSettings.GeminiKey,
+                ModelOverride  = aiSettings.GeminiModel
             };
 
             var insights = await _aiService.GetInsightsAsync(context, cancellationToken);

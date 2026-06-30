@@ -27,6 +27,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Pivots
         private readonly Mock<IMongoCollection<Sensor>> _mockSensors;
         private readonly Mock<IMongoCollection<ReadSensor>> _mockReadSensors;
         private readonly Mock<IMongoCollection<SensorAnomaly>> _mockAnomalies;
+        private readonly Mock<IMongoCollection<PlatformAiSettings>> _mockPlatformAiSettings;
         private readonly MockNotifier _notifier;
         private readonly IMemoryCache _cache;
         private readonly GetPivotAIInsightsHandler _handler;
@@ -39,8 +40,12 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Pivots
 
         private static readonly User DefaultUser = new()
         {
-            Id = 42, Name = "Fazendeiro", Email = "test@test.com", Password = "x",
-            GeminiApiKey = "test-gemini-key"
+            Id = 42, Name = "Fazendeiro", Email = "test@test.com", Password = "x"
+        };
+
+        private static readonly PlatformAiSettings DefaultAiSettings = new()
+        {
+            Id = 1, GeminiKey = "global-key", GeminiModel = "gemini-1.5-flash", ActiveProvider = "gemini"
         };
 
         public GetPivotAIInsightsHandlerTests()
@@ -54,6 +59,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Pivots
             _mockSensors = new Mock<IMongoCollection<Sensor>>();
             _mockReadSensors = new Mock<IMongoCollection<ReadSensor>>();
             _mockAnomalies = new Mock<IMongoCollection<SensorAnomaly>>();
+            _mockPlatformAiSettings = new Mock<IMongoCollection<PlatformAiSettings>>();
             _notifier = new MockNotifier();
             _cache = new MemoryCache(Options.Create(new MemoryCacheOptions()));
 
@@ -62,7 +68,10 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Pivots
             _mockDb.Setup(db => db.Sensors).Returns(_mockSensors.Object);
             _mockDb.Setup(db => db.ReadSensors).Returns(_mockReadSensors.Object);
             _mockDb.Setup(db => db.SensorAnomalies).Returns(_mockAnomalies.Object);
+            _mockDb.Setup(db => db.PlatformAiSettings).Returns(_mockPlatformAiSettings.Object);
             _mockUser.Setup(u => u.UserId).Returns(42);
+
+            MongoMockHelper.SetupFind(_mockPlatformAiSettings, DefaultAiSettings);
 
             _mockAI.Setup(ai => ai.GetInsightsAsync(It.IsAny<PivotAIContext>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync("Recomendação: irrigar o pivot.");
@@ -342,11 +351,11 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Pivots
         }
 
         [Fact]
-        public async Task Handle_UserHasNoGeminiApiKey_ShouldNotifyAndReturnNull()
+        public async Task Handle_GlobalAiSettingsHaveNoKey_ShouldNotifyAndReturnNull()
         {
-            var userNoKey = new User { Id = 42, Name = "F", Email = "f@f.com", Password = "x" };
             MongoMockHelper.SetupFind(_mockPivots, DefaultPivot);
-            MongoMockHelper.SetupFind(_mockUsers, userNoKey);
+            MongoMockHelper.SetupFind(_mockUsers, DefaultUser);
+            MongoMockHelper.SetupFind<PlatformAiSettings>(_mockPlatformAiSettings, null);
 
             var result = await _handler.Handle(new GetPivotAIInsightsRequest { PivotId = 1, UserId = 42 }, CancellationToken.None);
 
@@ -359,7 +368,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Pivots
         public async Task Handle_PivotLimitsNull_ShouldFallbackToUserLimits()
         {
             var pivotNoLimits = new Pivot { Id = 1, UserId = 42, Name = "P", LimiteInferior = null, LimiteSuperior = null };
-            var userWithLimits = new User { Id = 42, Name = "F", Email = "f@f.com", Password = "x", LimiteInferior = 20m, LimiteSuperior = 80m, GeminiApiKey = "test-gemini-key" };
+            var userWithLimits = new User { Id = 42, Name = "F", Email = "f@f.com", Password = "x", LimiteInferior = 20m, LimiteSuperior = 80m };
             MongoMockHelper.SetupFind(_mockPivots, pivotNoLimits);
             MongoMockHelper.SetupFind(_mockUsers, userWithLimits);
             MongoMockHelper.SetupFindList(_mockSensors, new List<Sensor>());

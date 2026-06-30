@@ -29,7 +29,6 @@ namespace AgripeWebAPI.Domain.Handlers.Admin
                 LimiteInferior = u.LimiteInferior,
                 LimiteSuperior = u.LimiteSuperior,
                 RainThresholdMm = u.RainThresholdMm,
-                GeminiApiKey = u.GeminiApiKey,
                 UplinkIntervalSeconds = u.UplinkIntervalSeconds
             }).ToList();
         }

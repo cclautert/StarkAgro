@@ -30,7 +30,8 @@ namespace AgripeWebAPI.Services.AIInsights
 
         public async Task<string?> GetInsightsAsync(PivotAIContext context, CancellationToken cancellationToken)
         {
-            var endpoint = $"v1beta/models/{_settings.Model}:generateContent?key={context.ApiKeyOverride}";
+            var model = context.ModelOverride ?? _settings.Model;
+            var endpoint = $"v1beta/models/{model}:generateContent?key={context.ApiKeyOverride}";
 
             var requestBody = new
             {

@@ -27,7 +27,6 @@ namespace AgripeWebAPI.Domain.Handlers.Users
             user.LimiteInferior = request.LimiteInferior;
             user.LimiteSuperior = request.LimiteSuperior;
             user.RainThresholdMm = request.RainThresholdMm;
-            user.GeminiApiKey = request.GeminiApiKey?.Trim();
             if (request.UplinkIntervalSeconds.HasValue)
                 user.UplinkIntervalSeconds = request.UplinkIntervalSeconds.Value;
 
