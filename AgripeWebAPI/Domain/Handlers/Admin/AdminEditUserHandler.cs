@@ -32,8 +32,8 @@ namespace AgripeWebAPI.Domain.Handlers.Admin
 
             var emailConflict = await _dbContext.Users
                 .Find(u => u.Email == request.Email && u.Id != request.Id)
-                .AnyAsync(cancellationToken);
-            if (emailConflict)
+                .FirstOrDefaultAsync(cancellationToken);
+            if (emailConflict != null)
             {
                 _notifier.Handle(new Notification("Email já em uso por outro usuário."));
                 return null!;
