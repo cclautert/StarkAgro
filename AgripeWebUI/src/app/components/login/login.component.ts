@@ -61,7 +61,7 @@ export class LoginComponent {
             // Verifique com seu back-end qual é o nome correto da "claim".
             const userId = decodedToken.id;
             localStorage.setItem('userId', userId.toString());
-            localStorage.setItem('isAdmin', (decodedToken.isAdmin === true).toString());
+            localStorage.setItem('isAdmin', (String(decodedToken.isAdmin) === 'true').toString());
 
             // 5. NAVEGUE PARA A HOME
             this.router.navigate(['/home']);
