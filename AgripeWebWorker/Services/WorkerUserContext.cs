@@ -10,5 +10,6 @@ namespace AgripeWebWorker.Services
     {
         public int? UserId => null;
         public bool IsAuthenticated => false;
+        public bool IsAdmin => false;
     }
 }
