@@ -790,6 +790,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   get trendDirection(): { label: string; cssClass: string } {
     if (!this.trendStats) return { label: 'Sem dados', cssClass: 'trend-badge-stable' };
     const s = this.trendStats.slope;
+    const last = this.trendStats.last;
+    // Sensor saturado: leituras presas no máximo/mínimo físico tornam o slope enganoso
+    if (s > 0 && last >= 95) return { label: 'Estavel', cssClass: 'trend-badge-stable' };
+    if (s < 0 && last <= 5)  return { label: 'Estavel', cssClass: 'trend-badge-stable' };
     if (Math.abs(s) < 0.3) return { label: 'Estavel', cssClass: 'trend-badge-stable' };
     if (s > 0) return { label: 'Subindo', cssClass: 'trend-badge-rising' };
     return { label: 'Caindo', cssClass: 'trend-badge-falling' };
@@ -804,6 +808,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   get trendTileBorderColor(): string {
     if (!this.trendStats) return '#3b82f6';
     const s = this.trendStats.slope;
+    const last = this.trendStats.last;
+    if (s > 0 && last >= 95) return '#3b82f6';
+    if (s < 0 && last <= 5)  return '#3b82f6';
     if (Math.abs(s) < 0.3) return '#3b82f6';
     return s > 0 ? '#22c55e' : '#ef4444';
   }
