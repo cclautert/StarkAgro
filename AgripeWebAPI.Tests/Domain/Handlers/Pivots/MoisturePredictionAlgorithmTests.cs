@@ -22,7 +22,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Pivots
         }
 
         [Fact]
-        public void FitWeightedLinear_ConstantData_ZeroSlope()
+        public void FitWeightedLinear_ConstantData_ZeroSlope_HighConfidence()
         {
             var times = new List<double> { 0, 10, 20, 30, 40 };
             var values = new List<double> { 50, 50, 50, 50, 50 };
@@ -32,7 +32,37 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Pivots
             Assert.Equal(0.0, slope, precision: 6);
             Assert.Equal(50.0, intercept, precision: 3);
             Assert.True(rmse < 0.001, $"RMSE for constant should be ~0, was {rmse}");
-            Assert.Equal(0.0, r2, precision: 6);
+            // R² is undefined (0/0) for zero-variance data; a tight/stable signal like this
+            // one should report high confidence, not the degenerate 0 the raw formula gives.
+            Assert.True(r2 > 0.99, $"Confidence for a tight, flat signal should be near 1, was {r2}");
+        }
+
+        [Fact]
+        public void FitWeightedLinear_StableWithRealisticSensorJitter_HighConfidence()
+        {
+            // Realistic case: humidity hovering around ~99.9% with small sensor jitter, not
+            // perfectly identical values. Classic R² collapses here (no real trend to explain
+            // the jitter), which used to report near-zero confidence for the most predictable
+            // case (stable, saturated reading) — the reported production bug.
+            var times = new List<double> { 0, 10, 20, 30, 40 };
+            var values = new List<double> { 99.8, 99.9, 100.0, 99.7, 99.9 };
+
+            var (_, _, _, r2) = MoisturePredictionAlgorithm.FitWeightedLinear(times, values);
+
+            Assert.True(r2 > 0.9, $"Confidence for a stable signal with small jitter should be high, was {r2}");
+        }
+
+        [Fact]
+        public void FitWeightedLinear_LargeSwingsRelativeToScale_LowConfidence()
+        {
+            // Genuinely noisy/oscillating data — large swings relative to scale, no stable
+            // trend and no tight clustering either. Confidence should stay low.
+            var times = new List<double> { 0, 10, 20, 30, 40 };
+            var values = new List<double> { 50, 65, 35, 65, 35 };
+
+            var (_, _, _, r2) = MoisturePredictionAlgorithm.FitWeightedLinear(times, values);
+
+            Assert.True(r2 < 0.5, $"Confidence for a noisy signal should be low, was {r2}");
         }
 
         [Fact]
@@ -118,13 +148,25 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Pivots
             Assert.True(hourly < 1, "Hourly rate should be < 1 %/hour for realistic ET0");
         }
 
+        // ── RainToHourlyMoistureRate ────────────────────────────────────────────
+
+        [Fact]
+        public void RainToHourlyMoistureRate_PositiveInput_ReturnsSmallPositiveRate()
+        {
+            double daily = 10.0; // mm/day forecast precipitation
+            double hourly = MoisturePredictionAlgorithm.RainToHourlyMoistureRate(daily);
+
+            Assert.True(hourly > 0, "Hourly rain rate must be positive");
+            Assert.True(hourly < 1, "Hourly rain rate should be < 1 %/hour for realistic precipitation");
+        }
+
         // ── Project ──────────────────────────────────────────────────────────────
 
         [Fact]
         public void Project_NegativeSlope_MoistureDecreasesOverTime()
         {
             var from = new DateTime(2026, 5, 30, 0, 0, 0, DateTimeKind.Utc);
-            var result = MoisturePredictionAlgorithm.Project(60.0, -0.3, 0, 2.0, from, hours: 72);
+            var result = MoisturePredictionAlgorithm.Project(60.0, -0.3, Array.Empty<double>(), 2.0, from, hours: 72);
 
             Assert.Equal(72, result.Count);
             Assert.True(result[71].Moisture < result[0].Moisture, "Moisture should decrease with negative slope");
@@ -137,7 +179,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Pivots
         {
             var from = new DateTime(2026, 5, 30, 0, 0, 0, DateTimeKind.Utc);
             double rmse = 3.0;
-            var result = MoisturePredictionAlgorithm.Project(50.0, 0, 0, rmse, from, hours: 1);
+            var result = MoisturePredictionAlgorithm.Project(50.0, 0, Array.Empty<double>(), rmse, from, hours: 1);
 
             var (_, moisture, min, max) = result[0];
             double expectedBand = 1.5 * rmse;
@@ -149,11 +191,34 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Pivots
         public void Project_ETComponentReducesMoistureMore()
         {
             var from = new DateTime(2026, 5, 30, 0, 0, 0, DateTimeKind.Utc);
-            var withoutET = MoisturePredictionAlgorithm.Project(60.0, -0.1, 0, 1.0, from, hours: 24);
-            var withET = MoisturePredictionAlgorithm.Project(60.0, -0.1, 0.05, 1.0, from, hours: 24);
+            var withoutET = MoisturePredictionAlgorithm.Project(60.0, -0.1, new[] { 0.0 }, 1.0, from, hours: 24);
+            var withET = MoisturePredictionAlgorithm.Project(60.0, -0.1, new[] { 0.05 }, 1.0, from, hours: 24);
 
             Assert.True(withET[23].Moisture < withoutET[23].Moisture,
                 "ET drying should result in lower projected moisture");
+        }
+
+        [Fact]
+        public void Project_RainOffsetsDryingOnThatDay()
+        {
+            var from = new DateTime(2026, 5, 30, 0, 0, 0, DateTimeKind.Utc);
+            // Day 0: pure ET drying. Day 1: rain more than offsets ET, net rate goes negative
+            // (moisture gain). Day 2: back to pure ET drying.
+            var dailyNetDryingRate = new[] { 0.1, -0.05, 0.1 };
+
+            var result = MoisturePredictionAlgorithm.Project(60.0, 0, dailyNetDryingRate, 1.0, from, hours: 72);
+
+            Assert.True(result[23].Moisture < result[0].Moisture, "Day 0 (pure ET) should still dry out");
+            Assert.True(result[47].Moisture > result[23].Moisture, "Day 1 (rain) should gain moisture back");
+        }
+
+        [Fact]
+        public void Project_EmptyDailyRates_NoDryingComponent()
+        {
+            var from = new DateTime(2026, 5, 30, 0, 0, 0, DateTimeKind.Utc);
+            var result = MoisturePredictionAlgorithm.Project(60.0, 0, Array.Empty<double>(), 1.0, from, hours: 48);
+
+            Assert.All(result, p => Assert.Equal(60.0, p.Moisture, precision: 6));
         }
     }
 }

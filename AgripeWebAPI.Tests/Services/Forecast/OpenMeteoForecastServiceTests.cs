@@ -74,27 +74,38 @@ namespace AgripeWebAPI.Tests.Services.Forecast
         }
 
         [Fact]
-        public async Task GetAgricultureDataAsync_ParsesTemperatureAndRadiation()
+        public async Task GetAgricultureDataAsync_ParsesTemperatureRadiationAndPrecipitationPerDay()
         {
             var handler = new MockHttpMessageHandler();
             handler.EnqueueResponse(HttpStatusCode.OK, """
             {
               "daily": {
-                "temperature_2m_max": [32.5],
-                "temperature_2m_min": [18.2],
-                "shortwave_radiation_sum": [22.1]
+                "time": ["2026-04-28","2026-04-29","2026-04-30"],
+                "temperature_2m_max": [32.5, 28.0, 29.1],
+                "temperature_2m_min": [18.2, 17.5, 17.9],
+                "shortwave_radiation_sum": [22.1, 15.0, 18.4],
+                "precipitation_sum": [0.0, 20.5, 3.2],
+                "precipitation_probability_max": [10, 90, 40]
               }
             }
             """);
 
             var sut = BuildService(handler);
 
-            var result = await sut.GetAgricultureDataAsync(-27.59, -48.55, 1, CancellationToken.None);
+            var result = await sut.GetAgricultureDataAsync(-27.59, -48.55, 3, CancellationToken.None);
 
             Assert.NotNull(result);
-            Assert.Equal(32.5, result!.TempMax, 1);
-            Assert.Equal(18.2, result.TempMin, 1);
-            Assert.Equal(22.1, result.ShortwaveRadiationMJm2, 1);
+            Assert.Equal(3, result!.Count);
+
+            Assert.Equal(new DateOnly(2026, 4, 28), result[0].Date);
+            Assert.Equal(32.5, result[0].TempMax, 1);
+            Assert.Equal(18.2, result[0].TempMin, 1);
+            Assert.Equal(22.1, result[0].ShortwaveRadiationMJm2, 1);
+            Assert.Equal(0.0, result[0].PrecipitationMm, 1);
+            Assert.Equal(10, result[0].PrecipitationProbabilityPct);
+
+            Assert.Equal(20.5, result[1].PrecipitationMm, 1);
+            Assert.Equal(90, result[1].PrecipitationProbabilityPct);
         }
 
         [Fact]

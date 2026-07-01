@@ -1,4 +1,5 @@
 using AgripeWebAPI.Domain.Commands.Requests.Pivots;
+using AgripeWebAPI.Domain.Commands.Responses.Pivots;
 using AgripeWebAPI.Domain.Handlers.Pivots;
 using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Entities;
@@ -242,7 +243,10 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Pivots
 
             var agri = new Mock<IAgricultureWeatherService>();
             agri.Setup(a => a.GetAgricultureDataAsync(-29.7, -53.7, It.IsAny<int>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new AgricultureWeatherData(30, 18, 20));
+                .ReturnsAsync(new List<DailyAgricultureData>
+                {
+                    new(DateOnly.FromDateTime(DateTime.UtcNow), 30, 18, 20, 0, 0)
+                });
 
             var handler = BuildHandler(db.Object, agri.Object);
 
@@ -254,6 +258,62 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Pivots
             Assert.Equal(readings.Count, result.DataPointsUsed);
             agri.Verify(a => a.GetAgricultureDataAsync(
                 -29.7, -53.7, It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task Handle_HeavyRainForecast_PushesCriticalTimeLaterThanNoRain()
+        {
+            async Task<MoisturePredictionResponse?> RunWithRain(IReadOnlyList<DailyAgricultureData> forecast)
+            {
+                var (db, pivots, sensors, reads) = BuildDbMocks();
+                MongoMockHelper.SetupFind(pivots, new Pivot
+                {
+                    Id = 1, UserId = OwnerUserId, Name = "P1",
+                    LimiteInferior = 30m, LimiteSuperior = 75m,
+                    Latitude = -29.7, Longitude = -53.7
+                });
+                MongoMockHelper.SetupFindList(sensors, new List<Sensor>
+                {
+                    new() { Id = 10, PivoId = 1, UserId = OwnerUserId, Quadrante = 1 }
+                });
+                var readings = GenerateHourlyReadings(10, OwnerUserId, count: 48,
+                    startMoisture: 60, slopePerHour: -0.3, totalSpanHours: 47);
+                MongoMockHelper.SetupFindList(reads, readings);
+
+                var agri = new Mock<IAgricultureWeatherService>();
+                agri.Setup(a => a.GetAgricultureDataAsync(-29.7, -53.7, It.IsAny<int>(), It.IsAny<CancellationToken>()))
+                    .ReturnsAsync(forecast);
+
+                var handler = BuildHandler(db.Object, agri.Object);
+                return await handler.Handle(
+                    new GetMoisturePredictionRequest { PivotId = 1, UserId = OwnerUserId }, default);
+            }
+
+            // LimiteInferior = 30: with the -0.3%/h historical decline plus a small ET drying
+            // component, the projection crosses 30% within 72h when there's no rain.
+            var today = DateOnly.FromDateTime(DateTime.UtcNow);
+            var noRain = new List<DailyAgricultureData>
+            {
+                new(today, 30, 18, 20, 0, 0),
+                new(today.AddDays(1), 30, 18, 20, 0, 0),
+                new(today.AddDays(2), 30, 18, 20, 0, 0)
+            };
+            // Heavy rain every day more than offsets both the ET drying and the historical
+            // decline trend, so moisture should never cross the limit within 72h.
+            var heavyRain = new List<DailyAgricultureData>
+            {
+                new(today, 30, 18, 20, 40, 90),
+                new(today.AddDays(1), 30, 18, 20, 40, 90),
+                new(today.AddDays(2), 30, 18, 20, 40, 90)
+            };
+
+            var withoutRain = await RunWithRain(noRain);
+            var withRain = await RunWithRain(heavyRain);
+
+            Assert.NotNull(withoutRain);
+            Assert.NotNull(withRain);
+            Assert.NotNull(withoutRain!.EstimatedCriticalAt);
+            Assert.Null(withRain!.EstimatedCriticalAt);
         }
 
         // ── EstimatedCriticalAt ───────────────────────────────────────────────

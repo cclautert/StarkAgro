@@ -106,8 +106,8 @@ namespace AgripeWebAPI.Domain.Handlers.Pivots
             double lastMoisture = intercept + histSlope * times[times.Count - 1];
             var projectionStart = hourlyAverages[hourlyAverages.Count - 1].Hour;
 
-            // ET0 component — only when the pivot has coordinates.
-            double etHourlyRate = 0;
+            // ET0/rain component — only when the pivot has coordinates.
+            var dailyNetDryingRate = new List<double>();
             bool hasCoordinates = pivot.Latitude.HasValue && pivot.Longitude.HasValue;
 
             if (hasCoordinates)
@@ -119,23 +119,28 @@ namespace AgripeWebAPI.Domain.Handlers.Pivots
 
                     if (agri is not null)
                     {
-                        double et0Daily = MoisturePredictionAlgorithm.ET0DailyMm(
-                            agri.TempMax, agri.TempMin, agri.ShortwaveRadiationMJm2);
-                        etHourlyRate = MoisturePredictionAlgorithm.ET0ToHourlyMoistureRate(et0Daily);
+                        foreach (var day in agri)
+                        {
+                            double et0Daily = MoisturePredictionAlgorithm.ET0DailyMm(
+                                day.TempMax, day.TempMin, day.ShortwaveRadiationMJm2);
+                            double etRate = MoisturePredictionAlgorithm.ET0ToHourlyMoistureRate(et0Daily);
+                            double rainRate = MoisturePredictionAlgorithm.RainToHourlyMoistureRate(day.PrecipitationMm);
+                            dailyNetDryingRate.Add(etRate - rainRate);
 
-                        _logger.LogInformation(
-                            "Pivot {PivotId}: ET0={Et0:.2f} mm/day, hourly moisture rate={Rate:.4f}%/h",
-                            pivot.Id, et0Daily, etHourlyRate);
+                            _logger.LogInformation(
+                                "Pivot {PivotId}: {Date} ET0={Et0:.2f}mm/day rain={Rain:.2f}mm net={Net:.4f}%/h",
+                                pivot.Id, day.Date, et0Daily, day.PrecipitationMm, etRate - rainRate);
+                        }
                     }
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogWarning(ex, "ET0 data fetch failed for pivot {PivotId}; continuing without ET component", pivot.Id);
+                    _logger.LogWarning(ex, "ET0/rain data fetch failed for pivot {PivotId}; continuing without that component", pivot.Id);
                 }
             }
 
             var projected = MoisturePredictionAlgorithm.Project(
-                lastMoisture, histSlope, etHourlyRate, rmse, projectionStart, ProjectionHours);
+                lastMoisture, histSlope, dailyNetDryingRate, rmse, projectionStart, ProjectionHours);
 
             var limiteInferior = (double)(pivot.LimiteInferior ?? 25m);
 

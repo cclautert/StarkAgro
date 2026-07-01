@@ -5,8 +5,14 @@ using System.Text.Json;
 
 namespace AgripeWebAPI.Services.Forecast
 {
-    /// <summary>Temperature + solar radiation snapshot used for ET0 calculation.</summary>
-    public record AgricultureWeatherData(double TempMax, double TempMin, double ShortwaveRadiationMJm2);
+    /// <summary>Daily temperature, solar radiation and precipitation used for ET0/moisture projection.</summary>
+    public record DailyAgricultureData(
+        DateOnly Date,
+        double TempMax,
+        double TempMin,
+        double ShortwaveRadiationMJm2,
+        double PrecipitationMm,
+        double? PrecipitationProbabilityPct);
 
     public class OpenMeteoForecastService : IAgricultureWeatherService
     {
@@ -89,16 +95,18 @@ namespace AgripeWebAPI.Services.Forecast
         }
 
         /// <summary>
-        /// Fetches daily temperature max/min and shortwave radiation for the next
-        /// <paramref name="days"/> days. Used by the moisture-prediction algorithm to
-        /// compute ET0 (Hargreaves simplified). Returns null when the request fails.
+        /// Fetches daily temperature max/min, shortwave radiation and precipitation for the
+        /// next <paramref name="days"/> days — one entry per day, oldest first. Used by the
+        /// moisture-prediction algorithm to compute ET0 (Hargreaves simplified) and the rain
+        /// offset per projected day. Returns null when the request fails.
         /// </summary>
-        public async Task<AgricultureWeatherData?> GetAgricultureDataAsync(
+        public async Task<IReadOnlyList<DailyAgricultureData>?> GetAgricultureDataAsync(
             double latitude, double longitude, int days, CancellationToken cancellationToken)
         {
             var path = $"v1/forecast?latitude={latitude.ToString(CultureInfo.InvariantCulture)}" +
                        $"&longitude={longitude.ToString(CultureInfo.InvariantCulture)}" +
-                       $"&daily=temperature_2m_max,temperature_2m_min,shortwave_radiation_sum" +
+                       $"&daily=temperature_2m_max,temperature_2m_min,shortwave_radiation_sum," +
+                       $"precipitation_sum,precipitation_probability_max" +
                        $"&forecast_days={days}&timezone=UTC";
 
             try
@@ -112,18 +120,43 @@ namespace AgripeWebAPI.Services.Forecast
                 if (!doc.RootElement.TryGetProperty("daily", out var daily))
                     return null;
 
-                static double FirstNumericOrZero(JsonElement el, string key)
+                static double NumericAtOrZero(JsonElement el, string key, int index)
                 {
                     if (!el.TryGetProperty(key, out var arr)) return 0;
-                    var first = arr.EnumerateArray().FirstOrDefault();
-                    return first.ValueKind == JsonValueKind.Number ? first.GetDouble() : 0;
+                    var item = arr.EnumerateArray().ElementAtOrDefault(index);
+                    return item.ValueKind == JsonValueKind.Number ? item.GetDouble() : 0;
                 }
 
-                var tMax = FirstNumericOrZero(daily, "temperature_2m_max");
-                var tMin = FirstNumericOrZero(daily, "temperature_2m_min");
-                var rad = FirstNumericOrZero(daily, "shortwave_radiation_sum");
+                static double? NullableNumericAt(JsonElement el, string key, int index)
+                {
+                    if (!el.TryGetProperty(key, out var arr)) return null;
+                    var item = arr.EnumerateArray().ElementAtOrDefault(index);
+                    return item.ValueKind == JsonValueKind.Number ? item.GetDouble() : null;
+                }
 
-                return new AgricultureWeatherData(tMax, tMin, rad);
+                var times = daily.TryGetProperty("time", out var timeEl)
+                    ? timeEl.EnumerateArray().Select(e => e.GetString()).ToList()
+                    : new List<string?>();
+
+                var result = new List<DailyAgricultureData>(times.Count);
+                for (int i = 0; i < times.Count; i++)
+                {
+                    if (string.IsNullOrEmpty(times[i]) ||
+                        !DateOnly.TryParse(times[i], CultureInfo.InvariantCulture, out var date))
+                    {
+                        continue;
+                    }
+
+                    var tMax = NumericAtOrZero(daily, "temperature_2m_max", i);
+                    var tMin = NumericAtOrZero(daily, "temperature_2m_min", i);
+                    var rad = NumericAtOrZero(daily, "shortwave_radiation_sum", i);
+                    var precip = NumericAtOrZero(daily, "precipitation_sum", i);
+                    var precipProb = NullableNumericAt(daily, "precipitation_probability_max", i);
+
+                    result.Add(new DailyAgricultureData(date, tMax, tMin, rad, precip, precipProb));
+                }
+
+                return result;
             }
             catch (Exception ex)
             {
