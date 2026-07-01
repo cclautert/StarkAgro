@@ -113,5 +113,70 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Anomalies
                 It.IsAny<IReadOnlyList<ReadSensor>>(),
                 It.IsAny<CancellationToken>()), Times.Once);
         }
+
+        // ── Stale baseline fallback (self-lock fix) ─────────────────────────────
+
+        [Fact]
+        public async Task Handle_StaleNonAnomalousBaseline_FallsBackToRawReadings()
+        {
+            var sensor = new Sensor { Id = 1, PivoId = 5, UserId = 10 };
+            MongoMockHelper.SetupFind(_mockSensors, sensor);
+
+            var staleBaseline = Enumerable.Range(0, 20).Select(i => new ReadSensor
+            {
+                Id = 2000 + i, SensorId = 1, UserId = 10, Humidity = 50m,
+                Date = DateTime.UtcNow.AddHours(-30).AddMinutes(-i)
+            }).ToList();
+            var rawFallback = Enumerable.Range(0, 20).Select(i => new ReadSensor
+            {
+                Id = 3000 + i, SensorId = 1, UserId = 10, Humidity = 90m,
+                Date = DateTime.UtcNow.AddMinutes(-i)
+            }).ToList();
+
+            _mockReadSensors.SetupSequence(c => c.FindAsync(
+                    It.IsAny<FilterDefinition<ReadSensor>>(),
+                    It.IsAny<FindOptions<ReadSensor, ReadSensor>>(),
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(MongoMockHelper.CreateMockCursor(staleBaseline).Object)
+                .ReturnsAsync(MongoMockHelper.CreateMockCursor(rawFallback).Object);
+
+            var request = new DetectSensorAnomalyRequest
+            {
+                ReadSensorId = 999, SensorId = 1, UserId = 10, Humidity = 91m
+            };
+
+            await _handler.Handle(request, CancellationToken.None);
+
+            _mockAnomalyService.Verify(s => s.DetectAndSaveAsync(
+                It.IsAny<ReadSensor>(),
+                5,
+                It.Is<IReadOnlyList<ReadSensor>>(list => list.Count == rawFallback.Count && list[0].Id == rawFallback[0].Id),
+                It.IsAny<CancellationToken>()), Times.Once);
+
+            _mockReadSensors.Verify(c => c.FindAsync(
+                It.IsAny<FilterDefinition<ReadSensor>>(),
+                It.IsAny<FindOptions<ReadSensor, ReadSensor>>(),
+                It.IsAny<CancellationToken>()), Times.Exactly(2));
+        }
+
+        [Fact]
+        public async Task Handle_FreshNonAnomalousBaseline_DoesNotFallBack()
+        {
+            var sensor = new Sensor { Id = 1, PivoId = 5, UserId = 10 };
+            MongoMockHelper.SetupFind(_mockSensors, sensor);
+            MongoMockHelper.SetupFindList(_mockReadSensors, BuildBaselineReadings(20));
+
+            var request = new DetectSensorAnomalyRequest
+            {
+                ReadSensorId = 999, SensorId = 1, UserId = 10, Humidity = 50m
+            };
+
+            await _handler.Handle(request, CancellationToken.None);
+
+            _mockReadSensors.Verify(c => c.FindAsync(
+                It.IsAny<FilterDefinition<ReadSensor>>(),
+                It.IsAny<FindOptions<ReadSensor, ReadSensor>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
     }
 }

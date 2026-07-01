@@ -335,8 +335,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
       error: (err: HttpErrorResponse) => {
         this.moisturePrediction = null;
         this.predictionLoading = false;
-        if (err.status === 422 || err.status === 400) {
-          this.predictionError = 'Histórico insuficiente para predição (mínimo 24h de leituras).';
+        const serverMsg = err.error?.errors?.[0];
+        if (serverMsg) {
+          this.predictionError = serverMsg;
         } else if (err.status !== 404) {
           this.predictionError = 'Predição temporariamente indisponível.';
         }

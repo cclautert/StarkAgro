@@ -12,6 +12,11 @@ namespace AgripeWebAPI.Domain.Handlers.Anomalies
     {
         private const int WindowSize = 50;
 
+        // If the freshest non-anomalous reading is already older than this, the stream has
+        // been flagging every new reading against a stale baseline for a while — none of them
+        // can ever refresh it, a self-perpetuating lock. See fallback query below.
+        private static readonly TimeSpan BaselineStaleAfter = TimeSpan.FromHours(24);
+
         private readonly agpDBContext _dbContext;
         private readonly ISensorAnomalyService _anomalyService;
         private readonly IPushNotificationService _pushService;
@@ -45,6 +50,23 @@ namespace AgripeWebAPI.Domain.Handlers.Anomalies
                 .SortByDescending(r => r.Date)
                 .Limit(WindowSize)
                 .ToListAsync(cancellationToken);
+
+            // Break the self-lock: if even the freshest non-anomalous reading is stale, fall
+            // back to the raw recent readings (regardless of anomaly flag) so the baseline can
+            // catch up with a sustained shift instead of staying frozen forever.
+            var isStale = baselineReadings.Count == 0 || DateTime.UtcNow - baselineReadings[0].Date > BaselineStaleAfter;
+            if (isStale)
+            {
+                var rawFilter = Builders<ReadSensor>.Filter.And(
+                    Builders<ReadSensor>.Filter.Eq(r => r.SensorId, request.SensorId),
+                    Builders<ReadSensor>.Filter.Ne(r => r.Id, request.ReadSensorId));
+
+                baselineReadings = await _dbContext.ReadSensors
+                    .Find(rawFilter)
+                    .SortByDescending(r => r.Date)
+                    .Limit(WindowSize)
+                    .ToListAsync(cancellationToken);
+            }
 
             var reading = new ReadSensor
             {
