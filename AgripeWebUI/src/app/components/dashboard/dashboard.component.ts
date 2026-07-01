@@ -91,6 +91,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
   lastTemperature: number | null = null;
   lastBatteryVoltage: number | null = null;
 
+  // Same range as GetSensorTelemetryHandler.BatMin/BatMax so the percentage matches
+  // what the sensor list and irrigation dashboard show for the same sensor.
+  private static readonly BatMin = 3.0;
+  private static readonly BatMax = 3.6;
+
+  /** Battery as 0–100%, same formula as the backend's SensorTelemetryResponse.BatteryPercent. */
+  get batteryPercent(): number | null {
+    if (this.lastBatteryVoltage == null) return null;
+    const pct = ((this.lastBatteryVoltage - DashboardComponent.BatMin) / (DashboardComponent.BatMax - DashboardComponent.BatMin)) * 100;
+    return Math.min(100, Math.max(0, Math.round(pct * 10) / 10));
+  }
+
   // Dataset index constants for the toggle handlers
   private readonly DS_TREND    = 4;
   private readonly DS_MA       = 5;

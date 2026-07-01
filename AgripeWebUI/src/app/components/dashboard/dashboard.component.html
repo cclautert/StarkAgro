@@ -171,7 +171,7 @@
       <div class="metric-card-label">Bateria</div>
       <div class="metric-card-value"
            [style.color]="lastBatteryVoltage! < 3.3 ? '#f87171' : lastBatteryVoltage! < 3.6 ? '#facc15' : '#4ade80'">
-        {{ lastBatteryVoltage!.toFixed(2) }}<span class="metric-card-unit">V</span>
+        {{ batteryPercent!.toFixed(0) }}<span class="metric-card-unit">%</span>
       </div>
       <div class="metric-card-sub"
            [style.color]="lastBatteryVoltage! < 3.3 ? '#f87171' : lastBatteryVoltage! < 3.6 ? '#facc15' : '#94a3b8'">
