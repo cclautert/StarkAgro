@@ -1,9 +1,12 @@
+using AgripeWebAPI.Configuration;
 using AgripeWebAPI.Domain.Commands.Requests.Anomalies;
 using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Entities;
 using AgripeWebAPI.Models.Interfaces;
 using AgripeWebAPI.Services;
 using MediatR;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
 namespace AgripeWebAPI.Domain.Handlers.Anomalies
@@ -20,15 +23,27 @@ namespace AgripeWebAPI.Domain.Handlers.Anomalies
         private readonly agpDBContext _dbContext;
         private readonly ISensorAnomalyService _anomalyService;
         private readonly IPushNotificationService _pushService;
+        private readonly IAgricultureWeatherService _weatherService;
+        private readonly IMemoryCache _cache;
+        private readonly WeatherForecastSettings _weatherSettings;
+        private readonly ILogger<DetectSensorAnomalyHandler> _logger;
 
         public DetectSensorAnomalyHandler(
             agpDBContext dbContext,
             ISensorAnomalyService anomalyService,
-            IPushNotificationService pushService)
+            IPushNotificationService pushService,
+            IAgricultureWeatherService weatherService,
+            IMemoryCache cache,
+            IOptions<WeatherForecastSettings> weatherSettings,
+            ILogger<DetectSensorAnomalyHandler> logger)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             _anomalyService = anomalyService ?? throw new ArgumentNullException(nameof(anomalyService));
             _pushService = pushService ?? throw new ArgumentNullException(nameof(pushService));
+            _weatherService = weatherService ?? throw new ArgumentNullException(nameof(weatherService));
+            _cache = cache ?? throw new ArgumentNullException(nameof(cache));
+            _weatherSettings = weatherSettings?.Value ?? throw new ArgumentNullException(nameof(weatherSettings));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<Unit> Handle(DetectSensorAnomalyRequest request, CancellationToken cancellationToken)
@@ -68,6 +83,12 @@ namespace AgripeWebAPI.Domain.Handlers.Anomalies
                     .ToListAsync(cancellationToken);
             }
 
+            // Rain suppression: high humidity while it has been raining at the pivot's
+            // location is expected (saturated soil), not an anomaly. Skipping detection also
+            // lets the rainy reading join the baseline, so the expected range adapts.
+            if (await IsHighReadingExplainedByRainAsync(request, sensor, baselineReadings, cancellationToken))
+                return Unit.Value;
+
             var reading = new ReadSensor
             {
                 Id = request.ReadSensorId,
@@ -90,6 +111,64 @@ namespace AgripeWebAPI.Domain.Handlers.Anomalies
             }
 
             return Unit.Value;
+        }
+
+        private async Task<bool> IsHighReadingExplainedByRainAsync(
+            DetectSensorAnomalyRequest request,
+            Sensor sensor,
+            IReadOnlyList<ReadSensor> baselineReadings,
+            CancellationToken cancellationToken)
+        {
+            // Only the high side can be explained by rain — a drop while raining is even
+            // more suspicious and must keep alerting.
+            if (baselineReadings.Count == 0)
+                return false;
+
+            var baselineAverage = baselineReadings.Average(r => (double)(r.Humidity ?? 0));
+            if ((double)(request.Humidity ?? 0) <= baselineAverage)
+                return false;
+
+            var pivot = await _dbContext.Pivots
+                .Find(p => p.Id == sensor.PivoId)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            if (pivot?.Latitude is null || pivot.Longitude is null)
+                return false;
+
+            var recentRainMm = await GetRecentRainCachedAsync(pivot.Latitude.Value, pivot.Longitude.Value, cancellationToken);
+            if (recentRainMm is null)
+                return false; // fail-open: weather unavailable, detect as usual
+
+            var user = await _dbContext.Users
+                .Find(u => u.Id == request.UserId)
+                .FirstOrDefaultAsync(cancellationToken);
+            var rainThreshold = pivot.RainThresholdMm ?? user?.RainThresholdMm ?? _weatherSettings.RainThresholdMm;
+
+            if (recentRainMm.Value < rainThreshold)
+                return false;
+
+            _logger.LogInformation(
+                "Anomaly suppressed by rain for sensor {SensorId} (pivot {PivotId}): humidity {Humidity}% with {RainMm}mm rain in last {Days}d (threshold {Threshold}mm)",
+                request.SensorId, sensor.PivoId, request.Humidity, recentRainMm.Value,
+                _weatherSettings.AnomalyRainLookbackDays, rainThreshold);
+
+            return true;
+        }
+
+        private async Task<double?> GetRecentRainCachedAsync(double latitude, double longitude, CancellationToken cancellationToken)
+        {
+            var lookbackDays = Math.Max(1, _weatherSettings.AnomalyRainLookbackDays);
+            var cacheKey = $"recent-rain:{latitude:F3}:{longitude:F3}:{lookbackDays}";
+
+            if (_cache.TryGetValue(cacheKey, out double cachedMm))
+                return cachedMm;
+
+            var rainMm = await _weatherService.GetRecentPrecipitationAsync(latitude, longitude, lookbackDays, cancellationToken);
+            if (rainMm is null)
+                return null; // do not cache failures
+
+            _cache.Set(cacheKey, rainMm.Value, TimeSpan.FromMinutes(Math.Max(1, _weatherSettings.CacheDurationMinutes)));
+            return rainMm;
         }
     }
 }

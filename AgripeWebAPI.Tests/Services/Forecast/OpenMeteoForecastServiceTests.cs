@@ -133,5 +133,75 @@ namespace AgripeWebAPI.Tests.Services.Forecast
 
             Assert.Null(result);
         }
+
+        [Fact]
+        public async Task GetRecentPrecipitationAsync_SumsPastDaysAndToday_UsesPastDaysParam()
+        {
+            var handler = new MockHttpMessageHandler();
+            handler.EnqueueResponse(HttpStatusCode.OK, """
+            {
+              "daily": {
+                "time": ["2026-06-30","2026-07-01","2026-07-02"],
+                "precipitation_sum": [10.0, 5.5, 0.5]
+              }
+            }
+            """);
+
+            var sut = BuildService(handler);
+
+            var result = await sut.GetRecentPrecipitationAsync(-27.59, -48.55, 2, CancellationToken.None);
+
+            Assert.NotNull(result);
+            Assert.Equal(16.0, result!.Value, 1);
+            var uri = Assert.Single(handler.RequestedUris);
+            Assert.Contains("past_days=2", uri!.ToString());
+            Assert.Contains("forecast_days=1", uri.ToString());
+        }
+
+        [Fact]
+        public async Task GetRecentPrecipitationAsync_NullEntries_TreatedAsZero()
+        {
+            var handler = new MockHttpMessageHandler();
+            handler.EnqueueResponse(HttpStatusCode.OK, """
+            {
+              "daily": {
+                "time": ["2026-07-01","2026-07-02"],
+                "precipitation_sum": [7.0, null]
+              }
+            }
+            """);
+
+            var sut = BuildService(handler);
+
+            var result = await sut.GetRecentPrecipitationAsync(-27.59, -48.55, 1, CancellationToken.None);
+
+            Assert.Equal(7.0, result!.Value, 1);
+        }
+
+        [Fact]
+        public async Task GetRecentPrecipitationAsync_MissingDaily_ReturnsNull()
+        {
+            var handler = new MockHttpMessageHandler();
+            handler.EnqueueResponse(HttpStatusCode.OK, "{}");
+
+            var sut = BuildService(handler);
+
+            var result = await sut.GetRecentPrecipitationAsync(-27.59, -48.55, 2, CancellationToken.None);
+
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public async Task GetRecentPrecipitationAsync_HttpFailure_ReturnsNull()
+        {
+            var handler = new MockHttpMessageHandler();
+            handler.EnqueueResponse(HttpStatusCode.InternalServerError, "{}");
+
+            var sut = BuildService(handler);
+
+            var result = await sut.GetRecentPrecipitationAsync(-27.59, -48.55, 2, CancellationToken.None);
+
+            Assert.Null(result);
+        }
     }
 }

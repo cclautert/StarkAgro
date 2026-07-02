@@ -48,6 +48,17 @@ var builder = Host.CreateDefaultBuilder(args)
         // Anomaly detection
         services.AddScoped<ISensorAnomalyService, SensorAnomalyService>();
 
+        // Weather (rain suppression of high-humidity anomalies)
+        services.Configure<WeatherForecastSettings>(context.Configuration.GetSection(WeatherForecastSettings.SectionName));
+        services.AddMemoryCache();
+        services.AddHttpClient<AgripeWebAPI.Services.Forecast.OpenMeteoForecastService>(client =>
+        {
+            client.BaseAddress = new Uri("https://api.open-meteo.com/");
+            client.Timeout = TimeSpan.FromSeconds(8);
+        });
+        services.AddScoped<IAgricultureWeatherService>(sp =>
+            sp.GetRequiredService<AgripeWebAPI.Services.Forecast.OpenMeteoForecastService>());
+
         // LoRaWAN parser
         services.AddSingleton<ILoRaWanUplinkParser, LoRaWanUplinkParser>();
 

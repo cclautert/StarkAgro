@@ -164,5 +164,44 @@ namespace AgripeWebAPI.Services.Forecast
                 return null;
             }
         }
+
+        /// <summary>
+        /// Accumulated precipitation (mm) over the last <paramref name="pastDays"/> days plus
+        /// today. Used to suppress high-humidity sensor anomalies during rainy periods.
+        /// </summary>
+        public async Task<double?> GetRecentPrecipitationAsync(
+            double latitude, double longitude, int pastDays, CancellationToken cancellationToken)
+        {
+            var path = $"v1/forecast?latitude={latitude.ToString(CultureInfo.InvariantCulture)}" +
+                       $"&longitude={longitude.ToString(CultureInfo.InvariantCulture)}" +
+                       $"&daily=precipitation_sum&past_days={pastDays}&forecast_days=1&timezone=UTC";
+
+            try
+            {
+                using var response = await _httpClient.GetAsync(path, cancellationToken);
+                response.EnsureSuccessStatusCode();
+
+                await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
+                using var doc = await JsonDocument.ParseAsync(stream, cancellationToken: cancellationToken);
+
+                if (!doc.RootElement.TryGetProperty("daily", out var daily) ||
+                    !daily.TryGetProperty("precipitation_sum", out var precipEl))
+                    return null;
+
+                double total = 0;
+                foreach (var item in precipEl.EnumerateArray())
+                {
+                    if (item.ValueKind == JsonValueKind.Number)
+                        total += item.GetDouble();
+                }
+
+                return Math.Round(total, 2);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "OpenMeteo recent precipitation unavailable for {Lat},{Lon}", latitude, longitude);
+                return null;
+            }
+        }
     }
 }

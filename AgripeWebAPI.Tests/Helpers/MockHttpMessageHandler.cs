@@ -6,6 +6,8 @@ namespace AgripeWebAPI.Tests.Helpers
     {
         private readonly Queue<HttpResponseMessage> _responses = new();
 
+        public List<Uri?> RequestedUris { get; } = new();
+
         public void EnqueueResponse(HttpResponseMessage response)
         {
             _responses.Enqueue(response);
@@ -21,6 +23,8 @@ namespace AgripeWebAPI.Tests.Helpers
 
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
+            RequestedUris.Add(request.RequestUri);
+
             if (_responses.Count == 0)
                 return Task.FromResult(new HttpResponseMessage(HttpStatusCode.InternalServerError));
 
