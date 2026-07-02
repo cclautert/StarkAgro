@@ -61,7 +61,16 @@ namespace AgripeWebAPI.Services.PushNotifications
                 string.IsNullOrWhiteSpace(dto.Keys?.P256DH) || string.IsNullOrWhiteSpace(dto.Keys?.Auth))
                 return;
 
-            var payload = JsonSerializer.Serialize(new { title, body });
+            // ngsw-worker only displays pushes wrapped in a "notification" object
+            var payload = JsonSerializer.Serialize(new
+            {
+                notification = new
+                {
+                    title,
+                    body,
+                    icon = "assets/icons/icon-192x192.png"
+                }
+            });
 
             try
             {
