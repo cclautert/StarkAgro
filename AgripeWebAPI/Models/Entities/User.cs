@@ -14,6 +14,7 @@ namespace AgripeWebAPI.Models.Entities
         public string? GeminiApiKey { get; set; }
         public string? ExpoPushToken { get; set; }
         public string? WebPushSubscriptionJson { get; set; }
+        public List<string> WebPushSubscriptions { get; set; } = new();
         public int? UplinkIntervalSeconds { get; set; } = 10800;
         public bool IsAdmin { get; set; } = false;
         public DateTime? AlertsReadAt { get; set; }

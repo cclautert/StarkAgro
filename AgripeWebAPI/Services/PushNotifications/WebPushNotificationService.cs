@@ -37,7 +37,15 @@ namespace AgripeWebAPI.Services.PushNotifications
                 .Find(u => u.Id == userId)
                 .FirstOrDefaultAsync(cancellationToken);
 
-            if (string.IsNullOrWhiteSpace(user?.WebPushSubscriptionJson))
+            if (user is null)
+                return;
+
+            // All device subscriptions: list + legacy single-subscription field
+            var subscriptions = new List<string>(user.WebPushSubscriptions ?? new List<string>());
+            if (!string.IsNullOrWhiteSpace(user.WebPushSubscriptionJson))
+                subscriptions.Add(user.WebPushSubscriptionJson);
+
+            if (subscriptions.Count == 0)
                 return;
 
             if (_vapid.PublicKey == "CHANGE_ME" || _vapid.PrivateKey == "CHANGE_ME")
@@ -45,21 +53,6 @@ namespace AgripeWebAPI.Services.PushNotifications
                 _logger.LogWarning("VAPID keys not configured — web push skipped for user {UserId}", userId);
                 return;
             }
-
-            WebPushSubscriptionDto? dto;
-            try
-            {
-                dto = JsonSerializer.Deserialize<WebPushSubscriptionDto>(user.WebPushSubscriptionJson, _jsonOptions);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning(ex, "Failed to deserialize WebPushSubscriptionJson for user {UserId}", userId);
-                return;
-            }
-
-            if (dto is null || string.IsNullOrWhiteSpace(dto.Endpoint) ||
-                string.IsNullOrWhiteSpace(dto.Keys?.P256DH) || string.IsNullOrWhiteSpace(dto.Keys?.Auth))
-                return;
 
             // ngsw-worker only displays pushes wrapped in a "notification" object
             var payload = JsonSerializer.Serialize(new
@@ -72,16 +65,65 @@ namespace AgripeWebAPI.Services.PushNotifications
                 }
             });
 
+            var vapidDetails = new VapidDetails(_vapid.Subject, _vapid.PublicKey, _vapid.PrivateKey);
+            var client = new WebPushClient();
+            var deadEndpoints = new List<string>();
+
+            foreach (var subscriptionJson in subscriptions)
+            {
+                WebPushSubscriptionDto? dto;
+                try
+                {
+                    dto = JsonSerializer.Deserialize<WebPushSubscriptionDto>(subscriptionJson, _jsonOptions);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Failed to deserialize web push subscription for user {UserId}", userId);
+                    continue;
+                }
+
+                if (dto is null || string.IsNullOrWhiteSpace(dto.Endpoint) ||
+                    string.IsNullOrWhiteSpace(dto.Keys?.P256DH) || string.IsNullOrWhiteSpace(dto.Keys?.Auth))
+                    continue;
+
+                try
+                {
+                    var subscription = new PushSubscription(dto.Endpoint, dto.Keys.P256DH, dto.Keys.Auth);
+                    await Task.Run(() => client.SendNotification(subscription, payload, vapidDetails), cancellationToken);
+                }
+                catch (WebPushException ex) when (
+                    ex.StatusCode == System.Net.HttpStatusCode.Gone ||
+                    ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    _logger.LogInformation("Web push endpoint expired for user {UserId} — removing subscription", userId);
+                    deadEndpoints.Add(dto.Endpoint);
+                }
+                catch (Exception ex) when (ex is not OperationCanceledException)
+                {
+                    _logger.LogWarning(ex, "Web push failed for user {UserId}", userId);
+                }
+            }
+
+            if (deadEndpoints.Count > 0)
+                await RemoveDeadSubscriptionsAsync(user, deadEndpoints, cancellationToken);
+        }
+
+        private async Task RemoveDeadSubscriptionsAsync(Models.Entities.User user, List<string> deadEndpoints, CancellationToken cancellationToken)
+        {
+            bool ContainsDeadEndpoint(string subscriptionJson) =>
+                deadEndpoints.Any(endpoint => subscriptionJson.Contains(endpoint, StringComparison.OrdinalIgnoreCase));
+
+            user.WebPushSubscriptions?.RemoveAll(ContainsDeadEndpoint);
+            if (!string.IsNullOrWhiteSpace(user.WebPushSubscriptionJson) && ContainsDeadEndpoint(user.WebPushSubscriptionJson))
+                user.WebPushSubscriptionJson = null;
+
             try
             {
-                var subscription = new PushSubscription(dto.Endpoint, dto.Keys.P256DH, dto.Keys.Auth);
-                var vapidDetails = new VapidDetails(_vapid.Subject, _vapid.PublicKey, _vapid.PrivateKey);
-                var client = new WebPushClient();
-                await Task.Run(() => client.SendNotification(subscription, payload, vapidDetails), cancellationToken);
+                await _dbContext.Users.ReplaceOneAsync(u => u.Id == user.Id, user, cancellationToken: cancellationToken);
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
-                _logger.LogWarning(ex, "Web push failed for user {UserId}", userId);
+                _logger.LogWarning(ex, "Failed to prune dead web push subscriptions for user {UserId}", user.Id);
             }
         }
 
