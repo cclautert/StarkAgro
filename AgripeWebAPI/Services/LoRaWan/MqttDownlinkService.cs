@@ -42,10 +42,12 @@ namespace AgripeWebAPI.Services.LoRaWan
             {
                 await EnsureConnectedAsync(cancellationToken);
 
+                // AtLeastOnce: with broker persistence + a persistent-session subscriber,
+                // the downlink survives a gateway that is momentarily offline (QoS 0 drops it).
                 var mqttMessage = new MqttApplicationMessageBuilder()
                     .WithTopic(_settings.Topic)
                     .WithPayload(message)
-                    .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtMostOnce)
+                    .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce)
                     .Build();
 
                 await _client.PublishAsync(mqttMessage, cancellationToken);

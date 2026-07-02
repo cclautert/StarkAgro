@@ -8,7 +8,12 @@
 user agripeweb-worker
 topic read reads
 
-# iot_device: publish only (sends sensor readings)
+# iot_device: publishes sensor readings (uplink), subscribes to downlinks
+# (gateway forwarder-mqtt-downlink reads topic `writes`), and — because the
+# API currently shares this username (docker-compose MqttDownlink__Username
+# = MQTT_USERNAME) — also publishes downlinks to `writes`.
 # Replace with the actual MQTT_USERNAME configured for your IoT device.
 user iot_device
 topic write reads
+topic read writes
+topic write writes
