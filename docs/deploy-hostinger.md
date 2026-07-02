@@ -61,9 +61,20 @@ GOOGLE_CLIENT_ID=seu_client_id
 GOOGLE_CLIENT_SECRET=seu_client_secret
 MQTT_USERNAME=iot_device
 MQTT_PASSWORD=<senha forte>
+VAPID_SUBJECT=mailto:admin@agripeweb.com
+VAPID_PUBLIC_KEY=<gerado com npx web-push generate-vapid-keys>
+VAPID_PRIVATE_KEY=<gerado com npx web-push generate-vapid-keys>
 ```
 
 Nunca commite este arquivo. Valores reais ficam apenas na VPS.
+
+> **Atenção:** o pipeline de deploy reescreve o `.env` a cada execução
+> (`bootstrap-vps-env-from-secrets.sh --force`) a partir dos GitHub Secrets —
+> edições manuais no `.env` da VPS são perdidas. Cadastre/altere valores
+> sempre via secrets (`JWT_SECRET_KEY`, `GOOGLE_CLIENT_*`, `MQTT_*`,
+> `MONGO_*`, `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`).
+> A `VAPID_PUBLIC_KEY` deve ser a mesma de `environment.prod.ts` e
+> `appsettings.json` (par gerado junto com a privada).
 
 ### 2b. Mosquitto (MQTT)
 

@@ -45,6 +45,10 @@ umask 077
   # MONGO_USER/MONGO_PASSWORD are optional; empty = MongoDB without auth
   printf 'MONGO_USER=%s\n' "${MONGO_USER:-}"
   printf 'MONGO_PASSWORD=%s\n' "${MONGO_PASSWORD:-}"
+  # VAPID keys are optional; empty = web push disabled server-side
+  printf 'VAPID_SUBJECT=%s\n' "${VAPID_SUBJECT:-mailto:admin@agripeweb.com}"
+  printf 'VAPID_PUBLIC_KEY=%s\n' "${VAPID_PUBLIC_KEY:-}"
+  printf 'VAPID_PRIVATE_KEY=%s\n' "${VAPID_PRIVATE_KEY:-}"
 } > .env
 chmod 600 .env
 if [[ -f .env && "$FORCE" -eq 1 ]]; then
