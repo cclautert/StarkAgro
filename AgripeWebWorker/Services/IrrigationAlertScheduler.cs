@@ -49,8 +49,27 @@ namespace AgripeWebWorker.Services
             var pushService = scope.ServiceProvider.GetRequiredService<IPushNotificationService>();
 
             var pivots = await db.Pivots
-                .Find(p => p.LimiteInferior != null)
+                .Find(FilterDefinition<Pivot>.Empty)
                 .ToListAsync(cancellationToken);
+
+            // Pivot without its own limit falls back to the owner's global limit
+            // (the /config screen documents the global value as the default).
+            var userIds = pivots.Where(p => p.LimiteInferior is null).Select(p => p.UserId).Distinct().ToList();
+            if (userIds.Count > 0)
+            {
+                var users = await db.Users
+                    .Find(u => userIds.Contains(u.Id))
+                    .ToListAsync(cancellationToken);
+                var limitByUserId = users.ToDictionary(u => u.Id, u => u.LimiteInferior);
+
+                foreach (var pivot in pivots.Where(p => p.LimiteInferior is null))
+                {
+                    if (limitByUserId.TryGetValue(pivot.UserId, out var userLimit))
+                        pivot.LimiteInferior = userLimit;
+                }
+            }
+
+            pivots = pivots.Where(p => p.LimiteInferior != null).ToList();
 
             _logger.LogInformation("IrrigationAlertScheduler: evaluating {Count} pivot(s)", pivots.Count);
 
