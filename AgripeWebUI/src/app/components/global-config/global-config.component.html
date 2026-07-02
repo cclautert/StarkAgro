@@ -30,6 +30,38 @@
       <div class="hint">Padrão global para sensores DTL-300. Pode ser sobrescrito por sensor. Padrão: 10800 s (3 h).</div>
     </div>
 
+    <hr class="section-divider">
+
+    <h3 class="section-title">Notificações</h3>
+
+    <div class="form-group">
+      <ng-container *ngIf="webPush.needsHomeScreenInstall; else pushStates">
+        <div class="hint">
+          No iPhone, adicione o AgripeWeb à tela inicial (Compartilhar → Adicionar à Tela de Início)
+          e abra pelo ícone para poder ativar as notificações.
+        </div>
+      </ng-container>
+      <ng-template #pushStates>
+        <ng-container [ngSwitch]="webPush.permission">
+          <div *ngSwitchCase="'granted'" class="hint">Notificações ativadas neste dispositivo ✓</div>
+          <div *ngSwitchCase="'denied'" class="hint">
+            Notificações bloqueadas — reative nas configurações do navegador/sistema.
+          </div>
+          <ng-container *ngSwitchDefault>
+            <div *ngIf="webPush.isSupported; else pushUnsupported">
+              <div class="hint">Receba alertas de irrigação e anomalias de sensor neste dispositivo.</div>
+              <button type="button" class="btn btn-primary" (click)="ativarNotificacoes()" [disabled]="enablingPush">
+                {{ enablingPush ? 'Ativando…' : 'Ativar notificações' }}
+              </button>
+            </div>
+            <ng-template #pushUnsupported>
+              <div class="hint">Notificações indisponíveis neste navegador.</div>
+            </ng-template>
+          </ng-container>
+        </ng-container>
+      </ng-template>
+    </div>
+
     <div class="form-actions">
       <button type="submit" class="btn btn-primary" [disabled]="configForm.invalid">Salvar</button>
       <button type="button" class="btn btn-secondary" (click)="cancelar()">Cancelar</button>

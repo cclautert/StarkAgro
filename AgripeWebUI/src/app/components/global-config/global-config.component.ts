@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
+import { WebPushService } from '../../services/web-push.service';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
@@ -17,8 +18,10 @@ export class GlobalConfigComponent implements OnInit {
   private router = inject(Router);
   private userService = inject(UserService);
   private snackBar = inject(MatSnackBar);
+  webPush = inject(WebPushService);
 
   configForm: FormGroup;
+  enablingPush = false;
 
   constructor() {
     this.configForm = this.fb.group({
@@ -64,5 +67,27 @@ export class GlobalConfigComponent implements OnInit {
 
   cancelar(): void {
     this.router.navigate(['/home']);
+  }
+
+  async ativarNotificacoes(): Promise<void> {
+    this.enablingPush = true;
+    try {
+      const result = await this.webPush.enableNotifications();
+      switch (result) {
+        case 'granted':
+          this.snackBar.open('Notificações ativadas neste dispositivo!', 'OK', { duration: 3000 });
+          break;
+        case 'denied':
+          this.snackBar.open('Permissão negada — reative nas configurações do navegador.', 'Fechar', { duration: 5000 });
+          break;
+        case 'unsupported':
+          this.snackBar.open('Notificações não são suportadas neste navegador.', 'Fechar', { duration: 4000 });
+          break;
+        default:
+          this.snackBar.open('Não foi possível ativar as notificações. Tente novamente.', 'Fechar', { duration: 4000 });
+      }
+    } finally {
+      this.enablingPush = false;
+    }
   }
 }
