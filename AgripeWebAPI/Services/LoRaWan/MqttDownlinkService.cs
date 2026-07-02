@@ -28,14 +28,14 @@ namespace AgripeWebAPI.Services.LoRaWan
         public async Task<bool> SendUplinkIntervalAsync(string devEui, int intervalSeconds, CancellationToken cancellationToken)
         {
             var cleanDevEui = StripSuffix(devEui);
-            var data = Convert.ToBase64String(BuildPayload(intervalSeconds));
 
+            // Khomp DTG forwarder-mqtt-downlink payload-routing schema:
+            // {"dev_eui": "...", "downlink": "<HEX>", "fport": n}
             var message = JsonSerializer.Serialize(new
             {
-                devEUI = cleanDevEui,
-                fPort = 1,
-                confirmed = false,
-                data
+                dev_eui = cleanDevEui,
+                downlink = Convert.ToHexString(BuildPayload(intervalSeconds)),
+                fport = 1
             });
 
             try

@@ -5,14 +5,17 @@ publica no tópico **`writes`** do broker da VPS (QoS 1) → forwarder-mqtt-down
 do gateway (inscrito em `writes`) → fila do device no ChirpStack local → comando
 desce ao sensor (Classe A) na **próxima transmissão** dele.
 
-Payload publicado (formato ChirpStack enqueue):
+Payload publicado (schema do forwarder-mqtt-downlink da Khomp — "Roteamento via
+Payload", ver tooltip "(?)" de Tópicos na página do gateway):
 
 ```json
-{ "devEUI": "a84041691d5f1794", "fPort": 1, "confirmed": false, "data": "AQAqMA==" }
+{ "dev_eui": "A84041691D5F1794", "downlink": "01002A30", "fport": 1 }
 ```
 
-`data` = Base64 de `0x01` + intervalo em segundos (24 bits, big-endian) — comando
-de intervalo de uplink do Khomp DTL-300 (porta 1).
+`downlink` = HEX de `0x01` + intervalo em segundos (24 bits, big-endian) — comando
+de intervalo de uplink do Khomp DTL-300 (porta 1). Atenção: o forwarder exige
+exatamente `dev_eui`/`downlink`/`fport` (snake_case, hex) — o formato ChirpStack
+clássico (`devEUI`/`data` base64) é descartado silenciosamente.
 
 ## Configuração do forwarder-mqtt-downlink (Dragino)
 
