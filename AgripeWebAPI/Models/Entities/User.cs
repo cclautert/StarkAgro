@@ -16,5 +16,6 @@ namespace AgripeWebAPI.Models.Entities
         public string? WebPushSubscriptionJson { get; set; }
         public int? UplinkIntervalSeconds { get; set; } = 10800;
         public bool IsAdmin { get; set; } = false;
+        public DateTime? AlertsReadAt { get; set; }
     }
 }

@@ -83,6 +83,25 @@ namespace AgripeWebAPI.Controllers
             return CustomResponse(null, HttpStatusCode.NoContent);
         }
 
+        [Route("alerts")]
+        [HttpGet]
+        public async Task<IList<UserAlertResponse>> GetAlerts(
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken)
+        {
+            return await mediator.Send(new GetUserAlertsRequest(), cancellationToken);
+        }
+
+        [Route("alerts/mark-read")]
+        [HttpPost]
+        public async Task<ActionResult> MarkAlertsRead(
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken)
+        {
+            await mediator.Send(new MarkAlertsReadRequest(), cancellationToken);
+            return CustomResponse(null, HttpStatusCode.NoContent);
+        }
+
         [Route("webPushSubscription")]
         [HttpPut]
         public async Task<ActionResult> RegisterWebPushSubscription(
