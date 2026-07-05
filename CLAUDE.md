@@ -14,6 +14,8 @@ Guide for Claude Code and coding agents in this repository.
 - **Uncertainty:** state assumptions or ask — don't guess tenant rules, API contracts, or irrigation logic.
 - **Verify:** `dotnet test` for API changes; manual or documented check for UI/IoT.
 - **Features:** large backend work → plan in `docs/features/{name}/plan.md` first (see `.claude/skills/agripeweb-feature-planner/`).
+- **Code queries and changes:** use graphify by default — query the graph before exploring code, update the graph after changing code (see [## graphify](#graphify)).
+- **Memory:** every durable fact saved locally must also be saved to Mnemosine (see [## Mnemosine](#mnemosine-long-term-memory)).
 - **Behavior details:** [docs/agent-behavior.md](docs/agent-behavior.md).
 
 ## Components
@@ -159,3 +161,25 @@ Controllers delegate to handlers; **no business logic in controllers.**
 - `.claude/skills/agripeweb-implement` — full issue workflow  
 - `.claude/skills/agripeweb-test-writer` — xUnit + Mongo mocks  
 - `.claude/skills/agripeweb-code-reviewer` — pre-merge review
+
+## graphify
+
+This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
+
+Rules:
+- **Default for code queries:** for any codebase question, first run `graphify query "<question>"` when graphify-out/graph.json exists. Use `graphify path "<A>" "<B>"` for relationships and `graphify explain "<concept>"` for focused concepts. These return a scoped subgraph, usually much smaller than GRAPH_REPORT.md or raw grep output.
+- If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
+- Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
+- **Default after code changes:** every code change must update BOTH this CLAUDE.md (when the change affects documented architecture, routes, entities, or conventions) AND the graph — run `graphify update .` (AST-only, no API cost) or `/graphify . --update` (also re-extracts changed docs/images).
+- A git post-commit hook is installed (`graphify hook status`) that auto-updates the graph for committed code files; doc/image changes still need a manual `/graphify . --update`.
+- If `graphify` is not on PATH, use the saved interpreter: `& (Get-Content graphify-out\.graphify_python) -m graphify <args>` (PowerShell).
+
+## Mnemosine (long-term memory)
+
+Remote memory MCP server `mnemosine-remote` (https://mnemosine.cloud/mcp), automatically scoped to this project. Auth token lives in the local MCP config — never in this repo.
+
+Rules:
+- **Recall first:** before stating that something wasn't agreed, decided, or configured, run `recall` on the topic.
+- **Mirror local memory:** every durable piece of information saved locally — Claude auto-memory files, graphify work-memory Q&As (`graphify save-result`), decisions and conventions — must ALSO be persisted to Mnemosine via `remember`, in the same turn, without asking.
+- Memories are project-scoped by default; use `all_projects=true` only when global context is genuinely needed.
+- If the Mnemosine API is unavailable, tell the user and continue — never fabricate memories.
