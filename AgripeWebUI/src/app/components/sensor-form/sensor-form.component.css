@@ -95,10 +95,12 @@
   width: 20px;
 }
 
-/* Preview do leitor de QR Code / código de barras */
+/* Preview do leitor de QR Code / código de barras.
+   Fica sempre no DOM (o <video> precisa existir antes do clique); escondido
+   por padrão e revelado com .active enquanto lê. */
 .scanner-preview {
+  display: none;
   margin-top: 12px;
-  display: flex;
   flex-direction: column;
   align-items: center;
   gap: 10px;
@@ -107,6 +109,10 @@
   border: 1px solid #2d3f5e;
   border-radius: 10px;
   position: relative;
+}
+
+.scanner-preview.active {
+  display: flex;
 }
 
 .scanner-video {

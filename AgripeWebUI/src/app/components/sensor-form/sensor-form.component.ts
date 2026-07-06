@@ -176,17 +176,14 @@ export class SensorFormComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.isScanning = true;
-
-    // Aguarda o Angular renderizar o <video> (via *ngIf="isScanning") antes de usá-lo.
-    await new Promise<void>(resolve => setTimeout(resolve));
-
+    // O <video> fica sempre no DOM, então o ViewChild já está resolvido no clique.
     const videoEl = this.scannerVideo?.nativeElement;
     if (!videoEl) {
-      this.isScanning = false;
       this.snackBar.open('Não foi possível iniciar o leitor.', 'Fechar', { duration: 4000 });
       return;
     }
+
+    this.isScanning = true;
 
     const hints = new Map<DecodeHintType, unknown>();
     hints.set(DecodeHintType.POSSIBLE_FORMATS, [
