@@ -207,7 +207,7 @@ export class SensorFormComponent implements OnInit, OnDestroy {
         videoEl,
         (result, err) => {
           if (result) {
-            this.sensorForm.patchValue({ code: result.getText() });
+            this.sensorForm.patchValue({ code: this.extractSensorCode(result.getText()) });
             this.sensorForm.get('code')?.markAsDirty();
             this.snackBar.open('Código lido com sucesso!', 'OK', { duration: 3000 });
             this.stopScan();
@@ -222,6 +222,16 @@ export class SensorFormComponent implements OnInit, OnDestroy {
       this.snackBar.open(msg, 'Fechar', { duration: 4000 });
       this.stopScan();
     }
+  }
+
+  /**
+   * Extrai o DevEUI de uma etiqueta LoRaWAN no formato
+   * "<serial>;<DevEUI>;<JoinEUI>;<AppKey>". Se o texto não tiver ';'
+   * (ex.: QR só com o DevEUI), devolve o próprio texto.
+   */
+  private extractSensorCode(raw: string): string {
+    const parts = raw.trim().split(';').map(p => p.trim()).filter(Boolean);
+    return parts.length >= 2 ? parts[1] : (parts[0] ?? raw.trim());
   }
 
   /** Encerra a leitura e libera a câmera. */
