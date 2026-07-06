@@ -176,17 +176,14 @@ export class SensorFormComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.isScanning = true;
-
-    // Aguarda o Angular renderizar o <video> (via *ngIf="isScanning") antes de usá-lo.
-    await new Promise<void>(resolve => setTimeout(resolve));
-
+    // O <video> fica sempre no DOM, então o ViewChild já está resolvido no clique.
     const videoEl = this.scannerVideo?.nativeElement;
     if (!videoEl) {
-      this.isScanning = false;
       this.snackBar.open('Não foi possível iniciar o leitor.', 'Fechar', { duration: 4000 });
       return;
     }
+
+    this.isScanning = true;
 
     const hints = new Map<DecodeHintType, unknown>();
     hints.set(DecodeHintType.POSSIBLE_FORMATS, [
@@ -210,7 +207,7 @@ export class SensorFormComponent implements OnInit, OnDestroy {
         videoEl,
         (result, err) => {
           if (result) {
-            this.sensorForm.patchValue({ code: result.getText() });
+            this.sensorForm.patchValue({ code: this.extractSensorCode(result.getText()) });
             this.sensorForm.get('code')?.markAsDirty();
             this.snackBar.open('Código lido com sucesso!', 'OK', { duration: 3000 });
             this.stopScan();
@@ -225,6 +222,16 @@ export class SensorFormComponent implements OnInit, OnDestroy {
       this.snackBar.open(msg, 'Fechar', { duration: 4000 });
       this.stopScan();
     }
+  }
+
+  /**
+   * Extrai o DevEUI de uma etiqueta LoRaWAN no formato
+   * "<serial>;<DevEUI>;<JoinEUI>;<AppKey>". Se o texto não tiver ';'
+   * (ex.: QR só com o DevEUI), devolve o próprio texto.
+   */
+  private extractSensorCode(raw: string): string {
+    const parts = raw.trim().split(';').map(p => p.trim()).filter(Boolean);
+    return parts.length >= 2 ? parts[1] : (parts[0] ?? raw.trim());
   }
 
   /** Encerra a leitura e libera a câmera. */
