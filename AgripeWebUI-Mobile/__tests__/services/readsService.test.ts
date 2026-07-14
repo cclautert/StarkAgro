@@ -83,4 +83,10 @@ describe('readsService', () => {
     const latest = await readsService.getLatestBySensorId(10, 1);
     expect(latest?.value).toBe(42);
   });
+
+  it('getLatestBySensorId devolve null quando não há leitura (sensor novo)', async () => {
+    mock.onGet(/reads\/GetAllBySensorId/).reply(200, []);
+    const { readsService } = require('../../services/readsService');
+    await expect(readsService.getLatestBySensorId(10, 1)).resolves.toBeNull();
+  });
 });
