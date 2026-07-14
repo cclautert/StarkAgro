@@ -2,6 +2,7 @@ using AgripeWebAPI.Configuration;
 using AgripeWebAPI.Models.Entities;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using MongoDB.Driver.GridFS;
 
 namespace AgripeWebAPI.Models
 {
@@ -53,7 +54,15 @@ namespace AgripeWebAPI.Models
             WaterSources = database.GetCollection<WaterSource>("water_sources");
             IrrigationProposals = database.GetCollection<IrrigationProposal>("irrigation_proposals");
             PlatformAiSettings = database.GetCollection<PlatformAiSettings>("platform_ai_settings");
+            PlantDiagnoses = database.GetCollection<PlantDiagnosis>("plant_diagnoses");
             _counters = database.GetCollection<CounterDocument>("counters");
+
+            // Fotos dos laudos ficam no GridFS: o driver já traz o suporte (nenhum pacote novo),
+            // usa o mesmo backup do Mongo, e API e Worker compartilham este contexto.
+            DiagnosisImages = new GridFSBucket(database, new GridFSBucketOptions
+            {
+                BucketName = "diagnosis_images"
+            });
 
             _ = Task.Run(async () =>
             {
@@ -80,6 +89,22 @@ namespace AgripeWebAPI.Models
                     await ReadSensors.Indexes.CreateOneAsync(new CreateIndexModel<ReadSensor>(
                         Builders<ReadSensor>.IndexKeys.Ascending(r => r.IdempotencyKey),
                         new CreateIndexOptions { Unique = true, Sparse = true }));
+
+                    // Listagem do produtor
+                    await PlantDiagnoses.Indexes.CreateOneAsync(new CreateIndexModel<PlantDiagnosis>(
+                        Builders<PlantDiagnosis>.IndexKeys
+                            .Ascending(d => d.UserId)
+                            .Descending(d => d.CreatedAt)));
+                    // Claim do worker
+                    await PlantDiagnoses.Indexes.CreateOneAsync(new CreateIndexModel<PlantDiagnosis>(
+                        Builders<PlantDiagnosis>.IndexKeys
+                            .Ascending(d => d.Status)
+                            .Ascending(d => d.NextAttemptAt)));
+                    // Dedup de reenvio da mesma foto
+                    await PlantDiagnoses.Indexes.CreateOneAsync(new CreateIndexModel<PlantDiagnosis>(
+                        Builders<PlantDiagnosis>.IndexKeys
+                            .Ascending(d => d.ImageSha256)
+                            .Ascending(d => d.UserId)));
                 }
                 catch
                 {
@@ -97,6 +122,8 @@ namespace AgripeWebAPI.Models
         public virtual IMongoCollection<WaterSource> WaterSources { get; }
         public virtual IMongoCollection<IrrigationProposal> IrrigationProposals { get; }
         public virtual IMongoCollection<PlatformAiSettings> PlatformAiSettings { get; }
+        public virtual IMongoCollection<PlantDiagnosis> PlantDiagnoses { get; }
+        public virtual IGridFSBucket DiagnosisImages { get; }
 
         public virtual async Task<int> GetNextIdAsync(string entityName, CancellationToken cancellationToken = default)
         {

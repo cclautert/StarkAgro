@@ -1,0 +1,42 @@
+<div class="container">
+  <div class="page-header">
+    <h1 class="page-title">🌿 Laudos</h1>
+    <button class="btn-add" [routerLink]="['/diagnosticos/novo']">+ Nova Foto</button>
+  </div>
+
+  <p class="loading-text" *ngIf="loading">Carregando laudos...</p>
+
+  <div class="empty-state error" *ngIf="error && !loading">
+    <span>Não foi possível carregar os laudos. <a (click)="load()">Tentar novamente</a></span>
+  </div>
+
+  <div class="diagnosis-grid" *ngIf="!loading && !error">
+    <div class="diagnosis-card" *ngFor="let diagnosis of diagnoses">
+      <div class="thumb" [class.thumb-empty]="!diagnosis.thumbnailUrl">
+        <img *ngIf="diagnosis.thumbnailUrl" [src]="diagnosis.thumbnailUrl" alt="Foto do laudo" />
+      </div>
+
+      <div class="diagnosis-info">
+        <span class="status-badge" [class]="'status-' + diagnosis.status">
+          {{ statusLabel(diagnosis.status) }}
+        </span>
+        <span class="diagnosis-crop">{{ diagnosis.cropName || 'Cultura não informada' }}</span>
+        <span class="diagnosis-meta">
+          {{ diagnosis.createdAt | date:'dd/MM/yyyy HH:mm' }}
+          <ng-container *ngIf="diagnosis.pivotId"> · Pivô {{ diagnosis.pivotId }}</ng-container>
+        </span>
+        <span class="diagnosis-error" *ngIf="diagnosis.failureReason">
+          {{ diagnosis.failureReason }}
+        </span>
+      </div>
+
+      <div class="diagnosis-actions">
+        <button class="btn-action btn-delete" (click)="delete(diagnosis.id)">Excluir</button>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="diagnoses.length === 0">
+      <span>Nenhum laudo ainda. Tire uma foto da planta com sintoma para começar.</span>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,204 @@
+using AgripeWebAPI.Models;
+using AgripeWebAPI.Models.Entities;
+using MongoDB.Driver;
+
+namespace AgripeWebWorker.Services
+{
+    /// <summary>
+    /// Consome os laudos pendentes e roda a análise.
+    /// <para>
+    /// Na Fase 0 o processamento é um <b>mock</b>: leva <c>Uploaded → AiCompleted</c> com um texto
+    /// fixo, só para exercitar a máquina de estados ponta a ponta. A Fase 1 (issue #103) substitui
+    /// o mock pela chamada ao Kindwise + LLM.
+    /// </para>
+    /// <para>
+    /// O tenant vem <b>de dentro do documento</b> (<c>d.UserId</c>), nunca de um contexto de
+    /// usuário: no worker o <c>WorkerUserContext</c> devolve <c>UserId = null</c>.
+    /// </para>
+    /// </summary>
+    public sealed class PlantDiagnosisProcessor : BackgroundService
+    {
+        private static readonly TimeSpan Interval = TimeSpan.FromSeconds(30);
+        private static readonly TimeSpan ZombieTimeout = TimeSpan.FromMinutes(10);
+        private const int MaxRetries = 3;
+
+        private readonly IServiceProvider _serviceProvider;
+        private readonly ILogger<PlantDiagnosisProcessor> _logger;
+        private readonly string _workerId = $"{Environment.MachineName}:{Environment.ProcessId}";
+
+        public PlantDiagnosisProcessor(
+            IServiceProvider serviceProvider,
+            ILogger<PlantDiagnosisProcessor> logger)
+        {
+            _serviceProvider = serviceProvider;
+            _logger = logger;
+        }
+
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        {
+            using var timer = new PeriodicTimer(Interval);
+
+            while (await timer.WaitForNextTickAsync(stoppingToken))
+            {
+                try
+                {
+                    await RunAsync(stoppingToken);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "PlantDiagnosisProcessor tick failed");
+                }
+            }
+        }
+
+        private async Task RunAsync(CancellationToken cancellationToken)
+        {
+            using var scope = _serviceProvider.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<agpDBContext>();
+
+            await ReleaseZombiesAsync(db, cancellationToken);
+
+            // Drena a fila num único tick, um documento por vez — cada iteração faz seu
+            // próprio claim atômico, então N workers em paralelo nunca pegam o mesmo laudo.
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                var diagnosis = await ClaimNextAsync(db, cancellationToken);
+                if (diagnosis is null) break;
+
+                try
+                {
+                    await ProcessAsync(db, diagnosis, cancellationToken);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "PlantDiagnosisProcessor: failed to process diagnosis {Id}", diagnosis.Id);
+                    await FailAsync(db, diagnosis, ex.Message, cancellationToken);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Claim atômico: o <c>FindOneAndUpdate</c> é o lock. Quem conseguir virar o status
+        /// para Processing ficou com o documento — sem Redis, sem fila externa.
+        /// </summary>
+        private async Task<PlantDiagnosis?> ClaimNextAsync(agpDBContext db, CancellationToken cancellationToken)
+        {
+            var now = DateTime.UtcNow;
+
+            var filter = Builders<PlantDiagnosis>.Filter.And(
+                Builders<PlantDiagnosis>.Filter.Eq(d => d.Status, PlantDiagnosisStatus.Uploaded),
+                Builders<PlantDiagnosis>.Filter.Lte(d => d.NextAttemptAt, now));
+
+            var update = Builders<PlantDiagnosis>.Update
+                .Set(d => d.Status, PlantDiagnosisStatus.Processing)
+                .Set(d => d.ProcessingStartedAt, now)
+                .Set(d => d.UpdatedAt, now)
+                .Set(d => d.WorkerId, _workerId)
+                .Push(d => d.AuditTrail, new PlantDiagnosisAuditEntry
+                {
+                    At = now,
+                    FromStatus = PlantDiagnosisStatus.Uploaded,
+                    ToStatus = PlantDiagnosisStatus.Processing,
+                    Action = "claimed"
+                });
+
+            return await db.PlantDiagnoses.FindOneAndUpdateAsync(
+                filter,
+                update,
+                new FindOneAndUpdateOptions<PlantDiagnosis> { ReturnDocument = ReturnDocument.After },
+                cancellationToken);
+        }
+
+        /// <summary>
+        /// Um worker que morreu no meio deixa o laudo preso em Processing. Depois de 10 min,
+        /// devolve para a fila (ou marca como falha, se já esgotou as tentativas).
+        /// </summary>
+        private async Task ReleaseZombiesAsync(agpDBContext db, CancellationToken cancellationToken)
+        {
+            var now = DateTime.UtcNow;
+            var cutoff = now - ZombieTimeout;
+
+            var stuck = await db.PlantDiagnoses
+                .Find(d => d.Status == PlantDiagnosisStatus.Processing && d.ProcessingStartedAt < cutoff)
+                .ToListAsync(cancellationToken);
+
+            foreach (var diagnosis in stuck)
+            {
+                _logger.LogWarning(
+                    "PlantDiagnosisProcessor: releasing stuck diagnosis {Id} (started at {StartedAt:O})",
+                    diagnosis.Id, diagnosis.ProcessingStartedAt);
+
+                await FailAsync(db, diagnosis, "Processamento interrompido.", cancellationToken);
+            }
+        }
+
+        private async Task ProcessAsync(agpDBContext db, PlantDiagnosis diagnosis, CancellationToken cancellationToken)
+        {
+            // MOCK (Fase 0) — a análise real entra na issue #103.
+            var report =
+                "## Pré-análise indisponível\n\n" +
+                "A foto foi recebida e armazenada com sucesso, mas a análise por IA ainda não está " +
+                "habilitada nesta versão.\n\n" +
+                "_Laudo técnico informativo. Não constitui receituário agronômico nem ART._";
+
+            var now = DateTime.UtcNow;
+
+            var update = Builders<PlantDiagnosis>.Update
+                .Set(d => d.Status, PlantDiagnosisStatus.AiCompleted)
+                .Set(d => d.AiReportMarkdown, report)
+                .Set(d => d.AiProvider, "mock")
+                .Set(d => d.AiGeneratedAt, now)
+                .Set(d => d.ProcessedAt, now)
+                .Set(d => d.UpdatedAt, now)
+                .Set(d => d.FailureReason, null)
+                .Push(d => d.AuditTrail, new PlantDiagnosisAuditEntry
+                {
+                    At = now,
+                    FromStatus = PlantDiagnosisStatus.Processing,
+                    ToStatus = PlantDiagnosisStatus.AiCompleted,
+                    Action = "processed:mock"
+                });
+
+            await db.PlantDiagnoses.UpdateOneAsync(d => d.Id == diagnosis.Id, update, null, cancellationToken);
+
+            _logger.LogInformation(
+                "PlantDiagnosisProcessor: diagnosis {Id} (user {UserId}) processed", diagnosis.Id, diagnosis.UserId);
+        }
+
+        private async Task FailAsync(
+            agpDBContext db,
+            PlantDiagnosis diagnosis,
+            string reason,
+            CancellationToken cancellationToken)
+        {
+            var now = DateTime.UtcNow;
+            var retryCount = diagnosis.RetryCount + 1;
+            var giveUp = retryCount >= MaxRetries;
+
+            var backoff = retryCount switch
+            {
+                1 => TimeSpan.FromMinutes(1),
+                2 => TimeSpan.FromMinutes(5),
+                _ => TimeSpan.FromMinutes(15)
+            };
+
+            var nextStatus = giveUp ? PlantDiagnosisStatus.Failed : PlantDiagnosisStatus.Uploaded;
+
+            var update = Builders<PlantDiagnosis>.Update
+                .Set(d => d.Status, nextStatus)
+                .Set(d => d.RetryCount, retryCount)
+                .Set(d => d.NextAttemptAt, now + backoff)
+                .Set(d => d.FailureReason, reason)
+                .Set(d => d.UpdatedAt, now)
+                .Push(d => d.AuditTrail, new PlantDiagnosisAuditEntry
+                {
+                    At = now,
+                    FromStatus = PlantDiagnosisStatus.Processing,
+                    ToStatus = nextStatus,
+                    Action = giveUp ? "failed" : "retry-scheduled"
+                });
+
+            await db.PlantDiagnoses.UpdateOneAsync(d => d.Id == diagnosis.Id, update, null, cancellationToken);
+        }
+    }
+}

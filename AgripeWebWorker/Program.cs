@@ -65,6 +65,7 @@ var builder = Host.CreateDefaultBuilder(args)
         // Hosted services
         services.AddHostedService<MqttWorkerService>();
         services.AddHostedService<IrrigationAlertScheduler>();
+        services.AddHostedService<PlantDiagnosisProcessor>();
     });
 
 var host = builder.Build();

@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>AgripeWeb — Laudo Fitossanitário Assistido por IA</title>
+<style>
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --green-900: #14401A;
+    --green-700: #1B5E20;
+    --green-500: #2E7D32;
+    --green-100: #E8F3E9;
+    --amber: #E8A317;
+    --amber-100: #FDF3DF;
+    --ink: #1C1E1B;
+    --muted: #5F6B60;
+    --line: #DCE3DC;
+    --red: #B3261E;
+    --red-100: #FBEAE9;
+  }
+
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  body {
+    font-family: "Segoe UI", "Inter", "Helvetica Neue", Arial, sans-serif;
+    color: var(--ink);
+    font-size: 10.5pt;
+    line-height: 1.5;
+    background: #fff;
+  }
+
+  /* Altura fixa e overflow oculto: com min-height:297mm o arredondamento de
+     subpixel empurra 1px para a folha seguinte e o PDF sai cheio de páginas em branco. */
+  .page {
+    width: 210mm;
+    height: 296mm;
+    overflow: hidden;
+    padding: 15mm 17mm;
+    page-break-after: always;
+    break-after: page;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .page:last-child { page-break-after: auto; break-after: auto; }
+
+  /* ---------- Capa ---------- */
+  .cover {
+    background: linear-gradient(160deg, var(--green-900) 0%, var(--green-500) 100%);
+    color: #fff;
+    justify-content: space-between;
+    padding: 25mm 20mm;
+  }
+  .cover .brand {
+    font-size: 13pt;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    font-weight: 600;
+    opacity: .85;
+  }
+  .cover h1 {
+    font-size: 34pt;
+    line-height: 1.12;
+    font-weight: 700;
+    letter-spacing: -.01em;
+    margin-top: 6mm;
+  }
+  .cover .kicker {
+    font-size: 14pt;
+    font-weight: 400;
+    opacity: .92;
+    margin-top: 8mm;
+    max-width: 135mm;
+    line-height: 1.45;
+  }
+  .cover .rule { width: 28mm; height: 3px; background: var(--amber); margin: 10mm 0; }
+  .cover-meta { font-size: 9.5pt; opacity: .75; line-height: 1.7; }
+  .cover-meta strong { font-weight: 600; opacity: 1; }
+  .cover-badges { display: flex; gap: 4mm; margin-top: 4mm; }
+  .cover-badges span {
+    border: 1px solid rgba(255,255,255,.4);
+    border-radius: 999px;
+    padding: 1.5mm 4mm;
+    font-size: 8.5pt;
+    letter-spacing: .04em;
+  }
+
+  /* ---------- Tipografia ---------- */
+  .part-label {
+    display: inline-block;
+    background: var(--green-100);
+    color: var(--green-700);
+    font-size: 8.5pt;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    padding: 1.5mm 3.5mm;
+    border-radius: 3px;
+    margin-bottom: 4mm;
+  }
+  h2 {
+    font-size: 20pt;
+    color: var(--green-900);
+    line-height: 1.2;
+    letter-spacing: -.01em;
+    margin-bottom: 3mm;
+  }
+  h3 {
+    font-size: 12.5pt;
+    color: var(--green-700);
+    margin: 7mm 0 2.5mm;
+    letter-spacing: -.005em;
+  }
+  h3:first-of-type { margin-top: 5mm; }
+  p { margin-bottom: 3mm; }
+  .lead { font-size: 11.5pt; color: var(--muted); line-height: 1.55; margin-bottom: 5mm; }
+  strong { font-weight: 600; }
+  .em-green { color: var(--green-700); font-weight: 600; }
+
+  /* ---------- Blocos ---------- */
+  .pain {
+    background: var(--red-100);
+    border-left: 3px solid var(--red);
+    padding: 5mm 6mm;
+    border-radius: 0 4px 4px 0;
+    margin-bottom: 6mm;
+  }
+  .pain p { margin: 0; font-size: 11pt; font-style: italic; color: #6B1F1A; line-height: 1.5; }
+
+  .steps { display: flex; gap: 4mm; margin: 4mm 0 2mm; }
+  .step {
+    flex: 1;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 5mm 4.5mm;
+    background: #fff;
+  }
+  .step .n {
+    width: 8mm; height: 8mm;
+    border-radius: 50%;
+    background: var(--green-500);
+    color: #fff;
+    font-weight: 700;
+    font-size: 11pt;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 3mm;
+  }
+  .step h4 { font-size: 11pt; color: var(--green-900); margin-bottom: 1.5mm; }
+  .step p { font-size: 9.5pt; color: var(--muted); margin: 0; line-height: 1.45; }
+
+  /* ---------- Mockup do laudo ---------- */
+  .mock {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 4mm 0 3mm;
+    background: #fff;
+  }
+  .mock-bar {
+    background: var(--green-900);
+    color: #fff;
+    padding: 3mm 5mm;
+    font-size: 9.5pt;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .mock-bar .tag {
+    background: var(--amber);
+    color: #3A2A05;
+    font-size: 8pt;
+    font-weight: 700;
+    padding: 1mm 2.5mm;
+    border-radius: 3px;
+    letter-spacing: .04em;
+  }
+  .mock-body { padding: 5mm; }
+  .mock-row { display: flex; gap: 5mm; }
+  .mock-photo {
+    width: 38mm; height: 30mm;
+    border-radius: 5px;
+    background:
+      radial-gradient(circle at 62% 42%, #8B6B2E 0 8%, transparent 9%),
+      radial-gradient(circle at 40% 62%, #A07C33 0 5%, transparent 6%),
+      radial-gradient(circle at 74% 68%, #8B6B2E 0 4%, transparent 5%),
+      linear-gradient(140deg, #4E8A3C 0%, #2F6B27 100%);
+    flex-shrink: 0;
+    border: 1px solid var(--line);
+  }
+  .mock-diag { flex: 1; }
+  .diag-line { display: flex; align-items: center; gap: 3mm; margin-bottom: 2.5mm; }
+  .diag-name { font-size: 9.5pt; width: 40mm; flex-shrink: 0; }
+  .diag-name small { display: block; color: var(--muted); font-size: 7.5pt; font-style: italic; }
+  .bar { flex: 1; height: 4mm; background: #EEF1EE; border-radius: 999px; overflow: hidden; }
+  .bar span { display: block; height: 100%; background: var(--green-500); border-radius: 999px; }
+  .bar.low span { background: #A9BFA6; }
+  .diag-pct { font-size: 9.5pt; font-weight: 700; width: 11mm; text-align: right; color: var(--green-700); }
+  .diag-pct.low { color: var(--muted); font-weight: 500; }
+
+  .correlation {
+    background: var(--amber-100);
+    border: 1px solid #F0DFB0;
+    border-radius: 5px;
+    padding: 4mm 4.5mm;
+    margin-top: 4mm;
+  }
+  .correlation .label {
+    font-size: 7.5pt;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: #8A6410;
+    margin-bottom: 1.5mm;
+  }
+  .correlation p { font-size: 9.5pt; margin: 0; line-height: 1.5; color: #4A3A12; }
+
+  .signature {
+    display: flex;
+    align-items: center;
+    gap: 3mm;
+    margin-top: 4mm;
+    padding-top: 3.5mm;
+    border-top: 1px dashed var(--line);
+  }
+  .seal {
+    width: 11mm; height: 11mm;
+    border-radius: 50%;
+    border: 2px solid var(--green-500);
+    color: var(--green-700);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13pt; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .signature div { font-size: 9pt; line-height: 1.4; }
+  .signature .who { font-weight: 600; }
+  .signature .meta { color: var(--muted); font-size: 8.5pt; }
+
+  /* ---------- Comparativo ---------- */
+  table { width: 100%; border-collapse: collapse; margin: 3mm 0 4mm; font-size: 9.5pt; }
+  th {
+    text-align: left;
+    background: var(--green-100);
+    color: var(--green-900);
+    font-weight: 600;
+    padding: 2.5mm 3mm;
+    border-bottom: 1px solid var(--line);
+    font-size: 9pt;
+  }
+  td { padding: 2.5mm 3mm; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .check { color: var(--green-500); font-weight: 700; }
+  .cross { color: #C0392B; font-weight: 700; }
+
+  .plans { display: flex; gap: 4mm; margin: 4mm 0; }
+  .plan {
+    flex: 1;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 5mm 4.5mm;
+  }
+  .plan.featured { border: 2px solid var(--green-500); background: var(--green-100); }
+  .plan h4 { font-size: 11pt; color: var(--green-900); margin-bottom: 1mm; }
+  .plan .price {
+    font-size: 16pt;
+    font-weight: 700;
+    color: var(--green-700);
+    margin: 2mm 0 1mm;
+    font-variant-numeric: tabular-nums;
+  }
+  .plan .price small { font-size: 9pt; font-weight: 400; color: var(--muted); }
+  .plan ul { list-style: none; margin-top: 2.5mm; }
+  .plan li { font-size: 9pt; color: var(--muted); padding-left: 4mm; position: relative; margin-bottom: 1.5mm; line-height: 1.4; }
+  .plan li::before { content: "✓"; position: absolute; left: 0; color: var(--green-500); font-weight: 700; }
+
+  .callout {
+    background: var(--green-100);
+    border-left: 3px solid var(--green-500);
+    padding: 4.5mm 5mm;
+    border-radius: 0 4px 4px 0;
+    margin: 4mm 0;
+  }
+  .callout p { margin: 0; font-size: 10pt; line-height: 1.5; }
+  .callout .title { font-weight: 700; color: var(--green-900); margin-bottom: 1.5mm; display: block; }
+
+  .metrics { display: flex; gap: 4mm; margin: 4mm 0; }
+  .metric {
+    flex: 1;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 4.5mm;
+    text-align: center;
+  }
+  .metric .big {
+    font-size: 17pt;
+    font-weight: 700;
+    color: var(--green-700);
+    line-height: 1.15;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .metric .big .range { font-size: 11pt; font-weight: 600; }
+  .metric .cap { font-size: 8.5pt; color: var(--muted); margin-top: 1.5mm; line-height: 1.35; }
+
+  /* -1 para a numeração começar em F0 e casar com as issues (Fase 0 … Fase 4). */
+  ol.roadmap { list-style: none; counter-reset: ph -1; }
+  ol.roadmap li {
+    counter-increment: ph;
+    position: relative;
+    padding-left: 11mm;
+    margin-bottom: 3.5mm;
+    font-size: 9.5pt;
+    line-height: 1.45;
+  }
+  ol.roadmap li::before {
+    content: "F" counter(ph, decimal);
+    position: absolute; left: 0; top: 0;
+    width: 8mm; height: 5mm;
+    background: var(--green-700);
+    color: #fff;
+    border-radius: 3px;
+    font-size: 8pt;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+  ol.roadmap li .t { font-weight: 600; color: var(--green-900); display: block; }
+  ol.roadmap li .d { color: var(--muted); }
+  ol.roadmap li.star .t::after {
+    content: "MVP na fazenda";
+    background: var(--amber);
+    color: #3A2A05;
+    font-size: 7pt;
+    font-weight: 700;
+    padding: .5mm 2mm;
+    border-radius: 3px;
+    margin-left: 2.5mm;
+    letter-spacing: .04em;
+    vertical-align: 1px;
+  }
+
+  .warn {
+    background: var(--red-100);
+    border: 1px solid #EBC9C6;
+    border-radius: 5px;
+    padding: 4.5mm 5mm;
+    margin-top: 4mm;
+  }
+  .warn .title { font-weight: 700; color: #8C2019; font-size: 9.5pt; margin-bottom: 1.5mm; display: block; }
+  .warn p { font-size: 9pt; color: #6B2B26; margin: 0; line-height: 1.5; }
+
+  footer {
+    margin-top: auto;
+    padding-top: 5mm;
+    border-top: 1px solid var(--line);
+    font-size: 8pt;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+  }
+  .sources { font-size: 7.5pt; color: var(--muted); line-height: 1.55; margin-top: 4mm; }
+  .sources b { color: var(--ink); font-weight: 600; }
+</style>
+</head>
+<body>
+
+<!-- ============ CAPA ============ -->
+<section class="page cover">
+  <div>
+    <div class="brand">AgripeWeb</div>
+    <div class="rule"></div>
+    <h1>Laudo Fitossanitário<br>Assistido por IA</h1>
+    <p class="kicker">
+      O produtor fotografa a planta doente. A inteligência artificial faz a pré-análise
+      cruzando com a umidade do solo e a chuva prevista daquele pivô. O engenheiro
+      agrônomo revisa e assina.
+    </p>
+    <div class="cover-badges">
+      <span>Diagnóstico por foto</span>
+      <span>Contexto da lavoura</span>
+      <span>Assinatura profissional</span>
+    </div>
+  </div>
+  <div class="cover-meta">
+    <strong>Proposta comercial e business case</strong><br>
+    Parte 1 — para o produtor rural &nbsp;·&nbsp; Parte 2 — para o agrônomo parceiro<br>
+    Julho de 2026 · Documento interno de trabalho
+  </div>
+</section>
+
+<!-- ============ PARTE 1 — PÁGINA 1 ============ -->
+<section class="page">
+  <div class="part-label">Parte 1 — Para o produtor</div>
+  <h2>Você viu a mancha na folha. E agora?</h2>
+
+  <div class="pain">
+    <p>
+      “Apareceu uma mancha esquisita no talhão. Espero o agrônomo conseguir vir — e perco
+      três dias? Chuto um defensivo e gasto à toa? Ou faço de conta que não vi e arrisco
+      perder a lavoura?”
+    </p>
+  </div>
+
+  <p>
+    Esse é o momento em que o produtor está mais sozinho. A doença avança em dias; a agenda do
+    agrônomo, não. O AgripeWeb resolve exatamente essa janela: <strong>uma resposta técnica em
+    minutos, e um laudo assinado por um profissional em seguida.</strong>
+  </p>
+
+  <h3>Como funciona</h3>
+  <div class="steps">
+    <div class="step">
+      <div class="n">1</div>
+      <h4>Tire a foto</h4>
+      <p>Pelo celular, ali no talhão. Abre o AgripeWeb, aponta para a folha e envia. Não precisa instalar nada.</p>
+    </div>
+    <div class="step">
+      <div class="n">2</div>
+      <h4>Receba a pré-análise</h4>
+      <p>Em minutos, a IA aponta a doença provável e cruza com a umidade do seu solo e a chuva prevista.</p>
+    </div>
+    <div class="step">
+      <div class="n">3</div>
+      <h4>O agrônomo assina</h4>
+      <p>Um engenheiro agrônomo revisa, corrige o que for preciso e assina o laudo. Aí sim você age.</p>
+    </div>
+  </div>
+
+  <h3>O que chega até você</h3>
+
+  <div class="mock">
+    <div class="mock-bar">
+      <span>Laudo #148 · Pivô Sede · Quadrante 3</span>
+      <span class="tag">ASSINADO</span>
+    </div>
+    <div class="mock-body">
+      <div class="mock-row">
+        <div class="mock-photo"></div>
+        <div class="mock-diag">
+          <div class="diag-line">
+            <div class="diag-name">Antracnose<small>Colletotrichum spp.</small></div>
+            <div class="bar"><span style="width:78%"></span></div>
+            <div class="diag-pct">78%</div>
+          </div>
+          <div class="diag-line">
+            <div class="diag-name">Mancha-alvo<small>Corynespora cassiicola</small></div>
+            <div class="bar low"><span style="width:14%"></span></div>
+            <div class="diag-pct low">14%</div>
+          </div>
+          <div class="diag-line">
+            <div class="diag-name">Deficiência de potássio</div>
+            <div class="bar low"><span style="width:6%"></span></div>
+            <div class="diag-pct low">6%</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="correlation">
+        <div class="label">Correlação com a sua lavoura</div>
+        <p>
+          A umidade do solo do Quadrante 3 ficou <strong>acima de 85% por 6 dias seguidos</strong> e há
+          <strong>chuva prevista para os próximos 3 dias</strong> — condição favorável ao patógeno.
+          Recomenda-se revisar a lâmina de irrigação do quadrante antes de qualquer intervenção química.
+        </p>
+      </div>
+
+      <div class="signature">
+        <div class="seal">✓</div>
+        <div>
+          <div class="who">Eng. Agr. [Nome do Agrônomo] — CREA [000000/UF]</div>
+          <div class="meta">Revisado e assinado em 13/07/2026 às 15:42 · Laudo técnico informativo</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <span>AgripeWeb · Laudo Fitossanitário Assistido por IA</span>
+    <span>Parte 1 — Produtor · 2</span>
+  </footer>
+</section>
+
+<!-- ============ PARTE 1 — PÁGINA 2 ============ -->
+<section class="page">
+  <div class="part-label">Parte 1 — Para o produtor</div>
+  <h2>Por que não é “só mais um app de foto”</h2>
+
+  <p class="lead">
+    Existem aplicativos que identificam doença por foto. Nenhum deles sabe o que está acontecendo
+    <em>na sua lavoura</em>.
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:44%">O que o laudo precisa responder</th>
+        <th style="width:28%">App de foto comum</th>
+        <th style="width:28%">AgripeWeb</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Que doença é essa?</td>
+        <td><span class="check">✓</span> Sim</td>
+        <td><span class="check">✓</span> Sim</td>
+      </tr>
+      <tr>
+        <td>A umidade do meu solo favoreceu isso?</td>
+        <td><span class="cross">✗</span> Não sabe</td>
+        <td><span class="check">✓</span> Lê os sensores do seu pivô</td>
+      </tr>
+      <tr>
+        <td>Minha irrigação está piorando o problema?</td>
+        <td><span class="cross">✗</span> Não sabe</td>
+        <td><span class="check">✓</span> Lê seu histórico de irrigação</td>
+      </tr>
+      <tr>
+        <td>Vai chover e agravar nos próximos dias?</td>
+        <td><span class="cross">✗</span> Não sabe</td>
+        <td><span class="check">✓</span> Cruza com a previsão do tempo</td>
+      </tr>
+      <tr>
+        <td>Um profissional se responsabiliza por isso?</td>
+        <td><span class="cross">✗</span> Ninguém assina</td>
+        <td><span class="check">✓</span> Agrônomo revisa e assina</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <span class="title">A diferença em uma frase</span>
+    <p>
+      O aplicativo comum olha para a <strong>folha</strong>. O AgripeWeb olha para a folha
+      <strong>e para a lavoura inteira</strong> — porque os sensores de umidade já estão lá, no seu pivô,
+      medindo todos os dias.
+    </p>
+  </div>
+
+  <h3>Planos</h3>
+  <p class="lead" style="margin-bottom:3mm">
+    O software e a assessoria vêm juntos: você não compra uma licença, você contrata um agrônomo
+    que agora consegue te atender no dia em que o problema aparece.
+  </p>
+
+  <div class="plans">
+    <div class="plan">
+      <h4>Monitoramento</h4>
+      <div class="price">R$ ___ <small>/mês</small></div>
+      <ul>
+        <li>Sensores de umidade e irrigação</li>
+        <li>Painel e alertas</li>
+        <li>Previsão do tempo do pivô</li>
+        <li>Pré-análise por IA (sem laudo assinado)</li>
+      </ul>
+    </div>
+    <div class="plan featured">
+      <h4>Monitoramento + Assessoria</h4>
+      <div class="price">R$ ___ <small>/mês</small></div>
+      <ul>
+        <li>Tudo do plano anterior</li>
+        <li><strong>___ laudos assinados por mês</strong></li>
+        <li>Agrônomo responsável dedicado</li>
+        <li>Resposta em até ___ horas</li>
+        <li>Laudo adicional: R$ ___</li>
+      </ul>
+    </div>
+    <div class="plan">
+      <h4>Safra completa</h4>
+      <div class="price">R$ ___ <small>/safra</small></div>
+      <ul>
+        <li>Laudos ilimitados</li>
+        <li>Visitas presenciais incluídas</li>
+        <li>Acompanhamento do ciclo</li>
+        <li>Histórico por talhão</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="warn">
+    <span class="title">Transparência sobre o que o laudo é</span>
+    <p>
+      O laudo entregue é um <strong>documento técnico informativo</strong>, assinado por engenheiro
+      agrônomo. Ele <strong>não substitui o receituário agronômico</strong> — a receita para aplicação
+      de defensivo é um documento à parte, emitido pelo profissional quando ele julgar necessário,
+      com a devida ART.
+    </p>
+  </div>
+
+  <footer>
+    <span>AgripeWeb · Laudo Fitossanitário Assistido por IA</span>
+    <span>Parte 1 — Produtor · 3</span>
+  </footer>
+</section>
+
+<!-- ============ PARTE 2 — PÁGINA 1 ============ -->
+<section class="page">
+  <div class="part-label" style="background:var(--amber-100); color:#8A6410;">Parte 2 — Business case</div>
+  <h2>Por que este produto se vende</h2>
+
+  <p class="lead">
+    A IA não é o produto. O produto é a <strong>capacidade do agrônomo de atender mais clientes,
+    mais rápido, sem abrir mão da responsabilidade técnica</strong> — que a lei reserva só para ele.
+  </p>
+
+  <h3>O fosso competitivo é legal, não tecnológico</h3>
+  <p>
+    Qualquer concorrente pode integrar um classificador de imagem amanhã. Nenhum deles pode
+    assinar um documento técnico. O receituário agronômico é <strong>obrigatório por lei</strong>
+    (Lei nº 14.785/2023) e é <strong>ato privativo de engenheiro agrônomo registrado no CREA</strong>,
+    vinculado a uma ART. Assinatura eletrônica já é aceita em 16 estados.
+  </p>
+
+  <div class="callout">
+    <span class="title">A tese</span>
+    <p>
+      A IA faz o <strong>volume</strong> — triagem de dezenas de fotos, laudo pré-redigido, correlação
+      automática com os dados da lavoura. O agrônomo entrega o que a IA <strong>nunca</strong> poderá
+      entregar: <strong>responsabilidade técnica</strong>. Um multiplica o outro; nenhum substitui o outro.
+    </p>
+  </div>
+
+  <h3>Economia unitária</h3>
+  <div class="metrics">
+    <div class="metric">
+      <div class="big">R$ <span class="range">0,06–0,32</span></div>
+      <div class="cap">Custo de IA por laudo<br>(classificador Kindwise)</div>
+    </div>
+    <div class="metric">
+      <div class="big">R$ <span class="range">600–3.000</span></div>
+      <div class="cap">Diária de consultoria<br>agronômica no mercado</div>
+    </div>
+    <div class="metric">
+      <div class="big">R$ <span class="range">5–20 mil</span></div>
+      <div class="cap">Contrato mensal típico<br>de assessoria</div>
+    </div>
+    <div class="metric">
+      <div class="big">~100%</div>
+      <div class="cap">Margem bruta por laudo<br>(custo de IA é desprezível)</div>
+    </div>
+  </div>
+
+  <p>
+    O custo marginal de um laudo é <strong>estatisticamente zero</strong>. O que limita a escala não é
+    o software — é o tempo do agrônomo na revisão. Por isso a tela de revisão foi desenhada para que
+    ele <strong>edite um texto pronto, não redija do zero</strong>: essa economia de tempo é literalmente
+    o que ele está comprando.
+  </p>
+
+  <h3>Modelo de receita</h3>
+  <table>
+    <thead>
+      <tr><th style="width:30%">Fonte</th><th style="width:40%">Como cobra</th><th style="width:30%">Quem paga</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Assinatura da fazenda</strong></td>
+        <td>Mensalidade com N laudos revisados inclusos</td>
+        <td>Produtor</td>
+      </tr>
+      <tr>
+        <td><strong>Laudo excedente</strong></td>
+        <td>Valor fixo por laudo além da cota</td>
+        <td>Produtor</td>
+      </tr>
+      <tr>
+        <td><strong>Plano do agrônomo</strong></td>
+        <td>Escala por número de clientes na carteira</td>
+        <td>Agrônomo / consultoria</td>
+      </tr>
+      <tr>
+        <td><strong>Hardware</strong></td>
+        <td>Venda ou comodato dos sensores e gateway</td>
+        <td>Produtor</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <footer>
+    <span>AgripeWeb · Business case</span>
+    <span>Parte 2 — Agrônomo · 4</span>
+  </footer>
+</section>
+
+<!-- ============ PARTE 2 — PÁGINA 2 ============ -->
+<section class="page">
+  <div class="part-label" style="background:var(--amber-100); color:#8A6410;">Parte 2 — Business case</div>
+  <h2>Concorrência, decisões técnicas e roadmap</h2>
+
+  <h3>Como estamos posicionados</h3>
+  <table>
+    <thead>
+      <tr>
+        <th style="width:22%">Player</th>
+        <th style="width:38%">O que faz</th>
+        <th style="width:40%">O que não faz</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Plantix</strong></td>
+        <td>Diagnóstico de doença por foto, base ampla de culturas</td>
+        <td>Não conhece o solo nem a irrigação do produtor; ninguém assina o resultado</td>
+      </tr>
+      <tr>
+        <td><strong>On Agri</strong></td>
+        <td>“Agrônomo digital” por WhatsApp, com clima e satélite</td>
+        <td>Não integra sensores de campo do próprio produtor</td>
+      </tr>
+      <tr>
+        <td><strong>AgripeWeb</strong></td>
+        <td>Foto + <strong>umidade do solo + histórico de irrigação + previsão</strong> daquele pivô, com laudo assinado</td>
+        <td>—</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Duas decisões técnicas que sustentam o produto</h3>
+
+  <p>
+    <span class="em-green">1. Classificador especializado, não um chatbot genérico.</span>
+    Em benchmark agrícola, os modelos de linguagem genéricos acertam cerca de <strong>62%</strong> dos
+    diagnósticos de doença de planta; classificadores especializados passam de <strong>90%</strong>.
+    Um laudo que um profissional assina não pode nascer de um chute. Usamos um classificador dedicado
+    (23 culturas, 288 doenças e pragas) e a IA de texto entra só para <em>redigir</em> o laudo em
+    português, cruzando o diagnóstico com os dados da lavoura.
+  </p>
+
+  <p>
+    <span class="em-green">2. A IA não prescreve. Nunca.</span>
+    O sistema é explicitamente proibido de sugerir produto comercial e dose — isso é receituário,
+    ato privativo com responsabilidade legal. A IA descreve <em>estratégias de manejo</em>; a prescrição
+    só existe no campo preenchido pelo agrônomo humano. Essa fronteira é o que separa um software
+    legítimo de um passivo jurídico.
+  </p>
+
+  <footer>
+    <span>AgripeWeb · Business case</span>
+    <span>Parte 2 — Agrônomo · 5</span>
+  </footer>
+</section>
+
+<!-- ============ PARTE 2 — PÁGINA 3 ============ -->
+<section class="page">
+  <div class="part-label" style="background:var(--amber-100); color:#8A6410;">Parte 2 — Business case</div>
+  <h2>Roadmap, risco e fontes</h2>
+
+  <h3>Roadmap de entrega</h3>
+  <ol class="roadmap">
+    <li>
+      <span class="t">Fundação</span>
+      <span class="d">Foto sobe do celular, é armazenada e volta na tela. Sem IA ainda — valida o caminho ponta a ponta.</span>
+    </li>
+    <li class="star">
+      <span class="t">Pré-análise por IA e laudo em português</span>
+      <span class="d">Foto de folha doente → ~40 segundos → laudo correlacionando a doença com a umidade e a chuva prevista daquele pivô. <strong>É esta fase que se demonstra na fazenda.</strong></span>
+    </li>
+    <li>
+      <span class="t">Perfil Agrônomo, carteira de clientes e assinatura</span>
+      <span class="d">Fila de laudos pendentes, revisão, assinatura e devolução ao produtor. <strong>É aqui que o produto passa a ser vendável.</strong></span>
+    </li>
+    <li>
+      <span class="t">Profissionalização</span>
+      <span class="d">PDF do laudo assinado, histórico por talhão, comparação temporal (“a mancha piorou desde 12/03”).</span>
+    </li>
+    <li>
+      <span class="t">Escala</span>
+      <span class="d">Cotas e cobrança, WhatsApp (onde o produtor realmente vive) e aplicativo móvel.</span>
+    </li>
+  </ol>
+
+  <div class="warn">
+    <span class="title">O risco que precisa ser dito em voz alta</span>
+    <p>
+      <strong>Receituário agronômico e ART não são “mais uma fase do roadmap”</strong> — são produto
+      regulado (validação de CREA, certificado ICP-Brasil, responsabilidade técnica formal). O laudo
+      do MVP é <strong>informativo</strong> e carrega esse aviso de forma explícita na tela e no rodapé
+      do documento. Prometer receituário cedo demais é o maior risco jurídico desta iniciativa.
+    </p>
+  </div>
+
+  <div class="sources">
+    <b>Fontes.</b>
+    Kindwise crop.health — cobertura, campos de resposta e preços (kindwise.com/crop-health, kindwise.com/pricing) ·
+    AgroBench, benchmark de modelos de visão em agricultura (arxiv.org/abs/2507.20519) ·
+    Revisão sobre detecção de doenças de plantas por IA (PMC13066816) ·
+    Receituário agronômico e ART — Lei nº 14.785/2023 (agroadvance.com.br; agriq.com.br) ·
+    Precificação de consultoria rural (blog Aegro) ·
+    On Agri — consultoria agronômica por WhatsApp (Broto Notícias).
+    <br><br>
+    <b>Nota sobre os valores.</b> O custo de IA por laudo parte do preço em euro do classificador
+    (€ 0,01–0,05 por identificação) convertido a uma taxa aproximada; os valores de mercado de
+    consultoria são faixas de referência públicas, não cotações. Os campos “R$ ___” nos planos são
+    propositalmente deixados em aberto para definição comercial.
+  </div>
+
+  <footer>
+    <span>AgripeWeb · Business case</span>
+    <span>Parte 2 — Agrônomo · 6</span>
+  </footer>
+</section>
+
+</body>
+</html>

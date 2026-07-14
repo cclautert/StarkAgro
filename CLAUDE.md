@@ -39,6 +39,9 @@ Guide for Claude Code and coding agents in this repository.
 | Pivot without lat/long | Skip weather forecast; show CTA in dashboard |
 | New domain handler | Inject `ICurrentUserContext`; filter `_currentUser.UserId`; never trust `request.UserId` |
 | MongoDB | No EF Core / SQL / `dotnet ef` — collections via `agpDBContext` |
+| Upload de imagem | Nginx precisa de `client_max_body_size` em `AgripeWebUI/nginx.conf` **e** `docker/nginx/nginx.conf` — o default de 1 MB rejeita foto de celular com 413 |
+| Testes com Mongo mock | Não use `.AnyAsync()` em handler: ele projeta para `BsonDocument` e o `MongoMockHelper` não cobre — use `.FirstOrDefaultAsync()` |
+| Processamento em background | Lógica rodada pelo worker é **serviço puro**, não handler MediatR — `WorkerUserContext.UserId` é `null` e o assembly scan exporia o handler |
 | Firmware | No real Wi-Fi passwords, tokens, or MACs in committed `.ino` files |
 | Deploy | `main` + green CI; secrets only via env / user secrets — placeholders in repo |
 | Google login button | Show only when `environment.googleClientId` is set |
@@ -82,6 +85,7 @@ docker compose -f docker/docker-compose.yml up --build
 | Entity / collection | `Models/Entities/`, register in `agpDBContext` — [agripeweb-mongo-setup skill](.claude/skills/agripeweb-mongo-setup/SKILL.md) |
 | Angular route / screen | `AgripeWebUI/src/app/app.routes.ts` + component; auth under `LayoutComponent` |
 | Weather / irrigation logic | `Services/Forecast/`, irrigation trend handlers |
+| Laudo fitossanitário (foto + IA) | `Controllers/PlantDiagnosisController.cs`, `Domain/Handlers/Diagnosis/`, `Services/Diagnosis/`, `AgripeWebWorker/Services/PlantDiagnosisProcessor.cs` — plano em [docs/features/laudo-fitossanitario-ia/plan.md](docs/features/laudo-fitossanitario-ia/plan.md) |
 | OAuth | API `Auth/external-login`; UI `/login/callback` |
 | Firmware / field device | `AgripeWebIOT/` — coordinate API contract with backend |
 | Multi-agent (Paperclip) | [docs/agents/README.md](docs/agents/README.md) |
@@ -102,16 +106,18 @@ Controllers delegate to handlers; **no business logic in controllers.**
 - `Controllers/` — thin; `MainController` base helpers  
 - `Domain/Commands/` — request/response DTOs  
 - `Domain/Handlers/` — business logic  
-- `Models/Entities/` — `User`, `Pivot`, `Sensor`, `ReadSensor` extend `Entity` (`[BsonId] int Id`)  
+- `Models/Entities/` — `User`, `Pivot`, `Sensor`, `ReadSensor`, `PlantDiagnosis` extend `Entity` (`[BsonId] int Id`)  
 - `Pivot` — nullable `Latitude`, `Longitude`, `Altitude`, `LocationAddress`, `LocationUpdatedAt` (map selector)  
-- `Services/` — JWT, passwords, `CurrentUserContext`; `Services/Forecast/` — `WeatherForecastOrchestrator`, Open-Meteo, Google Weather AI  
+- `PlantDiagnosis` — laudo fitossanitário; status `Uploaded → Processing → AiCompleted|PendingReview|Rejected|Failed`; foto no GridFS (`ImageFileId`); `AuditTrail` append-only  
+- `Services/` — JWT, passwords, `CurrentUserContext`; `Services/Forecast/` — `WeatherForecastOrchestrator`, Open-Meteo, Google Weather AI; `Services/Diagnosis/` — `IDiagnosisImageStore` (GridFS), `ImageContentValidator` (allowlist + magic bytes)  
 - `Configuration/` — DI, JWT/OAuth, Swagger, CORS, `MongoDbSettings`, `WeatherForecastSettings`  
 - `Validators/`, `Notifications/` (`INotifier` / `Notificator`)
 
 ### MongoDB
 
 - `agpDBContext` → `IMongoCollection<T>`  
-- Collections: `users`, `pivots`, `sensors`, `read_sensors`, `counters`  
+- Collections: `users`, `pivots`, `sensors`, `read_sensors`, `plant_diagnoses`, `counters`  
+- Binários: bucket GridFS `diagnosis_images` (`agpDBContext.DiagnosisImages`) — fotos dos laudos; **nunca** base64 no documento  
 - Sequential `int` IDs: `counters` + `GetNextIdAsync`  
 - Config: `appsettings.*.json` → section `MongoDb`  
 - Seed default user on startup if `users` is empty (`ApiConfig`)
@@ -132,8 +138,9 @@ Controllers delegate to handlers; **no business logic in controllers.**
 
 - **Routes:** single source `app.routes.ts` + `provideRouter` in `app.config.ts` — **not** `RouterModule.forRoot` in `AppModule`  
 - Login outside layout; authenticated routes are children of `LayoutComponent`  
-- **Routes:** `/login`, `/login/callback`, `/home`, `/irrigation-dashboard`, `/config`, `/pivots`, `/pivots/novo`, `/pivots/editar/:id`, `/sensores`, `/sensores/novo`, `/sensores/editar/:id`, `/dashboard/:pivoId/:quadrante`, `/dashboard/:pivoId/:quadrante/config`, `/user`  
+- **Routes:** `/login`, `/login/callback`, `/home`, `/irrigation-dashboard`, `/config`, `/pivots`, `/pivots/novo`, `/pivots/editar/:id`, `/sensores`, `/sensores/novo`, `/sensores/editar/:id`, `/diagnosticos`, `/diagnosticos/novo`, `/dashboard/:pivoId/:quadrante`, `/dashboard/:pivoId/:quadrante/config`, `/user`  
 - `ApiService` → `/api/v1/*`  
+- Imagem protegida (laudo): buscar como **blob** via `HttpClient` (`responseType: 'blob'` → `createObjectURL`) — `<img src>` não envia `Authorization`  
 - `PivotLocationMapComponent` — dynamic `import('leaflet')`; Nominatim + Open-Meteo elevation  
 - `LayoutComponent` standalone — `showLayout` from URL + `NavigationEnd` in `ngOnInit`  
 - `AppModule` imports `RouterModule` without `.forRoot()` for `routerLink` only

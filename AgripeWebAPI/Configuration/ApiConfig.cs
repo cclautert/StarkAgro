@@ -2,6 +2,7 @@ using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Entities;
 using AgripeWebAPI.Models.Interfaces;
 using AgripeWebAPI.Services.AIInsights;
+using AgripeWebAPI.Services.Diagnosis;
 using AgripeWebAPI.Services.Forecast;
 using AgripeWebAPI.Services.LoRaWan;
 using AgripeWebAPI.Services.PushNotifications;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using MongoDB.Driver;
 using System.Reflection;
 using System.Text.Json;
+using System.Threading.RateLimiting;
 
 namespace AgripeWebAPI.Configuration
 {
@@ -59,6 +61,8 @@ namespace AgripeWebAPI.Configuration
             services.AddScoped<ExpoPushNotificationService>();
             services.AddScoped<WebPushNotificationService>();
             services.AddScoped<IPushNotificationService, CompositePushNotificationService>();
+
+            services.AddScoped<IDiagnosisImageStore, GridFsDiagnosisImageStore>();
 
             services.AddControllers()
                 .AddJsonOptions(options =>
@@ -123,6 +127,21 @@ namespace AgripeWebAPI.Configuration
                     limiterOptions.SegmentsPerWindow = 2;
                     limiterOptions.QueueLimit = 0;
                 });
+
+                // Upload de foto: particionado por usuário, porque cada foto vira uma chamada
+                // paga ao classificador de IA na Fase 1. Cota global não protegeria contra
+                // um único usuário queimando os créditos de todo mundo.
+                options.AddPolicy("diagnosis-upload", httpContext =>
+                    RateLimitPartition.GetFixedWindowLimiter(
+                        httpContext.User?.Claims?.FirstOrDefault(c => c.Type == "id")?.Value ?? "anonymous",
+                        _ => new FixedWindowRateLimiterOptions
+                        {
+                            PermitLimit = 10,
+                            Window = TimeSpan.FromHours(1),
+                            QueueLimit = 0
+                        }));
+
+                options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
             });
         }
 

@@ -1,0 +1,68 @@
+<div class="container">
+  <div class="page-header">
+    <h1 class="page-title">📷 Nova Foto</h1>
+    <button class="btn-back" [routerLink]="['/diagnosticos']">Voltar</button>
+  </div>
+
+  <div class="card">
+    <!-- capture="environment" abre direto a câmera traseira no celular -->
+    <label class="capture-area" [class.has-preview]="previewUrl">
+      <input
+        type="file"
+        accept="image/*"
+        capture="environment"
+        (change)="onFileSelected($event)"
+        hidden />
+
+      <ng-container *ngIf="!previewUrl">
+        <span class="capture-icon">📸</span>
+        <span class="capture-title">Tirar foto da planta</span>
+        <span class="capture-hint">
+          Aproxime a folha, foque na lesão e evite contraluz.
+        </span>
+      </ng-container>
+
+      <img *ngIf="previewUrl" [src]="previewUrl" alt="Prévia da foto" class="preview" />
+    </label>
+
+    <p class="replace-hint" *ngIf="previewUrl">Toque na foto para trocar.</p>
+
+    <div class="field">
+      <label for="pivot">Pivô (opcional)</label>
+      <select id="pivot" [(ngModel)]="pivotId" name="pivotId">
+        <option [ngValue]="null">Não informar</option>
+        <option *ngFor="let pivot of pivots" [ngValue]="pivot.id">{{ pivot.name }}</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="crop">Cultura (opcional)</label>
+      <input id="crop" type="text" [(ngModel)]="cropName" name="cropName" placeholder="Ex.: soja, milho, café" />
+    </div>
+
+    <div class="field">
+      <label for="notes">O que você observou (opcional)</label>
+      <textarea
+        id="notes"
+        rows="3"
+        [(ngModel)]="notes"
+        name="notes"
+        placeholder="Ex.: manchas escuras nas folhas mais velhas, começou há 3 dias"></textarea>
+    </div>
+
+    <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+    <div class="progress" *ngIf="uploading">
+      <div class="progress-bar" [style.width.%]="progress"></div>
+      <span class="progress-label">Enviando... {{ progress }}%</span>
+    </div>
+
+    <button class="btn-submit" [disabled]="!previewUrl || uploading" (click)="submit()">
+      {{ uploading ? 'Enviando...' : 'Enviar para análise' }}
+    </button>
+
+    <p class="disclaimer">
+      A pré-análise é informativa e não constitui receituário agronômico nem ART.
+    </p>
+  </div>
+</div>
