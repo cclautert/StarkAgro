@@ -23,6 +23,15 @@ export interface DiseaseSuggestion {
   scientificName?: string | null;
   probability: number;
   severity?: string | null;
+  symptoms?: string | null;
+  treatments?: string[];
+}
+
+export interface DiagnosisSignature {
+  agronomistName: string;
+  crea?: string | null;
+  signedAt: string;
+  contentSha256: string;
 }
 
 /** Dados da lavoura congelados no laudo — é o diferencial contra um app de foto comum. */
@@ -46,8 +55,21 @@ export interface PlantDiagnosis extends PlantDiagnosisSummary {
   topProbability: number;
   diseases: DiseaseSuggestion[];
   context?: DiagnosisContext | null;
+
+  /** Laudo redigido pela IA. Imutável — a edição do agrônomo vive em outro campo. */
   aiReportMarkdown?: string | null;
   aiProvider?: string | null;
+
+  /** Nome do produtor — só vem na visão do agrônomo. */
+  clientName?: string | null;
+
+  agronomistReportMarkdown?: string | null;
+  confirmedDisease?: string | null;
+  agronomistSeverity?: string | null;
+  prescription?: string | null;
+  rejectionReason?: string | null;
+  signature?: DiagnosisSignature | null;
+
   imageUrl: string;
 }
 

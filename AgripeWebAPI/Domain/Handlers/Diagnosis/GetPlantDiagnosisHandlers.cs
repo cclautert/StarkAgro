@@ -82,43 +82,9 @@ namespace AgripeWebAPI.Domain.Handlers.Diagnosis
 
             if (diagnosis is null) return null;
 
-            return new PlantDiagnosisResponse
-            {
-                Id = diagnosis.Id,
-                Status = diagnosis.Status,
-                PivotId = diagnosis.PivotId,
-                CropName = diagnosis.CropName,
-                ProducerNotes = diagnosis.ProducerNotes,
-                Latitude = diagnosis.Latitude,
-                Longitude = diagnosis.Longitude,
-                CapturedAt = diagnosis.CapturedAt,
-                CreatedAt = diagnosis.CreatedAt,
-                ProcessedAt = diagnosis.ProcessedAt,
-                IsPlant = diagnosis.IsPlant,
-                TopProbability = diagnosis.TopProbability,
-                Diseases = diagnosis.Diseases.Select(d => new DiseaseSuggestionResponse
-                {
-                    Name = d.Name,
-                    ScientificName = d.ScientificName,
-                    Probability = d.Probability,
-                    Severity = d.Severity
-                }).ToList(),
-                Context = diagnosis.ContextSnapshot is null ? null : new DiagnosisContextResponse
-                {
-                    PivotName = diagnosis.ContextSnapshot.PivotName,
-                    MoistureAvg7d = diagnosis.ContextSnapshot.MoistureAvg7d,
-                    LimiteInferior = diagnosis.ContextSnapshot.LimiteInferior,
-                    LimiteSuperior = diagnosis.ContextSnapshot.LimiteSuperior,
-                    DaysAboveUpperLimit = diagnosis.ContextSnapshot.DaysAboveUpperLimit,
-                    OpenAnomalies = diagnosis.ContextSnapshot.OpenAnomalies,
-                    IrrigationAlerts7d = diagnosis.ContextSnapshot.IrrigationAlerts7d,
-                    ForecastSummary = diagnosis.ContextSnapshot.ForecastSummary
-                },
-                AiReportMarkdown = diagnosis.AiReportMarkdown,
-                AiProvider = diagnosis.AiProvider,
-                FailureReason = diagnosis.FailureReason,
-                ImageUrl = $"/api/v1/diagnosis/{diagnosis.Id}/image"
-            };
+            // Mesmo mapper da visão do agrônomo: o produtor também precisa ver o laudo
+            // assinado, a prescrição e o selo de assinatura.
+            return Agronomist.DiagnosisResponseMapper.ToResponse(diagnosis);
         }
     }
 

@@ -4,6 +4,20 @@
     <button class="btn-add" [routerLink]="['/diagnosticos/novo']">+ Nova Foto</button>
   </div>
 
+  <!-- Convite de agrônomo pendente -->
+  <div class="invite-box" *ngFor="let invite of invites">
+    <div class="invite-text">
+      <strong>{{ invite.agronomistName || 'Um agrônomo' }}</strong>
+      <span *ngIf="invite.agronomistCrea"> ({{ invite.agronomistCrea }})</span>
+      quer acompanhar seus laudos. Se aceitar, ele revisa e assina cada laudo antes de você
+      recebê-lo — e passa a ver a foto e os dados da lavoura do laudo.
+    </div>
+    <div class="invite-actions">
+      <button class="btn-accept" (click)="acceptInvite(invite)">Aceitar</button>
+      <button class="btn-decline" (click)="declineInvite(invite)">Recusar</button>
+    </div>
+  </div>
+
   <p class="loading-text" *ngIf="loading">Carregando laudos...</p>
 
   <div class="empty-state error" *ngIf="error && !loading">

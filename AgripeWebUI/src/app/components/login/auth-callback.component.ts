@@ -8,6 +8,7 @@ interface DecodedToken {
   name: string;
   email: string;
   isAdmin: boolean;
+  isAgronomist: boolean;
 }
 
 @Component({
@@ -62,6 +63,7 @@ export class AuthCallbackComponent implements OnInit {
                 if (typeof localStorage !== 'undefined') {
                   localStorage.setItem('userId', String(userId));
                   localStorage.setItem('isAdmin', (String(decoded.isAdmin) === 'true').toString());
+                  localStorage.setItem('isAgronomist', (String(decoded.isAgronomist) === 'true').toString());
                 }
               }
             } catch {

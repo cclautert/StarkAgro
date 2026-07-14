@@ -26,6 +26,8 @@ namespace AgripeWebAPI.Domain.Handlers.Admin
                 Email = u.Email,
                 Active = u.Active,
                 IsAdmin = u.IsAdmin,
+                IsAgronomist = u.IsAgronomist,
+                AgronomistCrea = u.AgronomistCrea,
                 LimiteInferior = u.LimiteInferior,
                 LimiteSuperior = u.LimiteSuperior,
                 RainThresholdMm = u.RainThresholdMm,

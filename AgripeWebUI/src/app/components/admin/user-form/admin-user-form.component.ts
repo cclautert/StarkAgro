@@ -36,6 +36,8 @@ export class AdminUserFormComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       active: [true],
       isAdmin: [false],
+      isAgronomist: [false],
+      agronomistCrea: [''],
       changePassword: [false],
       password: ['', [Validators.required, Validators.minLength(8)]]
     });
@@ -70,7 +72,9 @@ export class AdminUserFormComponent implements OnInit {
             name: user.name,
             email: user.email,
             active: user.active,
-            isAdmin: user.isAdmin
+            isAdmin: user.isAdmin,
+            isAgronomist: user.isAgronomist ?? false,
+            agronomistCrea: user.agronomistCrea ?? ''
           });
         } else {
           this.snackBar.open('Usuário não encontrado.', 'Fechar', { duration: 4000 });
@@ -92,10 +96,10 @@ export class AdminUserFormComponent implements OnInit {
     }
 
     this.isSaving = true;
-    const { name, email, active, isAdmin, changePassword, password } = this.form.value;
+    const { name, email, active, isAdmin, isAgronomist, agronomistCrea, changePassword, password } = this.form.value;
 
     if (this.isEditMode && this.userId) {
-      const payload: any = { name, email, active, isAdmin };
+      const payload: any = { name, email, active, isAdmin, isAgronomist, agronomistCrea: agronomistCrea || null };
       if (changePassword && password) payload.password = password;
 
       this.adminService.updateUser(this.userId, payload).subscribe({

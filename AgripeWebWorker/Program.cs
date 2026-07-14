@@ -91,6 +91,8 @@ var builder = Host.CreateDefaultBuilder(args)
             sp.GetRequiredService<AgripeWebAPI.Services.CropHealth.KindwiseCropHealthService>());
 
         services.AddScoped<IDiagnosisImageStore, AgripeWebAPI.Services.Diagnosis.GridFsDiagnosisImageStore>();
+        services.AddScoped<AgripeWebAPI.Services.Diagnosis.IDiagnosisAccessService,
+            AgripeWebAPI.Services.Diagnosis.DiagnosisAccessService>();
         services.AddScoped<AgripeWebAPI.Services.Diagnosis.IPlantDiagnosisContextBuilder,
             AgripeWebAPI.Services.Diagnosis.PlantDiagnosisContextBuilder>();
         services.AddScoped<AgripeWebAPI.Services.Diagnosis.IPlantDiagnosisProcessingService,

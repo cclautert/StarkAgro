@@ -22,6 +22,12 @@ namespace AgripeWebAPI.Models.Interfaces
         /// Indicates whether the current user has administrator privileges.
         /// </summary>
         bool IsAdmin { get; }
+
+        /// <summary>
+        /// Indicates whether the current user is an agronomist (reviews and signs reports
+        /// for the producers linked to them).
+        /// </summary>
+        bool IsAgronomist { get; }
     }
 }
 

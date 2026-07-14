@@ -55,6 +55,7 @@ namespace AgripeWebAPI.Models
             IrrigationProposals = database.GetCollection<IrrigationProposal>("irrigation_proposals");
             PlatformAiSettings = database.GetCollection<PlatformAiSettings>("platform_ai_settings");
             PlantDiagnoses = database.GetCollection<PlantDiagnosis>("plant_diagnoses");
+            AgronomistClients = database.GetCollection<AgronomistClient>("agronomist_clients");
             _counters = database.GetCollection<CounterDocument>("counters");
 
             // Fotos dos laudos ficam no GridFS: o driver já traz o suporte (nenhum pacote novo),
@@ -105,6 +106,35 @@ namespace AgripeWebAPI.Models
                         Builders<PlantDiagnosis>.IndexKeys
                             .Ascending(d => d.ImageSha256)
                             .Ascending(d => d.UserId)));
+                    // Fila do agrônomo
+                    await PlantDiagnoses.Indexes.CreateOneAsync(new CreateIndexModel<PlantDiagnosis>(
+                        Builders<PlantDiagnosis>.IndexKeys
+                            .Ascending(d => d.AgronomistId)
+                            .Ascending(d => d.Status)
+                            .Descending(d => d.CreatedAt)));
+
+                    await AgronomistClients.Indexes.CreateOneAsync(new CreateIndexModel<AgronomistClient>(
+                        Builders<AgronomistClient>.IndexKeys
+                            .Ascending(c => c.AgronomistId)
+                            .Ascending(c => c.Status)));
+                    await AgronomistClients.Indexes.CreateOneAsync(new CreateIndexModel<AgronomistClient>(
+                        Builders<AgronomistClient>.IndexKeys
+                            .Ascending(c => c.ClientUserId)
+                            .Ascending(c => c.Status)));
+                    await AgronomistClients.Indexes.CreateOneAsync(new CreateIndexModel<AgronomistClient>(
+                        Builders<AgronomistClient>.IndexKeys.Ascending(c => c.InviteToken),
+                        new CreateIndexOptions { Sparse = true }));
+
+                    // Índice único PARCIAL: o banco garante um agrônomo ativo por produtor.
+                    // Não adianta checar isso só no handler — duas requisições concorrentes passariam.
+                    await AgronomistClients.Indexes.CreateOneAsync(new CreateIndexModel<AgronomistClient>(
+                        Builders<AgronomistClient>.IndexKeys.Ascending(c => c.ClientUserId),
+                        new CreateIndexOptions<AgronomistClient>
+                        {
+                            Unique = true,
+                            PartialFilterExpression = Builders<AgronomistClient>.Filter.Eq(
+                                c => c.Status, AgronomistClientStatus.Active)
+                        }));
                 }
                 catch
                 {
@@ -123,6 +153,7 @@ namespace AgripeWebAPI.Models
         public virtual IMongoCollection<IrrigationProposal> IrrigationProposals { get; }
         public virtual IMongoCollection<PlatformAiSettings> PlatformAiSettings { get; }
         public virtual IMongoCollection<PlantDiagnosis> PlantDiagnoses { get; }
+        public virtual IMongoCollection<AgronomistClient> AgronomistClients { get; }
         public virtual IGridFSBucket DiagnosisImages { get; }
 
         public virtual async Task<int> GetNextIdAsync(string entityName, CancellationToken cancellationToken = default)

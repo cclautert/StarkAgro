@@ -16,17 +16,20 @@ namespace AgripeWebAPI.Domain.Handlers.Diagnosis
         private readonly agpDBContext _dbContext;
         private readonly ICurrentUserContext _currentUser;
         private readonly IDiagnosisImageStore _imageStore;
+        private readonly IDiagnosisAccessService _accessService;
         private readonly INotifier _notifier;
 
         public CreatePlantDiagnosisHandler(
             agpDBContext dbContext,
             ICurrentUserContext currentUser,
             IDiagnosisImageStore imageStore,
+            IDiagnosisAccessService accessService,
             INotifier notifier)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             _currentUser = currentUser ?? throw new ArgumentNullException(nameof(currentUser));
             _imageStore = imageStore ?? throw new ArgumentNullException(nameof(imageStore));
+            _accessService = accessService ?? throw new ArgumentNullException(nameof(accessService));
             _notifier = notifier ?? throw new ArgumentNullException(nameof(notifier));
         }
 
@@ -101,10 +104,15 @@ namespace AgripeWebAPI.Domain.Handlers.Diagnosis
             var fileName = string.IsNullOrWhiteSpace(request.FileName) ? $"diagnosis-{now:yyyyMMddHHmmss}" : request.FileName;
             var imageFileId = await _imageStore.UploadAsync(request.ImageBytes, fileName, sniffed, cancellationToken);
 
+            // Snapshot do agrônomo responsável no momento da criação. Sem vínculo ativo,
+            // o laudo termina em AiCompleted (não há fila para onde ir).
+            var link = await _accessService.GetActiveLinkForClientAsync(userId, cancellationToken);
+
             var diagnosis = new PlantDiagnosis
             {
                 Id = await _dbContext.GetNextIdAsync(nameof(PlantDiagnosis), cancellationToken),
                 UserId = userId,
+                AgronomistId = link?.AgronomistId,
                 PivotId = request.PivotId,
                 CropName = request.CropName,
                 ProducerNotes = request.Notes,

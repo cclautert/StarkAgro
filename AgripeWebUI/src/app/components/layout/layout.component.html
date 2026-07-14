@@ -39,6 +39,19 @@
         <span>Configurações</span>
       </a>
 
+      <!-- Seção do Agrônomo — visível apenas para quem tem o papel -->
+      <div class="nav-section" *ngIf="isAgronomist">
+        <div class="nav-section-label">Agrônomo</div>
+        <a class="nav-link" routerLink="/agronomo/fila" routerLinkActive="active-link">
+          <mat-icon>fact_check</mat-icon>
+          <span>Fila de Laudos</span>
+        </a>
+        <a class="nav-link" routerLink="/agronomo/clientes" routerLinkActive="active-link">
+          <mat-icon>groups</mat-icon>
+          <span>Meus Clientes</span>
+        </a>
+      </div>
+
       <!-- Seção Administração — visível apenas para super usuário -->
       <div class="nav-section" *ngIf="isAdmin">
         <div class="nav-section-label">Administração</div>

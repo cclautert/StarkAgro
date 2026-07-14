@@ -86,13 +86,33 @@ namespace AgripeWebAPI.Models.Entities
     }
 
     /// <summary>
+    /// Assinatura do agrônomo. O hash do conteúdo assinado prova, depois, que o texto do
+    /// laudo não mudou desde a assinatura.
+    /// </summary>
+    public class PlantDiagnosisSignature
+    {
+        public int AgronomistId { get; set; }
+        public string AgronomistName { get; set; } = string.Empty;
+        public string? Crea { get; set; }
+        public DateTime SignedAt { get; set; }
+        public string ContentSha256 { get; set; } = string.Empty;
+    }
+
+    /// <summary>
     /// Laudo fitossanitário: uma foto de planta enviada pelo produtor, a pré-análise
-    /// da IA e (a partir da Fase 2) a revisão e assinatura do agrônomo.
+    /// da IA e a revisão e assinatura do agrônomo.
     /// </summary>
     public class PlantDiagnosis : Entity
     {
         /// <summary>Produtor dono do laudo. É o tenant — nunca vem do request.</summary>
         public int UserId { get; set; }
+
+        /// <summary>
+        /// Agrônomo responsável, capturado do vínculo ativo no momento da criação.
+        /// Denormalizado para a fila ser uma query indexada — mas <b>não basta</b> para autorizar:
+        /// o vínculo também precisa continuar ativo (ver <c>IDiagnosisAccessService</c>).
+        /// </summary>
+        public int? AgronomistId { get; set; }
 
         public int? PivotId { get; set; }
         public string? CropName { get; set; }
@@ -144,6 +164,28 @@ namespace AgripeWebAPI.Models.Entities
         /// <summary>Dados da lavoura congelados no momento do processamento.</summary>
         [BsonIgnoreIfNull]
         public PlantDiagnosisContextSnapshot? ContextSnapshot { get; set; }
+
+        // ── Revisão do agrônomo ───────────────────────────────────────────────
+        public int? ReviewerId { get; set; }
+        public DateTime? ReviewStartedAt { get; set; }
+
+        /// <summary>
+        /// Versão editada pelo agrônomo. Vive num campo separado para que
+        /// <see cref="AiReportMarkdown"/> permaneça intacto — é o que permite auditar
+        /// "o que a IA disse" versus "o que ele assinou", e é o que prova o trabalho dele.
+        /// </summary>
+        public string? AgronomistReportMarkdown { get; set; }
+
+        public string? ConfirmedDisease { get; set; }
+        public string? AgronomistSeverity { get; set; }
+
+        /// <summary>Prescrição. Só o humano preenche — a IA é proibida de sugerir produto e dose.</summary>
+        public string? Prescription { get; set; }
+
+        public string? RejectionReason { get; set; }
+
+        [BsonIgnoreIfNull]
+        public PlantDiagnosisSignature? Signature { get; set; }
 
         [BsonIgnoreIfNull]
         public List<PlantDiagnosisAuditEntry> AuditTrail { get; set; } = [];

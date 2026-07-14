@@ -34,6 +34,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
   showLayout: boolean = false;
   alertPanelOpen = false;
   isAdmin = typeof window !== 'undefined' && localStorage.getItem('isAdmin') === 'true';
+  isAgronomist = typeof window !== 'undefined' && localStorage.getItem('isAgronomist') === 'true';
 
   @ViewChild('sidenav') sidenav!: MatSidenav;
 
@@ -117,6 +118,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
     if (typeof window !== 'undefined' && typeof window.localStorage !== 'undefined') {
       localStorage.removeItem('token');
       localStorage.removeItem('isAdmin');
+      localStorage.removeItem('isAgronomist');
     }
     this.router.navigate(['/login']);
   }

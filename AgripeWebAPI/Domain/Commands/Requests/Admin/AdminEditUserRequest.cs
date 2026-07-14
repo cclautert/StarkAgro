@@ -20,5 +20,9 @@ namespace AgripeWebAPI.Domain.Commands.Requests.Admin
 
         public bool Active { get; set; }
         public bool IsAdmin { get; set; }
+
+        /// <summary>Cria-se um agrônomo pelo admin — não há self-signup para o papel.</summary>
+        public bool IsAgronomist { get; set; }
+        public string? AgronomistCrea { get; set; }
     }
 }

@@ -18,6 +18,13 @@ namespace AgripeWebWorker.Services
     {
         private static readonly TimeSpan Interval = TimeSpan.FromSeconds(30);
         private static readonly TimeSpan ZombieTimeout = TimeSpan.FromMinutes(10);
+
+        /// <summary>
+        /// Agrônomo que assumiu um laudo e sumiu não pode prendê-lo para sempre: depois de 24 h
+        /// o laudo volta para a fila.
+        /// </summary>
+        private static readonly TimeSpan AbandonedReviewTimeout = TimeSpan.FromHours(24);
+
         private const int MaxRetries = 3;
 
         private readonly IServiceProvider _serviceProvider;
@@ -56,6 +63,7 @@ namespace AgripeWebWorker.Services
             var processingService = scope.ServiceProvider.GetRequiredService<IPlantDiagnosisProcessingService>();
 
             await ReleaseZombiesAsync(db, cancellationToken);
+            await ReleaseAbandonedReviewsAsync(db, cancellationToken);
 
             // Drena a fila num único tick, um documento por vez — cada iteração faz seu
             // próprio claim atômico, então N workers em paralelo nunca pegam o mesmo laudo.
@@ -135,6 +143,43 @@ namespace AgripeWebWorker.Services
                     diagnosis.Id, diagnosis.ProcessingStartedAt);
 
                 await FailAsync(db, diagnosis, "Processamento interrompido.", cancellationToken);
+            }
+        }
+
+        /// <summary>
+        /// Laudo que um agrônomo assumiu e abandonou volta para a fila depois de 24 h — senão
+        /// o produtor fica esperando indefinidamente por alguém que não vai voltar.
+        /// </summary>
+        private async Task ReleaseAbandonedReviewsAsync(agpDBContext db, CancellationToken cancellationToken)
+        {
+            var now = DateTime.UtcNow;
+            var cutoff = now - AbandonedReviewTimeout;
+
+            var abandoned = await db.PlantDiagnoses
+                .Find(d => d.Status == PlantDiagnosisStatus.InReview && d.ReviewStartedAt < cutoff)
+                .ToListAsync(cancellationToken);
+
+            foreach (var diagnosis in abandoned)
+            {
+                await db.PlantDiagnoses.UpdateOneAsync(
+                    d => d.Id == diagnosis.Id && d.Status == PlantDiagnosisStatus.InReview,
+                    Builders<PlantDiagnosis>.Update
+                        .Set(d => d.Status, PlantDiagnosisStatus.PendingReview)
+                        .Set(d => d.ReviewerId, (int?)null)
+                        .Set(d => d.ReviewStartedAt, (DateTime?)null)
+                        .Set(d => d.UpdatedAt, now)
+                        .Push(d => d.AuditTrail, new PlantDiagnosisAuditEntry
+                        {
+                            At = now,
+                            FromStatus = PlantDiagnosisStatus.InReview,
+                            ToStatus = PlantDiagnosisStatus.PendingReview,
+                            Action = "review-abandoned"
+                        }),
+                    null,
+                    cancellationToken);
+
+                _logger.LogWarning(
+                    "PlantDiagnosisProcessor: review of diagnosis {Id} abandoned, back to the queue", diagnosis.Id);
             }
         }
 

@@ -37,6 +37,48 @@
   background-color: #1d4ed8;
 }
 
+.invite-box {
+  background: #1a2540;
+  border: 1px solid #a16207;
+  border-left-width: 3px;
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.invite-text {
+  flex: 1;
+  min-width: 240px;
+  font-size: 0.9rem;
+  color: #cbd5e1;
+  line-height: 1.5;
+}
+
+.invite-text strong { color: #fbbf24; }
+
+.invite-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-accept,
+.btn-decline {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.btn-accept { background: #16a34a; color: #fff; }
+.btn-decline { background: #253152; color: #94a3b8; border-color: #3a4f75; }
+
 .diagnosis-grid {
   display: flex;
   flex-direction: column;

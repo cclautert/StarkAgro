@@ -13,6 +13,8 @@ namespace AgripeWebAPI.Services
         private int? _userId;
         private bool _isAdminResolved;
         private bool _isAdmin;
+        private bool _isAgronomistResolved;
+        private bool _isAgronomist;
 
         public CurrentUserContext(IHttpContextAccessor httpContextAccessor)
         {
@@ -66,6 +68,28 @@ namespace AgripeWebAPI.Services
                 }
 
                 return _isAdmin;
+            }
+        }
+
+        public bool IsAgronomist
+        {
+            get
+            {
+                if (!_isAgronomistResolved)
+                {
+                    var httpContext = _httpContextAccessor.HttpContext;
+                    var user = httpContext?.User;
+
+                    if (user?.Identity?.IsAuthenticated == true)
+                    {
+                        var claim = user.FindFirst("isAgronomist");
+                        _isAgronomist = claim?.Value == "true";
+                    }
+
+                    _isAgronomistResolved = true;
+                }
+
+                return _isAgronomist;
             }
         }
     }

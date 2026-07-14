@@ -4,6 +4,7 @@ using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Entities;
 using AgripeWebAPI.Models.Interfaces;
 using AgripeWebAPI.Notifications;
+using AgripeWebAPI.Services.Diagnosis;
 using AgripeWebAPI.Tests.Helpers;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
@@ -15,6 +16,15 @@ namespace AgripeWebAPI.Tests.Handlers.Diagnosis
     public class CreatePlantDiagnosisHandlerTests
     {
         private const int OwnerUserId = 7;
+
+        /// <summary>Produtor sem agrônomo vinculado — o laudo nasce com AgronomistId nulo.</summary>
+        private static IDiagnosisAccessService NoLink()
+        {
+            var access = new Mock<IDiagnosisAccessService>();
+            access.Setup(a => a.GetActiveLinkForClientAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync((AgronomistClient?)null);
+            return access.Object;
+        }
 
         /// <summary>JPEG mínimo: magic bytes FF D8 FF + preenchimento.</summary>
         private static byte[] ValidJpeg()
@@ -55,7 +65,7 @@ namespace AgripeWebAPI.Tests.Handlers.Diagnosis
             var notifier = new Notificator();
 
             var handler = new CreatePlantDiagnosisHandler(
-                db.Object, currentUser.Object, imageStore.Object, notifier);
+                db.Object, currentUser.Object, imageStore.Object, NoLink(), notifier);
 
             return (handler, diagnoses, imageStore, notifier);
         }
@@ -198,6 +208,52 @@ namespace AgripeWebAPI.Tests.Handlers.Diagnosis
         }
 
         [Fact]
+        public async Task Handle_SnapshotsTheActiveAgronomistOnTheDiagnosis()
+        {
+            // O AgronomistId é capturado na criação: é o que faz o laudo cair na fila certa
+            // e o que a regra de acesso usa depois (junto com o vínculo ainda ativo).
+            var diagnoses = new Mock<IMongoCollection<PlantDiagnosis>>();
+            MongoMockHelper.SetupFindList(diagnoses, []);
+
+            var db = new Mock<agpDBContext>();
+            db.Setup(d => d.PlantDiagnoses).Returns(diagnoses.Object);
+            db.Setup(d => d.Pivots).Returns(new Mock<IMongoCollection<Pivot>>().Object);
+            db.Setup(d => d.GetNextIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(42);
+
+            var currentUser = new Mock<ICurrentUserContext>();
+            currentUser.Setup(c => c.UserId).Returns(OwnerUserId);
+
+            var imageStore = new Mock<IDiagnosisImageStore>();
+            imageStore.Setup(s => s.UploadAsync(
+                    It.IsAny<byte[]>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(ObjectId.GenerateNewId());
+
+            var access = new Mock<IDiagnosisAccessService>();
+            access.Setup(a => a.GetActiveLinkForClientAsync(OwnerUserId, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new AgronomistClient
+                {
+                    AgronomistId = 99,
+                    ClientUserId = OwnerUserId,
+                    Status = AgronomistClientStatus.Active
+                });
+
+            var handler = new CreatePlantDiagnosisHandler(
+                db.Object, currentUser.Object, imageStore.Object, access.Object, new Notificator());
+
+            await handler.Handle(new CreatePlantDiagnosisRequest
+            {
+                ImageBytes = ValidJpeg(),
+                FileName = "folha.jpg",
+                ContentType = "image/jpeg"
+            }, CancellationToken.None);
+
+            diagnoses.Verify(c => c.InsertOneAsync(
+                It.Is<PlantDiagnosis>(d => d.AgronomistId == 99 && d.UserId == OwnerUserId),
+                It.IsAny<InsertOneOptions>(),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
         public async Task Handle_DedupQueryExcludesFailedAndRejected()
         {
             // Uma foto cuja análise falhou não pode ficar presa ao erro: reenviá-la tem que
@@ -227,12 +283,12 @@ namespace AgripeWebAPI.Tests.Handlers.Diagnosis
                 .ReturnsAsync(ObjectId.GenerateNewId());
 
             var handler = new CreatePlantDiagnosisHandler(
-                db.Object, currentUser.Object, imageStore.Object, new Notificator());
+                db.Object, currentUser.Object, imageStore.Object, NoLink(), new Notificator());
 
             await handler.Handle(new CreatePlantDiagnosisRequest
             {
                 ImageBytes = ValidJpeg(),
-                FileName = "folha.jpg",
+                FileName = "dedup.jpg",
                 ContentType = "image/jpeg"
             }, CancellationToken.None);
 

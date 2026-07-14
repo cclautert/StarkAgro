@@ -120,7 +120,8 @@ Controllers delegate to handlers; **no business logic in controllers.**
 ### MongoDB
 
 - `agpDBContext` → `IMongoCollection<T>`  
-- Collections: `users`, `pivots`, `sensors`, `read_sensors`, `plant_diagnoses`, `counters`  
+- Collections: `users`, `pivots`, `sensors`, `read_sensors`, `plant_diagnoses`, `agronomist_clients`, `counters`  
+- `agronomist_clients` tem **índice único parcial** em `{ClientUserId}` filtrando `Status: "Active"` — o banco garante *um agrônomo ativo por produtor*  
 - Binários: bucket GridFS `diagnosis_images` (`agpDBContext.DiagnosisImages`) — fotos dos laudos; **nunca** base64 no documento  
 - Sequential `int` IDs: `counters` + `GetNextIdAsync`  
 - Config: `appsettings.*.json` → section `MongoDb`  
@@ -133,6 +134,11 @@ Controllers delegate to handlers; **no business logic in controllers.**
 - **Never** use client-supplied `request.UserId` for isolation  
 - Examples: `CreatePivotHandler`, `CreateReadHandler`, `GetListSensorHandler`
 
+**Única exceção — o agrônomo** (papel `IsAgronomist`, claim `isAgronomist`, policy `"Agronomist"`):
+- Ele lê laudos cujo `UserId` não é o dele. A regra vive **em um lugar só**, `IDiagnosisAccessService`: lê o laudo `d` **sse** `d.UserId == u` **OU** (`d.AgronomistId == u` **E** existe vínculo `Active` entre eles). A segunda condição é o que faz a **revogação ter efeito imediato**.
+- Ele **não** lê `pivots`/`sensors`/`read_sensors` do cliente — todo o contexto vem do `ContextSnapshot` congelado dentro do laudo. Não crie endpoints que furem isso.
+- **Admin não tem acesso a laudo** (é ato profissional).
+
 ### Authentication
 
 - JWT Bearer (8 h) + Google OAuth → `Auth/external-login` exchanges code for API JWT  
@@ -142,7 +148,7 @@ Controllers delegate to handlers; **no business logic in controllers.**
 
 - **Routes:** single source `app.routes.ts` + `provideRouter` in `app.config.ts` — **not** `RouterModule.forRoot` in `AppModule`  
 - Login outside layout; authenticated routes are children of `LayoutComponent`  
-- **Routes:** `/login`, `/login/callback`, `/home`, `/irrigation-dashboard`, `/config`, `/pivots`, `/pivots/novo`, `/pivots/editar/:id`, `/sensores`, `/sensores/novo`, `/sensores/editar/:id`, `/diagnosticos`, `/diagnosticos/novo`, `/dashboard/:pivoId/:quadrante`, `/dashboard/:pivoId/:quadrante/config`, `/user`  
+- **Routes:** `/login`, `/login/callback`, `/home`, `/irrigation-dashboard`, `/config`, `/pivots`, `/pivots/novo`, `/pivots/editar/:id`, `/sensores`, `/sensores/novo`, `/sensores/editar/:id`, `/diagnosticos`, `/diagnosticos/novo`, `/diagnosticos/:id`, `/agronomo/fila`, `/agronomo/laudo/:id`, `/agronomo/clientes` (`AgronomistGuard`), `/dashboard/:pivoId/:quadrante`, `/dashboard/:pivoId/:quadrante/config`, `/user`  
 - `ApiService` → `/api/v1/*`  
 - Imagem protegida (laudo): buscar como **blob** via `HttpClient` (`responseType: 'blob'` → `createObjectURL`) — `<img src>` não envia `Authorization`  
 - `PivotLocationMapComponent` — dynamic `import('leaflet')`; Nominatim + Open-Meteo elevation  

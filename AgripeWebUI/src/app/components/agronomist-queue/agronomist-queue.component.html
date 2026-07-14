@@ -1,0 +1,47 @@
+<div class="container">
+  <div class="page-header">
+    <h1 class="page-title">📋 Fila de Laudos</h1>
+    <button class="btn-secondary" [routerLink]="['/agronomo/clientes']">Meus Clientes</button>
+  </div>
+
+  <p class="loading-text" *ngIf="loading">Carregando fila...</p>
+
+  <div class="state-box error" *ngIf="error && !loading">
+    Não foi possível carregar a fila. <a (click)="load()">Tentar novamente</a>
+  </div>
+
+  <div class="queue" *ngIf="!loading && !error">
+    <div class="queue-card" *ngFor="let item of items" (click)="open(item)">
+      <div class="thumb">
+        <img *ngIf="item.thumbnailUrl" [src]="item.thumbnailUrl" alt="Foto do laudo" />
+      </div>
+
+      <div class="queue-info">
+        <div class="queue-top">
+          <span class="client">{{ item.clientName || 'Produtor #' + item.clientUserId }}</span>
+          <span class="status-badge" [class.in-review]="item.status === 'InReview'">
+            {{ item.status === 'InReview' ? 'Em revisão' : 'Aguardando' }}
+          </span>
+        </div>
+
+        <div class="disease" *ngIf="item.topDisease">
+          {{ item.topDisease }}
+          <span class="prob">{{ item.topProbability * 100 | number:'1.0-0' }}%</span>
+        </div>
+
+        <div class="meta">
+          <span *ngIf="item.pivotName">{{ item.pivotName }}</span>
+          <span *ngIf="item.cropName">· {{ item.cropName }}</span>
+          <span>· {{ item.createdAt | date:'dd/MM HH:mm' }}</span>
+        </div>
+      </div>
+
+      <span class="chevron">›</span>
+    </div>
+
+    <div class="empty-state" *ngIf="items.length === 0">
+      Nenhum laudo aguardando revisão. Convide produtores em
+      <a [routerLink]="['/agronomo/clientes']">Meus Clientes</a>.
+    </div>
+  </div>
+</div>

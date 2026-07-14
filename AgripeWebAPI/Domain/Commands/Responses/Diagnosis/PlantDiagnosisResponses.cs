@@ -25,6 +25,16 @@ namespace AgripeWebAPI.Domain.Commands.Responses.Diagnosis
         public string? ScientificName { get; set; }
         public double Probability { get; set; }
         public string? Severity { get; set; }
+        public string? Symptoms { get; set; }
+        public List<string> Treatments { get; set; } = [];
+    }
+
+    public class DiagnosisSignatureResponse
+    {
+        public string AgronomistName { get; set; } = string.Empty;
+        public string? Crea { get; set; }
+        public DateTime SignedAt { get; set; }
+        public string ContentSha256 { get; set; } = string.Empty;
     }
 
     /// <summary>Dados da lavoura congelados no laudo — é o que o agrônomo lerá na Fase 2.</summary>
@@ -58,6 +68,17 @@ namespace AgripeWebAPI.Domain.Commands.Responses.Diagnosis
         public DiagnosisContextResponse? Context { get; set; }
         public string? AiReportMarkdown { get; set; }
         public string? AiProvider { get; set; }
+
+        /// <summary>Nome do produtor — só preenchido na visão do agrônomo.</summary>
+        public string? ClientName { get; set; }
+
+        public string? AgronomistReportMarkdown { get; set; }
+        public string? ConfirmedDisease { get; set; }
+        public string? AgronomistSeverity { get; set; }
+        public string? Prescription { get; set; }
+        public string? RejectionReason { get; set; }
+        public DiagnosisSignatureResponse? Signature { get; set; }
+
         public string? FailureReason { get; set; }
         public string ImageUrl { get; set; } = string.Empty;
     }

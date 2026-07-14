@@ -184,11 +184,30 @@ namespace AgripeWebAPI.Services.Diagnosis
             await CompleteAsync(
                 diagnosis, cropResult, snapshot, EnsureDisclaimer(report), settings, model, cancellationToken);
 
-            await NotifyAsync(
-                diagnosis.UserId,
-                "Laudo pronto",
-                $"A pré-análise da sua foto está pronta: {cropResult.Diseases.FirstOrDefault()?.Name ?? "resultado disponível"}.",
-                cancellationToken);
+            var topDisease = cropResult.Diseases.FirstOrDefault()?.Name ?? "resultado disponível";
+
+            if (diagnosis.AgronomistId.HasValue)
+            {
+                await NotifyAsync(
+                    diagnosis.UserId,
+                    "Pré-análise pronta",
+                    "Seu laudo está com o agrônomo para revisão e assinatura.",
+                    cancellationToken);
+
+                await NotifyAsync(
+                    diagnosis.AgronomistId.Value,
+                    "Novo laudo na fila",
+                    $"Um cliente enviou uma foto: {topDisease}.",
+                    cancellationToken);
+            }
+            else
+            {
+                await NotifyAsync(
+                    diagnosis.UserId,
+                    "Laudo pronto",
+                    $"A pré-análise da sua foto está pronta: {topDisease}.",
+                    cancellationToken);
+            }
 
             return new DiagnosisProcessingResult(DiagnosisProcessingOutcome.Completed);
         }
@@ -204,8 +223,11 @@ namespace AgripeWebAPI.Services.Diagnosis
         {
             var now = DateTime.UtcNow;
 
-            // Sem agrônomo vinculado (Fase 2), o laudo termina em AiCompleted.
-            const string nextStatus = PlantDiagnosisStatus.AiCompleted;
+            // Com agrônomo vinculado, o laudo vai para a fila de revisão dele.
+            // Sem vínculo, termina como pré-análise (AiCompleted é terminal).
+            var nextStatus = diagnosis.AgronomistId.HasValue
+                ? PlantDiagnosisStatus.PendingReview
+                : PlantDiagnosisStatus.AiCompleted;
 
             var update = Builders<PlantDiagnosis>.Update
                 .Set(d => d.Status, nextStatus)

@@ -74,8 +74,16 @@ namespace AgripeWebAPI.Configuration
             services.AddScoped<IPushNotificationService, CompositePushNotificationService>();
 
             services.AddScoped<IDiagnosisImageStore, GridFsDiagnosisImageStore>();
+            services.AddScoped<IDiagnosisAccessService, DiagnosisAccessService>();
             services.AddScoped<IPlantDiagnosisContextBuilder, PlantDiagnosisContextBuilder>();
             services.AddScoped<IPlantDiagnosisProcessingService, PlantDiagnosisProcessingService>();
+
+            // A policy só responde "é um agrônomo?". De QUEM ele pode ler é decidido documento
+            // a documento pelo IDiagnosisAccessService — a policy sozinha não isola nada.
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Agronomist", policy => policy.RequireClaim("isAgronomist", "true"));
+            });
 
             services.AddControllers()
                 .AddJsonOptions(options =>
