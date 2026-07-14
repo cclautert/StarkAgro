@@ -1,6 +1,7 @@
 using AgripeWebAPI.Domain.Commands.Requests.Users;
 using AgripeWebAPI.Domain.Commands.Responses.Users;
 using AgripeWebAPI.Models;
+using AgripeWebAPI.Services;
 using AgripeWebAPI.Models.Entities;
 using AgripeWebAPI.Models.Interfaces;
 using AgripeWebAPI.Notifications;
@@ -28,7 +29,7 @@ namespace AgripeWebAPI.Domain.Handlers.Users
         public async Task<CreateUserResponse> Handle(CreateUserRequest request, CancellationToken cancellationToken)
         {
             var user = await _dbContext.Users
-                .Find(x => x.Email == request.Email)
+                .Find(EmailNormalizer.ByEmail(request.Email))
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (user != null)
@@ -45,7 +46,7 @@ namespace AgripeWebAPI.Domain.Handlers.Users
                 {
                     Id = await _dbContext.GetNextIdAsync(nameof(User), cancellationToken),
                     Name = request.Name,
-                    Email = request.Email,
+                    Email = EmailNormalizer.Normalize(request.Email),
                     Password = hashedPassword,
                     Active = true
                 };

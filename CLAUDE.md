@@ -38,6 +38,7 @@ Guide for Claude Code and coding agents in this repository.
 | API URLs from UI | Relative `/api/v1/...` — never hardcode host |
 | Pivot without lat/long | Skip weather forecast; show CTA in dashboard |
 | New domain handler | Inject `ICurrentUserContext`; filter `_currentUser.UserId`; never trust `request.UserId` |
+| Any query or write by email | Never compare `Email` with `==`. Read with `EmailNormalizer.ByEmail(...)`, write with `EmailNormalizer.Normalize(...)`. Mongo is case-sensitive, email is not — `==` breaks login for anyone stored with a capital letter |
 | MongoDB | No EF Core / SQL / `dotnet ef` — collections via `agpDBContext` |
 | Upload de imagem | Nginx precisa de `client_max_body_size` em `AgripeWebUI/nginx.conf` **e** `docker/nginx/nginx.conf` — o default de 1 MB rejeita foto de celular com 413 |
 | Testes com Mongo mock | Não use `.AnyAsync()` em handler: ele projeta para `BsonDocument` e o `MongoMockHelper` não cobre — use `.FirstOrDefaultAsync()` |

@@ -251,7 +251,12 @@ namespace AgripeWebAPI.Configuration
                 var dbContext = scope.ServiceProvider.GetRequiredService<agpDBContext>();
 
                 const string adminEmail = "lautertdev@gmail.com";
-                var existing = await dbContext.Users.Find(u => u.Email == adminEmail).FirstOrDefaultAsync();
+
+                // Sem ignorar a caixa, um admin gravado como "LautertDev@..." não seria encontrado
+                // aqui e o seed criaria um segundo administrador a cada boot.
+                var existing = await dbContext.Users
+                    .Find(Services.EmailNormalizer.ByEmail(adminEmail))
+                    .FirstOrDefaultAsync();
 
                 if (existing == null)
                 {

@@ -42,6 +42,10 @@ namespace AgripeWebAPI.Domain.Handlers.Users
                 .FirstOrDefaultAsync(cancellationToken);
             var readAt = user?.AlertsReadAt;
 
+            // Convite de agrônomo pendente. Sem isto ele só aparecia na tela de Laudos — e o
+            // produtor não tem motivo nenhum para abrir aquela tela sabendo que foi convidado.
+            var invites = await GetPendingInvitesAsync(userId, user?.Email, cancellationToken);
+
             var pivotIds = irrigationAlerts.Select(x => x.PivotId)
                 .Concat(anomalies.Select(x => x.PivotId))
                 .Distinct()
@@ -82,11 +86,53 @@ namespace AgripeWebAPI.Domain.Handlers.Users
                     CreatedAt = a.Date,
                     IsRead = readAt.HasValue && a.Date <= readAt.Value
                 }))
+                .Concat(invites)
                 .OrderByDescending(x => x.CreatedAt)
                 .Take(MaxAlerts)
                 .ToList();
 
             return alerts;
+        }
+
+        /// <summary>
+        /// Convites de agrônomo aguardando resposta. Casa por id <b>ou</b> por e-mail, porque o
+        /// convite pode ter sido criado antes de o produtor ter conta.
+        /// </summary>
+        private async Task<List<UserAlertResponse>> GetPendingInvitesAsync(
+            int userId,
+            string? userEmail,
+            CancellationToken cancellationToken)
+        {
+            var email = Services.EmailNormalizer.Normalize(userEmail);
+            var now = DateTime.UtcNow;
+
+            var pending = await _dbContext.AgronomistClients
+                .Find(c => c.Status == AgronomistClientStatus.Pending
+                           && c.InviteExpiresAt > now
+                           && (c.ClientUserId == userId || c.ClientEmail == email))
+                .ToListAsync(cancellationToken);
+
+            if (pending.Count == 0) return [];
+
+            var agronomistIds = pending.Select(c => c.AgronomistId).Distinct().ToList();
+            var agronomists = await _dbContext.Users
+                .Find(u => agronomistIds.Contains(u.Id))
+                .ToListAsync(cancellationToken);
+
+            var byId = agronomists.ToDictionary(u => u.Id, u => u.Name);
+
+            return pending.Select(c => new UserAlertResponse
+            {
+                Id = $"invite-{c.Id}",
+                Title = $"{byId.GetValueOrDefault(c.AgronomistId) ?? "Um agrônomo"} quer acompanhar " +
+                        "seus laudos. Toque para responder ao convite.",
+                PivotName = "—",
+                AlertType = "AgronomistInvite",
+                CreatedAt = c.InvitedAt,
+
+                // Convite nunca fica "lido": ele some quando o produtor aceita ou recusa.
+                IsRead = false
+            }).ToList();
         }
     }
 }

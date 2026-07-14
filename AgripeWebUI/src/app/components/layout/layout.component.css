@@ -242,6 +242,15 @@
   border-left: 3px solid #60a5fa;
 }
 
+/* O convite é a única notificação em que há o que fazer — o cursor precisa dizer isso. */
+.alert-item.actionable {
+  cursor: pointer;
+}
+
+.alert-item.actionable.unread {
+  border-left-color: #34d399;
+}
+
 .alert-type-badge {
   display: inline-block;
   font-size: 0.7rem;

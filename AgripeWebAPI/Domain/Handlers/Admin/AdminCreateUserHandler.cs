@@ -1,6 +1,7 @@
 using AgripeWebAPI.Domain.Commands.Requests.Admin;
 using AgripeWebAPI.Domain.Commands.Responses.Admin;
 using AgripeWebAPI.Models;
+using AgripeWebAPI.Services;
 using AgripeWebAPI.Models.Entities;
 using AgripeWebAPI.Models.Interfaces;
 using AgripeWebAPI.Notifications;
@@ -27,7 +28,7 @@ namespace AgripeWebAPI.Domain.Handlers.Admin
 
         public async Task<AdminUserResponse> Handle(AdminCreateUserRequest request, CancellationToken cancellationToken)
         {
-            var existing = await _dbContext.Users.Find(u => u.Email == request.Email).FirstOrDefaultAsync(cancellationToken);
+            var existing = await _dbContext.Users.Find(EmailNormalizer.ByEmail(request.Email)).FirstOrDefaultAsync(cancellationToken);
             if (existing != null)
             {
                 _notifier.Handle(new Notification("Email já cadastrado."));
@@ -40,7 +41,7 @@ namespace AgripeWebAPI.Domain.Handlers.Admin
                 {
                     Id = await _dbContext.GetNextIdAsync(nameof(User), cancellationToken),
                     Name = request.Name,
-                    Email = request.Email,
+                    Email = EmailNormalizer.Normalize(request.Email),
                     Password = _passwordHasher.HashPassword(request.Password),
                     Active = request.Active,
                     IsAdmin = request.IsAdmin

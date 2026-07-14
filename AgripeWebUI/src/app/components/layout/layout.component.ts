@@ -109,9 +109,21 @@ export class LayoutComponent implements OnInit, OnDestroy {
   alertTypeLabel(type: string): string {
     const labels: Record<string, string> = {
       MoistureLow: 'Umidade baixa',
-      AnomalyPersisted: 'Anomalia persistente'
+      AnomalyPersisted: 'Anomalia persistente',
+      AgronomistInvite: 'Convite de agrônomo'
     };
     return labels[type] ?? type;
+  }
+
+  isInvite(alert: UserAlert): boolean {
+    return alert.alertType === 'AgronomistInvite';
+  }
+
+  /** O convite é a única notificação que exige uma resposta — leva o produtor até onde ele responde. */
+  openAlert(alert: UserAlert): void {
+    if (!this.isInvite(alert)) return;
+    this.closeAlertPanel();
+    this.router.navigate(['/diagnosticos']);
   }
 
   logout(): void {

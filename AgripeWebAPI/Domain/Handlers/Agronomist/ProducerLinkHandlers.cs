@@ -29,7 +29,7 @@ namespace AgripeWebAPI.Domain.Handlers.Agronomist
                 ?? throw new InvalidOperationException("Authenticated user is required.");
 
             var me = await _dbContext.Users.Find(u => u.Id == userId).FirstOrDefaultAsync(cancellationToken);
-            var email = me?.Email?.ToLowerInvariant();
+            var email = Services.EmailNormalizer.Normalize(me?.Email);
 
             var now = DateTime.UtcNow;
 
@@ -84,7 +84,7 @@ namespace AgripeWebAPI.Domain.Handlers.Agronomist
                 ?? throw new InvalidOperationException("Authenticated user is required.");
 
             var me = await _dbContext.Users.Find(u => u.Id == userId).FirstOrDefaultAsync(cancellationToken);
-            var email = me?.Email?.ToLowerInvariant();
+            var email = Services.EmailNormalizer.Normalize(me?.Email);
 
             var invite = await _dbContext.AgronomistClients
                 .Find(c => c.Id == request.InviteId
@@ -159,7 +159,7 @@ namespace AgripeWebAPI.Domain.Handlers.Agronomist
                 ?? throw new InvalidOperationException("Authenticated user is required.");
 
             var me = await _dbContext.Users.Find(u => u.Id == userId).FirstOrDefaultAsync(cancellationToken);
-            var email = me?.Email?.ToLowerInvariant();
+            var email = Services.EmailNormalizer.Normalize(me?.Email);
 
             var result = await _dbContext.AgronomistClients.UpdateOneAsync(
                 c => c.Id == request.InviteId

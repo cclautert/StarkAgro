@@ -17,7 +17,9 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Users
             User? user = null,
             List<Pivot>? pivots = null,
             List<Sensor>? sensors = null,
-            int? userId = 1)
+            int? userId = 1,
+            List<AgronomistClient>? invites = null,
+            List<User>? agronomists = null)
         {
             var db = new Mock<agpDBContext>();
 
@@ -29,9 +31,19 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Users
             MongoMockHelper.SetupFindList(anomaliesCol, anomalies ?? new List<SensorAnomaly>());
             db.Setup(d => d.SensorAnomalies).Returns(anomaliesCol.Object);
 
+            // O handler lê `users` duas vezes: o dono dos alertas (FirstOrDefault → primeiro da
+            // lista) e os agrônomos que convidaram (ToList). O mock ignora o filtro, então basta
+            // manter o dono na frente.
             var usersCol = new Mock<IMongoCollection<User>>();
-            MongoMockHelper.SetupFind(usersCol, user);
+            var allUsers = new List<User>();
+            if (user != null) allUsers.Add(user);
+            allUsers.AddRange(agronomists ?? new List<User>());
+            MongoMockHelper.SetupFindList(usersCol, allUsers);
             db.Setup(d => d.Users).Returns(usersCol.Object);
+
+            var invitesCol = new Mock<IMongoCollection<AgronomistClient>>();
+            MongoMockHelper.SetupFindList(invitesCol, invites ?? new List<AgronomistClient>());
+            db.Setup(d => d.AgronomistClients).Returns(invitesCol.Object);
 
             var pivotsCol = new Mock<IMongoCollection<Pivot>>();
             MongoMockHelper.SetupFindList(pivotsCol, pivots ?? new List<Pivot>());
@@ -46,6 +58,17 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Users
 
             return (db, currentUser);
         }
+
+        private static AgronomistClient PendingInvite(int id = 1, int agronomistId = 9) => new()
+        {
+            Id = id,
+            AgronomistId = agronomistId,
+            ClientUserId = 1,
+            ClientEmail = "produtor@fazenda.com",
+            Status = AgronomistClientStatus.Pending,
+            InvitedAt = DateTime.UtcNow.AddMinutes(-5),
+            InviteExpiresAt = DateTime.UtcNow.AddDays(7)
+        };
 
         [Fact]
         public async Task Handle_MergesIrrigationAndAnomalyAlerts_OrderedByDateDesc()
@@ -126,6 +149,103 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Users
 
             await Assert.ThrowsAsync<InvalidOperationException>(
                 () => handler.Handle(new GetUserAlertsRequest(), CancellationToken.None));
+        }
+
+        [Fact]
+        public async Task Handle_PendingInvite_SurfacesItInTheAlertBell()
+        {
+            // O bug: o convite só existia na tela "Laudos", e o produtor não tem motivo nenhum
+            // para abrir aquela tela sabendo que foi convidado. Ele precisa chegar no sininho.
+            var (db, currentUser) = BuildMocks(
+                user: new User { Id = 1, Email = "produtor@fazenda.com" },
+                invites: [PendingInvite(id: 3, agronomistId: 9)],
+                agronomists: [new User { Id = 9, Name = "Agrônomo Teste" }]);
+            var handler = new GetUserAlertsHandler(db.Object, currentUser.Object);
+
+            var result = await handler.Handle(new GetUserAlertsRequest(), CancellationToken.None);
+
+            var invite = Assert.Single(result);
+            Assert.Equal("invite-3", invite.Id);
+            Assert.Equal("AgronomistInvite", invite.AlertType);
+            Assert.Contains("Agrônomo Teste", invite.Title);
+            Assert.False(invite.IsRead);
+            Assert.Equal("—", invite.PivotName);   // laudo/convite não tem pivô
+        }
+
+        [Fact]
+        public async Task Handle_PendingInvite_StaysUnreadEvenAfterTheBellIsOpened()
+        {
+            // Um convite não é "notificação lida": ele some quando o produtor aceita ou recusa.
+            // Se marcasse como lido, o badge zerava e o convite virava invisível de novo.
+            var (db, currentUser) = BuildMocks(
+                user: new User { Id = 1, Email = "produtor@fazenda.com", AlertsReadAt = DateTime.UtcNow },
+                invites: [PendingInvite()],
+                agronomists: [new User { Id = 9, Name = "Agrônomo Teste" }]);
+            var handler = new GetUserAlertsHandler(db.Object, currentUser.Object);
+
+            var result = await handler.Handle(new GetUserAlertsRequest(), CancellationToken.None);
+
+            Assert.False(Assert.Single(result).IsRead);
+        }
+
+        [Fact]
+        public async Task Handle_InviteFromUnknownAgronomist_FallsBackToAGenericName()
+        {
+            var (db, currentUser) = BuildMocks(
+                user: new User { Id = 1, Email = "produtor@fazenda.com" },
+                invites: [PendingInvite(agronomistId: 404)],
+                agronomists: []);
+            var handler = new GetUserAlertsHandler(db.Object, currentUser.Object);
+
+            var result = await handler.Handle(new GetUserAlertsRequest(), CancellationToken.None);
+
+            Assert.Contains("Um agrônomo", Assert.Single(result).Title);
+        }
+
+        [Fact]
+        public async Task Handle_NoInvites_AddsNoInviteAlerts()
+        {
+            var (db, currentUser) = BuildMocks(user: new User { Id = 1, Email = "produtor@fazenda.com" });
+            var handler = new GetUserAlertsHandler(db.Object, currentUser.Object);
+
+            var result = await handler.Handle(new GetUserAlertsRequest(), CancellationToken.None);
+
+            Assert.Empty(result);
+        }
+
+        [Fact]
+        public async Task Handle_InviteQuery_MatchesByNormalizedEmail_AndOnlyPending()
+        {
+            // O mock devolve a lista inteira ignorando o filtro, então o comportamento acima não
+            // prova que convites expirados/aceitos ficam de fora nem que o e-mail casa em
+            // minúsculo. Isso está no filtro — então é o filtro que este teste inspeciona.
+            // O e-mail é o ponto crítico: o convite é gravado normalizado, e o usuário aqui está
+            // com o e-mail em maiúsculas.
+            var (baseDb, currentUser) = BuildMocks(user: new User { Id = 1, Email = "Produtor@Fazenda.com" });
+
+            FilterDefinition<AgronomistClient>? captured = null;
+            var invitesCol = new Mock<IMongoCollection<AgronomistClient>>();
+            invitesCol.Setup(c => c.FindAsync(
+                    It.IsAny<FilterDefinition<AgronomistClient>>(),
+                    It.IsAny<FindOptions<AgronomistClient, AgronomistClient>>(),
+                    It.IsAny<CancellationToken>()))
+                .Callback<FilterDefinition<AgronomistClient>, FindOptions<AgronomistClient, AgronomistClient>, CancellationToken>(
+                    (f, _, _) => captured = f)
+                .ReturnsAsync(() => MongoMockHelper.CreateMockCursor(new List<AgronomistClient>()).Object);
+            baseDb.Setup(d => d.AgronomistClients).Returns(invitesCol.Object);
+
+            var handler = new GetUserAlertsHandler(baseDb.Object, currentUser.Object);
+            await handler.Handle(new GetUserAlertsRequest(), CancellationToken.None);
+
+            Assert.NotNull(captured);
+            var rendered = captured!.Render(new RenderArgs<AgronomistClient>(
+                MongoDB.Bson.Serialization.BsonSerializer.SerializerRegistry.GetSerializer<AgronomistClient>(),
+                MongoDB.Bson.Serialization.BsonSerializer.SerializerRegistry)).ToString();
+
+            Assert.Contains("Pending", rendered);                  // aceito/recusado não aparece
+            Assert.Contains("InviteExpiresAt", rendered);          // expirado não aparece
+            Assert.Contains("produtor@fazenda.com", rendered);     // casa apesar do e-mail maiúsculo
+            Assert.DoesNotContain("Produtor@Fazenda.com", rendered);
         }
 
         [Fact]
