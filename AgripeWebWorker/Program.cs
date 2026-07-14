@@ -31,8 +31,11 @@ var builder = Host.CreateDefaultBuilder(args)
         // Notifications
         services.AddScoped<INotifier, Notificator>();
 
-        // Alert email — no-op until Backend Lead's AlertEmailService issue is merged
-        services.AddScoped<IAlertEmailService, NoOpAlertEmailService>();
+        // E-mail (SMTP real). Sem configuração, o sender apenas loga e devolve false —
+        // o alerta continua chegando por push e pela tela.
+        services.Configure<SmtpSettings>(context.Configuration.GetSection(SmtpSettings.SectionName));
+        services.AddScoped<AgripeWebAPI.Services.Email.IEmailSender, AgripeWebAPI.Services.Email.SmtpEmailSender>();
+        services.AddScoped<IAlertEmailService, AgripeWebAPI.Services.Email.AlertEmailService>();
 
         // Push notifications
         services.Configure<VapidSettings>(context.Configuration.GetSection(VapidSettings.SectionName));
@@ -97,6 +100,8 @@ var builder = Host.CreateDefaultBuilder(args)
             AgripeWebAPI.Services.Diagnosis.PlantDiagnosisContextBuilder>();
         services.AddScoped<AgripeWebAPI.Services.Diagnosis.IPlantDiagnosisProcessingService,
             AgripeWebAPI.Services.Diagnosis.PlantDiagnosisProcessingService>();
+        services.AddScoped<AgripeWebAPI.Services.Diagnosis.IDiagnosisQuotaService,
+            AgripeWebAPI.Services.Diagnosis.DiagnosisQuotaService>();
 
         // LoRaWAN parser
         services.AddSingleton<ILoRaWanUplinkParser, LoRaWanUplinkParser>();

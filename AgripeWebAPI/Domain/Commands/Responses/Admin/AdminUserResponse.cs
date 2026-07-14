@@ -9,6 +9,7 @@ namespace AgripeWebAPI.Domain.Commands.Responses.Admin
         public bool IsAdmin { get; set; }
         public bool IsAgronomist { get; set; }
         public string? AgronomistCrea { get; set; }
+        public int? DiagnosisQuotaPerMonth { get; set; }
         public decimal LimiteInferior { get; set; }
         public decimal LimiteSuperior { get; set; }
         public double? RainThresholdMm { get; set; }

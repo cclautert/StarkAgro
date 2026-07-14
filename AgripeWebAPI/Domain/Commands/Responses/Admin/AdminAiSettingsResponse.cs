@@ -13,5 +13,6 @@ namespace AgripeWebAPI.Domain.Commands.Responses.Admin
         /// <summary>Classificador de doenças de planta (crop.health / Kindwise) — cobra por foto.</summary>
         public string? CropHealthKey { get; set; }
         public bool CropHealthEnabled { get; set; }
+        public int DefaultDiagnosisQuotaPerMonth { get; set; }
     }
 }

@@ -155,6 +155,16 @@ namespace AgripeWebAPI.Controllers
             return CustomResponse(result);
         }
 
+        /// <summary>Quantos laudos o produtor ainda tem neste mês.</summary>
+        [HttpGet("quota")]
+        public async Task<IActionResult> GetQuota(
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken)
+        {
+            var result = await mediator.Send(new GetDiagnosisQuotaRequest(), cancellationToken);
+            return CustomResponse(result);
+        }
+
         [HttpGet("{id:int}/audit")]
         public async Task<IActionResult> GetAudit(
             [FromServices] IMediator mediator,

@@ -258,6 +258,38 @@ namespace AgripeWebAPI.Domain.Handlers.Diagnosis
         }
     }
 
+    public class GetDiagnosisQuotaHandler : IRequestHandler<GetDiagnosisQuotaRequest, DiagnosisQuotaResponse>
+    {
+        private readonly ICurrentUserContext _currentUser;
+        private readonly IDiagnosisQuotaService _quotaService;
+
+        public GetDiagnosisQuotaHandler(ICurrentUserContext currentUser, IDiagnosisQuotaService quotaService)
+        {
+            _currentUser = currentUser ?? throw new ArgumentNullException(nameof(currentUser));
+            _quotaService = quotaService ?? throw new ArgumentNullException(nameof(quotaService));
+        }
+
+        public async Task<DiagnosisQuotaResponse> Handle(
+            GetDiagnosisQuotaRequest request,
+            CancellationToken cancellationToken)
+        {
+            var userId = _currentUser.UserId
+                ?? throw new InvalidOperationException("Authenticated user is required.");
+
+            var quota = await _quotaService.GetAsync(userId, cancellationToken);
+
+            return new DiagnosisQuotaResponse
+            {
+                Limit = quota.Limit,
+                Used = quota.Used,
+                Remaining = quota.IsUnlimited ? 0 : quota.Remaining,
+                IsUnlimited = quota.IsUnlimited,
+                IsExhausted = quota.IsExhausted,
+                ResetsAt = quota.ResetsAt
+            };
+        }
+    }
+
     public class GetDiagnosisAuditHandler
         : IRequestHandler<GetDiagnosisAuditRequest, List<DiagnosisAuditEntryResponse>?>
     {

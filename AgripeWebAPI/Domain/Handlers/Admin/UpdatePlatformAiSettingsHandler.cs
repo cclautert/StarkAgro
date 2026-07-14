@@ -28,7 +28,8 @@ namespace AgripeWebAPI.Domain.Handlers.Admin
                 GeminiModel = request.GeminiModel,
                 ActiveProvider = request.ActiveProvider,
                 CropHealthKey = request.CropHealthKey,
-                CropHealthEnabled = request.CropHealthEnabled
+                CropHealthEnabled = request.CropHealthEnabled,
+                DefaultDiagnosisQuotaPerMonth = request.DefaultDiagnosisQuotaPerMonth
             };
 
             await _dbContext.PlatformAiSettings.ReplaceOneAsync(

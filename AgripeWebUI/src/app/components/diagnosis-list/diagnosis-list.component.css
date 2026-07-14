@@ -236,3 +236,30 @@
     width: 100%;
   }
 }
+
+.quota {
+  background: #1a2540;
+  border: 1px solid #2d3f5e;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  font-size: 0.88rem;
+  color: #cbd5e1;
+}
+
+.quota strong { color: #e2e8f0; }
+
+.quota.exhausted {
+  background: #2a2109;
+  border-color: #a16207;
+  color: #fbbf24;
+}
+
+.quota.exhausted strong { color: #fbbf24; }
+
+.btn-add.disabled,
+.btn-add[disabled] {
+  background-color: #2d3f5e;
+  color: #64748b;
+  cursor: not-allowed;
+}

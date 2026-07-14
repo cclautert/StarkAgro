@@ -1,7 +1,21 @@
 <div class="container">
   <div class="page-header">
     <h1 class="page-title">🌿 Laudos</h1>
-    <button class="btn-add" [routerLink]="['/diagnosticos/novo']">+ Nova Foto</button>
+    <button class="btn-add" [routerLink]="['/diagnosticos/novo']"
+            [class.disabled]="quota?.isExhausted"
+            [attr.disabled]="quota?.isExhausted ? true : null">+ Nova Foto</button>
+  </div>
+
+  <!-- Cota do plano -->
+  <div class="quota" *ngIf="quota && !quota.isUnlimited" [class.exhausted]="quota.isExhausted">
+    <span *ngIf="!quota.isExhausted">
+      <strong>{{ quota.used }} de {{ quota.limit }}</strong> laudos usados neste mês
+      · restam {{ quota.remaining }}
+    </span>
+    <span *ngIf="quota.isExhausted">
+      Você usou os <strong>{{ quota.limit }}</strong> laudos do seu plano neste mês.
+      A cota é renovada em {{ quota.resetsAt | date:'dd/MM' }}.
+    </span>
   </div>
 
   <!-- Convite de agrônomo pendente -->

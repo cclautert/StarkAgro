@@ -5,6 +5,7 @@ import {
   CreatePlantDiagnosisResult,
   DiagnosisAuditEntry,
   DiagnosisHistory,
+  DiagnosisQuota,
   PlantDiagnosis,
   PlantDiagnosisStatusResult,
   PlantDiagnosisSummary
@@ -76,5 +77,10 @@ export class DiagnosisService {
 
   getAudit(id: number): Observable<DiagnosisAuditEntry[]> {
     return this.http.get<DiagnosisAuditEntry[]>(`${this.baseUrl}diagnosis/${id}/audit`);
+  }
+
+  /** Quantos laudos ainda restam no mês. */
+  getQuota(): Observable<DiagnosisQuota> {
+    return this.http.get<DiagnosisQuota>(`${this.baseUrl}diagnosis/quota`);
   }
 }

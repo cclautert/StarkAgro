@@ -10,4 +10,7 @@ export interface PlatformAiSettings {
   /** Classificador de doenças de planta (crop.health / Kindwise) — cobra por foto. */
   cropHealthKey?: string | null;
   cropHealthEnabled?: boolean;
+
+  /** Cota padrão de laudos/mês. 0 = ilimitado. */
+  defaultDiagnosisQuotaPerMonth?: number;
 }

@@ -103,6 +103,17 @@ namespace AgripeWebAPI.Domain.Commands.Responses.Diagnosis
         public string FileName { get; set; } = string.Empty;
     }
 
+    public class DiagnosisQuotaResponse
+    {
+        /// <summary>Laudos permitidos no mês. <c>0</c> = ilimitado.</summary>
+        public int Limit { get; set; }
+        public int Used { get; set; }
+        public int Remaining { get; set; }
+        public bool IsUnlimited { get; set; }
+        public bool IsExhausted { get; set; }
+        public DateTime ResetsAt { get; set; }
+    }
+
     public class DiagnosisAuditEntryResponse
     {
         public DateTime At { get; set; }

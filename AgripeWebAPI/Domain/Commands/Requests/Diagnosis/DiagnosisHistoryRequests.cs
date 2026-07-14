@@ -25,4 +25,9 @@ namespace AgripeWebAPI.Domain.Commands.Requests.Diagnosis
     {
         public int Id { get; set; }
     }
+
+    /// <summary>Quantos laudos o produtor ainda tem no mês.</summary>
+    public class GetDiagnosisQuotaRequest : IRequest<DiagnosisQuotaResponse>
+    {
+    }
 }

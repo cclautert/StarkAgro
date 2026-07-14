@@ -4,6 +4,7 @@ using AgripeWebAPI.Models.Interfaces;
 using AgripeWebAPI.Services.AIInsights;
 using AgripeWebAPI.Services.CropHealth;
 using AgripeWebAPI.Services.Diagnosis;
+using AgripeWebAPI.Services.Email;
 using AgripeWebAPI.Services.Forecast;
 using AgripeWebAPI.Services.LoRaWan;
 using AgripeWebAPI.Services.PushNotifications;
@@ -75,6 +76,13 @@ namespace AgripeWebAPI.Configuration
 
             services.AddScoped<IDiagnosisImageStore, GridFsDiagnosisImageStore>();
             services.AddScoped<IDiagnosisAccessService, DiagnosisAccessService>();
+            services.AddScoped<IDiagnosisQuotaService, DiagnosisQuotaService>();
+
+            // E-mail: até agora o AgripeWeb não enviava nenhum (o AlertEmailService era um NoOp).
+            services.Configure<SmtpSettings>(configuration.GetSection(SmtpSettings.SectionName));
+            services.AddScoped<IEmailSender, SmtpEmailSender>();
+            services.AddScoped<IAlertEmailService, AlertEmailService>();
+            services.AddScoped<IDiagnosisEmailService, DiagnosisEmailService>();
 
             // QuestPDF exige a licença declarada em código. Community é gratuita para empresas
             // com receita anual abaixo de US$ 1 milhão — acima disso, exige licença paga.
