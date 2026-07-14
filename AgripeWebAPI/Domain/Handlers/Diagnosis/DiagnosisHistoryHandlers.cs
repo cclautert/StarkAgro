@@ -243,13 +243,16 @@ namespace AgripeWebAPI.Domain.Handlers.Diagnosis
 
             var delta = last.TopProbability - first.TopProbability;
 
+            var from = ProbabilityFormatter.ToPercent(first.TopProbability);
+            var to = ProbabilityFormatter.ToPercent(last.TopProbability);
+
             if (delta >= 0.10)
                 return $"{lastDisease} piorou {since}: a confiança do diagnóstico subiu de " +
-                       $"{first.TopProbability:P0} para {last.TopProbability:P0} em {days} dia(s).";
+                       $"{from} para {to} em {days} dia(s).";
 
             if (delta <= -0.10)
                 return $"{lastDisease} recuou {since}: a confiança do diagnóstico caiu de " +
-                       $"{first.TopProbability:P0} para {last.TopProbability:P0} em {days} dia(s).";
+                       $"{from} para {to} em {days} dia(s).";
 
             return $"{lastDisease} permanece estável {since} ({items.Count} laudos em {days} dia(s)).";
         }

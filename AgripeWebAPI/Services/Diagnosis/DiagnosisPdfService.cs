@@ -160,7 +160,8 @@ namespace AgripeWebAPI.Services.Diagnosis
                         });
 
                         row.ConstantItem(40).AlignRight()
-                            .Text($"{disease.Probability:P0}").FontSize(9).Bold().FontColor(Green);
+                            .Text(ProbabilityFormatter.ToPercent(disease.Probability))
+                            .FontSize(9).Bold().FontColor(Green);
                     });
                 }
 

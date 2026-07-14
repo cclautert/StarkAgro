@@ -80,7 +80,7 @@ namespace AgripeWebAPI.Services.Diagnosis
                 {
                     sb.AppendLine($"- **{disease.Name}**" +
                                   (string.IsNullOrWhiteSpace(disease.ScientificName) ? "" : $" ({disease.ScientificName})") +
-                                  $" — probabilidade {disease.Probability:P0}");
+                                  $" — probabilidade {ProbabilityFormatter.ToPercent(disease.Probability)}");
 
                     if (!string.IsNullOrWhiteSpace(disease.Severity))
                         sb.AppendLine($"  - severidade: {disease.Severity}");
