@@ -24,6 +24,8 @@
     "@angular/router": "^19.2.0",
     "@angular/service-worker": "^19.2.14",
     "@angular/ssr": "^19.2.12",
+    "@zxing/browser": "^0.2.1",
+    "@zxing/library": "^0.23.0",
     "chart.js": "^4.4.9",
     "chartjs-adapter-date-fns": "^3.0.0",
     "chartjs-plugin-annotation": "^3.1.0",

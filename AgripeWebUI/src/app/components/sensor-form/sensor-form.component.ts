@@ -1,5 +1,5 @@
 
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ElementRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -10,6 +10,8 @@ import { PivotService } from '../../services/pivot.service';
 import { Sensor } from '../../models/sensor.model';
 import { Pivot } from '../../models/pivot.model';
 import { forkJoin } from 'rxjs';
+import { BrowserMultiFormatReader, IScannerControls } from '@zxing/browser';
+import { BarcodeFormat, DecodeHintType } from '@zxing/library';
 
 @Component({
   selector: 'app-sensor-form',
@@ -18,7 +20,7 @@ import { forkJoin } from 'rxjs';
   templateUrl: './sensor-form.component.html',
   styleUrl: './sensor-form.component.css' // O CSS pode ser o mesmo
 })
-export class SensorFormComponent implements OnInit {
+export class SensorFormComponent implements OnInit, OnDestroy {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -26,8 +28,13 @@ export class SensorFormComponent implements OnInit {
   private pivotService = inject(PivotService);
   private snackBar = inject(MatSnackBar);
 
+  @ViewChild('scannerVideo') scannerVideo?: ElementRef<HTMLVideoElement>;
+
   isScanning = false;
   isSyncing = false;
+
+  private codeReader?: BrowserMultiFormatReader;
+  private scannerControls?: IScannerControls;
 
   sensorForm: FormGroup;
   isEditMode = false;
@@ -156,52 +163,86 @@ export class SensorFormComponent implements OnInit {
   get quadrante() { return this.sensorForm.get('quadrante'); }
   get uplinkIntervalSeconds() { return this.sensorForm.get('uplinkIntervalSeconds'); }
 
+  /**
+   * Abre a câmera e lê QR Code ou código de barras 1D (EAN, Code128, Code39, etc.)
+   * usando ZXing-js, que decodifica no próprio navegador — funciona no Android e no
+   * Safari do iOS, onde a API nativa BarcodeDetector não existe.
+   */
   async scanQrCode(): Promise<void> {
     if (this.isScanning) return;
 
-    if (!('BarcodeDetector' in window)) {
-      this.snackBar.open('Leitor de QR Code não suportado neste navegador.', 'Fechar', { duration: 4000 });
+    if (!navigator.mediaDevices?.getUserMedia) {
+      this.snackBar.open('Câmera não disponível neste navegador.', 'Fechar', { duration: 4000 });
       return;
     }
 
-    let stream: MediaStream | null = null;
-    try {
-      this.isScanning = true;
-      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-
-      const video = document.createElement('video');
-      video.srcObject = stream;
-      video.setAttribute('playsinline', 'true');
-      await video.play();
-
-      const canvas = document.createElement('canvas');
-      // @ts-ignore
-      const detector = new BarcodeDetector({ formats: ['qr_code'] });
-
-      const result = await new Promise<string>((resolve, reject) => {
-        let attempts = 0;
-        const scan = async () => {
-          attempts++;
-          if (attempts > 100) { reject(new Error('QR code não encontrado.')); return; }
-          canvas.width = video.videoWidth;
-          canvas.height = video.videoHeight;
-          canvas.getContext('2d')!.drawImage(video, 0, 0);
-          try {
-            const barcodes = await detector.detect(canvas);
-            if (barcodes.length > 0) { resolve(barcodes[0].rawValue); }
-            else { setTimeout(scan, 150); }
-          } catch { setTimeout(scan, 150); }
-        };
-        scan();
-      });
-
-      this.sensorForm.patchValue({ code: result });
-      this.snackBar.open('QR Code lido com sucesso!', 'OK', { duration: 3000 });
-    } catch (err: any) {
-      this.snackBar.open(err?.message ?? 'Erro ao acessar a câmera.', 'Fechar', { duration: 4000 });
-    } finally {
-      stream?.getTracks().forEach(t => t.stop());
-      this.isScanning = false;
+    // O <video> fica sempre no DOM, então o ViewChild já está resolvido no clique.
+    const videoEl = this.scannerVideo?.nativeElement;
+    if (!videoEl) {
+      this.snackBar.open('Não foi possível iniciar o leitor.', 'Fechar', { duration: 4000 });
+      return;
     }
+
+    this.isScanning = true;
+
+    const hints = new Map<DecodeHintType, unknown>();
+    hints.set(DecodeHintType.POSSIBLE_FORMATS, [
+      BarcodeFormat.QR_CODE,
+      BarcodeFormat.EAN_13,
+      BarcodeFormat.EAN_8,
+      BarcodeFormat.CODE_128,
+      BarcodeFormat.CODE_39,
+      BarcodeFormat.CODE_93,
+      BarcodeFormat.ITF,
+      BarcodeFormat.UPC_A,
+      BarcodeFormat.UPC_E,
+      BarcodeFormat.CODABAR,
+      BarcodeFormat.DATA_MATRIX
+    ]);
+    this.codeReader = new BrowserMultiFormatReader(hints);
+
+    try {
+      this.scannerControls = await this.codeReader.decodeFromConstraints(
+        { video: { facingMode: { ideal: 'environment' } } },
+        videoEl,
+        (result, err) => {
+          if (result) {
+            this.sensorForm.patchValue({ code: this.extractSensorCode(result.getText()) });
+            this.sensorForm.get('code')?.markAsDirty();
+            this.snackBar.open('Código lido com sucesso!', 'OK', { duration: 3000 });
+            this.stopScan();
+          }
+          // Erros de "não encontrado neste frame" são normais; ignoramos para seguir tentando.
+        }
+      );
+    } catch (err: any) {
+      const msg = err?.name === 'NotAllowedError'
+        ? 'Permissão de câmera negada.'
+        : (err?.message ?? 'Erro ao acessar a câmera.');
+      this.snackBar.open(msg, 'Fechar', { duration: 4000 });
+      this.stopScan();
+    }
+  }
+
+  /**
+   * Extrai o DevEUI de uma etiqueta LoRaWAN no formato
+   * "<serial>;<DevEUI>;<JoinEUI>;<AppKey>". Se o texto não tiver ';'
+   * (ex.: QR só com o DevEUI), devolve o próprio texto.
+   */
+  private extractSensorCode(raw: string): string {
+    const parts = raw.trim().split(';').map(p => p.trim()).filter(Boolean);
+    return parts.length >= 2 ? parts[1] : (parts[0] ?? raw.trim());
+  }
+
+  /** Encerra a leitura e libera a câmera. */
+  stopScan(): void {
+    this.scannerControls?.stop();
+    this.scannerControls = undefined;
+    this.codeReader = undefined;
+    this.isScanning = false;
+  }
+
+  ngOnDestroy(): void {
+    this.stopScan();
   }
 }

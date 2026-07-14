@@ -2,7 +2,6 @@ import { Routes } from '@angular/router';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { PivotFormComponent } from './components/pivot-form/pivot-form.component';
 import { UserFormComponent } from './components/user-form/user-form.component';
-import { SensorFormComponent } from './components/sensor-form/sensor-form.component';
 import { LoginComponent } from './components/login/login.component';
 import { AuthCallbackComponent } from './components/login/auth-callback.component';
 import { AuthGuard } from './guards/auth.guard';
@@ -46,8 +45,8 @@ export const routes: Routes = [
       { path: 'pivots/novo', component: PivotFormComponent, canActivate: [AuthGuard] },
       { path: 'pivots/editar/:id', component: PivotFormComponent, canActivate: [AuthGuard] },
       { path: 'sensores', component: SensorListComponent, canActivate: [AuthGuard] },
-      { path: 'sensores/novo', component: SensorFormComponent, canActivate: [AuthGuard] },
-      { path: 'sensores/editar/:id', component: SensorFormComponent, canActivate: [AuthGuard] },
+      { path: 'sensores/novo', loadComponent: () => import('./components/sensor-form/sensor-form.component').then(m => m.SensorFormComponent), canActivate: [AuthGuard] },
+      { path: 'sensores/editar/:id', loadComponent: () => import('./components/sensor-form/sensor-form.component').then(m => m.SensorFormComponent), canActivate: [AuthGuard] },
       { path: 'diagnosticos', component: DiagnosisListComponent, canActivate: [AuthGuard] },
       { path: 'diagnosticos/novo', component: DiagnosisNewComponent, canActivate: [AuthGuard] },
       { path: 'diagnosticos/:id', component: DiagnosisDetailComponent, canActivate: [AuthGuard] },

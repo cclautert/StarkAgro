@@ -41,6 +41,18 @@
       <div *ngIf="code?.invalid && (code?.dirty || code?.touched)" class="error">
         <div *ngIf="code?.errors?.['required']">Código é obrigatório.</div>
       </div>
+
+      <!-- Preview da câmera para leitura de QR Code / código de barras.
+           O <video> fica sempre no DOM (só o container é escondido via CSS) para
+           que o ViewChild esteja pronto no clique, sem corrida com *ngIf. -->
+      <div class="scanner-preview" [class.active]="isScanning">
+        <video #scannerVideo class="scanner-video" muted playsinline></video>
+        <div class="scanner-frame"></div>
+        <p class="scanner-hint">Aponte a câmera para o QR Code ou código de barras.</p>
+        <button type="button" class="btn btn-secondary" (click)="stopScan()">
+          <mat-icon>close</mat-icon> Cancelar leitura
+        </button>
+      </div>
     </div>
 
     <div class="form-group">
