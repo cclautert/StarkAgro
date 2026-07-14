@@ -56,7 +56,11 @@ namespace AgripeWebWorker.Services
             }
         }
 
-        private async Task RunAsync(CancellationToken cancellationToken)
+        /// <summary>
+        /// Um tick da fila. Público para ser exercitado em teste sem subir o BackgroundService
+        /// (mesmo padrão de <c>IrrigationAlertScheduler.EvaluatePivotAsync</c>).
+        /// </summary>
+        public async Task RunAsync(CancellationToken cancellationToken)
         {
             using var scope = _serviceProvider.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<agpDBContext>();
