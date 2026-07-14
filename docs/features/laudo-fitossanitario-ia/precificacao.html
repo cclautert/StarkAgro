@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>AgripeWeb — Estudo de Precificação (Brasil, 2026)</title>
+<style>
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --green-900: #14401A;
+    --green-700: #1B5E20;
+    --green-500: #2E7D32;
+    --green-100: #E8F3E9;
+    --amber: #8A6410;
+    --amber-100: #FDF3DF;
+    --ink: #1C1E1B;
+    --muted: #5F6B60;
+    --line: #DCE3DC;
+    --red: #B3261E;
+    --red-100: #FBEAE9;
+  }
+
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  body {
+    font-family: "Segoe UI", "Inter", Arial, sans-serif;
+    color: var(--ink);
+    font-size: 10pt;
+    line-height: 1.5;
+    background: #fff;
+  }
+
+  .page {
+    width: 210mm;
+    height: 296mm;
+    overflow: hidden;
+    padding: 15mm 17mm;
+    page-break-after: always;
+    break-after: page;
+    display: flex;
+    flex-direction: column;
+  }
+  .page:last-child { page-break-after: auto; break-after: auto; }
+
+  /* Capa */
+  .cover {
+    background: linear-gradient(160deg, var(--green-900) 0%, var(--green-500) 100%);
+    color: #fff;
+    justify-content: space-between;
+    padding: 25mm 20mm;
+  }
+  .cover .brand { font-size: 13pt; letter-spacing: .22em; text-transform: uppercase; font-weight: 600; opacity: .85; }
+  .cover h1 { font-size: 32pt; line-height: 1.12; font-weight: 700; margin-top: 6mm; }
+  .cover .kicker { font-size: 13.5pt; opacity: .92; margin-top: 8mm; max-width: 140mm; line-height: 1.45; }
+  .cover .rule { width: 28mm; height: 3px; background: #E8A317; margin: 10mm 0; }
+  .cover-meta { font-size: 9.5pt; opacity: .75; line-height: 1.7; }
+
+  h2 { font-size: 18pt; color: var(--green-900); line-height: 1.2; margin-bottom: 3mm; }
+  h3 { font-size: 12pt; color: var(--green-700); margin: 6mm 0 2.5mm; }
+  h3:first-of-type { margin-top: 4mm; }
+  p { margin-bottom: 3mm; }
+  .lead { font-size: 11pt; color: var(--muted); line-height: 1.55; margin-bottom: 5mm; }
+  strong { font-weight: 600; }
+
+  .label {
+    display: inline-block;
+    background: var(--green-100);
+    color: var(--green-700);
+    font-size: 8pt; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+    padding: 1.5mm 3.5mm; border-radius: 3px; margin-bottom: 4mm;
+  }
+
+  table { width: 100%; border-collapse: collapse; margin: 3mm 0 4mm; font-size: 9pt; }
+  th {
+    text-align: left; background: var(--green-100); color: var(--green-900);
+    font-weight: 600; padding: 2.5mm 3mm; border-bottom: 1px solid var(--line); font-size: 8.5pt;
+  }
+  td { padding: 2.2mm 3mm; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  td.num { white-space: nowrap; font-variant-numeric: tabular-nums; font-weight: 600; }
+  .src { font-size: 7.5pt; color: var(--muted); }
+  .hl td { background: #F2F7F2; }
+
+  .callout {
+    background: var(--green-100); border-left: 3px solid var(--green-500);
+    padding: 4.5mm 5mm; border-radius: 0 4px 4px 0; margin: 4mm 0;
+  }
+  .callout .t { font-weight: 700; color: var(--green-900); display: block; margin-bottom: 1.5mm; }
+  .callout p { margin: 0; font-size: 9.5pt; line-height: 1.5; }
+
+  .warn {
+    background: var(--red-100); border: 1px solid #EBC9C6;
+    border-radius: 5px; padding: 4.5mm 5mm; margin: 4mm 0;
+  }
+  .warn .t { font-weight: 700; color: #8C2019; font-size: 9.5pt; display: block; margin-bottom: 1.5mm; }
+  .warn p { font-size: 9pt; color: #6B2B26; margin: 0; line-height: 1.5; }
+
+  .gap {
+    background: #FAFCFA; border: 1px solid var(--line); border-radius: 6px;
+    padding: 5mm; margin: 4mm 0; text-align: center;
+  }
+  .gap .row { font-size: 9.5pt; color: var(--muted); padding: 1.5mm 0; }
+  .gap .row b { color: var(--ink); }
+  .gap .us {
+    background: var(--green-700); color: #fff; font-weight: 700; font-size: 10pt;
+    padding: 3mm 5mm; border-radius: 5px; display: inline-block; margin: 2mm 0;
+  }
+  .gap .arrow { color: var(--muted); font-size: 11pt; line-height: 1; }
+
+  .metrics { display: flex; gap: 4mm; margin: 4mm 0; }
+  .metric {
+    flex: 1; border: 1px solid var(--line); border-radius: 6px; padding: 4mm; text-align: center;
+  }
+  .metric .big {
+    font-size: 15pt; font-weight: 700; color: var(--green-700);
+    line-height: 1.15; white-space: nowrap; font-variant-numeric: tabular-nums;
+  }
+  .metric .big small { font-size: 10pt; }
+  .metric .cap { font-size: 8pt; color: var(--muted); margin-top: 1.5mm; line-height: 1.35; }
+
+  footer {
+    margin-top: auto; padding-top: 4mm; border-top: 1px solid var(--line);
+    font-size: 8pt; color: var(--muted); display: flex; justify-content: space-between;
+  }
+  .sources { font-size: 7.5pt; color: var(--muted); line-height: 1.55; margin-top: 3mm; }
+  .sources b { color: var(--ink); }
+</style>
+</head>
+<body>
+
+<!-- CAPA -->
+<section class="page cover">
+  <div>
+    <div class="brand">AgripeWeb</div>
+    <div class="rule"></div>
+    <h1>Quanto cobrar<br>pelo laudo assinado</h1>
+    <p class="kicker">
+      Levantamento dos preços praticados no Brasil e uma proposta de tabela — ancorada na
+      tabela oficial de honorários da Agronomia, não em achismo.
+    </p>
+  </div>
+  <div class="cover-meta">
+    <strong>Estudo de precificação</strong><br>
+    Fontes públicas · Julho de 2026<br>
+    Documento interno de trabalho
+  </div>
+</section>
+
+<!-- PÁGINA 2 — ÂNCORAS -->
+<section class="page">
+  <div class="label">O que o mercado cobra hoje</div>
+  <h2>As âncoras de preço</h2>
+
+  <p class="lead">
+    Tudo abaixo vem de fonte pública. A mais importante é a <strong>tabela oficial de honorários
+    da Agronomia</strong>, que fixa o Coeficiente Agronômico (CA) — a base de cálculo da profissão.
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:44%">Referência</th>
+        <th style="width:26%">Valor</th>
+        <th style="width:30%">Origem</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="hl">
+        <td><strong>Coeficiente Agronômico (CA)</strong></td>
+        <td class="num">R$ 167,34</td>
+        <td class="src">Tabela CREA-MS (2024)</td>
+      </tr>
+      <tr>
+        <td>Hora técnica</td>
+        <td class="num">3 CA = R$ 502</td>
+        <td class="src">Tabela CREA</td>
+      </tr>
+      <tr>
+        <td>Assistência técnica / consultoria</td>
+        <td class="num">mín. 4 CA/dia = R$ 669</td>
+        <td class="src">Tabela CREA</td>
+      </tr>
+      <tr class="hl">
+        <td><strong>Emissão de receita agronômica</strong></td>
+        <td class="num">mín. 1 CA = R$ 167</td>
+        <td class="src">Tabela CREA</td>
+      </tr>
+      <tr>
+        <td>Diária de consultor (mercado)</td>
+        <td class="num">R$ 600 – 3.000</td>
+        <td class="src">Blog Aegro</td>
+      </tr>
+      <tr>
+        <td>Consultoria por permuta</td>
+        <td class="num">2 sacas de soja/ha</td>
+        <td class="src">Prática de mercado</td>
+      </tr>
+      <tr>
+        <td>Saca de soja (jul/2026)</td>
+        <td class="num">R$ 129 – 140</td>
+        <td class="src">Cepea · média 1º sem.: R$ 134</td>
+      </tr>
+      <tr class="hl">
+        <td><strong>→ logo, a consultoria custa</strong></td>
+        <td class="num">≈ R$ 268/ha/safra</td>
+        <td class="src">2 × R$ 134</td>
+      </tr>
+      <tr>
+        <td>Plataformas digitais (Climate, Strider)</td>
+        <td class="num">R$ 9 – 30/ha</td>
+        <td class="src">Mercado</td>
+      </tr>
+      <tr>
+        <td>Sensores IoT</td>
+        <td class="num">R$ 20 – 120/ha/ano</td>
+        <td class="src">Mercado</td>
+      </tr>
+      <tr>
+        <td>Aplicação de defensivo</td>
+        <td class="num">R$ 120 – 180/ha</td>
+        <td class="src">Custo por aplicação</td>
+      </tr>
+      <tr>
+        <td>Custo de produção da soja 25/26</td>
+        <td class="num">R$ 6.116 – 7.430/ha</td>
+        <td class="src">Aprosoja-MS · IMEA</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>O número que muda a conversa de venda</h3>
+
+  <div class="metrics">
+    <div class="metric">
+      <div class="big">−52%</div>
+      <div class="cap">Queda no custo de controle de pragas com monitoramento (R$ 337 → R$ 160/ha, PR)</div>
+    </div>
+    <div class="metric">
+      <div class="big">420%</div>
+      <div class="cap">ROI medido do monitoramento: cada R$ 1 devolve R$ 4,20</div>
+    </div>
+    <div class="metric">
+      <div class="big">R$ 120<small>–180</small></div>
+      <div class="cap">Custo de <b>uma</b> aplicação de defensivo, por hectare</div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <span class="t">O argumento de venda, em uma frase</span>
+    <p>
+      <strong>Uma única aplicação evitada paga o ano inteiro do plano naquele hectare.</strong>
+      O produtor não está comprando software — está comprando a aplicação que ele
+      <em>não</em> precisou fazer.
+    </p>
+  </div>
+
+  <footer>
+    <span>AgripeWeb · Estudo de precificação</span>
+    <span>2</span>
+  </footer>
+</section>
+
+<!-- PÁGINA 3 — POSICIONAMENTO E TABELA -->
+<section class="page">
+  <div class="label">Onde nos encaixamos</div>
+  <h2>Existe um vão no mercado</h2>
+
+  <p class="lead">
+    De um lado, plataformas digitais baratas que ninguém assina. Do outro, a consultoria
+    presencial completa. No meio, ninguém.
+  </p>
+
+  <div class="gap">
+    <div class="row"><b>R$ 9 – 30/ha</b> &nbsp;·&nbsp; plataforma digital — só dado, ninguém assina nada</div>
+    <div class="arrow">▼</div>
+    <div class="us">AgripeWeb: software + sensores + laudo ASSINADO</div>
+    <div class="arrow">▼</div>
+    <div class="row"><b>R$ 268/ha/safra</b> &nbsp;·&nbsp; consultoria completa — agrônomo presencial, 2 sacas/ha</div>
+  </div>
+
+  <h3>Tabela sugerida</h3>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:26%">Plano</th>
+        <th style="width:22%">Preço sugerido</th>
+        <th style="width:12%">Em sacas</th>
+        <th style="width:40%">Por que este número</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Monitoramento</strong><br><span class="src">sensores + painel; laudo só com pré-análise da IA</span></td>
+        <td class="num">R$ 30 – 40<br><span class="src">/ha/ano</span></td>
+        <td class="num">~0,25</td>
+        <td>Cobre o custo do IoT (R$ 20–120/ha) e fica no topo da faixa das plataformas digitais — porque entrega <strong>sensor no solo</strong>, não satélite.</td>
+      </tr>
+      <tr class="hl">
+        <td><strong>Monitoramento + Assessoria</strong> ⭐<br><span class="src">com 6 a 10 laudos assinados/mês</span></td>
+        <td class="num">R$ 90 – 120<br><span class="src">/ha/safra</span></td>
+        <td class="num">~0,7 – 0,9</td>
+        <td><strong>Um terço do preço da consultoria tradicional</strong>, e com laudo assinado. O discurso é: <em>"metade do preço, e você tem resposta no mesmo dia".</em></td>
+      </tr>
+      <tr>
+        <td><strong>Laudo avulso</strong><br><span class="src">excedente da cota</span></td>
+        <td class="num">R$ 120 – 180</td>
+        <td class="num">~1</td>
+        <td>Acima do mínimo oficial de uma receita (R$ 167 é 1 CA) e muito abaixo de uma visita presencial (R$ 669/dia).</td>
+      </tr>
+      <tr>
+        <td><strong>Plano do agrônomo</strong><br><span class="src">o que o profissional paga à plataforma</span></td>
+        <td class="num">R$ 200 – 400<br><span class="src">/mês, até 10 clientes</span></td>
+        <td class="num">—</td>
+        <td>Ele fatura R$ 90–120/ha sobre a área da carteira; a plataforma leva uma fração pequena disso.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <span class="t">Como defender o preço na mesa</span>
+    <p>
+      Numa fazenda de <strong>500 ha de soja</strong>, o plano de assessoria a R$ 100/ha custa
+      <strong>R$ 50 mil na safra</strong> — contra <strong>R$ 134 mil</strong> da consultoria
+      tradicional a 2 sacas/ha. E <strong>uma</strong> aplicação evitada nesses 500 ha economiza
+      de R$ 60 mil a R$ 90 mil. O plano se paga com folga antes da segunda pulverização.
+    </p>
+  </div>
+
+  <footer>
+    <span>AgripeWeb · Estudo de precificação</span>
+    <span>3</span>
+  </footer>
+</section>
+
+<!-- PÁGINA 4 — MARGEM E RESSALVAS -->
+<section class="page">
+  <div class="label">A conta que importa</div>
+  <h2>A margem não está onde parece</h2>
+
+  <div class="metrics">
+    <div class="metric">
+      <div class="big">&lt; R$ 0,50</div>
+      <div class="cap">Custo de <b>IA</b> por laudo<br>(classificador + LLM)</div>
+    </div>
+    <div class="metric">
+      <div class="big">R$ 502</div>
+      <div class="cap">Valor de <b>uma hora</b> do agrônomo, pela tabela oficial</div>
+    </div>
+    <div class="metric">
+      <div class="big">≈ R$ 84</div>
+      <div class="cap">Custo real do laudo, se a revisão levar <b>10 minutos</b></div>
+    </div>
+  </div>
+
+  <div class="warn">
+    <span class="t">Não se engane com a margem de 99,7%</span>
+    <p>
+      Vendendo o laudo a R$ 150, a margem sobre o custo de IA parece de <strong>99,7%</strong>.
+      É ilusão de ótica. <strong>O custo real do laudo não é a IA — é o tempo do agrônomo
+      revisando e assinando.</strong> Pela tabela oficial, uma hora dele vale R$ 502. Se cada
+      laudo consumir 10 minutos, o custo real é de cerca de <strong>R$ 84</strong>.
+      A R$ 120–180 o laudo fecha com folga; <strong>a R$ 50, ele estaria trabalhando de graça.</strong>
+    </p>
+  </div>
+
+  <div class="callout">
+    <span class="t">Por isso a tela de revisão é o produto</span>
+    <p>
+      O laudo já chega ao agrônomo <strong>pré-escrito pela IA</strong>, com a correlação da
+      doença com a umidade e a chuva prevista daquele pivô. Ele <strong>edita</strong>, não
+      redige do zero. Cada minuto que a IA economiza dele é <strong>margem direta</strong> — e é
+      o que permite atender 10 clientes no lugar de 3.
+    </p>
+  </div>
+
+  <h3>Ressalvas — leia antes de fechar preço</h3>
+
+  <table>
+    <tbody>
+      <tr>
+        <td style="width:34%"><strong>O CA muda por estado e por ano</strong></td>
+        <td>A tabela usada aqui é a do <strong>CREA-MS, de 2024</strong>. Confirme o Coeficiente Agronômico vigente no <strong>CREA-RS</strong> antes de publicar preço.</td>
+      </tr>
+      <tr>
+        <td><strong>O preço do Aegro está velho</strong></td>
+        <td>O valor de R$ 299/mês que circula é de <strong>2019</strong>. Não use como referência atual.</td>
+      </tr>
+      <tr>
+        <td><strong>Falta a tabela do AgroReceita</strong></td>
+        <td>É o concorrente mais próximo no receituário, mas o site <strong>bloqueou o acesso automatizado (HTTP 403)</strong>. Vale abrir manualmente e conferir.</td>
+      </tr>
+      <tr>
+        <td><strong>Os planos são hipótese, não verdade</strong></td>
+        <td>Os números sugeridos são <strong>ancorados</strong> em fontes públicas, mas só o primeiro cliente real diz se o mercado paga. Comece pela fazenda-piloto.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="sources">
+    <b>Fontes.</b>
+    Tabela de Honorários da Agronomia — CREA-MS/AEAMS, 2024 (CA = R$ 167,34) ·
+    Precificação de consultoria rural — Blog Aegro ·
+    Cotação da soja — Cepea / Notícias Agrícolas / Farmnews (jul/2026) ·
+    Custo de produção da soja 25/26 — Aprosoja-MS e IMEA ·
+    Custos de plataformas digitais e sensores IoT, e ROI do monitoramento — Investidor Rural,
+    Máquinas e Inovações Agrícolas ·
+    Custo de IA por laudo — preços públicos do Kindwise crop.health e da API do provedor de LLM.
+    <br><br>
+    <b>Nota.</b> Valores de mercado são <strong>faixas de referência públicas, não cotações</strong>.
+    Confirme com fornecedores e com o CREA da sua região antes de fechar contrato.
+  </div>
+
+  <footer>
+    <span>AgripeWeb · Estudo de precificação</span>
+    <span>4</span>
+  </footer>
+</section>
+
+</body>
+</html>

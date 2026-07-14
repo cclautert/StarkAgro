@@ -70,6 +70,13 @@ export default function AppLayout() {
         }}
       />
       <Tabs.Screen
+        name="diagnosis/index"
+        options={{
+          title: 'Laudos',
+          tabBarIcon: ({ color }) => <TabIcon name="leaf-outline" color={color} />,
+        }}
+      />
+      <Tabs.Screen
         name="settings"
         options={{
           title: 'Config.',
@@ -92,6 +99,8 @@ export default function AppLayout() {
       <Tabs.Screen name="pivots/[id]/edit" options={{ href: null }} />
       <Tabs.Screen name="sensors/new" options={{ href: null }} />
       <Tabs.Screen name="sensors/[id]/edit" options={{ href: null }} />
+      <Tabs.Screen name="diagnosis/new" options={{ href: null }} />
+      <Tabs.Screen name="diagnosis/[id]" options={{ href: null }} />
     </Tabs>
     </View>
   );
