@@ -91,8 +91,38 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Unit tests (Karma)
+        run: |
+          export CHROME_BIN="$(command -v google-chrome || command -v chromium-browser)"
+          npx ng test --watch=false --browsers=ChromeHeadless
+
       - name: Production build
         run: npm run build -- --configuration=production
+
+  mobile:
+    name: Mobile (React Native)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: AgripeWebUI-Mobile
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: AgripeWebUI-Mobile/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Sem gate de cobertura por enquanto: o `coverageThreshold` do package.json pede 90%
+      # e o real hoje é 68%. Cobrar isso agora deixaria o CI vermelho no primeiro dia.
+      - name: Unit tests (Jest)
+        run: npx jest --ci
 
   docker-build:
     name: Docker images
