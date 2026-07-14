@@ -119,10 +119,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # Sem gate de cobertura por enquanto: o `coverageThreshold` do package.json pede 90%
-      # e o real hoje é 68%. Cobrar isso agora deixaria o CI vermelho no primeiro dia.
-      - name: Unit tests (Jest)
-        run: npx jest --ci
+      # Gate de cobertura ligado: o `coverageThreshold` do package.json (linhas/funcs 90%,
+      # branches 80%) agora é cumprido e `--coverage` o cobra — o CI falha se regredir.
+      - name: Unit tests + cobertura (Jest)
+        run: npx jest --ci --coverage
 
   docker-build:
     name: Docker images
