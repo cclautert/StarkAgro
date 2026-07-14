@@ -85,3 +85,35 @@ export interface PlantDiagnosisStatusResult {
   updatedAt: string;
   failureReason?: string | null;
 }
+
+export interface DiagnosisAuditEntry {
+  at: string;
+  actorUserId?: number | null;
+  actorName?: string | null;
+  fromStatus?: string | null;
+  toStatus: string;
+  action: string;
+}
+
+export interface DiagnosisHistoryItem {
+  id: number;
+  status: PlantDiagnosisStatus;
+  capturedAt: string;
+  topDisease?: string | null;
+  topProbability: number;
+  confirmedDisease?: string | null;
+  severity?: string | null;
+  moistureAvg7d?: number | null;
+  daysAboveUpperLimit: number;
+  isSigned: boolean;
+  imageUrl: string;
+}
+
+export interface DiagnosisHistory {
+  pivotId: number;
+  pivotName?: string | null;
+  items: DiagnosisHistoryItem[];
+
+  /** "a mancha piorou desde 12/03" — a pergunta que um app de foto avulsa não responde. */
+  trend?: string | null;
+}

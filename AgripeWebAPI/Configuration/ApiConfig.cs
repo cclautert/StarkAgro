@@ -75,6 +75,11 @@ namespace AgripeWebAPI.Configuration
 
             services.AddScoped<IDiagnosisImageStore, GridFsDiagnosisImageStore>();
             services.AddScoped<IDiagnosisAccessService, DiagnosisAccessService>();
+
+            // QuestPDF exige a licença declarada em código. Community é gratuita para empresas
+            // com receita anual abaixo de US$ 1 milhão — acima disso, exige licença paga.
+            QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
+            services.AddSingleton<IDiagnosisPdfService, DiagnosisPdfService>();
             services.AddScoped<IPlantDiagnosisContextBuilder, PlantDiagnosisContextBuilder>();
             services.AddScoped<IPlantDiagnosisProcessingService, PlantDiagnosisProcessingService>();
 

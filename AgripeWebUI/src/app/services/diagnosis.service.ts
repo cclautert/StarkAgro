@@ -3,6 +3,8 @@ import { HttpClient, HttpEvent, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
   CreatePlantDiagnosisResult,
+  DiagnosisAuditEntry,
+  DiagnosisHistory,
   PlantDiagnosis,
   PlantDiagnosisStatusResult,
   PlantDiagnosisSummary
@@ -56,5 +58,23 @@ export class DiagnosisService {
 
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}diagnosis/${id}`);
+  }
+
+  /** PDF do laudo — vem como blob pelo mesmo motivo da imagem (header Authorization). */
+  getPdf(id: number): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}diagnosis/${id}/pdf`, { responseType: 'blob' });
+  }
+
+  /** Reenfileira um laudo que falhou. A foto continua no servidor. */
+  reprocess(id: number): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}diagnosis/${id}/reprocess`, {});
+  }
+
+  getHistory(pivotId: number): Observable<DiagnosisHistory> {
+    return this.http.get<DiagnosisHistory>(`${this.baseUrl}diagnosis/history/${pivotId}`);
+  }
+
+  getAudit(id: number): Observable<DiagnosisAuditEntry[]> {
+    return this.http.get<DiagnosisAuditEntry[]>(`${this.baseUrl}diagnosis/${id}/audit`);
   }
 }

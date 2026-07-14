@@ -3,7 +3,12 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { DiagnosisService } from '../../services/diagnosis.service';
-import { PlantDiagnosis, PlantDiagnosisStatus } from '../../models/plant-diagnosis.model';
+import {
+  DiagnosisAuditEntry,
+  DiagnosisHistory,
+  PlantDiagnosis,
+  PlantDiagnosisStatus
+} from '../../models/plant-diagnosis.model';
 import { renderMarkdown } from '../../utils/markdown';
 
 @Component({
@@ -16,8 +21,12 @@ import { renderMarkdown } from '../../utils/markdown';
 export class DiagnosisDetailComponent implements OnInit, OnDestroy {
   diagnosis?: PlantDiagnosis;
   imageUrl?: string;
+  history?: DiagnosisHistory;
+  audit: DiagnosisAuditEntry[] = [];
   loading = true;
   error = false;
+  reprocessing = false;
+  auditExpanded = false;
 
   id!: number;
 
@@ -71,6 +80,55 @@ export class DiagnosisDetailComponent implements OnInit, OnDestroy {
     return labels[status] ?? status;
   }
 
+  /** Baixa o PDF do laudo. */
+  downloadPdf(): void {
+    this.diagnosisService.getPdf(this.id).subscribe(blob => {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `laudo-${this.id}.pdf`;
+      link.click();
+      URL.revokeObjectURL(url);
+    });
+  }
+
+  /** Reenfileira o laudo. A foto continua no servidor: não precisa fotografar de novo. */
+  reprocess(): void {
+    this.reprocessing = true;
+    this.diagnosisService.reprocess(this.id).subscribe({
+      next: () => {
+        this.reprocessing = false;
+        this.load();
+      },
+      error: () => this.reprocessing = false
+    });
+  }
+
+  toggleAudit(): void {
+    this.auditExpanded = !this.auditExpanded;
+
+    if (this.auditExpanded && this.audit.length === 0) {
+      this.diagnosisService.getAudit(this.id).subscribe(entries => this.audit = entries);
+    }
+  }
+
+  actionLabel(action: string): string {
+    const labels: Record<string, string> = {
+      'created': 'Foto enviada',
+      'claimed': 'Assumido',
+      'processed:ai': 'Analisado pela IA',
+      'processed:mock': 'Analisado',
+      'rejected:low-confidence': 'Foto recusada na análise',
+      'rejected:agronomist': 'Devolvido pelo agrônomo',
+      'signed': 'Assinado',
+      'failed': 'Falhou',
+      'retry-scheduled': 'Nova tentativa agendada',
+      'review-abandoned': 'Revisão devolvida à fila',
+      'reprocess-requested': 'Reprocessamento solicitado'
+    };
+    return labels[action] ?? action;
+  }
+
   private load(silent = false): void {
     if (!silent) this.loading = true;
 
@@ -79,11 +137,22 @@ export class DiagnosisDetailComponent implements OnInit, OnDestroy {
         this.diagnosis = diagnosis;
         this.loading = false;
         this.error = false;
+
+        if (diagnosis.pivotId && !this.history) {
+          this.loadHistory(diagnosis.pivotId);
+        }
       },
       error: () => {
         this.loading = false;
         this.error = true;
       }
+    });
+  }
+
+  private loadHistory(pivotId: number): void {
+    this.diagnosisService.getHistory(pivotId).subscribe({
+      next: history => this.history = history,
+      error: () => { /* histórico é acessório */ }
     });
   }
 

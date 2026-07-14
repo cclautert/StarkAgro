@@ -45,6 +45,7 @@ Guide for Claude Code and coding agents in this repository.
 | Chaves de IA | Ficam no Mongo (`platform_ai_settings`, tela `/admin/ia`), **não** em `appsettings`. `CropHealthEnabled` é o kill-switch do custo por foto |
 | Laudo gerado por LLM | O disclaimer legal é garantido em código (`EnsureDisclaimer`), nunca só pelo prompt — truncamento ou modelo teimoso o removeria |
 | Kindwise crop.health | `datetime` exige offset (`+00:00`; `Z` e `ToString("o")` dão 400); **não** envie `similar_images: false`; a resposta de sucesso é **201** |
+| PDF (QuestPDF) | Licença **Community** declarada em `ApiConfig` — gratuita só até US$ 1 mi de receita anual. Não dá para asserir texto nos bytes do PDF (fonte subsetada): teste o conteúdo via `DiagnosisPdfService.FooterLines`/`StatusLabel` |
 | Firmware | No real Wi-Fi passwords, tokens, or MACs in committed `.ino` files |
 | Deploy | `main` + green CI; secrets only via env / user secrets — placeholders in repo |
 | Google login button | Show only when `environment.googleClientId` is set |

@@ -37,6 +37,11 @@ export class AgronomistService {
     return this.http.get(`${this.baseUrl}agronomist/diagnosis/${id}/image`, { responseType: 'blob' });
   }
 
+  /** PDF do laudo — mesma regra de acesso do detalhe. */
+  getDiagnosisPdf(id: number): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}agronomist/diagnosis/${id}/pdf`, { responseType: 'blob' });
+  }
+
   claim(id: number): Observable<void> {
     return this.http.post<void>(`${this.baseUrl}agronomist/diagnosis/${id}/claim`, {});
   }

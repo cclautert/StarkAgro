@@ -96,4 +96,49 @@ namespace AgripeWebAPI.Domain.Commands.Responses.Diagnosis
         public byte[] Content { get; set; } = [];
         public string ContentType { get; set; } = string.Empty;
     }
+
+    public class DiagnosisPdfResponse
+    {
+        public byte[] Content { get; set; } = [];
+        public string FileName { get; set; } = string.Empty;
+    }
+
+    public class DiagnosisAuditEntryResponse
+    {
+        public DateTime At { get; set; }
+        public int? ActorUserId { get; set; }
+        public string? ActorName { get; set; }
+        public string? FromStatus { get; set; }
+        public string ToStatus { get; set; } = string.Empty;
+        public string Action { get; set; } = string.Empty;
+    }
+
+    /// <summary>Um laudo na linha do tempo do talhão.</summary>
+    public class DiagnosisHistoryItemResponse
+    {
+        public int Id { get; set; }
+        public string Status { get; set; } = string.Empty;
+        public DateTime CapturedAt { get; set; }
+        public string? TopDisease { get; set; }
+        public double TopProbability { get; set; }
+        public string? ConfirmedDisease { get; set; }
+        public string? Severity { get; set; }
+        public decimal? MoistureAvg7d { get; set; }
+        public int DaysAboveUpperLimit { get; set; }
+        public bool IsSigned { get; set; }
+        public string ImageUrl { get; set; } = string.Empty;
+    }
+
+    public class DiagnosisHistoryResponse
+    {
+        public int PivotId { get; set; }
+        public string? PivotName { get; set; }
+        public List<DiagnosisHistoryItemResponse> Items { get; set; } = [];
+
+        /// <summary>
+        /// Leitura da evolução entre o laudo mais antigo e o mais recente do mesmo talhão —
+        /// é o que responde "a mancha piorou?".
+        /// </summary>
+        public string? Trend { get; set; }
+    }
 }

@@ -59,6 +59,21 @@ namespace AgripeWebAPI.Controllers
             return File(result.Content, result.ContentType);
         }
 
+        /// <summary>PDF do laudo — mesma regra de acesso do detalhe.</summary>
+        [HttpGet("diagnosis/{id:int}/pdf")]
+        public async Task<IActionResult> GetDiagnosisPdf(
+            [FromServices] IMediator mediator,
+            int id,
+            CancellationToken cancellationToken)
+        {
+            var result = await mediator.Send(
+                new Domain.Commands.Requests.Diagnosis.GetDiagnosisPdfRequest { Id = id }, cancellationToken);
+
+            if (result is null) return NotFound();
+
+            return File(result.Content, "application/pdf", result.FileName);
+        }
+
         [HttpPost("diagnosis/{id:int}/claim")]
         public async Task<IActionResult> Claim(
             [FromServices] IMediator mediator,

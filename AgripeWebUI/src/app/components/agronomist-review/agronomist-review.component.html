@@ -10,9 +10,12 @@
 
   <ng-container *ngIf="diagnosis as d">
     <div class="state-box signed" *ngIf="isSigned">
-      ✓ Assinado por {{ d.signature?.agronomistName }}
-      <span *ngIf="d.signature?.crea">— {{ d.signature?.crea }}</span>
-      em {{ d.signature?.signedAt | date:'dd/MM/yyyy HH:mm' }}
+      <span>
+        ✓ Assinado por {{ d.signature?.agronomistName }}
+        <span *ngIf="d.signature?.crea">— {{ d.signature?.crea }}</span>
+        em {{ d.signature?.signedAt | date:'dd/MM/yyyy HH:mm' }}
+      </span>
+      <button class="btn-secondary" (click)="downloadPdf()">⬇ Baixar PDF</button>
     </div>
 
     <div class="columns">

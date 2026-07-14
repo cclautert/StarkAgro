@@ -37,9 +37,17 @@
       Analisando a foto e cruzando com os dados do seu pivô. Isso leva menos de um minuto.
     </div>
 
-    <!-- Rejeitado / falhou -->
-    <div class="state-box error" *ngIf="d.status === 'Rejected' || d.status === 'Failed'">
-      {{ d.failureReason || 'Não foi possível analisar esta foto.' }}
+    <!-- Falhou: a foto está guardada, dá para tentar de novo sem fotografar -->
+    <div class="state-box error" *ngIf="d.status === 'Failed'">
+      <span>{{ d.failureReason || 'Não foi possível analisar esta foto.' }}</span>
+      <button class="btn-retry" (click)="reprocess()" [disabled]="reprocessing">
+        {{ reprocessing ? 'Reenviando...' : 'Tentar novamente' }}
+      </button>
+    </div>
+
+    <!-- Foto recusada: tentar de novo daria o mesmo resultado -->
+    <div class="state-box error" *ngIf="d.status === 'Rejected'">
+      <span>{{ d.failureReason || d.rejectionReason || 'Esta foto não pôde ser analisada.' }}</span>
       <a class="retry-link" [routerLink]="['/diagnosticos/novo']">Enviar outra foto</a>
     </div>
 
@@ -86,9 +94,60 @@
 
     <!-- Laudo -->
     <div class="card" *ngIf="reportHtml as html">
-      <h2 class="section-title">Laudo</h2>
+      <div class="section-head">
+        <h2 class="section-title">Laudo</h2>
+        <button class="btn-pdf" (click)="downloadPdf()">⬇ Baixar PDF</button>
+      </div>
+
+      <div class="signed-seal" *ngIf="d.signature as sig">
+        ✓ Assinado por <strong>{{ sig.agronomistName }}</strong>
+        <span *ngIf="sig.crea"> — {{ sig.crea }}</span>
+        em {{ sig.signedAt | date:'dd/MM/yyyy HH:mm' }}
+      </div>
+
       <div class="report" [innerHTML]="html"></div>
-      <p class="provider" *ngIf="d.aiProvider">Pré-análise gerada por IA ({{ d.aiProvider }}).</p>
+
+      <div class="prescription" *ngIf="d.prescription">
+        <span class="k">Prescrição do agrônomo</span>
+        <p>{{ d.prescription }}</p>
+      </div>
+
+      <p class="provider" *ngIf="d.aiProvider && !d.signature">
+        Pré-análise gerada por IA ({{ d.aiProvider }}).
+      </p>
+    </div>
+
+    <!-- Histórico do talhão: "a mancha piorou?" -->
+    <div class="card" *ngIf="history && history.items.length > 1">
+      <h2 class="section-title">Histórico deste pivô</h2>
+
+      <div class="trend" *ngIf="history.trend">{{ history.trend }}</div>
+
+      <div class="timeline">
+        <a class="timeline-item" *ngFor="let item of history.items"
+           [routerLink]="['/diagnosticos', item.id]"
+           [class.current]="item.id === d.id">
+          <span class="t-date">{{ item.capturedAt | date:'dd/MM' }}</span>
+          <span class="t-disease">{{ item.confirmedDisease || item.topDisease || '—' }}</span>
+          <span class="t-prob">{{ item.topProbability * 100 | number:'1.0-0' }}%</span>
+          <span class="t-seal" *ngIf="item.isSigned" title="Assinado">✓</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Auditoria -->
+    <div class="card">
+      <button class="btn-link" (click)="toggleAudit()">
+        {{ auditExpanded ? 'Ocultar' : 'Ver' }} o histórico deste laudo
+      </button>
+
+      <div class="audit" *ngIf="auditExpanded">
+        <div class="audit-row" *ngFor="let entry of audit">
+          <span class="a-date">{{ entry.at | date:'dd/MM HH:mm' }}</span>
+          <span class="a-action">{{ actionLabel(entry.action) }}</span>
+          <span class="a-actor">{{ entry.actorName || 'sistema' }}</span>
+        </div>
+      </div>
     </div>
   </ng-container>
 </div>

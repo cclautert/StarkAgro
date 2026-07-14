@@ -270,6 +270,150 @@
   color: #64748b;
 }
 
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.section-head .section-title { margin: 0; }
+
+.btn-pdf {
+  padding: 7px 14px;
+  background: #253152;
+  color: #93c5fd;
+  border: 1px solid #3a4f75;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-pdf:hover { background: #2d3f5e; }
+
+.signed-seal {
+  background: #0f3123;
+  border: 1px solid #15803d;
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  font-size: 0.88rem;
+  color: #6ee7b7;
+}
+
+.signed-seal strong { color: #a7f3d0; }
+
+.prescription {
+  margin-top: 14px;
+  background: #2a2109;
+  border: 1px solid #a16207;
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.prescription .k {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #fbbf24;
+}
+
+.prescription p {
+  margin: 4px 0 0;
+  font-size: 0.9rem;
+  color: #e2e8f0;
+}
+
+/* Histórico do talhão */
+.trend {
+  background: #101a2e;
+  border-left: 3px solid #fbbf24;
+  border-radius: 0 8px 8px 0;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+  color: #e2e8f0;
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.timeline-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #101a2e;
+  border: 1px solid #2d3f5e;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.timeline-item:hover { border-color: #3a4f75; }
+
+.timeline-item.current {
+  border-color: #2563eb;
+  background: #16233d;
+}
+
+.t-date { font-size: 0.82rem; color: #94a3b8; width: 44px; flex-shrink: 0; }
+.t-disease { flex: 1; font-size: 0.9rem; color: #e2e8f0; }
+.t-prob { font-size: 0.85rem; font-weight: 700; color: #6ee7b7; }
+.t-seal { color: #6ee7b7; font-weight: 700; }
+
+/* Auditoria */
+.btn-link {
+  background: none;
+  border: none;
+  color: #93c5fd;
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.88rem;
+  text-decoration: underline;
+}
+
+.audit {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.audit-row {
+  display: flex;
+  gap: 10px;
+  font-size: 0.82rem;
+  padding: 6px 0;
+  border-bottom: 1px solid #23314f;
+}
+
+.audit-row:last-child { border-bottom: none; }
+
+.a-date { color: #64748b; width: 82px; flex-shrink: 0; }
+.a-action { flex: 1; color: #cbd5e1; }
+.a-actor { color: #94a3b8; }
+
+.btn-retry {
+  padding: 6px 14px;
+  background: #7f1d1d;
+  color: #fecaca;
+  border: 1px solid #dc2626;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-retry:disabled { opacity: 0.6; cursor: not-allowed; }
+
 /* Estados */
 .state-box {
   border-radius: 10px;

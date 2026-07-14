@@ -120,6 +120,53 @@ namespace AgripeWebAPI.Controllers
             return File(result.Content, result.ContentType);
         }
 
+        /// <summary>PDF do laudo — o documento que o produtor guarda e imprime.</summary>
+        [HttpGet("{id:int}/pdf")]
+        public async Task<IActionResult> GetPdf(
+            [FromServices] IMediator mediator,
+            int id,
+            CancellationToken cancellationToken)
+        {
+            var result = await mediator.Send(new GetDiagnosisPdfRequest { Id = id }, cancellationToken);
+            if (result is null) return NotFound();
+
+            return File(result.Content, "application/pdf", result.FileName);
+        }
+
+        /// <summary>Reenfileira um laudo que falhou, sem exigir que o produtor reenvie a foto.</summary>
+        [HttpPost("{id:int}/reprocess")]
+        public async Task<IActionResult> Reprocess(
+            [FromServices] IMediator mediator,
+            int id,
+            CancellationToken cancellationToken)
+        {
+            var ok = await mediator.Send(new ReprocessDiagnosisRequest { Id = id }, cancellationToken);
+            return ok ? CustomResponse(null, HttpStatusCode.Accepted) : CustomResponse();
+        }
+
+        /// <summary>Histórico do talhão: "a mancha piorou desde a última vez?".</summary>
+        [HttpGet("history/{pivotId:int}")]
+        public async Task<IActionResult> GetHistory(
+            [FromServices] IMediator mediator,
+            int pivotId,
+            CancellationToken cancellationToken)
+        {
+            var result = await mediator.Send(new GetDiagnosisHistoryRequest { PivotId = pivotId }, cancellationToken);
+            return CustomResponse(result);
+        }
+
+        [HttpGet("{id:int}/audit")]
+        public async Task<IActionResult> GetAudit(
+            [FromServices] IMediator mediator,
+            int id,
+            CancellationToken cancellationToken)
+        {
+            var result = await mediator.Send(new GetDiagnosisAuditRequest { Id = id }, cancellationToken);
+            if (result is null) return CustomResponse(null, HttpStatusCode.NotFound);
+
+            return CustomResponse(result);
+        }
+
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(
             [FromServices] IMediator mediator,

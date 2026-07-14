@@ -63,6 +63,17 @@ export class AgronomistReviewComponent implements OnInit, OnDestroy {
     return this.diagnosis?.status === 'PendingReview';
   }
 
+  downloadPdf(): void {
+    this.agronomistService.getDiagnosisPdf(this.id).subscribe(blob => {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `laudo-${this.id}.pdf`;
+      link.click();
+      URL.revokeObjectURL(url);
+    });
+  }
+
   claim(): void {
     this.saving = true;
     this.agronomistService.claim(this.id).subscribe({
