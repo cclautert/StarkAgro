@@ -31,6 +31,16 @@ namespace AgripeWebAPI.Models.Entities
         /// <summary>Registro no CREA, exibido na assinatura do laudo.</summary>
         public string? AgronomistCrea { get; set; }
 
+        /// <summary>
+        /// Quantos laudos este produtor pode enviar por mês.
+        /// <para>
+        /// <c>null</c> usa o padrão da plataforma; <c>0</c> significa <b>ilimitado</b>. É o que
+        /// dá lastro ao plano contratado — e o que impede um único produtor de queimar os
+        /// créditos de IA de todo mundo.
+        /// </para>
+        /// </summary>
+        public int? DiagnosisQuotaPerMonth { get; set; }
+
         public DateTime? AlertsReadAt { get; set; }
     }
 }

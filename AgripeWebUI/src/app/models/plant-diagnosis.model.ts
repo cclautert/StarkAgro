@@ -117,3 +117,13 @@ export interface DiagnosisHistory {
   /** "a mancha piorou desde 12/03" — a pergunta que um app de foto avulsa não responde. */
   trend?: string | null;
 }
+
+export interface DiagnosisQuota {
+  /** 0 = ilimitado. */
+  limit: number;
+  used: number;
+  remaining: number;
+  isUnlimited: boolean;
+  isExhausted: boolean;
+  resetsAt: string;
+}

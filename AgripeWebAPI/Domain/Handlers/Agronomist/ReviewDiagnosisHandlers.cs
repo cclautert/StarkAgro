@@ -152,16 +152,22 @@ namespace AgripeWebAPI.Domain.Handlers.Agronomist
     public class SignDiagnosisHandler : AgronomistWriteHandlerBase, IRequestHandler<SignDiagnosisRequest, bool>
     {
         private readonly IPushNotificationService _pushService;
+        private readonly Services.Email.IDiagnosisEmailService _emailService;
+        private readonly ILogger<SignDiagnosisHandler> _logger;
 
         public SignDiagnosisHandler(
             agpDBContext dbContext,
             ICurrentUserContext currentUser,
             IDiagnosisAccessService accessService,
             INotifier notifier,
-            IPushNotificationService pushService)
+            IPushNotificationService pushService,
+            Services.Email.IDiagnosisEmailService emailService,
+            ILogger<SignDiagnosisHandler> logger)
             : base(dbContext, currentUser, accessService, notifier)
         {
             _pushService = pushService ?? throw new ArgumentNullException(nameof(pushService));
+            _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<bool> Handle(SignDiagnosisRequest request, CancellationToken cancellationToken)
@@ -234,6 +240,24 @@ namespace AgripeWebAPI.Domain.Handlers.Agronomist
                 "Laudo assinado",
                 $"Seu laudo foi revisado e assinado por {signature.AgronomistName}.",
                 cancellationToken);
+
+            // O e-mail leva o PDF assinado — é o documento que o produtor guarda. Como o laudo
+            // já está gravado, uma falha aqui não pode desfazer a assinatura.
+            try
+            {
+                diagnosis.Status = PlantDiagnosisStatus.Signed;
+                diagnosis.AgronomistReportMarkdown = request.ReportMarkdown;
+                diagnosis.ConfirmedDisease = request.ConfirmedDisease;
+                diagnosis.AgronomistSeverity = request.Severity;
+                diagnosis.Prescription = request.Prescription;
+                diagnosis.Signature = signature;
+
+                await _emailService.SendSignedReportAsync(diagnosis, cancellationToken);
+            }
+            catch (Exception ex) when (ex is not OperationCanceledException)
+            {
+                _logger.LogError(ex, "Falha ao enviar o e-mail do laudo {Id}; a assinatura foi mantida.", diagnosis.Id);
+            }
 
             return true;
         }

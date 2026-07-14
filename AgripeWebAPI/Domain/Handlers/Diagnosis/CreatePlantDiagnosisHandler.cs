@@ -17,6 +17,7 @@ namespace AgripeWebAPI.Domain.Handlers.Diagnosis
         private readonly ICurrentUserContext _currentUser;
         private readonly IDiagnosisImageStore _imageStore;
         private readonly IDiagnosisAccessService _accessService;
+        private readonly IDiagnosisQuotaService _quotaService;
         private readonly INotifier _notifier;
 
         public CreatePlantDiagnosisHandler(
@@ -24,12 +25,14 @@ namespace AgripeWebAPI.Domain.Handlers.Diagnosis
             ICurrentUserContext currentUser,
             IDiagnosisImageStore imageStore,
             IDiagnosisAccessService accessService,
+            IDiagnosisQuotaService quotaService,
             INotifier notifier)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             _currentUser = currentUser ?? throw new ArgumentNullException(nameof(currentUser));
             _imageStore = imageStore ?? throw new ArgumentNullException(nameof(imageStore));
             _accessService = accessService ?? throw new ArgumentNullException(nameof(accessService));
+            _quotaService = quotaService ?? throw new ArgumentNullException(nameof(quotaService));
             _notifier = notifier ?? throw new ArgumentNullException(nameof(notifier));
         }
 
@@ -98,6 +101,18 @@ namespace AgripeWebAPI.Domain.Handlers.Diagnosis
             if (existing is not null)
             {
                 return ToResponse(existing);
+            }
+
+            // A cota é checada depois do dedup: reenviar a MESMA foto não consome laudo, porque
+            // não gera análise nova. E é checada antes do upload, para não guardar no GridFS uma
+            // imagem que não vai virar laudo.
+            var quota = await _quotaService.GetAsync(userId, cancellationToken);
+            if (quota.IsExhausted)
+            {
+                _notifier.Handle(new Notification(
+                    $"Você já usou os {quota.Limit} laudos do seu plano neste mês. " +
+                    $"A cota é renovada em {quota.ResetsAt:dd/MM}."));
+                return null;
             }
 
             var now = DateTime.UtcNow;

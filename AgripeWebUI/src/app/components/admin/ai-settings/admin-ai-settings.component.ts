@@ -40,7 +40,8 @@ export class AdminAiSettingsComponent implements OnInit {
       anthropicKey: [''],
       anthropicModel: ['claude-sonnet-4-6'],
       cropHealthKey: [''],
-      cropHealthEnabled: [false]
+      cropHealthEnabled: [false],
+      defaultDiagnosisQuotaPerMonth: [0]
     });
 
     this.adminService.getAiSettings().subscribe({
@@ -54,7 +55,8 @@ export class AdminAiSettingsComponent implements OnInit {
           anthropicKey: settings.anthropicKey ?? '',
           anthropicModel: settings.anthropicModel ?? 'claude-sonnet-4-6',
           cropHealthKey: settings.cropHealthKey ?? '',
-          cropHealthEnabled: settings.cropHealthEnabled ?? false
+          cropHealthEnabled: settings.cropHealthEnabled ?? false,
+          defaultDiagnosisQuotaPerMonth: settings.defaultDiagnosisQuotaPerMonth ?? 0
         });
         this.isLoading = false;
       },
@@ -78,7 +80,8 @@ export class AdminAiSettingsComponent implements OnInit {
       anthropicKey: this.form.value.anthropicKey || null,
       anthropicModel: this.form.value.anthropicModel || null,
       cropHealthKey: this.form.value.cropHealthKey || null,
-      cropHealthEnabled: !!this.form.value.cropHealthEnabled
+      cropHealthEnabled: !!this.form.value.cropHealthEnabled,
+      defaultDiagnosisQuotaPerMonth: Number(this.form.value.defaultDiagnosisQuotaPerMonth) || 0
     };
 
     this.adminService.updateAiSettings(payload).subscribe({

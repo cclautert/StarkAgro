@@ -5,6 +5,8 @@ using AgripeWebAPI.Models.Entities;
 using AgripeWebAPI.Models.Interfaces;
 using AgripeWebAPI.Notifications;
 using AgripeWebAPI.Services.Diagnosis;
+using AgripeWebAPI.Services.Email;
+using Microsoft.Extensions.Logging.Abstractions;
 using AgripeWebAPI.Tests.Helpers;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
@@ -78,7 +80,9 @@ namespace AgripeWebAPI.Tests.Handlers.Agronomist
                 .ReturnsAsync(hasActiveLink);
 
             var handler = new SignDiagnosisHandler(
-                db.Object, currentUser.Object, access.Object, harness.Notifier, harness.Push.Object);
+                db.Object, currentUser.Object, access.Object, harness.Notifier, harness.Push.Object,
+                new Mock<IDiagnosisEmailService>().Object,
+                NullLogger<SignDiagnosisHandler>.Instance);
 
             return new Harness
             {
@@ -227,7 +231,9 @@ namespace AgripeWebAPI.Tests.Handlers.Agronomist
 
             var handler = new SignDiagnosisHandler(
                 db.Object, currentUser.Object, access.Object, new Notificator(),
-                new Mock<IPushNotificationService>().Object);
+                new Mock<IPushNotificationService>().Object,
+                new Mock<IDiagnosisEmailService>().Object,
+                NullLogger<SignDiagnosisHandler>.Instance);
 
             await handler.Handle(Request(), CancellationToken.None);
 

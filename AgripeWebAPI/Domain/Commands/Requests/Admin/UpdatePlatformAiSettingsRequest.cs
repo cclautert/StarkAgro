@@ -16,6 +16,9 @@ namespace AgripeWebAPI.Domain.Commands.Requests.Admin
         public string? CropHealthKey { get; set; }
         public bool CropHealthEnabled { get; set; }
 
+        /// <summary>Cota padrão de laudos/mês. 0 = ilimitado.</summary>
+        public int DefaultDiagnosisQuotaPerMonth { get; set; }
+
         [Required]
         [RegularExpression("^(openai|anthropic|gemini)$", ErrorMessage = "ActiveProvider deve ser 'openai', 'anthropic' ou 'gemini'.")]
         public string ActiveProvider { get; set; } = "gemini";

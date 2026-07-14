@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router';
 import { DiagnosisService } from '../../services/diagnosis.service';
 import { AgronomistService } from '../../services/agronomist.service';
 import { AgronomistInvite } from '../../models/agronomist.model';
-import { PlantDiagnosisStatus, PlantDiagnosisSummary } from '../../models/plant-diagnosis.model';
+import { DiagnosisQuota, PlantDiagnosisStatus, PlantDiagnosisSummary } from '../../models/plant-diagnosis.model';
 
 interface DiagnosisCard extends PlantDiagnosisSummary {
   thumbnailUrl?: string;
@@ -20,6 +20,7 @@ interface DiagnosisCard extends PlantDiagnosisSummary {
 export class DiagnosisListComponent implements OnInit, OnDestroy {
   diagnoses: DiagnosisCard[] = [];
   invites: AgronomistInvite[] = [];
+  quota?: DiagnosisQuota;
   loading = true;
   error = false;
 
@@ -35,6 +36,7 @@ export class DiagnosisListComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.load();
     this.loadInvites();
+    this.loadQuota();
 
     // Enquanto houver laudo em processamento, recarrega para o status andar sozinho na tela.
     this.pollTimer = setInterval(() => {
@@ -79,6 +81,13 @@ export class DiagnosisListComponent implements OnInit, OnDestroy {
 
   declineInvite(invite: AgronomistInvite): void {
     this.agronomistService.declineInvite(invite.id).subscribe(() => this.loadInvites());
+  }
+
+  private loadQuota(): void {
+    this.diagnosisService.getQuota().subscribe({
+      next: quota => this.quota = quota,
+      error: () => { /* a cota é acessório: a lista continua funcionando */ }
+    });
   }
 
   private loadInvites(): void {

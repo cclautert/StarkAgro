@@ -17,6 +17,15 @@ namespace AgripeWebAPI.Tests.Handlers.Diagnosis
     {
         private const int OwnerUserId = 7;
 
+        /// <summary>Cota liberada — os testes abaixo não estão exercitando o limite.</summary>
+        private static IDiagnosisQuotaService UnlimitedQuota()
+        {
+            var quota = new Mock<IDiagnosisQuotaService>();
+            quota.Setup(q => q.GetAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new DiagnosisQuota(0, 0, DateTime.UtcNow.AddMonths(1)));
+            return quota.Object;
+        }
+
         /// <summary>Produtor sem agrônomo vinculado — o laudo nasce com AgronomistId nulo.</summary>
         private static IDiagnosisAccessService NoLink()
         {
@@ -65,7 +74,7 @@ namespace AgripeWebAPI.Tests.Handlers.Diagnosis
             var notifier = new Notificator();
 
             var handler = new CreatePlantDiagnosisHandler(
-                db.Object, currentUser.Object, imageStore.Object, NoLink(), notifier);
+                db.Object, currentUser.Object, imageStore.Object, NoLink(), UnlimitedQuota(), notifier);
 
             return (handler, diagnoses, imageStore, notifier);
         }
@@ -238,7 +247,7 @@ namespace AgripeWebAPI.Tests.Handlers.Diagnosis
                 });
 
             var handler = new CreatePlantDiagnosisHandler(
-                db.Object, currentUser.Object, imageStore.Object, access.Object, new Notificator());
+                db.Object, currentUser.Object, imageStore.Object, access.Object, UnlimitedQuota(), new Notificator());
 
             await handler.Handle(new CreatePlantDiagnosisRequest
             {
@@ -283,7 +292,7 @@ namespace AgripeWebAPI.Tests.Handlers.Diagnosis
                 .ReturnsAsync(ObjectId.GenerateNewId());
 
             var handler = new CreatePlantDiagnosisHandler(
-                db.Object, currentUser.Object, imageStore.Object, NoLink(), new Notificator());
+                db.Object, currentUser.Object, imageStore.Object, NoLink(), UnlimitedQuota(), new Notificator());
 
             await handler.Handle(new CreatePlantDiagnosisRequest
             {

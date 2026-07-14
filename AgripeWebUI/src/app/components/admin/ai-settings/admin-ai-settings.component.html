@@ -112,6 +112,15 @@
       </label>
     </div>
 
+    <div class="form-group">
+      <label for="defaultDiagnosisQuotaPerMonth">Cota padrão de laudos por mês</label>
+      <input id="defaultDiagnosisQuotaPerMonth" type="number" min="0"
+             formControlName="defaultDiagnosisQuotaPerMonth" />
+      <p class="section-hint" style="margin-top:6px">
+        Vale para produtores sem cota própria. <strong>0 = ilimitado.</strong>
+      </p>
+    </div>
+
     <div class="form-actions">
       <button type="submit" class="btn btn-primary" [disabled]="isSaving">
         {{ isSaving ? 'Salvando...' : 'Salvar Configurações' }}

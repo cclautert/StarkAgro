@@ -18,5 +18,11 @@ namespace AgripeWebAPI.Models.Entities
         /// o admin corta o custo sem redeploy.
         /// </summary>
         public bool CropHealthEnabled { get; set; } = false;
+
+        /// <summary>
+        /// Cota padrão de laudos por mês, para produtores sem cota própria.
+        /// <c>0</c> = ilimitado (o comportamento de antes desta configuração existir).
+        /// </summary>
+        public int DefaultDiagnosisQuotaPerMonth { get; set; } = 0;
     }
 }

@@ -38,6 +38,7 @@ export class AdminUserFormComponent implements OnInit {
       isAdmin: [false],
       isAgronomist: [false],
       agronomistCrea: [''],
+      diagnosisQuotaPerMonth: [null],
       changePassword: [false],
       password: ['', [Validators.required, Validators.minLength(8)]]
     });
@@ -74,7 +75,8 @@ export class AdminUserFormComponent implements OnInit {
             active: user.active,
             isAdmin: user.isAdmin,
             isAgronomist: user.isAgronomist ?? false,
-            agronomistCrea: user.agronomistCrea ?? ''
+            agronomistCrea: user.agronomistCrea ?? '',
+            diagnosisQuotaPerMonth: user.diagnosisQuotaPerMonth ?? null
           });
         } else {
           this.snackBar.open('Usuário não encontrado.', 'Fechar', { duration: 4000 });
@@ -96,10 +98,14 @@ export class AdminUserFormComponent implements OnInit {
     }
 
     this.isSaving = true;
-    const { name, email, active, isAdmin, isAgronomist, agronomistCrea, changePassword, password } = this.form.value;
+    const { name, email, active, isAdmin, isAgronomist, agronomistCrea, diagnosisQuotaPerMonth, changePassword, password } = this.form.value;
 
     if (this.isEditMode && this.userId) {
-      const payload: any = { name, email, active, isAdmin, isAgronomist, agronomistCrea: agronomistCrea || null };
+      const payload: any = {
+        name, email, active, isAdmin, isAgronomist,
+        agronomistCrea: agronomistCrea || null,
+        diagnosisQuotaPerMonth: diagnosisQuotaPerMonth === '' ? null : diagnosisQuotaPerMonth
+      };
       if (changePassword && password) payload.password = password;
 
       this.adminService.updateUser(this.userId, payload).subscribe({

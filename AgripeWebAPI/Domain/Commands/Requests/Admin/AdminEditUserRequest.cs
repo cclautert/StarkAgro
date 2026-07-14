@@ -24,5 +24,8 @@ namespace AgripeWebAPI.Domain.Commands.Requests.Admin
         /// <summary>Cria-se um agrônomo pelo admin — não há self-signup para o papel.</summary>
         public bool IsAgronomist { get; set; }
         public string? AgronomistCrea { get; set; }
+
+        /// <summary>Laudos por mês do plano deste produtor. 0 ou nulo = ilimitado.</summary>
+        public int? DiagnosisQuotaPerMonth { get; set; }
     }
 }

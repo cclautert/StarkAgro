@@ -32,7 +32,8 @@ namespace AgripeWebAPI.Domain.Handlers.Admin
                 GeminiModel = settings.GeminiModel,
                 ActiveProvider = settings.ActiveProvider,
                 CropHealthKey = settings.CropHealthKey,
-                CropHealthEnabled = settings.CropHealthEnabled
+                CropHealthEnabled = settings.CropHealthEnabled,
+                DefaultDiagnosisQuotaPerMonth = settings.DefaultDiagnosisQuotaPerMonth
             };
         }
     }
