@@ -12,6 +12,10 @@ namespace AgripeWebAPI.Domain.Commands.Requests.Admin
         public string? GeminiKey { get; set; }
         public string? GeminiModel { get; set; }
 
+        /// <summary>Chave do crop.health (Kindwise) e o kill-switch do laudo fitossanitário.</summary>
+        public string? CropHealthKey { get; set; }
+        public bool CropHealthEnabled { get; set; }
+
         [Required]
         [RegularExpression("^(openai|anthropic|gemini)$", ErrorMessage = "ActiveProvider deve ser 'openai', 'anthropic' ou 'gemini'.")]
         public string ActiveProvider { get; set; } = "gemini";

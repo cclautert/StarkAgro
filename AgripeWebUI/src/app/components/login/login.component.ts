@@ -11,6 +11,7 @@ interface DecodedToken {
   name: string;
   email: string;
   isAdmin: boolean;
+  isAgronomist: boolean;
 }
 
 /** Google OAuth 2.0 authorization endpoint */
@@ -62,6 +63,7 @@ export class LoginComponent {
             const userId = decodedToken.id;
             localStorage.setItem('userId', userId.toString());
             localStorage.setItem('isAdmin', (String(decodedToken.isAdmin) === 'true').toString());
+            localStorage.setItem('isAgronomist', (String(decodedToken.isAgronomist) === 'true').toString());
 
             // 5. NAVEGUE PARA A HOME
             this.router.navigate(['/home']);

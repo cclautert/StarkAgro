@@ -6,4 +6,8 @@ export interface PlatformAiSettings {
   geminiKey?: string | null;
   geminiModel?: string | null;
   activeProvider: 'openai' | 'anthropic' | 'gemini';
+
+  /** Classificador de doenças de planta (crop.health / Kindwise) — cobra por foto. */
+  cropHealthKey?: string | null;
+  cropHealthEnabled?: boolean;
 }

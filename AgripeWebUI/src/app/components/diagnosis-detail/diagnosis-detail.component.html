@@ -1,0 +1,153 @@
+<div class="container">
+  <div class="page-header">
+    <h1 class="page-title">🌿 Laudo #{{ id }}</h1>
+    <button class="btn-back" [routerLink]="['/diagnosticos']">Voltar</button>
+  </div>
+
+  <p class="loading-text" *ngIf="loading">Carregando laudo...</p>
+
+  <div class="state-box error" *ngIf="error && !loading">
+    Não foi possível carregar este laudo.
+  </div>
+
+  <ng-container *ngIf="diagnosis as d">
+    <div class="card">
+      <div class="card-head">
+        <span class="status-badge" [class]="'status-' + d.status">{{ statusLabel(d.status) }}</span>
+        <span class="card-meta">{{ d.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+      </div>
+
+      <div class="photo-row">
+        <img *ngIf="imageUrl" [src]="imageUrl" alt="Foto enviada" class="photo" />
+        <div class="photo-info">
+          <div class="info-line"><span class="k">Cultura</span><span class="v">{{ d.cropName || '—' }}</span></div>
+          <div class="info-line" *ngIf="d.context?.pivotName">
+            <span class="k">Pivô</span><span class="v">{{ d.context?.pivotName }}</span>
+          </div>
+          <div class="info-line" *ngIf="d.producerNotes">
+            <span class="k">Sua observação</span><span class="v">{{ d.producerNotes }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Processando -->
+    <div class="state-box pending" *ngIf="isPending(d.status)">
+      <span class="spinner"></span>
+      Analisando a foto e cruzando com os dados do seu pivô. Isso leva menos de um minuto.
+    </div>
+
+    <!-- Falhou: a foto está guardada, dá para tentar de novo sem fotografar -->
+    <div class="state-box error" *ngIf="d.status === 'Failed'">
+      <span>{{ d.failureReason || 'Não foi possível analisar esta foto.' }}</span>
+      <button class="btn-retry" (click)="reprocess()" [disabled]="reprocessing">
+        {{ reprocessing ? 'Reenviando...' : 'Tentar novamente' }}
+      </button>
+    </div>
+
+    <!-- Foto recusada: tentar de novo daria o mesmo resultado -->
+    <div class="state-box error" *ngIf="d.status === 'Rejected'">
+      <span>{{ d.failureReason || d.rejectionReason || 'Esta foto não pôde ser analisada.' }}</span>
+      <a class="retry-link" [routerLink]="['/diagnosticos/novo']">Enviar outra foto</a>
+    </div>
+
+    <!-- Diagnóstico -->
+    <div class="card" *ngIf="d.diseases.length > 0">
+      <h2 class="section-title">Diagnóstico provável</h2>
+      <div class="disease" *ngFor="let disease of d.diseases; let first = first">
+        <div class="disease-name">
+          {{ disease.name }}
+          <small *ngIf="disease.scientificName">{{ disease.scientificName }}</small>
+        </div>
+        <div class="bar" [class.bar-low]="!first">
+          <span [style.width.%]="disease.probability * 100"></span>
+        </div>
+        <div class="disease-pct" [class.pct-low]="!first">
+          {{ disease.probability * 100 | number:'1.0-0' }}%
+        </div>
+      </div>
+    </div>
+
+    <!-- Correlação com a lavoura: o diferencial -->
+    <div class="card context" *ngIf="d.context as ctx">
+      <h2 class="section-title">Contexto da sua lavoura</h2>
+      <div class="context-grid">
+        <div class="context-item" *ngIf="ctx.moistureAvg7d != null">
+          <span class="big">{{ ctx.moistureAvg7d | number:'1.0-1' }}%</span>
+          <span class="cap">Umidade média (7 dias)</span>
+        </div>
+        <div class="context-item alert" *ngIf="ctx.daysAboveUpperLimit > 0">
+          <span class="big">{{ ctx.daysAboveUpperLimit }}</span>
+          <span class="cap">Dias acima do limite superior</span>
+        </div>
+        <div class="context-item" *ngIf="ctx.openAnomalies > 0">
+          <span class="big">{{ ctx.openAnomalies }}</span>
+          <span class="cap">Anomalias em aberto</span>
+        </div>
+        <div class="context-item" *ngIf="ctx.irrigationAlerts7d > 0">
+          <span class="big">{{ ctx.irrigationAlerts7d }}</span>
+          <span class="cap">Alertas de irrigação (7 dias)</span>
+        </div>
+      </div>
+      <p class="forecast" *ngIf="ctx.forecastSummary">🌧️ {{ ctx.forecastSummary }}</p>
+    </div>
+
+    <!-- Laudo -->
+    <div class="card" *ngIf="reportHtml as html">
+      <div class="section-head">
+        <h2 class="section-title">Laudo</h2>
+        <button class="btn-pdf" (click)="downloadPdf()">⬇ Baixar PDF</button>
+      </div>
+
+      <div class="signed-seal" *ngIf="d.signature as sig">
+        ✓ Assinado por <strong>{{ sig.agronomistName }}</strong>
+        <span *ngIf="sig.crea"> — {{ sig.crea }}</span>
+        em {{ sig.signedAt | date:'dd/MM/yyyy HH:mm' }}
+      </div>
+
+      <div class="report" [innerHTML]="html"></div>
+
+      <div class="prescription" *ngIf="d.prescription">
+        <span class="k">Prescrição do agrônomo</span>
+        <p>{{ d.prescription }}</p>
+      </div>
+
+      <p class="provider" *ngIf="d.aiProvider && !d.signature">
+        Pré-análise gerada por IA ({{ d.aiProvider }}).
+      </p>
+    </div>
+
+    <!-- Histórico do talhão: "a mancha piorou?" -->
+    <div class="card" *ngIf="history && history.items.length > 1">
+      <h2 class="section-title">Histórico deste pivô</h2>
+
+      <div class="trend" *ngIf="history.trend">{{ history.trend }}</div>
+
+      <div class="timeline">
+        <a class="timeline-item" *ngFor="let item of history.items"
+           [routerLink]="['/diagnosticos', item.id]"
+           [class.current]="item.id === d.id">
+          <span class="t-date">{{ item.capturedAt | date:'dd/MM' }}</span>
+          <span class="t-disease">{{ item.confirmedDisease || item.topDisease || '—' }}</span>
+          <span class="t-prob">{{ item.topProbability * 100 | number:'1.0-0' }}%</span>
+          <span class="t-seal" *ngIf="item.isSigned" title="Assinado">✓</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Auditoria -->
+    <div class="card">
+      <button class="btn-link" (click)="toggleAudit()">
+        {{ auditExpanded ? 'Ocultar' : 'Ver' }} o histórico deste laudo
+      </button>
+
+      <div class="audit" *ngIf="auditExpanded">
+        <div class="audit-row" *ngFor="let entry of audit">
+          <span class="a-date">{{ entry.at | date:'dd/MM HH:mm' }}</span>
+          <span class="a-action">{{ actionLabel(entry.action) }}</span>
+          <span class="a-actor">{{ entry.actorName || 'sistema' }}</span>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>

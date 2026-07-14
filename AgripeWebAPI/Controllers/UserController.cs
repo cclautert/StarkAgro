@@ -1,3 +1,4 @@
+using AgripeWebAPI.Domain.Commands.Requests.Agronomist;
 using AgripeWebAPI.Domain.Commands.Requests.Users;
 using AgripeWebAPI.Domain.Commands.Responses.Users;
 using AgripeWebAPI.Models.Interfaces;
@@ -114,6 +115,51 @@ namespace AgripeWebAPI.Controllers
             command.UserId = GetCurrentUserId();
             await mediator.Send(command, cancellationToken);
             return CustomResponse(null, HttpStatusCode.NoContent);
+        }
+
+        // ── Vínculo com o agrônomo (lado do produtor) ─────────────────────────
+
+        [Route("agronomist-invites")]
+        [HttpGet]
+        public async Task<IActionResult> GetAgronomistInvites(
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken)
+        {
+            var result = await mediator.Send(new GetMyAgronomistInvitesRequest(), cancellationToken);
+            return CustomResponse(result);
+        }
+
+        [Route("agronomist-invites/{id:int}/accept")]
+        [HttpPost]
+        public async Task<IActionResult> AcceptAgronomistInvite(
+            [FromServices] IMediator mediator,
+            int id,
+            CancellationToken cancellationToken)
+        {
+            var ok = await mediator.Send(new AcceptAgronomistInviteRequest { InviteId = id }, cancellationToken);
+            return ok ? CustomResponse() : CustomResponse(null, HttpStatusCode.BadRequest);
+        }
+
+        [Route("agronomist-invites/{id:int}/decline")]
+        [HttpPost]
+        public async Task<IActionResult> DeclineAgronomistInvite(
+            [FromServices] IMediator mediator,
+            int id,
+            CancellationToken cancellationToken)
+        {
+            var ok = await mediator.Send(new DeclineAgronomistInviteRequest { InviteId = id }, cancellationToken);
+            return ok ? CustomResponse() : CustomResponse(null, HttpStatusCode.BadRequest);
+        }
+
+        /// <summary>O produtor demite o agrônomo. Direito dele, sem intermediários.</summary>
+        [Route("agronomist-link")]
+        [HttpDelete]
+        public async Task<IActionResult> RevokeMyAgronomist(
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken)
+        {
+            var ok = await mediator.Send(new RevokeMyAgronomistRequest(), cancellationToken);
+            return ok ? CustomResponse(null, HttpStatusCode.NoContent) : CustomResponse(null, HttpStatusCode.BadRequest);
         }
     }
 }

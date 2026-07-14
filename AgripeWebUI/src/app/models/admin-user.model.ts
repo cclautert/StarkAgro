@@ -4,6 +4,8 @@ export interface AdminUser {
   email: string;
   active: boolean;
   isAdmin: boolean;
+  isAgronomist?: boolean;
+  agronomistCrea?: string | null;
   limiteInferior?: number;
   limiteSuperior?: number;
   rainThresholdMm?: number | null;

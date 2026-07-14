@@ -1,0 +1,135 @@
+<div class="container">
+  <div class="page-header">
+    <h1 class="page-title">Laudo #{{ id }}</h1>
+    <button class="btn-secondary" [routerLink]="['/agronomo/fila']">Voltar à fila</button>
+  </div>
+
+  <p class="loading-text" *ngIf="loading">Carregando laudo...</p>
+
+  <div class="state-box error" *ngIf="errorMessage && !loading">{{ errorMessage }}</div>
+
+  <ng-container *ngIf="diagnosis as d">
+    <div class="state-box signed" *ngIf="isSigned">
+      <span>
+        ✓ Assinado por {{ d.signature?.agronomistName }}
+        <span *ngIf="d.signature?.crea">— {{ d.signature?.crea }}</span>
+        em {{ d.signature?.signedAt | date:'dd/MM/yyyy HH:mm' }}
+      </span>
+      <button class="btn-secondary" (click)="downloadPdf()">⬇ Baixar PDF</button>
+    </div>
+
+    <div class="columns">
+
+      <!-- 1. Evidência: vem do laudo, não das coleções do produtor -->
+      <section class="col">
+        <h2 class="col-title">Evidência</h2>
+
+        <div class="card">
+          <img *ngIf="imageUrl" [src]="imageUrl" alt="Foto enviada pelo produtor" class="photo" />
+
+          <div class="kv"><span class="k">Produtor</span><span class="v">{{ d.clientName || '—' }}</span></div>
+          <div class="kv"><span class="k">Cultura</span><span class="v">{{ d.cropName || '—' }}</span></div>
+          <div class="kv" *ngIf="d.producerNotes">
+            <span class="k">Observação</span><span class="v">{{ d.producerNotes }}</span>
+          </div>
+        </div>
+
+        <div class="card" *ngIf="d.context as ctx">
+          <h3 class="card-title">Contexto da lavoura</h3>
+          <div class="kv" *ngIf="ctx.pivotName"><span class="k">Pivô</span><span class="v">{{ ctx.pivotName }}</span></div>
+          <div class="kv" *ngIf="ctx.moistureAvg7d != null">
+            <span class="k">Umidade média 7d</span>
+            <span class="v">{{ ctx.moistureAvg7d | number:'1.0-1' }}%
+              <small *ngIf="ctx.limiteSuperior != null">(ideal até {{ ctx.limiteSuperior | number:'1.0-0' }}%)</small>
+            </span>
+          </div>
+          <div class="kv alert" *ngIf="ctx.daysAboveUpperLimit > 0">
+            <span class="k">Dias acima do limite</span>
+            <span class="v">{{ ctx.daysAboveUpperLimit }}</span>
+          </div>
+          <div class="kv" *ngIf="ctx.openAnomalies > 0">
+            <span class="k">Anomalias abertas</span><span class="v">{{ ctx.openAnomalies }}</span>
+          </div>
+          <p class="forecast" *ngIf="ctx.forecastSummary">🌧️ {{ ctx.forecastSummary }}</p>
+        </div>
+      </section>
+
+      <!-- 2. Pré-análise da IA: imutável -->
+      <section class="col">
+        <h2 class="col-title">Pré-análise da IA</h2>
+
+        <div class="card">
+          <div class="disease" *ngFor="let disease of d.diseases; let first = first">
+            <div class="disease-name">
+              {{ disease.name }}
+              <small *ngIf="disease.scientificName">{{ disease.scientificName }}</small>
+            </div>
+            <div class="bar" [class.bar-low]="!first">
+              <span [style.width.%]="disease.probability * 100"></span>
+            </div>
+            <span class="pct" [class.pct-low]="!first">{{ disease.probability * 100 | number:'1.0-0' }}%</span>
+          </div>
+
+          <button class="btn-link" (click)="aiExpanded = !aiExpanded">
+            {{ aiExpanded ? 'Ocultar' : 'Ver' }} o laudo original da IA
+          </button>
+
+          <div class="ai-report" *ngIf="aiExpanded && aiReportHtml as html" [innerHTML]="html"></div>
+          <p class="hint" *ngIf="aiExpanded">
+            Este texto é imutável — fica guardado para comparação com o que você assinar.
+          </p>
+        </div>
+      </section>
+
+      <!-- 3. Laudo do agrônomo -->
+      <section class="col">
+        <h2 class="col-title">Seu laudo</h2>
+
+        <div class="card">
+          <div class="state-box pending" *ngIf="needsClaim">
+            Assuma o laudo para poder editá-lo.
+            <button class="btn-primary" (click)="claim()" [disabled]="saving">Assumir</button>
+          </div>
+
+          <div class="field">
+            <label for="disease">Doença confirmada</label>
+            <input id="disease" type="text" [(ngModel)]="confirmedDisease" [disabled]="!canEdit" />
+          </div>
+
+          <div class="field">
+            <label for="severity">Severidade</label>
+            <select id="severity" [(ngModel)]="severity" [disabled]="!canEdit">
+              <option value="">Não informada</option>
+              <option value="baixa">Baixa</option>
+              <option value="media">Média</option>
+              <option value="alta">Alta</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="report">Laudo (markdown)</label>
+            <textarea id="report" rows="16" [(ngModel)]="reportMarkdown" [disabled]="!canEdit"></textarea>
+            <small class="hint">Pré-preenchido com o texto da IA. Edite o que for necessário.</small>
+          </div>
+
+          <div class="field">
+            <label for="prescription">Prescrição (opcional)</label>
+            <textarea id="prescription" rows="3" [(ngModel)]="prescription" [disabled]="!canEdit"
+              placeholder="Produto e dose só podem ser prescritos por você — a IA é proibida de sugerir."></textarea>
+          </div>
+
+          <div class="actions" *ngIf="canEdit">
+            <button class="btn-secondary" (click)="saveDraft()" [disabled]="saving">Salvar rascunho</button>
+            <button class="btn-danger" (click)="reject()" [disabled]="saving">Rejeitar</button>
+            <button class="btn-primary" (click)="sign()" [disabled]="saving">Assinar e enviar</button>
+          </div>
+
+          <p class="disclaimer">
+            Ao assinar, você assume a responsabilidade técnica pelo conteúdo deste laudo.
+          </p>
+        </div>
+      </section>
+
+    </div>
+  </ng-container>
+</div>

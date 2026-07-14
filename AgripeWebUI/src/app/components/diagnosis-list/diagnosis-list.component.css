@@ -1,0 +1,238 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #e2e8f0;
+  margin: 0;
+}
+
+.btn-add {
+  padding: 9px 20px;
+  background-color: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s;
+  white-space: nowrap;
+}
+
+.btn-add:hover {
+  background-color: #1d4ed8;
+}
+
+.invite-box {
+  background: #1a2540;
+  border: 1px solid #a16207;
+  border-left-width: 3px;
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.invite-text {
+  flex: 1;
+  min-width: 240px;
+  font-size: 0.9rem;
+  color: #cbd5e1;
+  line-height: 1.5;
+}
+
+.invite-text strong { color: #fbbf24; }
+
+.invite-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-accept,
+.btn-decline {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.btn-accept { background: #16a34a; color: #fff; }
+.btn-decline { background: #253152; color: #94a3b8; border-color: #3a4f75; }
+
+.diagnosis-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.diagnosis-card {
+  background: #1a2540;
+  border: 1px solid #2d3f5e;
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: border-color 0.15s;
+  cursor: pointer;
+}
+
+.diagnosis-card:hover {
+  border-color: #3a4f75;
+}
+
+.thumb {
+  width: 72px;
+  height: 72px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #101a2e;
+  border: 1px solid #2d3f5e;
+}
+
+.thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.diagnosis-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.status-badge {
+  align-self: flex-start;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #253152;
+  color: #93c5fd;
+  border: 1px solid #3a4f75;
+}
+
+.status-Processing,
+.status-Uploaded {
+  background: #3b2f0b;
+  color: #fbbf24;
+  border-color: #a16207;
+}
+
+.status-AiCompleted,
+.status-Signed {
+  background: #0f3123;
+  color: #6ee7b7;
+  border-color: #15803d;
+}
+
+.status-Rejected,
+.status-Failed {
+  background: #3b1414;
+  color: #fca5a5;
+  border-color: #b91c1c;
+}
+
+.diagnosis-crop {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #e2e8f0;
+}
+
+.diagnosis-meta {
+  font-size: 0.85rem;
+  color: #a0aec0;
+}
+
+.diagnosis-error {
+  font-size: 0.8rem;
+  color: #fca5a5;
+}
+
+.diagnosis-actions {
+  flex-shrink: 0;
+}
+
+.btn-action {
+  padding: 7px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.btn-action:hover {
+  opacity: 0.85;
+}
+
+.btn-delete {
+  background-color: #7f1d1d;
+  color: #fca5a5;
+  border: 1px solid #dc2626;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: #a0aec0;
+  font-size: 1rem;
+}
+
+.empty-state.error {
+  color: #fca5a5;
+}
+
+.empty-state a {
+  color: #93c5fd;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.loading-text {
+  color: #a0aec0;
+  text-align: center;
+  padding: 40px;
+}
+
+@media (max-width: 480px) {
+  .diagnosis-card {
+    flex-wrap: wrap;
+  }
+
+  .diagnosis-actions {
+    width: 100%;
+  }
+
+  .btn-action {
+    width: 100%;
+  }
+}

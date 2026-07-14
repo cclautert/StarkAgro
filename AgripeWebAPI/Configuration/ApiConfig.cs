@@ -2,6 +2,8 @@ using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Entities;
 using AgripeWebAPI.Models.Interfaces;
 using AgripeWebAPI.Services.AIInsights;
+using AgripeWebAPI.Services.CropHealth;
+using AgripeWebAPI.Services.Diagnosis;
 using AgripeWebAPI.Services.Forecast;
 using AgripeWebAPI.Services.LoRaWan;
 using AgripeWebAPI.Services.PushNotifications;
@@ -9,6 +11,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using MongoDB.Driver;
 using System.Reflection;
 using System.Text.Json;
+using System.Threading.RateLimiting;
 
 namespace AgripeWebAPI.Configuration
 {
@@ -49,6 +52,16 @@ namespace AgripeWebAPI.Configuration
             });
             services.AddTransient<IAIInsightsServiceFactory, AIInsightsServiceFactory>();
 
+            // crop.health (Kindwise): timeout maior que o dos LLMs — a identificação leva 3–10s
+            // e os 30s dos insights são justos demais aqui.
+            services.AddHttpClient<KindwiseCropHealthService>(client =>
+            {
+                client.BaseAddress = new Uri("https://crop.kindwise.com/");
+                client.Timeout = TimeSpan.FromSeconds(45);
+            });
+            services.AddScoped<ICropDiagnosisProvider>(sp =>
+                sp.GetRequiredService<KindwiseCropHealthService>());
+
             services.AddSingleton<ILoRaWanDownlinkService, MqttDownlinkService>();
 
             services.AddHttpClient("expo_push", client =>
@@ -59,6 +72,23 @@ namespace AgripeWebAPI.Configuration
             services.AddScoped<ExpoPushNotificationService>();
             services.AddScoped<WebPushNotificationService>();
             services.AddScoped<IPushNotificationService, CompositePushNotificationService>();
+
+            services.AddScoped<IDiagnosisImageStore, GridFsDiagnosisImageStore>();
+            services.AddScoped<IDiagnosisAccessService, DiagnosisAccessService>();
+
+            // QuestPDF exige a licença declarada em código. Community é gratuita para empresas
+            // com receita anual abaixo de US$ 1 milhão — acima disso, exige licença paga.
+            QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
+            services.AddSingleton<IDiagnosisPdfService, DiagnosisPdfService>();
+            services.AddScoped<IPlantDiagnosisContextBuilder, PlantDiagnosisContextBuilder>();
+            services.AddScoped<IPlantDiagnosisProcessingService, PlantDiagnosisProcessingService>();
+
+            // A policy só responde "é um agrônomo?". De QUEM ele pode ler é decidido documento
+            // a documento pelo IDiagnosisAccessService — a policy sozinha não isola nada.
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Agronomist", policy => policy.RequireClaim("isAgronomist", "true"));
+            });
 
             services.AddControllers()
                 .AddJsonOptions(options =>
@@ -123,6 +153,21 @@ namespace AgripeWebAPI.Configuration
                     limiterOptions.SegmentsPerWindow = 2;
                     limiterOptions.QueueLimit = 0;
                 });
+
+                // Upload de foto: particionado por usuário, porque cada foto vira uma chamada
+                // paga ao classificador de IA na Fase 1. Cota global não protegeria contra
+                // um único usuário queimando os créditos de todo mundo.
+                options.AddPolicy("diagnosis-upload", httpContext =>
+                    RateLimitPartition.GetFixedWindowLimiter(
+                        httpContext.User?.Claims?.FirstOrDefault(c => c.Type == "id")?.Value ?? "anonymous",
+                        _ => new FixedWindowRateLimiterOptions
+                        {
+                            PermitLimit = 10,
+                            Window = TimeSpan.FromHours(1),
+                            QueueLimit = 0
+                        }));
+
+                options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
             });
         }
 

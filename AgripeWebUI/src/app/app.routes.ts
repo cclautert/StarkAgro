@@ -16,6 +16,13 @@ import { GlobalConfigComponent } from './components/global-config/global-config.
 import { AdminUserListComponent } from './components/admin/user-list/admin-user-list.component';
 import { AdminUserFormComponent } from './components/admin/user-form/admin-user-form.component';
 import { AdminAiSettingsComponent } from './components/admin/ai-settings/admin-ai-settings.component';
+import { DiagnosisListComponent } from './components/diagnosis-list/diagnosis-list.component';
+import { DiagnosisNewComponent } from './components/diagnosis-new/diagnosis-new.component';
+import { DiagnosisDetailComponent } from './components/diagnosis-detail/diagnosis-detail.component';
+import { AgronomistGuard } from './guards/agronomist.guard';
+import { AgronomistQueueComponent } from './components/agronomist-queue/agronomist-queue.component';
+import { AgronomistReviewComponent } from './components/agronomist-review/agronomist-review.component';
+import { AgronomistClientsComponent } from './components/agronomist-clients/agronomist-clients.component';
 
 export const routes: Routes = [
   // Login routes outside the main layout
@@ -40,6 +47,14 @@ export const routes: Routes = [
       { path: 'sensores', component: SensorListComponent, canActivate: [AuthGuard] },
       { path: 'sensores/novo', loadComponent: () => import('./components/sensor-form/sensor-form.component').then(m => m.SensorFormComponent), canActivate: [AuthGuard] },
       { path: 'sensores/editar/:id', loadComponent: () => import('./components/sensor-form/sensor-form.component').then(m => m.SensorFormComponent), canActivate: [AuthGuard] },
+      { path: 'diagnosticos', component: DiagnosisListComponent, canActivate: [AuthGuard] },
+      { path: 'diagnosticos/novo', component: DiagnosisNewComponent, canActivate: [AuthGuard] },
+      { path: 'diagnosticos/:id', component: DiagnosisDetailComponent, canActivate: [AuthGuard] },
+
+      // Área do agrônomo (apenas quem tem o papel)
+      { path: 'agronomo/fila', component: AgronomistQueueComponent, canActivate: [AuthGuard, AgronomistGuard] },
+      { path: 'agronomo/laudo/:id', component: AgronomistReviewComponent, canActivate: [AuthGuard, AgronomistGuard] },
+      { path: 'agronomo/clientes', component: AgronomistClientsComponent, canActivate: [AuthGuard, AgronomistGuard] },
 
       // Rotas de administração (apenas super usuário)
       { path: 'admin/usuarios', component: AdminUserListComponent, canActivate: [AuthGuard, AdminGuard] },

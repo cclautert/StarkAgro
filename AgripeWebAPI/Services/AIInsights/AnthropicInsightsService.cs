@@ -25,17 +25,30 @@ namespace AgripeWebAPI.Services.AIInsights
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<string?> GetInsightsAsync(PivotAIContext context, CancellationToken cancellationToken)
+        public Task<string?> GetInsightsAsync(PivotAIContext context, CancellationToken cancellationToken)
+            => CompleteAsync(
+                AIInsightsPromptBuilder.SystemPrompt,
+                AIInsightsPromptBuilder.BuildUserMessage(context),
+                context.ApiKeyOverride,
+                context.ModelOverride,
+                cancellationToken);
+
+        public async Task<string?> CompleteAsync(
+            string systemPrompt,
+            string userMessage,
+            string? apiKey,
+            string? model,
+            CancellationToken cancellationToken,
+            int? maxTokens = null)
         {
-            var model = context.ModelOverride ?? DefaultModel;
             var requestBody = new
             {
-                model,
-                max_tokens = _settings.MaxTokens,
-                system = AIInsightsPromptBuilder.SystemPrompt,
+                model = model ?? DefaultModel,
+                max_tokens = maxTokens ?? _settings.MaxTokens,
+                system = systemPrompt,
                 messages = new[]
                 {
-                    new { role = "user", content = AIInsightsPromptBuilder.BuildUserMessage(context) }
+                    new { role = "user", content = userMessage }
                 }
             };
 
@@ -45,7 +58,7 @@ namespace AgripeWebAPI.Services.AIInsights
             });
 
             using var request = new HttpRequestMessage(HttpMethod.Post, "v1/messages");
-            request.Headers.Add("x-api-key", context.ApiKeyOverride);
+            request.Headers.Add("x-api-key", apiKey);
             request.Headers.Add("anthropic-version", AnthropicVersion);
             request.Content = new StringContent(json, Encoding.UTF8, "application/json");
 

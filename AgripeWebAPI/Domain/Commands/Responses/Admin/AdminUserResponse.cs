@@ -7,6 +7,8 @@ namespace AgripeWebAPI.Domain.Commands.Responses.Admin
         public string Email { get; set; } = string.Empty;
         public bool Active { get; set; }
         public bool IsAdmin { get; set; }
+        public bool IsAgronomist { get; set; }
+        public string? AgronomistCrea { get; set; }
         public decimal LimiteInferior { get; set; }
         public decimal LimiteSuperior { get; set; }
         public double? RainThresholdMm { get; set; }

@@ -24,6 +24,7 @@ export class AdminAiSettingsComponent implements OnInit {
   showGeminiKey = false;
   showOpenAiKey = false;
   showAnthropicKey = false;
+  showCropHealthKey = false;
 
   geminiModels = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-2.0-flash'];
   openAiModels = ['gpt-4o', 'gpt-4o-mini', 'gpt-4-turbo', 'o3-mini'];
@@ -37,7 +38,9 @@ export class AdminAiSettingsComponent implements OnInit {
       openAiKey: [''],
       openAiModel: ['gpt-4o'],
       anthropicKey: [''],
-      anthropicModel: ['claude-sonnet-4-6']
+      anthropicModel: ['claude-sonnet-4-6'],
+      cropHealthKey: [''],
+      cropHealthEnabled: [false]
     });
 
     this.adminService.getAiSettings().subscribe({
@@ -49,7 +52,9 @@ export class AdminAiSettingsComponent implements OnInit {
           openAiKey: settings.openAiKey ?? '',
           openAiModel: settings.openAiModel ?? 'gpt-4o',
           anthropicKey: settings.anthropicKey ?? '',
-          anthropicModel: settings.anthropicModel ?? 'claude-sonnet-4-6'
+          anthropicModel: settings.anthropicModel ?? 'claude-sonnet-4-6',
+          cropHealthKey: settings.cropHealthKey ?? '',
+          cropHealthEnabled: settings.cropHealthEnabled ?? false
         });
         this.isLoading = false;
       },
@@ -71,7 +76,9 @@ export class AdminAiSettingsComponent implements OnInit {
       openAiKey: this.form.value.openAiKey || null,
       openAiModel: this.form.value.openAiModel || null,
       anthropicKey: this.form.value.anthropicKey || null,
-      anthropicModel: this.form.value.anthropicModel || null
+      anthropicModel: this.form.value.anthropicModel || null,
+      cropHealthKey: this.form.value.cropHealthKey || null,
+      cropHealthEnabled: !!this.form.value.cropHealthEnabled
     };
 
     this.adminService.updateAiSettings(payload).subscribe({
