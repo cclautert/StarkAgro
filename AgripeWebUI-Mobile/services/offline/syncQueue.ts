@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { diagnosisService } from '../diagnosisService';
 import { readsService } from '../readsService';
 import { conflictLog } from './conflictLog';
 import { OFFLINE_STORAGE_KEYS } from './storageKeys';
@@ -20,6 +21,20 @@ export interface PhotoPayload {
   capturedAt: string;
 }
 
+/**
+ * Foto de planta com sintoma, tirada no talhão. É o caso de uso central do app: no campo
+ * quase nunca há sinal, e a foto precisa sair da mão do produtor no momento em que ele vê
+ * a mancha — não quando ele volta para a sede.
+ */
+export interface DiagnosisPhotoPayload {
+  /** URI local do arquivo capturado pela câmera. */
+  localUri: string;
+  pivotId?: number | null;
+  cropName?: string | null;
+  notes?: string | null;
+  capturedAt: string;
+}
+
 export type SyncQueueItem =
   | {
       id: string;
@@ -36,6 +51,14 @@ export type SyncQueueItem =
       retries: number;
       createdAt: string;
       payload: PhotoPayload;
+    }
+  | {
+      id: string;
+      type: 'diagnosis_photo';
+      status: 'pending' | 'syncing' | 'error';
+      retries: number;
+      createdAt: string;
+      payload: DiagnosisPhotoPayload;
     };
 
 export type SyncQueueListener = (items: SyncQueueItem[]) => void;
@@ -114,6 +137,22 @@ export const syncQueue = {
     return item;
   },
 
+  /** Enfileira a foto do laudo. Sobe sozinha quando a conexão voltar. */
+  async enqueueDiagnosisPhoto(payload: DiagnosisPhotoPayload): Promise<SyncQueueItem> {
+    const items = await this.getAll();
+    const item: SyncQueueItem = {
+      id: `diagnosis-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      type: 'diagnosis_photo',
+      status: 'pending',
+      retries: 0,
+      createdAt: new Date().toISOString(),
+      payload,
+    };
+    items.push(item);
+    await this.save(items);
+    return item;
+  },
+
   async getPendingCount(): Promise<number> {
     const items = await this.getAll();
     return items.filter((item) => item.status === 'pending' || item.status === 'error').length;
@@ -141,8 +180,44 @@ export const syncQueue = {
         }
 
         if (item.type === 'photo') {
-          // Photo upload API not yet available — keep queued for a future backend contract.
+          // Tipo legado (foto de leitura de sensor): nunca houve endpoint para ele, e o
+          // localUri gravado era fictício. Continua parado até existir um contrato.
           skipped += 1;
+          continue;
+        }
+
+        if (item.type === 'diagnosis_photo') {
+          items[i] = { ...item, status: 'syncing' };
+          await this.save(items);
+
+          try {
+            await diagnosisService.upload({
+              localUri: item.payload.localUri,
+              pivotId: item.payload.pivotId,
+              cropName: item.payload.cropName,
+              notes: item.payload.notes,
+            });
+
+            await markSynced(item.id);
+            items = items.filter((entry) => entry.id !== item.id);
+            synced += 1;
+          } catch (error) {
+            // 4xx é veredito do servidor (cota estourada, foto inválida): retentar daria o
+            // mesmo erro para sempre. Só falha de rede ou 5xx merece nova tentativa.
+            const status = (error as { response?: { status?: number } })?.response?.status;
+            const isPermanent = typeof status === 'number' && status >= 400 && status < 500;
+
+            if (isPermanent) {
+              await markSynced(item.id);
+              items = items.filter((entry) => entry.id !== item.id);
+              failed += 1;
+            } else {
+              items[i] = { ...item, status: 'error', retries: item.retries + 1 };
+              failed += 1;
+            }
+          }
+
+          await this.save(items);
           continue;
         }
 
