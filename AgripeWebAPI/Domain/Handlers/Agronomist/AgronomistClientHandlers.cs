@@ -1,6 +1,7 @@
 using AgripeWebAPI.Domain.Commands.Requests.Agronomist;
 using AgripeWebAPI.Domain.Commands.Responses.Agronomist;
 using AgripeWebAPI.Models;
+using AgripeWebAPI.Services;
 using AgripeWebAPI.Models.Entities;
 using AgripeWebAPI.Models.Interfaces;
 using AgripeWebAPI.Notifications;
@@ -106,10 +107,12 @@ namespace AgripeWebAPI.Domain.Handlers.Agronomist
             var agronomistId = _currentUser.UserId
                 ?? throw new InvalidOperationException("Authenticated user is required.");
 
-            var email = request.ClientEmail.Trim().ToLowerInvariant();
+            var email = Services.EmailNormalizer.Normalize(request.ClientEmail);
 
+            // Sem ignorar a caixa, um produtor cadastrado como "Produtor@Fazenda.com" não era
+            // encontrado: o vínculo nascia sem ClientUserId e o agrônomo via um cliente sem nome.
             var client = await _dbContext.Users
-                .Find(u => u.Email == email)
+                .Find(EmailNormalizer.ByEmail(email))
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (client is not null && client.Id == agronomistId)

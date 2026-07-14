@@ -1,17 +1,41 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpInterceptorFn } from '@angular/common/http';
+import { HttpHandler, HttpRequest, HttpResponse } from '@angular/common/http';
+import { of } from 'rxjs';
 
-import { authInterceptor } from './auth.interceptor';
+import { AuthInterceptor } from './auth.interceptor';
 
-describe('authInterceptor', () => {
-  const interceptor: HttpInterceptorFn = (req, next) => 
-    TestBed.runInInjectionContext(() => authInterceptor(req, next));
+describe('AuthInterceptor', () => {
+  let interceptor: AuthInterceptor;
+  let next: HttpHandler;
+  let handled: HttpRequest<unknown>;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({ providers: [AuthInterceptor] });
+    interceptor = TestBed.inject(AuthInterceptor);
+
+    next = {
+      handle: (req: HttpRequest<unknown>) => {
+        handled = req;
+        return of(new HttpResponse());
+      }
+    } as HttpHandler;
+
+    localStorage.removeItem('token');
   });
 
-  it('should be created', () => {
-    expect(interceptor).toBeTruthy();
+  afterEach(() => localStorage.removeItem('token'));
+
+  it('anexa o Bearer quando há token', () => {
+    localStorage.setItem('token', 'abc123');
+
+    interceptor.intercept(new HttpRequest('GET', '/api/v1/pivot'), next).subscribe();
+
+    expect(handled.headers.get('Authorization')).toBe('Bearer abc123');
+  });
+
+  it('não manda Authorization quando não há token', () => {
+    interceptor.intercept(new HttpRequest('GET', '/api/v1/pivot'), next).subscribe();
+
+    expect(handled.headers.has('Authorization')).toBeFalse();
   });
 });

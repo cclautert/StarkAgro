@@ -1,6 +1,7 @@
 using AgripeWebAPI.Domain.Commands.Requests.Admin;
 using AgripeWebAPI.Domain.Commands.Responses.Admin;
 using AgripeWebAPI.Models;
+using AgripeWebAPI.Services;
 using AgripeWebAPI.Models.Interfaces;
 using AgripeWebAPI.Notifications;
 using MediatR;
@@ -31,7 +32,7 @@ namespace AgripeWebAPI.Domain.Handlers.Admin
             }
 
             var emailConflict = await _dbContext.Users
-                .Find(u => u.Email == request.Email && u.Id != request.Id)
+                .Find(EmailNormalizer.ByEmailExcluding(request.Email, request.Id))
                 .FirstOrDefaultAsync(cancellationToken);
             if (emailConflict != null)
             {
@@ -40,7 +41,7 @@ namespace AgripeWebAPI.Domain.Handlers.Admin
             }
 
             user.Name = request.Name;
-            user.Email = request.Email;
+            user.Email = EmailNormalizer.Normalize(request.Email);
             user.Active = request.Active;
             user.IsAdmin = request.IsAdmin;
             user.IsAgronomist = request.IsAgronomist;

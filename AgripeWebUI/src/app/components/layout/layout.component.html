@@ -126,14 +126,19 @@
           <!-- Alert List -->
           <ul class="alert-list"
             *ngIf="!(loading$ | async) && (alerts$ | async) as alerts">
-            <li class="alert-item" *ngFor="let alert of alerts" [class.unread]="!alert.isRead">
+            <li class="alert-item" *ngFor="let alert of alerts"
+              [class.unread]="!alert.isRead"
+              [class.actionable]="isInvite(alert)"
+              (click)="openAlert(alert)">
               <div class="alert-type-badge" [class]="'type-' + alert.alertType">
                 {{ alertTypeLabel(alert.alertType) }}
               </div>
               <div class="alert-title">{{ alert.title }}</div>
               <div class="alert-meta">
-                <mat-icon class="meta-icon">rotate_right</mat-icon>
-                <span>{{ alert.pivotName }}</span>
+                <ng-container *ngIf="!isInvite(alert)">
+                  <mat-icon class="meta-icon">rotate_right</mat-icon>
+                  <span>{{ alert.pivotName }}</span>
+                </ng-container>
                 <mat-icon class="meta-icon">schedule</mat-icon>
                 <span>{{ alert.createdAt | date:'dd/MM HH:mm' }}</span>
               </div>

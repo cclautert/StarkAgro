@@ -35,8 +35,10 @@ namespace AgripeWebAPI.Domain.Handlers.Users
                 return new UserTokenResponse { ErrorCode = LoginErrorCode.TooManyAttempts };
             }
 
+            // E-mail não diferencia caixa: quem se cadastrou como "Fulano@Fazenda.com"
+            // precisa conseguir logar digitando "fulano@fazenda.com".
             User? user = await _dbContext.Users
-                .Find(x => x.Email == request.Email)
+                .Find(EmailNormalizer.ByEmail(request.Email))
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (user == null)

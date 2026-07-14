@@ -1,6 +1,7 @@
 using AgripeWebAPI.Domain.Commands.Requests.Users;
 using AgripeWebAPI.Domain.Commands.Responses.Users;
 using AgripeWebAPI.Models;
+using AgripeWebAPI.Services;
 using AgripeWebAPI.Models.Entities;
 using AgripeWebAPI.Models.Interfaces;
 using AgripeWebAPI.Notifications;
@@ -31,7 +32,7 @@ namespace AgripeWebAPI.Domain.Handlers.Users
         public async Task<EditUserResponse> Handle(EditUserRequest request, CancellationToken cancellationToken)
         {
             var user = await _dbContext.Users
-                .Find(x => x.Email == request.Email)
+                .Find(EmailNormalizer.ByEmail(request.Email))
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (user == null)
@@ -53,7 +54,7 @@ namespace AgripeWebAPI.Domain.Handlers.Users
             {
                 var passwordChanged = false;
                 user.Name = request.Name;
-                user.Email = request.Email;
+                user.Email = EmailNormalizer.Normalize(request.Email);
                 
                 // Only hash password if a new one is provided and validate it
                 if (!string.IsNullOrWhiteSpace(request.Password))

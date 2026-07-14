@@ -2,6 +2,7 @@ using AgripeWebAPI.Configuration;
 using AgripeWebAPI.Domain.Commands.Requests.Users;
 using AgripeWebAPI.Domain.Commands.Responses.Users;
 using AgripeWebAPI.Models;
+using AgripeWebAPI.Services;
 using AgripeWebAPI.Models.Entities;
 using AgripeWebAPI.Models.Interfaces;
 using MediatR;
@@ -141,7 +142,7 @@ namespace AgripeWebAPI.Domain.Handlers.Users
             }
 
             var user = await _dbContext.Users
-                .Find(x => x.Email == userInfo.Email)
+                .Find(EmailNormalizer.ByEmail(userInfo.Email))
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (user == null)
@@ -151,7 +152,7 @@ namespace AgripeWebAPI.Domain.Handlers.Users
                 {
                     Id = await _dbContext.GetNextIdAsync(nameof(User), cancellationToken),
                     Name = userInfo.Name ?? userInfo.Email,
-                    Email = userInfo.Email,
+                    Email = EmailNormalizer.Normalize(userInfo.Email),
                     Password = _passwordHasher.HashPassword(Guid.NewGuid().ToString("N")),
                     Active = true
                 };

@@ -1,4 +1,4 @@
-export type AlertType = 'MoistureLow' | 'AnomalyPersisted';
+export type AlertType = 'MoistureLow' | 'AnomalyPersisted' | 'AgronomistInvite';
 
 export interface UserAlert {
   id: string;
