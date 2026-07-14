@@ -85,6 +85,33 @@
       </select>
     </div>
 
+    <!-- crop.health (Kindwise) — classificador de doenças de planta -->
+    <hr class="section-divider" />
+    <p class="section-title">Laudo Fitossanitário (crop.health / Kindwise)</p>
+    <p class="section-hint">
+      Classificador especializado de doenças de planta. <strong>Cobra por foto analisada</strong>
+      (≈ € 0,01–0,05). Desligue a chave para cortar o custo sem redeploy.
+    </p>
+
+    <div class="form-group">
+      <label>Chave da API</label>
+      <div class="input-with-toggle">
+        <input formControlName="cropHealthKey"
+               [type]="showCropHealthKey ? 'text' : 'password'"
+               placeholder="chave do crop.kindwise.com" />
+        <button type="button" class="btn-toggle-key" (click)="showCropHealthKey = !showCropHealthKey">
+          {{ showCropHealthKey ? 'Ocultar' : 'Mostrar' }}
+        </button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="checkbox-label">
+        <input type="checkbox" formControlName="cropHealthEnabled" />
+        Habilitar a análise por IA dos laudos
+      </label>
+    </div>
+
     <div class="form-actions">
       <button type="submit" class="btn btn-primary" [disabled]="isSaving">
         {{ isSaving ? 'Salvando...' : 'Salvar Configurações' }}

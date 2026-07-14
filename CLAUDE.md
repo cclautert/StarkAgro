@@ -42,6 +42,9 @@ Guide for Claude Code and coding agents in this repository.
 | Upload de imagem | Nginx precisa de `client_max_body_size` em `AgripeWebUI/nginx.conf` **e** `docker/nginx/nginx.conf` — o default de 1 MB rejeita foto de celular com 413 |
 | Testes com Mongo mock | Não use `.AnyAsync()` em handler: ele projeta para `BsonDocument` e o `MongoMockHelper` não cobre — use `.FirstOrDefaultAsync()` |
 | Processamento em background | Lógica rodada pelo worker é **serviço puro**, não handler MediatR — `WorkerUserContext.UserId` é `null` e o assembly scan exporia o handler |
+| Chaves de IA | Ficam no Mongo (`platform_ai_settings`, tela `/admin/ia`), **não** em `appsettings`. `CropHealthEnabled` é o kill-switch do custo por foto |
+| Laudo gerado por LLM | O disclaimer legal é garantido em código (`EnsureDisclaimer`), nunca só pelo prompt — truncamento ou modelo teimoso o removeria |
+| Kindwise crop.health | `datetime` exige offset (`+00:00`; `Z` e `ToString("o")` dão 400); **não** envie `similar_images: false`; a resposta de sucesso é **201** |
 | Firmware | No real Wi-Fi passwords, tokens, or MACs in committed `.ino` files |
 | Deploy | `main` + green CI; secrets only via env / user secrets — placeholders in repo |
 | Google login button | Show only when `environment.googleClientId` is set |
@@ -109,7 +112,8 @@ Controllers delegate to handlers; **no business logic in controllers.**
 - `Models/Entities/` — `User`, `Pivot`, `Sensor`, `ReadSensor`, `PlantDiagnosis` extend `Entity` (`[BsonId] int Id`)  
 - `Pivot` — nullable `Latitude`, `Longitude`, `Altitude`, `LocationAddress`, `LocationUpdatedAt` (map selector)  
 - `PlantDiagnosis` — laudo fitossanitário; status `Uploaded → Processing → AiCompleted|PendingReview|Rejected|Failed`; foto no GridFS (`ImageFileId`); `AuditTrail` append-only  
-- `Services/` — JWT, passwords, `CurrentUserContext`; `Services/Forecast/` — `WeatherForecastOrchestrator`, Open-Meteo, Google Weather AI; `Services/Diagnosis/` — `IDiagnosisImageStore` (GridFS), `ImageContentValidator` (allowlist + magic bytes)  
+- `Services/` — JWT, passwords, `CurrentUserContext`; `Services/Forecast/` — `WeatherForecastOrchestrator`, Open-Meteo, Google Weather AI; `Services/Diagnosis/` — `IDiagnosisImageStore` (GridFS), `ImageContentValidator`, `PlantDiagnosisProcessingService` (classificador → contexto → LLM); `Services/CropHealth/` — `KindwiseCropHealthService` (crop.health)  
+- `IAIInsightsService.CompleteAsync(systemPrompt, userMessage, apiKey, model, ct, maxTokens?)` — canal genérico de texto; **passe `maxTokens` para textos longos**: o padrão (1024) corta um laudo pelo meio  
 - `Configuration/` — DI, JWT/OAuth, Swagger, CORS, `MongoDbSettings`, `WeatherForecastSettings`  
 - `Validators/`, `Notifications/` (`INotifier` / `Notificator`)
 

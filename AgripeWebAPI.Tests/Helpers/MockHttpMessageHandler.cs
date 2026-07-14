@@ -8,6 +8,9 @@ namespace AgripeWebAPI.Tests.Helpers
 
         public List<Uri?> RequestedUris { get; } = new();
 
+        /// <summary>Corpo de cada request enviado — permite asserir o payload, não só a URL.</summary>
+        public List<string> RequestBodies { get; } = new();
+
         public void EnqueueResponse(HttpResponseMessage response)
         {
             _responses.Enqueue(response);
@@ -21,14 +24,17 @@ namespace AgripeWebAPI.Tests.Helpers
             });
         }
 
-        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             RequestedUris.Add(request.RequestUri);
 
-            if (_responses.Count == 0)
-                return Task.FromResult(new HttpResponseMessage(HttpStatusCode.InternalServerError));
+            if (request.Content is not null)
+                RequestBodies.Add(await request.Content.ReadAsStringAsync(cancellationToken));
 
-            return Task.FromResult(_responses.Dequeue());
+            if (_responses.Count == 0)
+                return new HttpResponseMessage(HttpStatusCode.InternalServerError);
+
+            return _responses.Dequeue();
         }
     }
 }

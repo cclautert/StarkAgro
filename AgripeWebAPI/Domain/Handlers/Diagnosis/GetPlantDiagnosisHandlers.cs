@@ -94,6 +94,26 @@ namespace AgripeWebAPI.Domain.Handlers.Diagnosis
                 CapturedAt = diagnosis.CapturedAt,
                 CreatedAt = diagnosis.CreatedAt,
                 ProcessedAt = diagnosis.ProcessedAt,
+                IsPlant = diagnosis.IsPlant,
+                TopProbability = diagnosis.TopProbability,
+                Diseases = diagnosis.Diseases.Select(d => new DiseaseSuggestionResponse
+                {
+                    Name = d.Name,
+                    ScientificName = d.ScientificName,
+                    Probability = d.Probability,
+                    Severity = d.Severity
+                }).ToList(),
+                Context = diagnosis.ContextSnapshot is null ? null : new DiagnosisContextResponse
+                {
+                    PivotName = diagnosis.ContextSnapshot.PivotName,
+                    MoistureAvg7d = diagnosis.ContextSnapshot.MoistureAvg7d,
+                    LimiteInferior = diagnosis.ContextSnapshot.LimiteInferior,
+                    LimiteSuperior = diagnosis.ContextSnapshot.LimiteSuperior,
+                    DaysAboveUpperLimit = diagnosis.ContextSnapshot.DaysAboveUpperLimit,
+                    OpenAnomalies = diagnosis.ContextSnapshot.OpenAnomalies,
+                    IrrigationAlerts7d = diagnosis.ContextSnapshot.IrrigationAlerts7d,
+                    ForecastSummary = diagnosis.ContextSnapshot.ForecastSummary
+                },
                 AiReportMarkdown = diagnosis.AiReportMarkdown,
                 AiProvider = diagnosis.AiProvider,
                 FailureReason = diagnosis.FailureReason,

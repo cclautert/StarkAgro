@@ -30,7 +30,9 @@ namespace AgripeWebAPI.Domain.Handlers.Admin
                 AnthropicModel = settings.AnthropicModel,
                 GeminiKey = settings.GeminiKey,
                 GeminiModel = settings.GeminiModel,
-                ActiveProvider = settings.ActiveProvider
+                ActiveProvider = settings.ActiveProvider,
+                CropHealthKey = settings.CropHealthKey,
+                CropHealthEnabled = settings.CropHealthEnabled
             };
         }
     }

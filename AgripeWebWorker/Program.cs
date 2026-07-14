@@ -59,6 +59,43 @@ var builder = Host.CreateDefaultBuilder(args)
         services.AddScoped<IAgricultureWeatherService>(sp =>
             sp.GetRequiredService<AgripeWebAPI.Services.Forecast.OpenMeteoForecastService>());
 
+        // Previsão do tempo para o laudo — o orquestrador não estava registrado no worker,
+        // só o OpenMeteo cru (espelha ApiConfig).
+        services.AddHttpClient<AgripeWebAPI.Services.Forecast.GoogleWeatherAIForecastService>(client =>
+        {
+            client.Timeout = TimeSpan.FromSeconds(8);
+        });
+        services.AddScoped<IWeatherForecastService, AgripeWebAPI.Services.Forecast.WeatherForecastOrchestrator>();
+
+        // Laudo fitossanitário: classificador + LLM + contexto da lavoura
+        services.Configure<AISettings>(context.Configuration.GetSection(AISettings.SectionName));
+        services.AddHttpClient<AgripeWebAPI.Services.AIInsights.GeminiInsightsService>(client =>
+        {
+            client.BaseAddress = new Uri("https://generativelanguage.googleapis.com/");
+            client.Timeout = TimeSpan.FromSeconds(30);
+        });
+        services.AddHttpClient<AgripeWebAPI.Services.AIInsights.AnthropicInsightsService>(client =>
+        {
+            client.BaseAddress = new Uri("https://api.anthropic.com/");
+            client.Timeout = TimeSpan.FromSeconds(30);
+        });
+        services.AddTransient<AgripeWebAPI.Services.AIInsights.IAIInsightsServiceFactory,
+            AgripeWebAPI.Services.AIInsights.AIInsightsServiceFactory>();
+
+        services.AddHttpClient<AgripeWebAPI.Services.CropHealth.KindwiseCropHealthService>(client =>
+        {
+            client.BaseAddress = new Uri("https://crop.kindwise.com/");
+            client.Timeout = TimeSpan.FromSeconds(45);
+        });
+        services.AddScoped<ICropDiagnosisProvider>(sp =>
+            sp.GetRequiredService<AgripeWebAPI.Services.CropHealth.KindwiseCropHealthService>());
+
+        services.AddScoped<IDiagnosisImageStore, AgripeWebAPI.Services.Diagnosis.GridFsDiagnosisImageStore>();
+        services.AddScoped<AgripeWebAPI.Services.Diagnosis.IPlantDiagnosisContextBuilder,
+            AgripeWebAPI.Services.Diagnosis.PlantDiagnosisContextBuilder>();
+        services.AddScoped<AgripeWebAPI.Services.Diagnosis.IPlantDiagnosisProcessingService,
+            AgripeWebAPI.Services.Diagnosis.PlantDiagnosisProcessingService>();
+
         // LoRaWAN parser
         services.AddSingleton<ILoRaWanUplinkParser, LoRaWanUplinkParser>();
 

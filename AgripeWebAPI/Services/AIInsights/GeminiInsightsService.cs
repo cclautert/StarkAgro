@@ -23,28 +23,42 @@ namespace AgripeWebAPI.Services.AIInsights
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<string?> GetInsightsAsync(PivotAIContext context, CancellationToken cancellationToken)
+        public Task<string?> GetInsightsAsync(PivotAIContext context, CancellationToken cancellationToken)
+            => CompleteAsync(
+                AIInsightsPromptBuilder.SystemPrompt,
+                AIInsightsPromptBuilder.BuildUserMessage(context),
+                context.ApiKeyOverride,
+                context.ModelOverride,
+                cancellationToken);
+
+        public async Task<string?> CompleteAsync(
+            string systemPrompt,
+            string userMessage,
+            string? apiKey,
+            string? model,
+            CancellationToken cancellationToken,
+            int? maxTokens = null)
         {
-            var model = context.ModelOverride ?? _settings.Model;
-            var endpoint = $"v1beta/models/{model}:generateContent?key={context.ApiKeyOverride}";
+            var resolvedModel = model ?? _settings.Model;
+            var endpoint = $"v1beta/models/{resolvedModel}:generateContent?key={apiKey}";
 
             var requestBody = new
             {
                 system_instruction = new
                 {
-                    parts = new[] { new { text = AIInsightsPromptBuilder.SystemPrompt } }
+                    parts = new[] { new { text = systemPrompt } }
                 },
                 contents = new[]
                 {
                     new
                     {
                         role = "user",
-                        parts = new[] { new { text = AIInsightsPromptBuilder.BuildUserMessage(context) } }
+                        parts = new[] { new { text = userMessage } }
                     }
                 },
                 generationConfig = new
                 {
-                    maxOutputTokens = _settings.MaxTokens
+                    maxOutputTokens = maxTokens ?? _settings.MaxTokens
                 }
             };
 
@@ -91,6 +105,5 @@ namespace AgripeWebAPI.Services.AIInsights
                 return null;
             }
         }
-
     }
 }

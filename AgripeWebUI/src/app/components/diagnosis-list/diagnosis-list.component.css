@@ -52,6 +52,7 @@
   align-items: center;
   gap: 14px;
   transition: border-color 0.15s;
+  cursor: pointer;
 }
 
 .diagnosis-card:hover {

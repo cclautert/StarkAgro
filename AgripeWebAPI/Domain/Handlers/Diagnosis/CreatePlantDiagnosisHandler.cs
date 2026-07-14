@@ -78,10 +78,17 @@ namespace AgripeWebAPI.Domain.Handlers.Diagnosis
 
             var sha256 = ImageContentValidator.ComputeSha256(request.ImageBytes);
 
-            // Dedup: a mesma foto reenviada devolve o laudo que já existe, em vez de
-            // gerar outro (e, na Fase 1, pagar outra chamada de IA por nada).
+            // Dedup: a mesma foto reenviada devolve o laudo que já existe, em vez de gerar
+            // outro e pagar outra chamada de IA por nada.
+            //
+            // Failed e Rejected ficam de fora de propósito: se a análise falhou (ou a foto foi
+            // recusada), reenviar tem que ser uma nova tentativa. Caso contrário o produtor fica
+            // preso ao erro para sempre, e a única saída seria apagar o laudo.
             var existing = await _dbContext.PlantDiagnoses
-                .Find(d => d.UserId == userId && d.ImageSha256 == sha256)
+                .Find(d => d.UserId == userId
+                           && d.ImageSha256 == sha256
+                           && d.Status != PlantDiagnosisStatus.Failed
+                           && d.Status != PlantDiagnosisStatus.Rejected)
                 .SortByDescending(d => d.CreatedAt)
                 .FirstOrDefaultAsync(cancellationToken);
 

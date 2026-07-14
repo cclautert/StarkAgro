@@ -26,7 +26,9 @@ namespace AgripeWebAPI.Domain.Handlers.Admin
                 AnthropicModel = request.AnthropicModel,
                 GeminiKey = request.GeminiKey,
                 GeminiModel = request.GeminiModel,
-                ActiveProvider = request.ActiveProvider
+                ActiveProvider = request.ActiveProvider,
+                CropHealthKey = request.CropHealthKey,
+                CropHealthEnabled = request.CropHealthEnabled
             };
 
             await _dbContext.PlatformAiSettings.ReplaceOneAsync(

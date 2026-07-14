@@ -18,11 +18,34 @@ export interface PlantDiagnosisSummary {
   failureReason?: string | null;
 }
 
+export interface DiseaseSuggestion {
+  name: string;
+  scientificName?: string | null;
+  probability: number;
+  severity?: string | null;
+}
+
+/** Dados da lavoura congelados no laudo — é o diferencial contra um app de foto comum. */
+export interface DiagnosisContext {
+  pivotName?: string | null;
+  moistureAvg7d?: number | null;
+  limiteInferior?: number | null;
+  limiteSuperior?: number | null;
+  daysAboveUpperLimit: number;
+  openAnomalies: number;
+  irrigationAlerts7d: number;
+  forecastSummary?: string | null;
+}
+
 export interface PlantDiagnosis extends PlantDiagnosisSummary {
   producerNotes?: string | null;
   latitude?: number | null;
   longitude?: number | null;
   capturedAt: string;
+  isPlant: boolean;
+  topProbability: number;
+  diseases: DiseaseSuggestion[];
+  context?: DiagnosisContext | null;
   aiReportMarkdown?: string | null;
   aiProvider?: string | null;
   imageUrl: string;

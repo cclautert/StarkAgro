@@ -2,6 +2,7 @@ using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Entities;
 using AgripeWebAPI.Models.Interfaces;
 using AgripeWebAPI.Services.AIInsights;
+using AgripeWebAPI.Services.CropHealth;
 using AgripeWebAPI.Services.Diagnosis;
 using AgripeWebAPI.Services.Forecast;
 using AgripeWebAPI.Services.LoRaWan;
@@ -51,6 +52,16 @@ namespace AgripeWebAPI.Configuration
             });
             services.AddTransient<IAIInsightsServiceFactory, AIInsightsServiceFactory>();
 
+            // crop.health (Kindwise): timeout maior que o dos LLMs — a identificação leva 3–10s
+            // e os 30s dos insights são justos demais aqui.
+            services.AddHttpClient<KindwiseCropHealthService>(client =>
+            {
+                client.BaseAddress = new Uri("https://crop.kindwise.com/");
+                client.Timeout = TimeSpan.FromSeconds(45);
+            });
+            services.AddScoped<ICropDiagnosisProvider>(sp =>
+                sp.GetRequiredService<KindwiseCropHealthService>());
+
             services.AddSingleton<ILoRaWanDownlinkService, MqttDownlinkService>();
 
             services.AddHttpClient("expo_push", client =>
@@ -63,6 +74,8 @@ namespace AgripeWebAPI.Configuration
             services.AddScoped<IPushNotificationService, CompositePushNotificationService>();
 
             services.AddScoped<IDiagnosisImageStore, GridFsDiagnosisImageStore>();
+            services.AddScoped<IPlantDiagnosisContextBuilder, PlantDiagnosisContextBuilder>();
+            services.AddScoped<IPlantDiagnosisProcessingService, PlantDiagnosisProcessingService>();
 
             services.AddControllers()
                 .AddJsonOptions(options =>

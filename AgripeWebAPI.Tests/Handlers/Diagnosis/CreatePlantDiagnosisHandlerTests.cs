@@ -6,6 +6,7 @@ using AgripeWebAPI.Models.Interfaces;
 using AgripeWebAPI.Notifications;
 using AgripeWebAPI.Tests.Helpers;
 using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using Moq;
 
@@ -194,6 +195,56 @@ namespace AgripeWebAPI.Tests.Handlers.Diagnosis
                 It.IsAny<byte[]>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
             diagnoses.Verify(c => c.InsertOneAsync(
                 It.IsAny<PlantDiagnosis>(), It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task Handle_DedupQueryExcludesFailedAndRejected()
+        {
+            // Uma foto cuja análise falhou não pode ficar presa ao erro: reenviá-la tem que
+            // ser uma nova tentativa, não a devolução do laudo falho.
+            FilterDefinition<PlantDiagnosis>? capturedFilter = null;
+
+            var diagnoses = new Mock<IMongoCollection<PlantDiagnosis>>();
+            diagnoses.Setup(c => c.FindAsync(
+                    It.IsAny<FilterDefinition<PlantDiagnosis>>(),
+                    It.IsAny<FindOptions<PlantDiagnosis, PlantDiagnosis>>(),
+                    It.IsAny<CancellationToken>()))
+                .Callback<FilterDefinition<PlantDiagnosis>, FindOptions<PlantDiagnosis, PlantDiagnosis>, CancellationToken>(
+                    (filter, _, _) => capturedFilter = filter)
+                .ReturnsAsync(() => MongoMockHelper.CreateMockCursor(new List<PlantDiagnosis>()).Object);
+
+            var db = new Mock<agpDBContext>();
+            db.Setup(d => d.PlantDiagnoses).Returns(diagnoses.Object);
+            db.Setup(d => d.Pivots).Returns(new Mock<IMongoCollection<Pivot>>().Object);
+            db.Setup(d => d.GetNextIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(42);
+
+            var currentUser = new Mock<ICurrentUserContext>();
+            currentUser.Setup(c => c.UserId).Returns(OwnerUserId);
+
+            var imageStore = new Mock<IDiagnosisImageStore>();
+            imageStore.Setup(s => s.UploadAsync(
+                    It.IsAny<byte[]>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(ObjectId.GenerateNewId());
+
+            var handler = new CreatePlantDiagnosisHandler(
+                db.Object, currentUser.Object, imageStore.Object, new Notificator());
+
+            await handler.Handle(new CreatePlantDiagnosisRequest
+            {
+                ImageBytes = ValidJpeg(),
+                FileName = "folha.jpg",
+                ContentType = "image/jpeg"
+            }, CancellationToken.None);
+
+            Assert.NotNull(capturedFilter);
+            var serializer = BsonSerializer.SerializerRegistry.GetSerializer<PlantDiagnosis>();
+            var rendered = capturedFilter!
+                .Render(new RenderArgs<PlantDiagnosis>(serializer, BsonSerializer.SerializerRegistry))
+                .ToString();
+
+            Assert.Contains(PlantDiagnosisStatus.Failed, rendered);
+            Assert.Contains(PlantDiagnosisStatus.Rejected, rendered);
+            Assert.Contains("$ne", rendered);
         }
 
         [Fact]

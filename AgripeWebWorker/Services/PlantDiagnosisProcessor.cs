@@ -1,17 +1,15 @@
 using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Entities;
+using AgripeWebAPI.Services.Diagnosis;
 using MongoDB.Driver;
 
 namespace AgripeWebWorker.Services
 {
     /// <summary>
-    /// Consome os laudos pendentes e roda a análise.
+    /// Consome os laudos pendentes e dispara a análise (classificador → contexto → LLM),
+    /// delegada ao <see cref="IPlantDiagnosisProcessingService"/>.
     /// <para>
-    /// Na Fase 0 o processamento é um <b>mock</b>: leva <c>Uploaded → AiCompleted</c> com um texto
-    /// fixo, só para exercitar a máquina de estados ponta a ponta. A Fase 1 (issue #103) substitui
-    /// o mock pela chamada ao Kindwise + LLM.
-    /// </para>
-    /// <para>
+    /// Este BackgroundService cuida só da <b>fila</b>: claim atômico, retentativa e zumbis.
     /// O tenant vem <b>de dentro do documento</b> (<c>d.UserId</c>), nunca de um contexto de
     /// usuário: no worker o <c>WorkerUserContext</c> devolve <c>UserId = null</c>.
     /// </para>
@@ -55,6 +53,7 @@ namespace AgripeWebWorker.Services
         {
             using var scope = _serviceProvider.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<agpDBContext>();
+            var processingService = scope.ServiceProvider.GetRequiredService<IPlantDiagnosisProcessingService>();
 
             await ReleaseZombiesAsync(db, cancellationToken);
 
@@ -67,7 +66,14 @@ namespace AgripeWebWorker.Services
 
                 try
                 {
-                    await ProcessAsync(db, diagnosis, cancellationToken);
+                    var result = await processingService.ProcessAsync(diagnosis, cancellationToken);
+
+                    // Rejeição (foto ruim, não é planta) é um desfecho legítimo e terminal:
+                    // o serviço já gravou o status. Só falha de verdade entra na retentativa.
+                    if (result.Outcome == DiagnosisProcessingOutcome.Failed)
+                    {
+                        await FailAsync(db, diagnosis, result.Reason ?? "Falha ao processar o laudo.", cancellationToken);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -130,39 +136,6 @@ namespace AgripeWebWorker.Services
 
                 await FailAsync(db, diagnosis, "Processamento interrompido.", cancellationToken);
             }
-        }
-
-        private async Task ProcessAsync(agpDBContext db, PlantDiagnosis diagnosis, CancellationToken cancellationToken)
-        {
-            // MOCK (Fase 0) — a análise real entra na issue #103.
-            var report =
-                "## Pré-análise indisponível\n\n" +
-                "A foto foi recebida e armazenada com sucesso, mas a análise por IA ainda não está " +
-                "habilitada nesta versão.\n\n" +
-                "_Laudo técnico informativo. Não constitui receituário agronômico nem ART._";
-
-            var now = DateTime.UtcNow;
-
-            var update = Builders<PlantDiagnosis>.Update
-                .Set(d => d.Status, PlantDiagnosisStatus.AiCompleted)
-                .Set(d => d.AiReportMarkdown, report)
-                .Set(d => d.AiProvider, "mock")
-                .Set(d => d.AiGeneratedAt, now)
-                .Set(d => d.ProcessedAt, now)
-                .Set(d => d.UpdatedAt, now)
-                .Set(d => d.FailureReason, null)
-                .Push(d => d.AuditTrail, new PlantDiagnosisAuditEntry
-                {
-                    At = now,
-                    FromStatus = PlantDiagnosisStatus.Processing,
-                    ToStatus = PlantDiagnosisStatus.AiCompleted,
-                    Action = "processed:mock"
-                });
-
-            await db.PlantDiagnoses.UpdateOneAsync(d => d.Id == diagnosis.Id, update, null, cancellationToken);
-
-            _logger.LogInformation(
-                "PlantDiagnosisProcessor: diagnosis {Id} (user {UserId}) processed", diagnosis.Id, diagnosis.UserId);
         }
 
         private async Task FailAsync(

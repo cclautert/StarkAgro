@@ -1,0 +1,94 @@
+<div class="container">
+  <div class="page-header">
+    <h1 class="page-title">🌿 Laudo #{{ id }}</h1>
+    <button class="btn-back" [routerLink]="['/diagnosticos']">Voltar</button>
+  </div>
+
+  <p class="loading-text" *ngIf="loading">Carregando laudo...</p>
+
+  <div class="state-box error" *ngIf="error && !loading">
+    Não foi possível carregar este laudo.
+  </div>
+
+  <ng-container *ngIf="diagnosis as d">
+    <div class="card">
+      <div class="card-head">
+        <span class="status-badge" [class]="'status-' + d.status">{{ statusLabel(d.status) }}</span>
+        <span class="card-meta">{{ d.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+      </div>
+
+      <div class="photo-row">
+        <img *ngIf="imageUrl" [src]="imageUrl" alt="Foto enviada" class="photo" />
+        <div class="photo-info">
+          <div class="info-line"><span class="k">Cultura</span><span class="v">{{ d.cropName || '—' }}</span></div>
+          <div class="info-line" *ngIf="d.context?.pivotName">
+            <span class="k">Pivô</span><span class="v">{{ d.context?.pivotName }}</span>
+          </div>
+          <div class="info-line" *ngIf="d.producerNotes">
+            <span class="k">Sua observação</span><span class="v">{{ d.producerNotes }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Processando -->
+    <div class="state-box pending" *ngIf="isPending(d.status)">
+      <span class="spinner"></span>
+      Analisando a foto e cruzando com os dados do seu pivô. Isso leva menos de um minuto.
+    </div>
+
+    <!-- Rejeitado / falhou -->
+    <div class="state-box error" *ngIf="d.status === 'Rejected' || d.status === 'Failed'">
+      {{ d.failureReason || 'Não foi possível analisar esta foto.' }}
+      <a class="retry-link" [routerLink]="['/diagnosticos/novo']">Enviar outra foto</a>
+    </div>
+
+    <!-- Diagnóstico -->
+    <div class="card" *ngIf="d.diseases.length > 0">
+      <h2 class="section-title">Diagnóstico provável</h2>
+      <div class="disease" *ngFor="let disease of d.diseases; let first = first">
+        <div class="disease-name">
+          {{ disease.name }}
+          <small *ngIf="disease.scientificName">{{ disease.scientificName }}</small>
+        </div>
+        <div class="bar" [class.bar-low]="!first">
+          <span [style.width.%]="disease.probability * 100"></span>
+        </div>
+        <div class="disease-pct" [class.pct-low]="!first">
+          {{ disease.probability * 100 | number:'1.0-0' }}%
+        </div>
+      </div>
+    </div>
+
+    <!-- Correlação com a lavoura: o diferencial -->
+    <div class="card context" *ngIf="d.context as ctx">
+      <h2 class="section-title">Contexto da sua lavoura</h2>
+      <div class="context-grid">
+        <div class="context-item" *ngIf="ctx.moistureAvg7d != null">
+          <span class="big">{{ ctx.moistureAvg7d | number:'1.0-1' }}%</span>
+          <span class="cap">Umidade média (7 dias)</span>
+        </div>
+        <div class="context-item alert" *ngIf="ctx.daysAboveUpperLimit > 0">
+          <span class="big">{{ ctx.daysAboveUpperLimit }}</span>
+          <span class="cap">Dias acima do limite superior</span>
+        </div>
+        <div class="context-item" *ngIf="ctx.openAnomalies > 0">
+          <span class="big">{{ ctx.openAnomalies }}</span>
+          <span class="cap">Anomalias em aberto</span>
+        </div>
+        <div class="context-item" *ngIf="ctx.irrigationAlerts7d > 0">
+          <span class="big">{{ ctx.irrigationAlerts7d }}</span>
+          <span class="cap">Alertas de irrigação (7 dias)</span>
+        </div>
+      </div>
+      <p class="forecast" *ngIf="ctx.forecastSummary">🌧️ {{ ctx.forecastSummary }}</p>
+    </div>
+
+    <!-- Laudo -->
+    <div class="card" *ngIf="reportHtml as html">
+      <h2 class="section-title">Laudo</h2>
+      <div class="report" [innerHTML]="html"></div>
+      <p class="provider" *ngIf="d.aiProvider">Pré-análise gerada por IA ({{ d.aiProvider }}).</p>
+    </div>
+  </ng-container>
+</div>

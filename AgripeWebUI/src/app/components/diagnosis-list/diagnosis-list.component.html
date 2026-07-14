@@ -11,7 +11,7 @@
   </div>
 
   <div class="diagnosis-grid" *ngIf="!loading && !error">
-    <div class="diagnosis-card" *ngFor="let diagnosis of diagnoses">
+    <div class="diagnosis-card" *ngFor="let diagnosis of diagnoses" [routerLink]="['/diagnosticos', diagnosis.id]">
       <div class="thumb" [class.thumb-empty]="!diagnosis.thumbnailUrl">
         <img *ngIf="diagnosis.thumbnailUrl" [src]="diagnosis.thumbnailUrl" alt="Foto do laudo" />
       </div>
@@ -31,7 +31,7 @@
       </div>
 
       <div class="diagnosis-actions">
-        <button class="btn-action btn-delete" (click)="delete(diagnosis.id)">Excluir</button>
+        <button class="btn-action btn-delete" (click)="$event.stopPropagation(); delete(diagnosis.id)">Excluir</button>
       </div>
     </div>
 
