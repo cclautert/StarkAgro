@@ -60,6 +60,7 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Reads
         {
             var sensor = new Sensor { Id = 7, Code = "A84041691D5F1794", UserId = 42 };
             MongoMockHelper.SetupFind(_mockSensors, sensor);
+            MongoMockHelper.SetupFind(_mockReadSensors, (ReadSensor?)null); // sem duplicata prévia
 
             ReadSensor? inserted = null;
             _mockReadSensors.Setup(c => c.InsertOneAsync(It.IsAny<ReadSensor>(), It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()))
@@ -88,7 +89,64 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Reads
             Assert.Equal(22.7m, inserted.Temperature);
             Assert.Equal(3.582m, inserted.BatteryVoltage);
             Assert.Equal(new DateTime(2026, 6, 11, 23, 29, 2, DateTimeKind.Utc), inserted.Date.ToUniversalTime());
-            Assert.Equal("A84041691D5F1794:126", inserted.IdempotencyKey);
+            var expectedTicks = new DateTime(2026, 6, 11, 23, 29, 2, DateTimeKind.Utc).ToUniversalTime().Ticks;
+            Assert.Equal($"A84041691D5F1794:126:{expectedTicks}", inserted.IdempotencyKey);
+        }
+
+        [Fact]
+        public async Task Handle_DuplicateUplink_ReturnsNullWithoutInserting()
+        {
+            var sensor = new Sensor { Id = 7, Code = "A84041691D5F1794", UserId = 42 };
+            MongoMockHelper.SetupFind(_mockSensors, sensor);
+
+            // Uma leitura com a mesma IdempotencyKey (mesmo code+fcnt+time) já existe.
+            var existing = new ReadSensor { Id = 55, SensorId = 7, UserId = 42, IdempotencyKey = "any" };
+            MongoMockHelper.SetupFind(_mockReadSensors, existing);
+
+            var request = new CreateLoRaWanReadRequest
+            {
+                Code = "A84041691D5F1794",
+                Humidity = 71.3m,
+                Temperature = 21.2m,
+                ReadAt = new DateTime(2026, 7, 15, 21, 14, 15, DateTimeKind.Utc),
+                Fcnt = 0
+            };
+
+            var result = await _handler.Handle(request, CancellationToken.None);
+
+            Assert.Null(result);
+            _mockReadSensors.Verify(c => c.InsertOneAsync(
+                It.IsAny<ReadSensor>(), It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task Handle_PostRejoinSameFcntDifferentTime_PersistsAsNewRead()
+        {
+            // Mesmo device, fcnt=0 de novo (rejoin), mas timestamp diferente → não é duplicata.
+            var sensor = new Sensor { Id = 7, Code = "A84041691D5F1794", UserId = 42 };
+            MongoMockHelper.SetupFind(_mockSensors, sensor);
+            MongoMockHelper.SetupFind(_mockReadSensors, (ReadSensor?)null); // chave nova, sem duplicata
+
+            ReadSensor? inserted = null;
+            _mockReadSensors.Setup(c => c.InsertOneAsync(It.IsAny<ReadSensor>(), It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()))
+                .Callback<ReadSensor, InsertOneOptions?, CancellationToken>((r, _, _) => inserted = r)
+                .Returns(Task.CompletedTask);
+
+            var request = new CreateLoRaWanReadRequest
+            {
+                Code = "A84041691D5F1794",
+                Humidity = 71.3m,
+                Temperature = 21.2m,
+                ReadAt = new DateTime(2026, 7, 15, 21, 15, 4, DateTimeKind.Utc),
+                Fcnt = 0
+            };
+
+            var result = await _handler.Handle(request, CancellationToken.None);
+
+            Assert.NotNull(result);
+            Assert.NotNull(inserted);
+            var expectedTicks = new DateTime(2026, 7, 15, 21, 15, 4, DateTimeKind.Utc).ToUniversalTime().Ticks;
+            Assert.Equal($"A84041691D5F1794:0:{expectedTicks}", inserted!.IdempotencyKey);
         }
 
         [Fact]

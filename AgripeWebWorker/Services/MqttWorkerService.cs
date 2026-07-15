@@ -128,7 +128,7 @@ namespace AgripeWebWorker.Services
             var response = await mediator.Send(read, cancellationToken);
             if (response == null)
             {
-                _logger.LogWarning("Read not persisted for sensor code '{Code}': sensor not registered", read.Code);
+                // Handler já logou o motivo específico (sensor não cadastrado ou uplink duplicado).
                 return;
             }
 
