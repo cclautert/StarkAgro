@@ -5,6 +5,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AgripeWebAPI.Domain.Commands.Requests.Agronomist
 {
+    public class GetAgronomistBillingRequest : IRequest<AgronomistBillingResponse>
+    {
+    }
+
     public class GetAgronomistQueueRequest : IRequest<List<AgronomistQueueItemResponse>>
     {
         public string? Status { get; set; }

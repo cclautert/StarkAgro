@@ -24,6 +24,7 @@ import { AgronomistGuard } from './guards/agronomist.guard';
 import { AgronomistQueueComponent } from './components/agronomist-queue/agronomist-queue.component';
 import { AgronomistReviewComponent } from './components/agronomist-review/agronomist-review.component';
 import { AgronomistClientsComponent } from './components/agronomist-clients/agronomist-clients.component';
+import { AgronomistBillingComponent } from './components/agronomist/billing/agronomist-billing.component';
 
 export const routes: Routes = [
   // Login routes outside the main layout
@@ -56,6 +57,7 @@ export const routes: Routes = [
       { path: 'agronomo/fila', component: AgronomistQueueComponent, canActivate: [AuthGuard, AgronomistGuard] },
       { path: 'agronomo/laudo/:id', component: AgronomistReviewComponent, canActivate: [AuthGuard, AgronomistGuard] },
       { path: 'agronomo/clientes', component: AgronomistClientsComponent, canActivate: [AuthGuard, AgronomistGuard] },
+      { path: 'agronomo/faturamento', component: AgronomistBillingComponent, canActivate: [AuthGuard, AgronomistGuard] },
 
       // Rotas de administração (apenas super usuário)
       { path: 'admin/usuarios', component: AdminUserListComponent, canActivate: [AuthGuard, AdminGuard] },

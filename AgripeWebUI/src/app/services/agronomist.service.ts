@@ -8,6 +8,7 @@ import {
   AgronomistQueueItem,
   SignPayload
 } from '../models/agronomist.model';
+import { AgronomistBilling } from '../models/agronomist-billing.model';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +17,11 @@ export class AgronomistService {
   private baseUrl = '/api/v1/';
 
   constructor(private http: HttpClient) { }
+
+  // ── Faturamento ─────────────────────────────────────────────────────────
+  getBilling(): Observable<AgronomistBilling> {
+    return this.http.get<AgronomistBilling>(`${this.baseUrl}agronomist/billing`);
+  }
 
   // ── Fila ────────────────────────────────────────────────────────────────
   getQueue(status?: string, pageSize = 20, pageIndex = 0): Observable<AgronomistQueueItem[]> {

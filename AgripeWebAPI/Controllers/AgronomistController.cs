@@ -135,6 +135,15 @@ namespace AgripeWebAPI.Controllers
             return CustomResponse(result);
         }
 
+        [HttpGet("billing")]
+        public async Task<IActionResult> GetBilling(
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken)
+        {
+            var result = await mediator.Send(new GetAgronomistBillingRequest(), cancellationToken);
+            return CustomResponse(result);
+        }
+
         [HttpPost("clients/invite")]
         public async Task<IActionResult> InviteClient(
             [FromServices] IMediator mediator,
