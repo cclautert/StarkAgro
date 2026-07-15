@@ -41,6 +41,12 @@ namespace AgripeWebAPI.Models.Entities
         /// </summary>
         public int? DiagnosisQuotaPerMonth { get; set; }
 
+        /// <summary>
+        /// Plano mensal de laudos ao qual o produtor está associado (<see cref="DiagnosisPlan"/>).
+        /// <c>null</c> = sem plano (fatura zero; a cota cai no padrão da plataforma).
+        /// </summary>
+        public int? DiagnosisPlanId { get; set; }
+
         public DateTime? AlertsReadAt { get; set; }
     }
 }

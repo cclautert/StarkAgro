@@ -56,6 +56,7 @@ namespace AgripeWebAPI.Models
             PlatformAiSettings = database.GetCollection<PlatformAiSettings>("platform_ai_settings");
             PlantDiagnoses = database.GetCollection<PlantDiagnosis>("plant_diagnoses");
             AgronomistClients = database.GetCollection<AgronomistClient>("agronomist_clients");
+            DiagnosisPlans = database.GetCollection<DiagnosisPlan>("diagnosis_plans");
             _counters = database.GetCollection<CounterDocument>("counters");
 
             // Fotos dos laudos ficam no GridFS: o driver já traz o suporte (nenhum pacote novo),
@@ -154,6 +155,7 @@ namespace AgripeWebAPI.Models
         public virtual IMongoCollection<PlatformAiSettings> PlatformAiSettings { get; }
         public virtual IMongoCollection<PlantDiagnosis> PlantDiagnoses { get; }
         public virtual IMongoCollection<AgronomistClient> AgronomistClients { get; }
+        public virtual IMongoCollection<DiagnosisPlan> DiagnosisPlans { get; }
         public virtual IGridFSBucket DiagnosisImages { get; }
 
         public virtual async Task<int> GetNextIdAsync(string entityName, CancellationToken cancellationToken = default)

@@ -7,6 +7,7 @@ export interface AdminUser {
   isAgronomist?: boolean;
   agronomistCrea?: string | null;
   diagnosisQuotaPerMonth?: number | null;
+  diagnosisPlanId?: number | null;
   limiteInferior?: number;
   limiteSuperior?: number;
   rainThresholdMm?: number | null;

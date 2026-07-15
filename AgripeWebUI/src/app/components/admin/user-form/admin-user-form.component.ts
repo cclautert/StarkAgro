@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AdminService } from '../../../services/admin.service';
+import { DiagnosisPlan } from '../../../models/diagnosis-plan.model';
 
 @Component({
   selector: 'app-admin-user-form',
@@ -24,6 +25,7 @@ export class AdminUserFormComponent implements OnInit {
   userId: number | null = null;
   isLoading = false;
   isSaving = false;
+  plans: DiagnosisPlan[] = [];
 
   get changePassword() { return this.form.get('changePassword'); }
   get name() { return this.form.get('name'); }
@@ -39,6 +41,7 @@ export class AdminUserFormComponent implements OnInit {
       isAgronomist: [false],
       agronomistCrea: [''],
       diagnosisQuotaPerMonth: [null],
+      diagnosisPlanId: [null],
       changePassword: [false],
       password: ['', [Validators.required, Validators.minLength(8)]]
     });
@@ -47,6 +50,11 @@ export class AdminUserFormComponent implements OnInit {
     if (idParam) {
       this.isEditMode = true;
       this.userId = +idParam;
+      // Planos só são atribuídos na edição (o backend persiste o plano no update).
+      this.adminService.getDiagnosisPlans().subscribe({
+        next: (plans) => this.plans = plans,
+        error: () => { /* sem planos: o seletor fica vazio, não bloqueia o form */ }
+      });
       this.password?.clearValidators();
       this.password?.updateValueAndValidity();
       this.carregarUsuario(this.userId);
@@ -76,7 +84,8 @@ export class AdminUserFormComponent implements OnInit {
             isAdmin: user.isAdmin,
             isAgronomist: user.isAgronomist ?? false,
             agronomistCrea: user.agronomistCrea ?? '',
-            diagnosisQuotaPerMonth: user.diagnosisQuotaPerMonth ?? null
+            diagnosisQuotaPerMonth: user.diagnosisQuotaPerMonth ?? null,
+            diagnosisPlanId: user.diagnosisPlanId ?? null
           });
         } else {
           this.snackBar.open('Usuário não encontrado.', 'Fechar', { duration: 4000 });
@@ -98,13 +107,14 @@ export class AdminUserFormComponent implements OnInit {
     }
 
     this.isSaving = true;
-    const { name, email, active, isAdmin, isAgronomist, agronomistCrea, diagnosisQuotaPerMonth, changePassword, password } = this.form.value;
+    const { name, email, active, isAdmin, isAgronomist, agronomistCrea, diagnosisQuotaPerMonth, diagnosisPlanId, changePassword, password } = this.form.value;
 
     if (this.isEditMode && this.userId) {
       const payload: any = {
         name, email, active, isAdmin, isAgronomist,
         agronomistCrea: agronomistCrea || null,
-        diagnosisQuotaPerMonth: diagnosisQuotaPerMonth === '' ? null : diagnosisQuotaPerMonth
+        diagnosisQuotaPerMonth: diagnosisQuotaPerMonth === '' ? null : diagnosisQuotaPerMonth,
+        diagnosisPlanId: diagnosisPlanId === '' || diagnosisPlanId == null ? null : Number(diagnosisPlanId)
       };
       if (changePassword && password) payload.password = password;
 

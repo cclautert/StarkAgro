@@ -79,10 +79,21 @@
     </div>
 
     <div class="form-group">
-      <label for="diagnosisQuotaPerMonth">Laudos por mês (plano)</label>
+      <label for="diagnosisQuotaPerMonth">Cota de laudos por mês</label>
       <input id="diagnosisQuotaPerMonth" type="number" min="0" formControlName="diagnosisQuotaPerMonth"
              placeholder="Vazio = usa o padrão da plataforma" />
-      <small class="form-hint">0 = ilimitado. Cada laudo consome uma análise paga.</small>
+      <small class="form-hint">Limite rígido (bloqueia). 0 = ilimitado. Cada laudo consome uma análise paga.</small>
+    </div>
+
+    <div class="form-group" *ngIf="isEditMode">
+      <label for="diagnosisPlanId">Plano de cobrança</label>
+      <select id="diagnosisPlanId" formControlName="diagnosisPlanId">
+        <option [ngValue]="null">Sem plano (não fatura)</option>
+        <option *ngFor="let p of plans" [ngValue]="p.id" [disabled]="!p.active">
+          {{ p.name }}{{ p.active ? '' : ' (inativo)' }}
+        </option>
+      </select>
+      <small class="form-hint">Define o que o produtor paga: mensalidade + excedente. Gerencie em Administração → Planos.</small>
     </div>
 
     <div class="form-actions">

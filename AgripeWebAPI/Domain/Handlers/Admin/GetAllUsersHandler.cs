@@ -29,6 +29,7 @@ namespace AgripeWebAPI.Domain.Handlers.Admin
                 IsAgronomist = u.IsAgronomist,
                 AgronomistCrea = u.AgronomistCrea,
                 DiagnosisQuotaPerMonth = u.DiagnosisQuotaPerMonth,
+                DiagnosisPlanId = u.DiagnosisPlanId,
                 LimiteInferior = u.LimiteInferior,
                 LimiteSuperior = u.LimiteSuperior,
                 RainThresholdMm = u.RainThresholdMm,

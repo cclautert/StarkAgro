@@ -16,6 +16,7 @@ import { GlobalConfigComponent } from './components/global-config/global-config.
 import { AdminUserListComponent } from './components/admin/user-list/admin-user-list.component';
 import { AdminUserFormComponent } from './components/admin/user-form/admin-user-form.component';
 import { AdminAiSettingsComponent } from './components/admin/ai-settings/admin-ai-settings.component';
+import { AdminPlansComponent } from './components/admin/plans/admin-plans.component';
 import { DiagnosisListComponent } from './components/diagnosis-list/diagnosis-list.component';
 import { DiagnosisNewComponent } from './components/diagnosis-new/diagnosis-new.component';
 import { DiagnosisDetailComponent } from './components/diagnosis-detail/diagnosis-detail.component';
@@ -61,6 +62,7 @@ export const routes: Routes = [
       { path: 'admin/usuarios/novo', component: AdminUserFormComponent, canActivate: [AuthGuard, AdminGuard] },
       { path: 'admin/usuarios/editar/:id', component: AdminUserFormComponent, canActivate: [AuthGuard, AdminGuard] },
       { path: 'admin/ia', component: AdminAiSettingsComponent, canActivate: [AuthGuard, AdminGuard] },
+      { path: 'admin/planos', component: AdminPlansComponent, canActivate: [AuthGuard, AdminGuard] },
 
       // Default child route inside layout
       { path: '', redirectTo: 'home', pathMatch: 'full' }

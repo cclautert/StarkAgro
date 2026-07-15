@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AdminUser } from '../models/admin-user.model';
 import { PlatformAiSettings } from '../models/platform-ai-settings.model';
+import { DiagnosisPlan } from '../models/diagnosis-plan.model';
 
 @Injectable({ providedIn: 'root' })
 export class AdminService {
@@ -35,5 +36,21 @@ export class AdminService {
 
   updateAiSettings(data: PlatformAiSettings): Observable<void> {
     return this.http.put<void>(`${this.baseUrl}ai-settings`, data);
+  }
+
+  getDiagnosisPlans(): Observable<DiagnosisPlan[]> {
+    return this.http.get<DiagnosisPlan[]>(`${this.baseUrl}diagnosis-plans`);
+  }
+
+  createDiagnosisPlan(data: Partial<DiagnosisPlan>): Observable<DiagnosisPlan> {
+    return this.http.post<DiagnosisPlan>(`${this.baseUrl}diagnosis-plans`, data);
+  }
+
+  updateDiagnosisPlan(id: number, data: Partial<DiagnosisPlan>): Observable<DiagnosisPlan> {
+    return this.http.put<DiagnosisPlan>(`${this.baseUrl}diagnosis-plans/${id}`, data);
+  }
+
+  deleteDiagnosisPlan(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}diagnosis-plans/${id}`);
   }
 }

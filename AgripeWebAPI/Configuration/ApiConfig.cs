@@ -78,6 +78,7 @@ namespace AgripeWebAPI.Configuration
             services.AddScoped<IDiagnosisAccessService, DiagnosisAccessService>();
             services.AddScoped<IDiagnosisQuotaService, DiagnosisQuotaService>();
             services.AddScoped<IDiagnosisCostService, DiagnosisCostService>();
+            services.AddScoped<IDiagnosisBillingService, DiagnosisBillingService>();
 
             // E-mail: até agora o AgripeWeb não enviava nenhum (o AlertEmailService era um NoOp).
             services.Configure<SmtpSettings>(configuration.GetSection(SmtpSettings.SectionName));

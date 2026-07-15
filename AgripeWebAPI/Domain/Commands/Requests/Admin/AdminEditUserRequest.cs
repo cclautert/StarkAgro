@@ -27,5 +27,8 @@ namespace AgripeWebAPI.Domain.Commands.Requests.Admin
 
         /// <summary>Laudos por mês do plano deste produtor. 0 ou nulo = ilimitado.</summary>
         public int? DiagnosisQuotaPerMonth { get; set; }
+
+        /// <summary>Plano mensal de laudos atribuído ao produtor. null = sem plano.</summary>
+        public int? DiagnosisPlanId { get; set; }
     }
 }

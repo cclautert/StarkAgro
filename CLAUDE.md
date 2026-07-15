@@ -45,6 +45,7 @@ Guide for Claude Code and coding agents in this repository.
 | Processamento em background | Lógica rodada pelo worker é **serviço puro**, não handler MediatR — `WorkerUserContext.UserId` é `null` e o assembly scan exporia o handler |
 | Chaves de IA | Ficam no Mongo (`platform_ai_settings`, tela `/admin/ia`), **não** em `appsettings`. `CropHealthEnabled` é o kill-switch do custo por foto |
 | Custo de IA por laudo | Guardado em **centavos inteiros** (`PlatformAiSettings.CropHealthCostCents`, config; `PlantDiagnosis.AiCostCents`, congelado no processamento) — dinheiro em `double` acumula erro. O processador grava o custo em **todos** os desfechos pagos (completo/recusado/só-classificador); `DiagnosisCostService` soma o mês e a tela `/admin/ia` mostra o gasto |
+| Cobrança / planos | Preços **nunca** cravados em código: `DiagnosisPlan` (coleção `diagnosis_plans`, tela `/admin/planos`) tem mensalidade + laudos inclusos + preço do excedente, tudo em **centavos inteiros**. `User.DiagnosisPlanId` associa o produtor. `DiagnosisBillingService` calcula a fatura (mensalidade + excedente) — só **mostra**, não cobra (gateway de pagamento é etapa futura). **Cota (bloqueio) e plano (cobrança) são coisas separadas**: o excedente é cobrado, não bloqueado |
 | Laudo gerado por LLM | O disclaimer legal é garantido em código (`EnsureDisclaimer`), nunca só pelo prompt — truncamento ou modelo teimoso o removeria |
 | Kindwise crop.health | `datetime` exige offset (`+00:00`; `Z` e `ToString("o")` dão 400); **não** envie `similar_images: false`; a resposta de sucesso é **201** |
 | PDF (QuestPDF) | Licença **Community** declarada em `ApiConfig` — gratuita só até US$ 1 mi de receita anual. Não dá para asserir texto nos bytes do PDF (fonte subsetada): teste o conteúdo via `DiagnosisPdfService.FooterLines`/`StatusLabel` |
@@ -123,7 +124,7 @@ Controllers delegate to handlers; **no business logic in controllers.**
 ### MongoDB
 
 - `agpDBContext` → `IMongoCollection<T>`  
-- Collections: `users`, `pivots`, `sensors`, `read_sensors`, `plant_diagnoses`, `agronomist_clients`, `counters`  
+- Collections: `users`, `pivots`, `sensors`, `read_sensors`, `plant_diagnoses`, `agronomist_clients`, `diagnosis_plans`, `counters`  
 - `agronomist_clients` tem **índice único parcial** em `{ClientUserId}` filtrando `Status: "Active"` — o banco garante *um agrônomo ativo por produtor*  
 - Binários: bucket GridFS `diagnosis_images` (`agpDBContext.DiagnosisImages`) — fotos dos laudos; **nunca** base64 no documento  
 - Sequential `int` IDs: `counters` + `GetNextIdAsync`  

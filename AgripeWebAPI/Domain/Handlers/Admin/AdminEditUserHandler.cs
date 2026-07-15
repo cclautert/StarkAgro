@@ -47,6 +47,7 @@ namespace AgripeWebAPI.Domain.Handlers.Admin
             user.IsAgronomist = request.IsAgronomist;
             user.AgronomistCrea = request.AgronomistCrea;
             user.DiagnosisQuotaPerMonth = request.DiagnosisQuotaPerMonth;
+            user.DiagnosisPlanId = request.DiagnosisPlanId;
 
             if (!string.IsNullOrWhiteSpace(request.Password))
                 user.Password = _passwordHasher.HashPassword(request.Password);
@@ -63,6 +64,7 @@ namespace AgripeWebAPI.Domain.Handlers.Admin
                 IsAgronomist = user.IsAgronomist,
                 AgronomistCrea = user.AgronomistCrea,
                 DiagnosisQuotaPerMonth = user.DiagnosisQuotaPerMonth,
+                DiagnosisPlanId = user.DiagnosisPlanId,
                 LimiteInferior = user.LimiteInferior,
                 LimiteSuperior = user.LimiteSuperior,
                 RainThresholdMm = user.RainThresholdMm,

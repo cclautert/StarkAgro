@@ -93,5 +93,49 @@ namespace AgripeWebAPI.Controllers
             await mediator.Send(command, cancellationToken);
             return CustomResponse(null, HttpStatusCode.NoContent);
         }
+
+        [HttpGet("diagnosis-plans")]
+        public async Task<ActionResult<List<DiagnosisPlanResponse>>> GetDiagnosisPlans(
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken)
+        {
+            if (!GetCurrentUserIsAdmin()) return StatusCode(403, new { errors = new[] { "Acesso negado." } });
+            return CustomResponse(await mediator.Send(new GetDiagnosisPlansRequest(), cancellationToken));
+        }
+
+        [HttpPost("diagnosis-plans")]
+        public async Task<ActionResult<DiagnosisPlanResponse>> CreateDiagnosisPlan(
+            [FromServices] IMediator mediator,
+            [FromBody] CreateDiagnosisPlanRequest command,
+            CancellationToken cancellationToken)
+        {
+            if (!GetCurrentUserIsAdmin()) return StatusCode(403, new { errors = new[] { "Acesso negado." } });
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
+            return CustomResponse(await mediator.Send(command, cancellationToken), HttpStatusCode.Created);
+        }
+
+        [HttpPut("diagnosis-plans/{id}")]
+        public async Task<ActionResult<DiagnosisPlanResponse>> UpdateDiagnosisPlan(
+            [FromServices] IMediator mediator,
+            [FromRoute] int id,
+            [FromBody] UpdateDiagnosisPlanRequest command,
+            CancellationToken cancellationToken)
+        {
+            if (!GetCurrentUserIsAdmin()) return StatusCode(403, new { errors = new[] { "Acesso negado." } });
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
+            command.Id = id;
+            return CustomResponse(await mediator.Send(command, cancellationToken));
+        }
+
+        [HttpDelete("diagnosis-plans/{id}")]
+        public async Task<ActionResult> DeleteDiagnosisPlan(
+            [FromServices] IMediator mediator,
+            [FromRoute] int id,
+            CancellationToken cancellationToken)
+        {
+            if (!GetCurrentUserIsAdmin()) return StatusCode(403, new { errors = new[] { "Acesso negado." } });
+            await mediator.Send(new DeleteDiagnosisPlanRequest { Id = id }, cancellationToken);
+            return CustomResponse(null, HttpStatusCode.NoContent);
+        }
     }
 }
