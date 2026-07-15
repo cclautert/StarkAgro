@@ -2,6 +2,7 @@ using AgripeWebAPI.Domain.Commands.Requests.Admin;
 using AgripeWebAPI.Domain.Handlers.Admin;
 using AgripeWebAPI.Models;
 using AgripeWebAPI.Models.Entities;
+using AgripeWebAPI.Services.Diagnosis;
 using AgripeWebAPI.Tests.Helpers;
 using MongoDB.Driver;
 using Moq;
@@ -10,6 +11,14 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Admin
 {
     public class GetPlatformAiSettingsHandlerTests
     {
+        private static Mock<IDiagnosisCostService> CostService(int monthCost = 0)
+        {
+            var cost = new Mock<IDiagnosisCostService>();
+            cost.Setup(c => c.GetCurrentMonthCostCentsAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(monthCost);
+            return cost;
+        }
+
         [Fact]
         public async Task Handle_Returns_Existing_Settings()
         {
@@ -22,17 +31,20 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Admin
                 ActiveProvider = "anthropic",
                 AnthropicKey = "sk-ant-test",
                 AnthropicModel = "claude-sonnet-4-6",
-                GeminiKey = null
+                GeminiKey = null,
+                CropHealthCostCents = 5
             };
             MongoMockHelper.SetupFind(mockSettings, settings);
             mockDbContext.Setup(c => c.PlatformAiSettings).Returns(mockSettings.Object);
 
-            var handler = new GetPlatformAiSettingsHandler(mockDbContext.Object);
+            var handler = new GetPlatformAiSettingsHandler(mockDbContext.Object, CostService(monthCost: 42).Object);
             var result = await handler.Handle(new GetPlatformAiSettingsRequest(), default);
 
             Assert.NotNull(result);
             Assert.Equal("anthropic", result.ActiveProvider);
             Assert.Equal("sk-ant-test", result.AnthropicKey);
+            Assert.Equal(5, result.CropHealthCostCents);
+            Assert.Equal(42, result.CurrentMonthAiCostCents);
         }
 
         [Fact]
@@ -44,11 +56,13 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Admin
             MongoMockHelper.SetupFind<PlatformAiSettings>(mockSettings, null);
             mockDbContext.Setup(c => c.PlatformAiSettings).Returns(mockSettings.Object);
 
-            var handler = new GetPlatformAiSettingsHandler(mockDbContext.Object);
+            var handler = new GetPlatformAiSettingsHandler(mockDbContext.Object, CostService(monthCost: 7).Object);
             var result = await handler.Handle(new GetPlatformAiSettingsRequest(), default);
 
             Assert.NotNull(result);
             Assert.Equal("gemini", result.ActiveProvider);
+            // Mesmo sem settings gravadas, o gasto do mês continua visível.
+            Assert.Equal(7, result.CurrentMonthAiCostCents);
         }
     }
 }

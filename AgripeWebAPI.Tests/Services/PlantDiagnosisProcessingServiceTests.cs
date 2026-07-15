@@ -7,6 +7,7 @@ using AgripeWebAPI.Services.Diagnosis;
 using AgripeWebAPI.Tests.Helpers;
 using Microsoft.Extensions.Logging.Abstractions;
 using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using Moq;
 
@@ -130,6 +131,65 @@ namespace AgripeWebAPI.Tests.Services
 
             h.Push.Verify(p => p.SendAsync(
                 OwnerUserId, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task ProcessAsync_RecordsTheKindwiseCostOnTheDiagnosis()
+        {
+            // O custo da chamada paga tem de ficar registrado no laudo — é o que torna o gasto
+            // de IA visível e auditável. Custo distinto do padrão (5) para o teste ser específico.
+            var settings = Settings();
+            settings.CropHealthCostCents = 5;
+            var h = Build(settings, CropResult());
+
+            UpdateDefinition<PlantDiagnosis>? captured = null;
+            h.Diagnoses.Setup(c => c.UpdateOneAsync(
+                    It.IsAny<FilterDefinition<PlantDiagnosis>>(),
+                    It.IsAny<UpdateDefinition<PlantDiagnosis>>(),
+                    It.IsAny<UpdateOptions>(),
+                    It.IsAny<CancellationToken>()))
+                .Callback<FilterDefinition<PlantDiagnosis>, UpdateDefinition<PlantDiagnosis>, UpdateOptions, CancellationToken>(
+                    (_, update, _, _) => captured = update)
+                .ReturnsAsync(new UpdateResult.Acknowledged(1, 1, null));
+
+            await h.Service.ProcessAsync(Diagnosis(), CancellationToken.None);
+
+            Assert.NotNull(captured);
+            var rendered = Render(captured!);
+            Assert.Equal(5, rendered["$set"]["AiCostCents"].AsInt32);
+        }
+
+        [Fact]
+        public async Task ProcessAsync_RejectedPhoto_StillRecordsTheCost()
+        {
+            // A foto recusada (não é planta) também consumiu a chamada paga — o custo tem de
+            // aparecer, senão o gasto real fica subestimado.
+            var settings = Settings();
+            settings.CropHealthCostCents = 4;
+            var h = Build(settings, CropResult(isPlant: false));
+
+            UpdateDefinition<PlantDiagnosis>? captured = null;
+            h.Diagnoses.Setup(c => c.UpdateOneAsync(
+                    It.IsAny<FilterDefinition<PlantDiagnosis>>(),
+                    It.IsAny<UpdateDefinition<PlantDiagnosis>>(),
+                    It.IsAny<UpdateOptions>(),
+                    It.IsAny<CancellationToken>()))
+                .Callback<FilterDefinition<PlantDiagnosis>, UpdateDefinition<PlantDiagnosis>, UpdateOptions, CancellationToken>(
+                    (_, update, _, _) => captured = update)
+                .ReturnsAsync(new UpdateResult.Acknowledged(1, 1, null));
+
+            var result = await h.Service.ProcessAsync(Diagnosis(), CancellationToken.None);
+
+            Assert.Equal(DiagnosisProcessingOutcome.RejectedLowConfidence, result.Outcome);
+            Assert.NotNull(captured);
+            Assert.Equal(4, Render(captured!)["$set"]["AiCostCents"].AsInt32);
+        }
+
+        private static BsonDocument Render(UpdateDefinition<PlantDiagnosis> update)
+        {
+            var serializer = BsonSerializer.SerializerRegistry.GetSerializer<PlantDiagnosis>();
+            return update.Render(new RenderArgs<PlantDiagnosis>(serializer, BsonSerializer.SerializerRegistry))
+                .AsBsonDocument;
         }
 
         [Fact]

@@ -151,6 +151,13 @@ namespace AgripeWebAPI.Models.Entities
         public string? CropHealthRawJson { get; set; }
         public string? CropHealthProvider { get; set; }
 
+        /// <summary>
+        /// Custo da chamada ao classificador para <b>este</b> laudo, em centavos, congelado no
+        /// momento do processamento (o preço do plano pode mudar depois). <c>null</c> = a foto
+        /// nunca chegou a ser classificada (falhou antes) ou é anterior a este rastreamento.
+        /// </summary>
+        public int? AiCostCents { get; set; }
+
         // ── Laudo (LLM) ───────────────────────────────────────────────────────
         /// <summary>
         /// Laudo redigido pela IA. <b>Imutável</b> — a edição do agrônomo vive em outro campo

@@ -14,5 +14,14 @@ namespace AgripeWebAPI.Domain.Commands.Responses.Admin
         public string? CropHealthKey { get; set; }
         public bool CropHealthEnabled { get; set; }
         public int DefaultDiagnosisQuotaPerMonth { get; set; }
+
+        /// <summary>Custo configurado por análise do classificador, em centavos.</summary>
+        public int CropHealthCostCents { get; set; }
+
+        /// <summary>
+        /// Custo de IA já incorrido no mês corrente, em centavos (só leitura). Torna o gasto
+        /// visível onde o admin controla o botão de custo — sem tela nova.
+        /// </summary>
+        public int CurrentMonthAiCostCents { get; set; }
     }
 }

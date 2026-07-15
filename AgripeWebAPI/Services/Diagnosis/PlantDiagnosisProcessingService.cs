@@ -126,15 +126,19 @@ namespace AgripeWebAPI.Services.Diagnosis
                     DiagnosisProcessingOutcome.Failed, "O serviço de diagnóstico não respondeu.");
             }
 
+            // A chamada paga ao classificador já aconteceu — o custo incorre aqui, qualquer que
+            // seja o desfecho (recusa, falha do laudo ou sucesso). Congela-se agora.
+            var costCents = settings.CropHealthCostCents;
+
             if (!cropResult.IsPlant)
             {
-                await RejectAsync(diagnosis, cropResult, NotAPlantHint, cancellationToken);
+                await RejectAsync(diagnosis, cropResult, NotAPlantHint, costCents, cancellationToken);
                 return new DiagnosisProcessingResult(DiagnosisProcessingOutcome.RejectedLowConfidence, NotAPlantHint);
             }
 
             if (cropResult.TopProbability < MinimumProbability)
             {
-                await RejectAsync(diagnosis, cropResult, LowConfidenceHint, cancellationToken);
+                await RejectAsync(diagnosis, cropResult, LowConfidenceHint, costCents, cancellationToken);
                 return new DiagnosisProcessingResult(DiagnosisProcessingOutcome.RejectedLowConfidence, LowConfidenceHint);
             }
 
@@ -176,13 +180,13 @@ namespace AgripeWebAPI.Services.Diagnosis
             {
                 // O diagnóstico do classificador já foi pago — preserva-o para a retentativa
                 // não precisar chamar o Kindwise de novo.
-                await SaveCropResultAsync(diagnosis, cropResult, snapshot, cancellationToken);
+                await SaveCropResultAsync(diagnosis, cropResult, snapshot, costCents, cancellationToken);
                 return new DiagnosisProcessingResult(
                     DiagnosisProcessingOutcome.Failed, "A IA não conseguiu redigir o laudo.");
             }
 
             await CompleteAsync(
-                diagnosis, cropResult, snapshot, EnsureDisclaimer(report), settings, model, cancellationToken);
+                diagnosis, cropResult, snapshot, EnsureDisclaimer(report), settings, model, costCents, cancellationToken);
 
             var topDisease = cropResult.Diseases.FirstOrDefault()?.Name ?? "resultado disponível";
 
@@ -219,6 +223,7 @@ namespace AgripeWebAPI.Services.Diagnosis
             string report,
             PlatformAiSettings settings,
             string? model,
+            int costCents,
             CancellationToken cancellationToken)
         {
             var now = DateTime.UtcNow;
@@ -236,6 +241,7 @@ namespace AgripeWebAPI.Services.Diagnosis
                 .Set(d => d.TopProbability, cropResult.TopProbability)
                 .Set(d => d.CropHealthRawJson, cropResult.RawJson)
                 .Set(d => d.CropHealthProvider, "kindwise")
+                .Set(d => d.AiCostCents, costCents)
                 .Set(d => d.ContextSnapshot, snapshot)
                 .Set(d => d.AiReportMarkdown, report)
                 .Set(d => d.AiProvider, settings.ActiveProvider)
@@ -265,6 +271,7 @@ namespace AgripeWebAPI.Services.Diagnosis
             PlantDiagnosis diagnosis,
             CropDiagnosisResult cropResult,
             string reason,
+            int costCents,
             CancellationToken cancellationToken)
         {
             var now = DateTime.UtcNow;
@@ -276,6 +283,7 @@ namespace AgripeWebAPI.Services.Diagnosis
                 .Set(d => d.TopProbability, cropResult.TopProbability)
                 .Set(d => d.CropHealthRawJson, cropResult.RawJson)
                 .Set(d => d.CropHealthProvider, "kindwise")
+                .Set(d => d.AiCostCents, costCents)
                 .Set(d => d.FailureReason, reason)
                 .Set(d => d.ProcessedAt, now)
                 .Set(d => d.UpdatedAt, now)
@@ -302,6 +310,7 @@ namespace AgripeWebAPI.Services.Diagnosis
             PlantDiagnosis diagnosis,
             CropDiagnosisResult cropResult,
             PlantDiagnosisContextSnapshot snapshot,
+            int costCents,
             CancellationToken cancellationToken)
         {
             var update = Builders<PlantDiagnosis>.Update
@@ -309,6 +318,7 @@ namespace AgripeWebAPI.Services.Diagnosis
                 .Set(d => d.TopProbability, cropResult.TopProbability)
                 .Set(d => d.CropHealthRawJson, cropResult.RawJson)
                 .Set(d => d.CropHealthProvider, "kindwise")
+                .Set(d => d.AiCostCents, costCents)
                 .Set(d => d.ContextSnapshot, snapshot);
 
             await _dbContext.PlantDiagnoses.UpdateOneAsync(

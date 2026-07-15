@@ -24,5 +24,15 @@ namespace AgripeWebAPI.Models.Entities
         /// <c>0</c> = ilimitado (o comportamento de antes desta configuração existir).
         /// </summary>
         public int DefaultDiagnosisQuotaPerMonth { get; set; } = 0;
+
+        /// <summary>
+        /// Custo de uma análise do classificador (crop.health / Kindwise), em <b>centavos</b>.
+        /// <para>
+        /// Guardado em centavos inteiros de propósito — dinheiro em <c>double</c> acumula erro, e
+        /// o projeto já tropeçou em cultura/decimal. O Kindwise cobra ~€0,01–0,05 por foto; o
+        /// padrão 3 (€0,03) fica no meio da faixa. O admin ajusta conforme o plano contratado.
+        /// </para>
+        /// </summary>
+        public int CropHealthCostCents { get; set; } = 3;
     }
 }
