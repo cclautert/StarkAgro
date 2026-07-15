@@ -29,7 +29,8 @@ namespace AgripeWebAPI.Domain.Handlers.Admin
                 ActiveProvider = request.ActiveProvider,
                 CropHealthKey = request.CropHealthKey,
                 CropHealthEnabled = request.CropHealthEnabled,
-                DefaultDiagnosisQuotaPerMonth = request.DefaultDiagnosisQuotaPerMonth
+                DefaultDiagnosisQuotaPerMonth = request.DefaultDiagnosisQuotaPerMonth,
+                CropHealthCostCents = request.CropHealthCostCents
             };
 
             await _dbContext.PlatformAiSettings.ReplaceOneAsync(

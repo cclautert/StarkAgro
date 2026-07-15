@@ -21,6 +21,9 @@ export class AdminAiSettingsComponent implements OnInit {
   isLoading = true;
   isSaving = false;
 
+  /** Gasto de IA no mês corrente, em centavos (só leitura, vem do backend). */
+  currentMonthAiCostCents = 0;
+
   showGeminiKey = false;
   showOpenAiKey = false;
   showAnthropicKey = false;
@@ -41,7 +44,8 @@ export class AdminAiSettingsComponent implements OnInit {
       anthropicModel: ['claude-sonnet-4-6'],
       cropHealthKey: [''],
       cropHealthEnabled: [false],
-      defaultDiagnosisQuotaPerMonth: [0]
+      defaultDiagnosisQuotaPerMonth: [0],
+      cropHealthCostCents: [3, [Validators.min(0)]]
     });
 
     this.adminService.getAiSettings().subscribe({
@@ -56,8 +60,10 @@ export class AdminAiSettingsComponent implements OnInit {
           anthropicModel: settings.anthropicModel ?? 'claude-sonnet-4-6',
           cropHealthKey: settings.cropHealthKey ?? '',
           cropHealthEnabled: settings.cropHealthEnabled ?? false,
-          defaultDiagnosisQuotaPerMonth: settings.defaultDiagnosisQuotaPerMonth ?? 0
+          defaultDiagnosisQuotaPerMonth: settings.defaultDiagnosisQuotaPerMonth ?? 0,
+          cropHealthCostCents: settings.cropHealthCostCents ?? 3
         });
+        this.currentMonthAiCostCents = settings.currentMonthAiCostCents ?? 0;
         this.isLoading = false;
       },
       error: () => {
@@ -81,7 +87,8 @@ export class AdminAiSettingsComponent implements OnInit {
       anthropicModel: this.form.value.anthropicModel || null,
       cropHealthKey: this.form.value.cropHealthKey || null,
       cropHealthEnabled: !!this.form.value.cropHealthEnabled,
-      defaultDiagnosisQuotaPerMonth: Number(this.form.value.defaultDiagnosisQuotaPerMonth) || 0
+      defaultDiagnosisQuotaPerMonth: Number(this.form.value.defaultDiagnosisQuotaPerMonth) || 0,
+      cropHealthCostCents: Number(this.form.value.cropHealthCostCents) || 0
     };
 
     this.adminService.updateAiSettings(payload).subscribe({

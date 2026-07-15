@@ -28,7 +28,8 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Admin
             {
                 ActiveProvider = "openai",
                 OpenAiKey = "sk-test",
-                OpenAiModel = "gpt-4o"
+                OpenAiModel = "gpt-4o",
+                CropHealthCostCents = 5
             };
 
             var result = await handler.Handle(request, default);
@@ -36,7 +37,8 @@ namespace AgripeWebAPI.Tests.Domain.Handlers.Admin
             Assert.True(result);
             mockSettings.Verify(c => c.ReplaceOneAsync(
                 It.IsAny<FilterDefinition<PlatformAiSettings>>(),
-                It.Is<PlatformAiSettings>(s => s.Id == 1 && s.ActiveProvider == "openai" && s.OpenAiKey == "sk-test"),
+                It.Is<PlatformAiSettings>(s => s.Id == 1 && s.ActiveProvider == "openai"
+                    && s.OpenAiKey == "sk-test" && s.CropHealthCostCents == 5),
                 It.Is<ReplaceOptions>(o => o.IsUpsert == true),
                 It.IsAny<CancellationToken>()), Times.Once);
         }

@@ -13,4 +13,10 @@ export interface PlatformAiSettings {
 
   /** Cota padrão de laudos/mês. 0 = ilimitado. */
   defaultDiagnosisQuotaPerMonth?: number;
+
+  /** Custo por análise do classificador, em centavos (dinheiro em inteiro, sem float). */
+  cropHealthCostCents?: number;
+
+  /** Custo de IA já gasto no mês corrente, em centavos (só leitura). */
+  readonly currentMonthAiCostCents?: number;
 }

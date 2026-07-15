@@ -19,6 +19,10 @@ namespace AgripeWebAPI.Domain.Commands.Requests.Admin
         /// <summary>Cota padrão de laudos/mês. 0 = ilimitado.</summary>
         public int DefaultDiagnosisQuotaPerMonth { get; set; }
 
+        /// <summary>Custo por análise do classificador, em centavos (evita float em dinheiro).</summary>
+        [Range(0, 100000, ErrorMessage = "CropHealthCostCents deve estar entre 0 e 100000.")]
+        public int CropHealthCostCents { get; set; } = 3;
+
         [Required]
         [RegularExpression("^(openai|anthropic|gemini)$", ErrorMessage = "ActiveProvider deve ser 'openai', 'anthropic' ou 'gemini'.")]
         public string ActiveProvider { get; set; } = "gemini";
