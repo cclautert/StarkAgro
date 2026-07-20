@@ -122,8 +122,9 @@ Controllers delegate to handlers; **no business logic in controllers.**
 ### MongoDB
 
 - `agpDBContext` → `IMongoCollection<T>`  
-- Collections: `users`, `pivots`, `sensors`, `read_sensors`, `plant_diagnoses`, `agronomist_clients`, `diagnosis_plans`, `counters`  
+- Collections: `users`, `pivots`, `sensors`, `read_sensors`, `plant_diagnoses`, `agronomist_clients`, `diagnosis_plans`, `revendas`, `revenda_memberships`, `counters`  
 - `agronomist_clients` tem **índice único parcial** em `{ClientUserId}` filtrando `Status: "Active"` — o banco garante *um agrônomo ativo por produtor*  
+- `revenda_memberships` (vínculo revenda↔membro, papéis `Manager`/`Agronomist`/`Client`) espelha `agronomist_clients`, com **índice único parcial** em `{MemberUserId}` filtrando `Status: "Active" AND MemberRole: "Client"` — *um produtor ativo por revenda*. Revenda/membership são geridos pelo **admin** (não são dados por-tenant): CRUD em `AdminController` (`v1/admin/revendas`), sem filtro por `_currentUser.UserId`, igual a `diagnosis_plans`  
 - Binários: bucket GridFS `diagnosis_images` (`agpDBContext.DiagnosisImages`) — fotos dos laudos; **nunca** base64 no documento  
 - Sequential `int` IDs: `counters` + `GetNextIdAsync`  
 - Config: `appsettings.*.json` → section `MongoDb`  
