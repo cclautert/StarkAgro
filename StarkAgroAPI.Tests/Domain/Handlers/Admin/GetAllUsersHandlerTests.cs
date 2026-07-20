@@ -18,7 +18,7 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Admin
 
             var users = new List<User>
             {
-                new User { Id = 1, Name = "Alice", Email = "alice@example.com", Active = true, IsAdmin = true },
+                new User { Id = 1, Name = "Alice", Email = "alice@example.com", Active = true, Roles = { UserRole.Admin } },
                 new User { Id = 2, Name = "Bob",   Email = "bob@example.com",   Active = false }
             };
             MongoMockHelper.SetupFindList(mockUsers, users);

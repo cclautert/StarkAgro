@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace StarkAgroAPI.Models.Entities
 {
@@ -16,17 +17,41 @@ namespace StarkAgroAPI.Models.Entities
         public string? WebPushSubscriptionJson { get; set; }
         public List<string> WebPushSubscriptions { get; set; } = new();
         public int? UplinkIntervalSeconds { get; set; } = 10800;
-        public bool IsAdmin { get; set; } = false;
+
+        /// <summary>
+        /// Papéis do usuário (ver <see cref="UserRole"/>). É a fonte da verdade — substitui os
+        /// antigos booleans <c>IsAdmin</c>/<c>IsAgronomist</c>. Documentos gravados no formato
+        /// antigo são convertidos no boot pela migração idempotente.
+        /// </summary>
+        public List<string> Roles { get; set; } = new();
+
+        /// <summary>Administrador da plataforma. Computado sobre <see cref="Roles"/>.</summary>
+        [BsonIgnore]
+        public bool IsAdmin => Roles.Contains(UserRole.Admin);
 
         /// <summary>
         /// Engenheiro agrônomo: revisa e assina os laudos dos clientes vinculados a ele.
-        /// <para>
-        /// É um bool paralelo ao <see cref="IsAdmin"/> de propósito — reusa toda a plumbing de
-        /// claim/guard que já existe. <b>Dívida registrada:</b> quando aparecer o 3º papel,
-        /// colapsar os dois booleans em <c>Roles: List&lt;string&gt;</c> de uma vez.
-        /// </para>
+        /// Computado sobre <see cref="Roles"/>.
         /// </summary>
-        public bool IsAgronomist { get; set; } = false;
+        [BsonIgnore]
+        public bool IsAgronomist => Roles.Contains(UserRole.Agronomist);
+
+        /// <summary>Gestor de uma revenda. Computado sobre <see cref="Roles"/>.</summary>
+        [BsonIgnore]
+        public bool IsResellerManager => Roles.Contains(UserRole.ResellerManager);
+
+        /// <summary>Adiciona ou remove um papel sem duplicar. Não persiste sozinho.</summary>
+        public void SetRole(string role, bool enabled)
+        {
+            if (enabled)
+            {
+                if (!Roles.Contains(role)) Roles.Add(role);
+            }
+            else
+            {
+                Roles.Remove(role);
+            }
+        }
 
         /// <summary>Registro no CREA, exibido na assinatura do laudo.</summary>
         public string? AgronomistCrea { get; set; }

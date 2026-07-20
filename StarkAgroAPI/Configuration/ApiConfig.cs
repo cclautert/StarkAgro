@@ -9,6 +9,7 @@ using StarkAgroAPI.Services.Forecast;
 using StarkAgroAPI.Services.LoRaWan;
 using StarkAgroAPI.Services.PushNotifications;
 using Microsoft.AspNetCore.RateLimiting;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using System.Reflection;
 using System.Text.Json;
@@ -98,6 +99,7 @@ namespace StarkAgroAPI.Configuration
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("Agronomist", policy => policy.RequireClaim("isAgronomist", "true"));
+                options.AddPolicy("ResellerManager", policy => policy.RequireClaim("isResellerManager", "true"));
             });
 
             services.AddControllers()
@@ -241,8 +243,59 @@ namespace StarkAgroAPI.Configuration
             });
 
             _ = Task.Run(() => SeedMongoDatabase(app.ApplicationServices));
-            _ = Task.Run(() => SeedAdminUserAsync(app.ApplicationServices));
+            _ = Task.Run(async () =>
+            {
+                // Migra os papéis (bools legados -> Roles) ANTES de semear/promover o admin,
+                // que agora manipula Roles.
+                await MigrateUserRolesAsync(app.ApplicationServices);
+                await SeedAdminUserAsync(app.ApplicationServices);
+            });
             _ = Task.Run(() => SeedPlatformAiSettingsAsync(app.ApplicationServices));
+        }
+
+        /// <summary>
+        /// Converte os documentos de usuário gravados no formato antigo (campos booleanos
+        /// <c>IsAdmin</c>/<c>IsAgronomist</c>) para o novo <c>Roles</c>. Idempotente: só toca em
+        /// documentos sem <c>Roles</c> (ausente ou vazio). Lê os campos legados via BsonDocument
+        /// porque a entidade <c>User</c> não os expõe mais como propriedade persistida.
+        /// </summary>
+        private static async Task MigrateUserRolesAsync(IServiceProvider serviceProvider)
+        {
+            try
+            {
+                using var scope = serviceProvider.CreateScope();
+                var dbContext = scope.ServiceProvider.GetRequiredService<agpDBContext>();
+                var raw = dbContext.Users.Database.GetCollection<BsonDocument>("users");
+
+                // Documentos ainda sem Roles preenchido (ausente ou array vazio).
+                var pending = Builders<BsonDocument>.Filter.Or(
+                    Builders<BsonDocument>.Filter.Exists("Roles", false),
+                    Builders<BsonDocument>.Filter.Eq("Roles", new BsonArray()));
+
+                using var cursor = await raw.Find(pending).ToCursorAsync();
+                var migrated = 0;
+                while (await cursor.MoveNextAsync())
+                {
+                    foreach (var doc in cursor.Current)
+                    {
+                        var roles = Services.UserRoleMigration.DeriveRoles(doc);
+
+                        var update = Builders<BsonDocument>.Update
+                            .Set("Roles", roles)
+                            .Unset("IsAdmin")
+                            .Unset("IsAgronomist");
+                        await raw.UpdateOneAsync(Builders<BsonDocument>.Filter.Eq("_id", doc["_id"]), update);
+                        migrated++;
+                    }
+                }
+
+                if (migrated > 0)
+                    Console.WriteLine($"[Migrate] Papéis convertidos para Roles em {migrated} usuário(s).");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[Migrate] MigrateUserRolesAsync ignorado: {ex.Message}");
+            }
         }
 
         private static async Task SeedAdminUserAsync(IServiceProvider serviceProvider)
@@ -270,14 +323,14 @@ namespace StarkAgroAPI.Configuration
                         Email = adminEmail,
                         Password = password,
                         Active = true,
-                        IsAdmin = true
+                        Roles = new List<string> { UserRole.Admin }
                     };
                     await dbContext.Users.InsertOneAsync(adminUser);
                     Console.WriteLine($"[Seed] Usuário admin criado: {adminEmail}");
                 }
                 else if (!existing.IsAdmin)
                 {
-                    var update = Builders<User>.Update.Set(u => u.IsAdmin, true);
+                    var update = Builders<User>.Update.AddToSet(u => u.Roles, UserRole.Admin);
                     await dbContext.Users.UpdateOneAsync(u => u.Id == existing.Id, update);
                     Console.WriteLine($"[Seed] Usuário {adminEmail} promovido a admin.");
                 }
