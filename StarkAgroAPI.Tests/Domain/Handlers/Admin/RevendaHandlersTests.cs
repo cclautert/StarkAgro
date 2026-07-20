@@ -7,22 +7,23 @@ using StarkAgroAPI.Notifications;
 using StarkAgroAPI.Tests.Helpers;
 using MongoDB.Driver;
 using Moq;
+using RevendaEntity = StarkAgroAPI.Models.Entities.Revenda;
 
 namespace StarkAgroAPI.Tests.Domain.Handlers.Admin
 {
     public class RevendaHandlersTests
     {
         private static Mock<agpDBContext> Db(
-            List<Revenda>? revendas = null,
+            List<RevendaEntity>? revendas = null,
             List<RevendaMembership>? memberships = null,
             List<DiagnosisPlan>? plans = null,
             List<User>? users = null,
             int nextId = 1)
         {
-            var revendasCol = new Mock<IMongoCollection<Revenda>>();
+            var revendasCol = new Mock<IMongoCollection<RevendaEntity>>();
             MongoMockHelper.SetupFindList(revendasCol, revendas ?? []);
             revendasCol.Setup(c => c.UpdateOneAsync(
-                    It.IsAny<FilterDefinition<Revenda>>(), It.IsAny<UpdateDefinition<Revenda>>(),
+                    It.IsAny<FilterDefinition<RevendaEntity>>(), It.IsAny<UpdateDefinition<RevendaEntity>>(),
                     It.IsAny<UpdateOptions>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new UpdateResult.Acknowledged(1, 1, null));
 
@@ -61,8 +62,8 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Admin
         public async Task Get_lista_as_revendas()
         {
             var db = Db(revendas: [
-                new Revenda { Id = 1, Name = "AgroSul" },
-                new Revenda { Id = 2, Name = "CampoForte" }
+                new RevendaEntity { Id = 1, Name = "AgroSul" },
+                new RevendaEntity { Id = 2, Name = "CampoForte" }
             ]);
             var handler = new GetRevendasHandler(db.Object);
 
@@ -89,7 +90,7 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Admin
             Assert.Equal(7, result.Id);
             Assert.Equal("AgroSul", result.Name);
             revendasCol.Verify(c => c.InsertOneAsync(
-                It.Is<Revenda>(r => r.Id == 7 && r.Name == "AgroSul" && r.CreatedByAdminId == 42
+                It.Is<RevendaEntity>(r => r.Id == 7 && r.Name == "AgroSul" && r.CreatedByAdminId == 42
                     && r.Cnpj == "12.345.678/0001-90"),
                 It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()), Times.Once);
         }
@@ -119,7 +120,7 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Admin
             Assert.Null(result);
             Assert.True(notifier.HasNotification());
             revendasCol.Verify(c => c.InsertOneAsync(
-                It.IsAny<Revenda>(), It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()), Times.Never);
+                It.IsAny<RevendaEntity>(), It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()), Times.Never);
         }
 
         [Fact]
@@ -152,7 +153,7 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Admin
         [Fact]
         public async Task Update_existente_grava_novos_valores()
         {
-            var db = Db(revendas: [new Revenda { Id = 2, Name = "AgroSul", Active = true }]);
+            var db = Db(revendas: [new RevendaEntity { Id = 2, Name = "AgroSul", Active = true }]);
             var handler = new UpdateRevendaHandler(db.Object, new Notificator());
 
             var result = await handler.Handle(new UpdateRevendaRequest
@@ -169,7 +170,7 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Admin
         [Fact]
         public async Task Update_com_plano_inexistente_notifica_e_devolve_null()
         {
-            var db = Db(revendas: [new Revenda { Id = 2, Name = "AgroSul" }], plans: []);
+            var db = Db(revendas: [new RevendaEntity { Id = 2, Name = "AgroSul" }], plans: []);
             var notifier = new Notificator();
             var handler = new UpdateRevendaHandler(db.Object, notifier);
 
@@ -197,7 +198,7 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Admin
         [Fact]
         public async Task AssignManager_usuario_inexistente_notifica_e_devolve_null()
         {
-            var db = Db(revendas: [new Revenda { Id = 1, Name = "AgroSul" }], users: []);
+            var db = Db(revendas: [new RevendaEntity { Id = 1, Name = "AgroSul" }], users: []);
             var notifier = new Notificator();
             var handler = new AssignRevendaManagerHandler(db.Object, notifier);
 
@@ -211,7 +212,7 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Admin
         public async Task AssignManager_cria_membership_e_atribui_papel()
         {
             var db = Db(
-                revendas: [new Revenda { Id = 1, Name = "AgroSul" }],
+                revendas: [new RevendaEntity { Id = 1, Name = "AgroSul" }],
                 memberships: [], // nenhum gestor ainda
                 users: [new User { Id = 3, Email = "u@a.com" }],
                 nextId: 55);
@@ -237,7 +238,7 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Admin
         public async Task AssignManager_ja_gestor_nao_duplica_membership_mas_reforca_papel()
         {
             var db = Db(
-                revendas: [new Revenda { Id = 1, Name = "AgroSul" }],
+                revendas: [new RevendaEntity { Id = 1, Name = "AgroSul" }],
                 memberships: [new RevendaMembership
                 {
                     Id = 9, RevendaId = 1, MemberUserId = 3,
