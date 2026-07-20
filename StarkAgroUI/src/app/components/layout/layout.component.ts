@@ -111,20 +111,22 @@ export class LayoutComponent implements OnInit, OnDestroy {
     const labels: Record<string, string> = {
       MoistureLow: 'Umidade baixa',
       AnomalyPersisted: 'Anomalia persistente',
-      AgronomistInvite: 'Convite de agrônomo'
+      AgronomistInvite: 'Convite de agrônomo',
+      RevendaInvite: 'Convite de revenda'
     };
     return labels[type] ?? type;
   }
 
   isInvite(alert: UserAlert): boolean {
-    return alert.alertType === 'AgronomistInvite';
+    return alert.alertType === 'AgronomistInvite' || alert.alertType === 'RevendaInvite';
   }
 
-  /** O convite é a única notificação que exige uma resposta — leva o produtor até onde ele responde. */
+  /** O convite é a única notificação que exige uma resposta — leva o membro até onde ele responde. */
   openAlert(alert: UserAlert): void {
     if (!this.isInvite(alert)) return;
     this.closeAlertPanel();
-    this.router.navigate(['/diagnosticos']);
+    const target = alert.alertType === 'RevendaInvite' ? '/revenda/convites' : '/diagnosticos';
+    this.router.navigate([target]);
   }
 
   logout(): void {
