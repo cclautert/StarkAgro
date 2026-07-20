@@ -43,7 +43,7 @@ Faça logout/login para usar Docker sem `sudo`.
 ```bash
 sudo mkdir -p /opt/agripeweb
 sudo chown "$USER:$USER" /opt/agripeweb
-git clone https://github.com/cclautert/AgripeWeb.git /opt/agripeweb
+git clone https://github.com/cclautert/StarkAgro.git /opt/agripeweb
 cd /opt/agripeweb
 ```
 
@@ -104,21 +104,21 @@ docker compose --project-directory . -f docker/docker-compose.yml up -d
 No seu PC (ou na VPS), gere um par dedicado ao CI:
 
 ```bash
-ssh-keygen -t ed25519 -f agripeweb-deploy -N ""
+ssh-keygen -t ed25519 -f starkagro-deploy -N ""
 ```
 
-- Copie o conteúdo de `agripeweb-deploy.pub` para `~/.ssh/authorized_keys` do usuário de deploy na VPS.
-- O conteúdo de `agripeweb-deploy` (chave **privada**) vai para o secret `VPS_SSH_KEY` no GitHub.
+- Copie o conteúdo de `starkagro-deploy.pub` para `~/.ssh/authorized_keys` do usuário de deploy na VPS.
+- O conteúdo de `starkagro-deploy` (chave **privada**) vai para o secret `VPS_SSH_KEY` no GitHub.
 
 Teste manualmente:
 
 ```bash
-ssh -i agripeweb-deploy usuario@IP_DA_VPS "cd /opt/agripeweb && git status"
+ssh -i starkagro-deploy usuario@IP_DA_VPS "cd /opt/agripeweb && git status"
 ```
 
 ## Secrets no GitHub
 
-Em **Settings → Secrets and variables → Actions** do repositório [cclautert/AgripeWeb](https://github.com/cclautert/AgripeWeb):
+Em **Settings → Secrets and variables → Actions** do repositório [cclautert/StarkAgro](https://github.com/cclautert/StarkAgro):
 
 | Secret | Exemplo | Descrição |
 |--------|---------|-----------|
@@ -152,7 +152,7 @@ Em cada `push` bem-sucedido em `main`, após o CI passar:
 3. `docker image prune -f`
 4. Health check: `curl https://agripeweb.com/api/v1/health`
 
-Serviços **não** atualizados automaticamente neste pipeline: `agripewebui-mobile`, `nginx-proxy`, `certbot`.
+Serviços **não** atualizados automaticamente neste pipeline: `nginx-proxy`, `certbot`.
 
 ## Branch protection (recomendado)
 

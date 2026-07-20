@@ -1,4 +1,4 @@
-Issue: https://github.com/cclautert/AgripeWeb/issues/69
+Issue: https://github.com/cclautert/StarkAgro/issues/69
 
 # Plan — IoT Device Read without JWT + Device Timestamp
 
@@ -14,13 +14,13 @@ Issue: https://github.com/cclautert/AgripeWeb/issues/69
 | `ReadSensor.Date` uses uplink `time` when provided | `CreateDeviceReadRequest.ReadAt` is `DateTime?`; handler: `request.ReadAt ?? DateTime.UtcNow` |
 | Tenant isolation: `UserId` from `sensor.UserId` only | Handler looks up sensor by `Code` (case-insensitive); takes `sensor.UserId` — never from request |
 | Uplink with unregistered `DevEUI` rejected/logged | If sensor not found → `_logger.LogWarning(...)` → return `null`; worker skips anomaly dispatch |
-| `dotnet test` green | Tests in `AgripeWebAPI.Tests` and `AgripeWebWorker.Tests` |
+| `dotnet test` green | Tests in `StarkAgroAPI.Tests` and `StarkAgroWorker.Tests` |
 
 ## Affected Layers
 
-- **New handler:** `AgripeWebAPI/Domain/Handlers/Reads/CreateDeviceReadHandler.cs`
-- **New request DTO:** `AgripeWebAPI/Domain/Commands/Requests/Reads/CreateDeviceReadRequest.cs`
-- **Modified worker:** `AgripeWebWorker/Services/MqttWorkerService.cs`
+- **New handler:** `StarkAgroAPI/Domain/Handlers/Reads/CreateDeviceReadHandler.cs`
+- **New request DTO:** `StarkAgroAPI/Domain/Commands/Requests/Reads/CreateDeviceReadRequest.cs`
+- **Modified worker:** `StarkAgroWorker/Services/MqttWorkerService.cs`
 - **No controller** — device reads are not exposed via HTTP endpoint; handler is invoked only by the worker via MediatR
 
 ## New REST Endpoints
@@ -31,15 +31,15 @@ None — device ingestion is MQTT-only.
 
 | Path | Type |
 |------|------|
-| `AgripeWebAPI/Domain/Commands/Requests/Reads/CreateDeviceReadRequest.cs` | MediatR request DTO |
-| `AgripeWebAPI/Domain/Handlers/Reads/CreateDeviceReadHandler.cs` | MediatR handler |
-| `AgripeWebAPI.Tests/Domain/Handlers/Reads/CreateDeviceReadHandlerTests.cs` | xUnit tests |
+| `StarkAgroAPI/Domain/Commands/Requests/Reads/CreateDeviceReadRequest.cs` | MediatR request DTO |
+| `StarkAgroAPI/Domain/Handlers/Reads/CreateDeviceReadHandler.cs` | MediatR handler |
+| `StarkAgroAPI.Tests/Domain/Handlers/Reads/CreateDeviceReadHandlerTests.cs` | xUnit tests |
 
 ## Files to Modify
 
 | Path | Change |
 |------|--------|
-| `AgripeWebWorker/Services/MqttWorkerService.cs` | Replace `CreateReadRequest` → `CreateDeviceReadRequest`; propagate `message.ReadAt`; skip anomaly dispatch when handler returns null |
+| `StarkAgroWorker/Services/MqttWorkerService.cs` | Replace `CreateReadRequest` → `CreateDeviceReadRequest`; propagate `message.ReadAt`; skip anomaly dispatch when handler returns null |
 
 ## MongoDB Changes
 
@@ -80,7 +80,7 @@ None — MediatR discovers handlers via assembly scan already configured in `Api
 
 ## Test Coverage Plan
 
-### CreateDeviceReadHandlerTests (AgripeWebAPI.Tests)
+### CreateDeviceReadHandlerTests (StarkAgroAPI.Tests)
 
 | Test | Scenario |
 |------|----------|
@@ -90,7 +90,7 @@ None — MediatR discovers handlers via assembly scan already configured in `Api
 | `Handle_ReturnsNull_WhenSensorNotFound` | Sensor not in DB → returns null, no insert |
 | `Handle_CallsGetNextIdAsync_BeforeInsert` | Verifies `GetNextIdAsync` called once |
 
-### MqttWorkerServiceTests (AgripeWebWorker.Tests)
+### MqttWorkerServiceTests (StarkAgroWorker.Tests)
 
 Existing tests continue to pass; add:
 
@@ -102,7 +102,7 @@ Existing tests continue to pass; add:
 ## Verification
 
 ```bash
-dotnet build AgripeWebAPI/AgripeWebAPI.csproj
-dotnet test AgripeWebAPI.Tests/AgripeWebAPI.Tests.csproj
-dotnet test AgripeWebWorker.Tests/AgripeWebWorker.Tests.csproj
+dotnet build StarkAgroAPI/StarkAgroAPI.csproj
+dotnet test StarkAgroAPI.Tests/StarkAgroAPI.Tests.csproj
+dotnet test StarkAgroWorker.Tests/StarkAgroWorker.Tests.csproj
 ```

@@ -28,13 +28,13 @@ Nenhum.
 ## Files to Modify
 | Path | Change |
 |---|---|
-| `AgripeWebAPI/Models/Interfaces/IAgricultureWeatherService.cs` | + `Task<double?> GetRecentPrecipitationAsync(double lat, double lon, int pastDays, CancellationToken ct)` (mm acumulados; null = indisponível) |
-| `AgripeWebAPI/Services/Forecast/OpenMeteoForecastService.cs` | Implementar o método: URL `v1/forecast?latitude=..&longitude=..&daily=precipitation_sum&past_days={n}&forecast_days=1&timezone=UTC`, somar `precipitation_sum` |
-| `AgripeWebAPI/Configuration/WeatherForecastSettings.cs` | + `public int AnomalyRainLookbackDays { get; set; } = 2;` |
-| `AgripeWebAPI/Domain/Handlers/Anomalies/DetectSensorAnomalyHandler.cs` | Injetar `IAgricultureWeatherService`, `IOptions<WeatherForecastSettings>`, `IMemoryCache`; carregar `Pivot` e `User`; antes da detecção: se valor > média da baseline e chuva recente ≥ limiar → return (suprimido, log info) |
-| `AgripeWebWorker/Program.cs` | Registrar `AddMemoryCache()`, `Configure<WeatherForecastSettings>`, `AddHttpClient<OpenMeteoForecastService>` (BaseAddress open-meteo, timeout 8 s, mesmo padrão do `ApiConfig`), `IAgricultureWeatherService` |
-| `AgripeWebAPI.Tests/Domain/Handlers/Anomalies/DetectSensorAnomalyHandlerTests.cs` | Atualizar construtor + novos cenários |
-| `AgripeWebAPI.Tests/Services/Forecast/OpenMeteoForecastServiceTests.cs` | + testes do novo método (URL com `past_days`, parse, falha → null) |
+| `StarkAgroAPI/Models/Interfaces/IAgricultureWeatherService.cs` | + `Task<double?> GetRecentPrecipitationAsync(double lat, double lon, int pastDays, CancellationToken ct)` (mm acumulados; null = indisponível) |
+| `StarkAgroAPI/Services/Forecast/OpenMeteoForecastService.cs` | Implementar o método: URL `v1/forecast?latitude=..&longitude=..&daily=precipitation_sum&past_days={n}&forecast_days=1&timezone=UTC`, somar `precipitation_sum` |
+| `StarkAgroAPI/Configuration/WeatherForecastSettings.cs` | + `public int AnomalyRainLookbackDays { get; set; } = 2;` |
+| `StarkAgroAPI/Domain/Handlers/Anomalies/DetectSensorAnomalyHandler.cs` | Injetar `IAgricultureWeatherService`, `IOptions<WeatherForecastSettings>`, `IMemoryCache`; carregar `Pivot` e `User`; antes da detecção: se valor > média da baseline e chuva recente ≥ limiar → return (suprimido, log info) |
+| `StarkAgroWorker/Program.cs` | Registrar `AddMemoryCache()`, `Configure<WeatherForecastSettings>`, `AddHttpClient<OpenMeteoForecastService>` (BaseAddress open-meteo, timeout 8 s, mesmo padrão do `ApiConfig`), `IAgricultureWeatherService` |
+| `StarkAgroAPI.Tests/Domain/Handlers/Anomalies/DetectSensorAnomalyHandlerTests.cs` | Atualizar construtor + novos cenários |
+| `StarkAgroAPI.Tests/Services/Forecast/OpenMeteoForecastServiceTests.cs` | + testes do novo método (URL com `past_days`, parse, falha → null) |
 
 ## MongoDB Changes
 Nenhuma.
@@ -51,14 +51,14 @@ Sem novas consultas por usuário vindas de request — o handler já opera com `
 ## DI Registration
 | Interface | Implementation | Lifetime | File |
 |---|---|---|---|
-| `IAgricultureWeatherService` | `OpenMeteoForecastService` | Scoped (via HttpClient factory) | `AgripeWebWorker/Program.cs` (já existe no `ApiConfig`) |
-| `IMemoryCache` | `AddMemoryCache()` | Singleton | `AgripeWebWorker/Program.cs` |
+| `IAgricultureWeatherService` | `OpenMeteoForecastService` | Scoped (via HttpClient factory) | `StarkAgroWorker/Program.cs` (já existe no `ApiConfig`) |
+| `IMemoryCache` | `AddMemoryCache()` | Singleton | `StarkAgroWorker/Program.cs` |
 
 ## Verification
 ```bash
-dotnet build AgripeWebAPI/AgripeWebAPI.csproj
-dotnet test AgripeWebAPI.Tests/AgripeWebAPI.Tests.csproj
-dotnet test AgripeWebWorker.Tests/AgripeWebWorker.Tests.csproj
+dotnet build StarkAgroAPI/StarkAgroAPI.csproj
+dotnet test StarkAgroAPI.Tests/StarkAgroAPI.Tests.csproj
+dotnet test StarkAgroWorker.Tests/StarkAgroWorker.Tests.csproj
 ```
 Cenários de teste do handler: (a) chuva ≥ limiar + valor alto → suprime (sem insert/push); (b) chuva ≥ limiar + valor baixo → detecta normal; (c) sem lat/long → detecta normal sem chamar forecast; (d) forecast null → detecta normal; (e) chuva < limiar → detecta normal.
 Pós-deploy: sensor 1 continua em 99,9 e está chovendo → não deve surgir nenhuma anomalia nova; conferir via MongoDB na VPS e logs do worker (`docker logs agripwebworker | grep -i rain`).

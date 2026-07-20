@@ -26,19 +26,19 @@ handlers / controllers / entities (campo novo em `User`) — sem mudanças em ag
 ## Files to Create
 | Path | Type | Summary |
 |---|---|---|
-| `AgripeWebAPI/Domain/Commands/Requests/Users/GetUserAlertsRequest.cs` | Request | `IRequest<IList<UserAlertResponse>>`, sem campos |
-| `AgripeWebAPI/Domain/Commands/Requests/Users/MarkAlertsReadRequest.cs` | Request | `IRequest<Unit>`, sem campos |
-| `AgripeWebAPI/Domain/Commands/Responses/Users/UserAlertResponse.cs` | Response DTO | `Id (string), Title, PivotName, AlertType, CreatedAt (DateTime), IsRead (bool)` |
-| `AgripeWebAPI/Domain/Handlers/Users/GetUserAlertsHandler.cs` | Handler | Busca, junta, mapeia, ordena, limita |
-| `AgripeWebAPI/Domain/Handlers/Users/MarkAlertsReadHandler.cs` | Handler | `UpdateOne` set `AlertsReadAt` |
-| `AgripeWebAPI.Tests/Domain/Handlers/Users/GetUserAlertsHandlerTests.cs` | Testes | cursor mocking padrão |
-| `AgripeWebAPI.Tests/Domain/Handlers/Users/MarkAlertsReadHandlerTests.cs` | Testes | cursor mocking padrão |
+| `StarkAgroAPI/Domain/Commands/Requests/Users/GetUserAlertsRequest.cs` | Request | `IRequest<IList<UserAlertResponse>>`, sem campos |
+| `StarkAgroAPI/Domain/Commands/Requests/Users/MarkAlertsReadRequest.cs` | Request | `IRequest<Unit>`, sem campos |
+| `StarkAgroAPI/Domain/Commands/Responses/Users/UserAlertResponse.cs` | Response DTO | `Id (string), Title, PivotName, AlertType, CreatedAt (DateTime), IsRead (bool)` |
+| `StarkAgroAPI/Domain/Handlers/Users/GetUserAlertsHandler.cs` | Handler | Busca, junta, mapeia, ordena, limita |
+| `StarkAgroAPI/Domain/Handlers/Users/MarkAlertsReadHandler.cs` | Handler | `UpdateOne` set `AlertsReadAt` |
+| `StarkAgroAPI.Tests/Domain/Handlers/Users/GetUserAlertsHandlerTests.cs` | Testes | cursor mocking padrão |
+| `StarkAgroAPI.Tests/Domain/Handlers/Users/MarkAlertsReadHandlerTests.cs` | Testes | cursor mocking padrão |
 
 ## Files to Modify
 | Path | Change |
 |---|---|
-| `AgripeWebAPI/Controllers/UserController.cs` | + `[HttpGet] Route("alerts")` e `[HttpPost] Route("alerts/mark-read")` (padrão fino existente) |
-| `AgripeWebAPI/Models/Entities/User.cs` | + `public DateTime? AlertsReadAt { get; set; }` |
+| `StarkAgroAPI/Controllers/UserController.cs` | + `[HttpGet] Route("alerts")` e `[HttpPost] Route("alerts/mark-read")` (padrão fino existente) |
+| `StarkAgroAPI/Models/Entities/User.cs` | + `public DateTime? AlertsReadAt { get; set; }` |
 
 ## MongoDB Changes
 Campo novo opcional `AlertsReadAt` (DateTime?) em `users` — nullable, sem migração/índice. Nenhuma coleção nova.
@@ -57,7 +57,7 @@ Nenhuma — handlers MediatR são descobertos pelo assembly scan existente em `A
 
 ## Verification
 ```bash
-dotnet build AgripeWebAPI/AgripeWebAPI.csproj
-dotnet test AgripeWebAPI.Tests/AgripeWebAPI.Tests.csproj
+dotnet build StarkAgroAPI/StarkAgroAPI.csproj
+dotnet test StarkAgroAPI.Tests/StarkAgroAPI.Tests.csproj
 ```
 Produção (após deploy): `GET https://agripeweb.com/api/v1/user/alerts` sem token → 401 (hoje: 404); com login no app, sininho lista alertas e badge zera após abrir o painel (mark-read).

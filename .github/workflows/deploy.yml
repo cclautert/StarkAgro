@@ -1,4 +1,4 @@
-# AgripeWeb — auto-deploy to Hostinger VPS after successful CI on main.
+# StarkAgro — auto-deploy to Hostinger VPS after successful CI on main.
 #
 # Deploy modes (pick one on the VPS — see docs/deploy-hostinger.md):
 #   A) Self-hosted runner (recommended): infra/scripts/install-github-actions-runner.sh
@@ -104,7 +104,7 @@ jobs:
         run: |
           dir="${VPS_DEPLOY_PATH:-/opt/agripeweb}"
           if [[ ! -d "$dir" ]]; then
-            echo "Deploy dir $dir missing — clone AgripeWeb to /opt/agripeweb on the VPS first." >&2
+            echo "Deploy dir $dir missing — clone StarkAgro to /opt/agripeweb on the VPS first." >&2
             exit 1
           fi
           echo "dir=$dir" >> "$GITHUB_OUTPUT"
@@ -192,7 +192,7 @@ jobs:
             git fetch origin main
             git reset --hard origin/main
             git sparse-checkout disable >/dev/null 2>&1 || true
-            git checkout -f HEAD -- AgripeWebUI AgripeWebAPI AgripeWebWorker docker scripts infra
+            git checkout -f HEAD -- StarkAgroUI StarkAgroAPI StarkAgroWorker docker scripts infra
             chmod +x scripts/bootstrap-vps-env.sh scripts/bootstrap-vps-env-from-secrets.sh scripts/resolve-vps-repo-root.sh scripts/vps-deploy-from-actions.sh scripts/deploy-hostinger-remote.sh
             if [[ -d .env ]]; then rm -rf .env; fi
             scripts/bootstrap-vps-env-from-secrets.sh "$REPO_ROOT" --force

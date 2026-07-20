@@ -35,12 +35,12 @@ Both endpoints already call `if (!ModelState.IsValid) return CustomResponse(Mode
 
 ## Files to Create
 
-### 1. `AgripeWebAPI/Validators/MacAddressAttribute.cs`
+### 1. `StarkAgroAPI/Validators/MacAddressAttribute.cs`
 Type: Validator (custom `ValidationAttribute`)
 
 Key members:
 ```
-namespace AgripeWebAPI.Validators
+namespace StarkAgroAPI.Validators
 
 public class MacAddressAttribute : ValidationAttribute
     private static readonly Regex MacRegex = new Regex(
@@ -64,7 +64,7 @@ Decision point for the implementer: the attribute should normalise (upper-case) 
 
 ---
 
-### 2. `AgripeWebAPI.Tests/Validators/MacAddressAttributeTests.cs`
+### 2. `StarkAgroAPI.Tests/Validators/MacAddressAttributeTests.cs`
 Type: Unit test
 
 Required test cases:
@@ -86,7 +86,7 @@ Follow the exact `[Theory] / [InlineData]` + `[Fact]` pattern from `EmailAttribu
 
 ---
 
-### 3. `AgripeWebAPI.Tests/Domain/Commands/Requests/Sensors/CreateSensorRequestTests_MacValidation.cs`
+### 3. `StarkAgroAPI.Tests/Domain/Commands/Requests/Sensors/CreateSensorRequestTests_MacValidation.cs`
 
 Type: Behavioral unit test — validates that `MacAddressAttribute` is wired to `CreateSensorRequest.Code` and that `DataAnnotations` validation fires correctly.
 
@@ -102,7 +102,7 @@ Use `System.ComponentModel.DataAnnotations.Validator.TryValidateObject(request, 
 
 ---
 
-### 4. `AgripeWebAPI.Tests/Domain/Commands/Requests/Sensors/EditSensorRequestTests_MacValidation.cs`
+### 4. `StarkAgroAPI.Tests/Domain/Commands/Requests/Sensors/EditSensorRequestTests_MacValidation.cs`
 
 Type: Behavioral unit test — mirrors file 3 but for `EditSensorRequest`.
 
@@ -116,7 +116,7 @@ Required test cases:
 
 ---
 
-### 5. `AgripeWebAPI.Tests/Domain/Handlers/Sensors/CreateSensorHandlerTests_MacNormalisation.cs`
+### 5. `StarkAgroAPI.Tests/Domain/Handlers/Sensors/CreateSensorHandlerTests_MacNormalisation.cs`
 
 Type: Behavioral unit test — verifies that the handler stores the code in normalised (uppercase) form.
 
@@ -131,7 +131,7 @@ Use the same Moq setup pattern as `CreateSensorHandlerTests.cs` (mock `agpDBCont
 
 ---
 
-### 6. `AgripeWebAPI.Tests/Domain/Handlers/Sensors/EditSensorHandlerTests_MacNormalisation.cs`
+### 6. `StarkAgroAPI.Tests/Domain/Handlers/Sensors/EditSensorHandlerTests_MacNormalisation.cs`
 
 Type: Behavioral unit test — same normalisation check for the edit path.
 
@@ -146,11 +146,11 @@ Required test cases:
 
 ## Files to Modify
 
-### 1. `AgripeWebAPI/Domain/Commands/Requests/Sensors/CreateSensorRequest.cs`
+### 1. `StarkAgroAPI/Domain/Commands/Requests/Sensors/CreateSensorRequest.cs`
 
 Changes:
 - Add `using System.ComponentModel.DataAnnotations;`
-- Add `using AgripeWebAPI.Validators;`
+- Add `using StarkAgroAPI.Validators;`
 - Decorate `Code` with `[Required]` and `[MacAddress]`
 - Change the `Code` property type from `string` (non-nullable) to `string?` with `[Required]` annotation, OR keep `string` and mark as required — remain consistent with `User.cs` Email pattern.
 
@@ -161,11 +161,11 @@ Note: the `Code` field is already typed as non-nullable `string`. Adding `[Requi
 
 ---
 
-### 2. `AgripeWebAPI/Domain/Commands/Requests/Sensors/EditSensorRequest.cs`
+### 2. `StarkAgroAPI/Domain/Commands/Requests/Sensors/EditSensorRequest.cs`
 
 Changes:
 - Add `using System.ComponentModel.DataAnnotations;`
-- Add `using AgripeWebAPI.Validators;`
+- Add `using StarkAgroAPI.Validators;`
 - Decorate `Code` with `[MacAddress]` (but NOT `[Required]` — on edit, omitting Code is acceptable; see Risks).
 
 Before: `public string? Code { get; set; }`
@@ -175,7 +175,7 @@ Important: since `Code` is nullable on the edit request, `MacAddressAttribute.Is
 
 ---
 
-### 3. `AgripeWebAPI/Domain/Handlers/Sensors/CreateSensorHandler.cs`
+### 3. `StarkAgroAPI/Domain/Handlers/Sensors/CreateSensorHandler.cs`
 
 Changes:
 - In the `Handle` method, before constructing the `Sensor` entity, normalise the code:
@@ -188,7 +188,7 @@ No new constructor dependencies needed.
 
 ---
 
-### 4. `AgripeWebAPI/Domain/Handlers/Sensors/EditSensorHandler.cs`
+### 4. `StarkAgroAPI/Domain/Handlers/Sensors/EditSensorHandler.cs`
 
 Changes:
 - In the `Handle` method, after the null pivot check, normalise code before assigning to the entity:
@@ -201,7 +201,7 @@ No new constructor dependencies needed.
 
 ---
 
-### 5. `AgripeWebAPI.Tests/Domain/Commands/Requests/Sensors/CreateSensorRequestTests.cs`
+### 5. `StarkAgroAPI.Tests/Domain/Commands/Requests/Sensors/CreateSensorRequestTests.cs`
 
 Changes:
 - The existing test `Can_Set_And_Get_Properties` uses `Code = "SENSOR-001"`. After adding `[MacAddress]`, this value is still settable on the POCO (the attribute is only checked during model validation, not on property assignment). The test does NOT use `Validator.TryValidateObject`, so it will continue to pass unchanged.
@@ -210,7 +210,7 @@ Changes:
 
 ---
 
-### 6. `AgripeWebAPI.Tests/Domain/Handlers/Sensors/CreateSensorHandlerTests.cs`
+### 6. `StarkAgroAPI.Tests/Domain/Handlers/Sensors/CreateSensorHandlerTests.cs`
 
 Changes:
 - The existing tests pass `Code = "SENSOR-1"`. After the handler normalises code to upper-case, `"SENSOR-1".ToUpperInvariant()` == `"SENSOR-1"`, so existing assertions `Assert.Equal(123, result.Id)` remain correct.
@@ -218,7 +218,7 @@ Changes:
 
 ---
 
-### 7. `AgripeWebAPI.Tests/Domain/Handlers/Sensors/EditSensorHandlerTests.cs`
+### 7. `StarkAgroAPI.Tests/Domain/Handlers/Sensors/EditSensorHandlerTests.cs`
 
 Changes:
 - Existing test `Handle_Updates_Sensor_And_Returns_Response` asserts `Assert.Equal("NEW", sensor.Code)`. After normalisation, `"NEW".ToUpperInvariant()` == `"NEW"`, so this still passes.
@@ -226,7 +226,7 @@ Changes:
 
 ---
 
-### 8. `AgripeWebAPI.Tests/Controllers/SensorControllerTests.cs`
+### 8. `StarkAgroAPI.Tests/Controllers/SensorControllerTests.cs`
 
 Changes:
 - Existing tests pass `Code = "S001"` in `CreateSensorRequest`. This is NOT a valid MAC address. The controller test does not invoke the real model validation pipeline (`ModelState` is only manually manipulated), so these tests are isolated from the new attribute.
@@ -318,7 +318,7 @@ No new services are introduced. `MacAddressAttribute` is a `ValidationAttribute`
 ### Step 1 — Run the full existing test suite first (baseline)
 
 ```bash
-dotnet test AgripeWebAPI.Tests/AgripeWebAPI.Tests.csproj --logger "console;verbosity=normal"
+dotnet test StarkAgroAPI.Tests/StarkAgroAPI.Tests.csproj --logger "console;verbosity=normal"
 ```
 
 All tests must be green before applying changes.
@@ -326,7 +326,7 @@ All tests must be green before applying changes.
 ### Step 2 — Apply changes, then run tests again
 
 ```bash
-dotnet test AgripeWebAPI.Tests/AgripeWebAPI.Tests.csproj --logger "console;verbosity=normal"
+dotnet test StarkAgroAPI.Tests/StarkAgroAPI.Tests.csproj --logger "console;verbosity=normal"
 ```
 
 Expected result: all pre-existing tests still pass; new test files add green tests.
@@ -334,13 +334,13 @@ Expected result: all pre-existing tests still pass; new test files add green tes
 ### Step 3 — Run only the validator tests in isolation
 
 ```bash
-dotnet test AgripeWebAPI.Tests/AgripeWebAPI.Tests.csproj --filter "FullyQualifiedName~MacAddressAttributeTests"
+dotnet test StarkAgroAPI.Tests/StarkAgroAPI.Tests.csproj --filter "FullyQualifiedName~MacAddressAttributeTests"
 ```
 
 ### Step 4 — Run only the sensor handler tests
 
 ```bash
-dotnet test AgripeWebAPI.Tests/AgripeWebAPI.Tests.csproj --filter "FullyQualifiedName~Sensors"
+dotnet test StarkAgroAPI.Tests/StarkAgroAPI.Tests.csproj --filter "FullyQualifiedName~Sensors"
 ```
 
 ### Step 5 — Manual API call (requires running stack)
@@ -395,13 +395,13 @@ The implementer must follow this order to avoid broken intermediary states:
 
 ## Reference Files the Implementer Must Read Before Coding
 
-- `AgripeWebAPI/Validators/EmailAttribute.cs` — exact pattern for a custom `ValidationAttribute`
-- `AgripeWebAPI/Domain/Commands/Requests/Sensors/CreateSensorRequest.cs` — property to decorate
-- `AgripeWebAPI/Domain/Commands/Requests/Sensors/EditSensorRequest.cs` — property to decorate
-- `AgripeWebAPI/Domain/Handlers/Sensors/CreateSensorHandler.cs` — normalisation insertion point
-- `AgripeWebAPI/Domain/Handlers/Sensors/EditSensorHandler.cs` — normalisation insertion point
-- `AgripeWebAPI.Tests/Validators/EmailAttributeTests.cs` — test structure to mirror
-- `AgripeWebAPI.Tests/Domain/Handlers/Sensors/CreateSensorHandlerTests.cs` — handler test pattern
-- `AgripeWebAPI.Tests/Domain/Handlers/Sensors/EditSensorHandlerTests.cs` — handler test pattern
-- `AgripeWebAPI.Tests/Helpers/MongoMockHelper.cs` — Moq helpers available for handler tests
-- `AgripeWebAPI.Tests/Mocks/MockNotifier.cs` — available mock (not needed for this feature but part of the controller test setup)
+- `StarkAgroAPI/Validators/EmailAttribute.cs` — exact pattern for a custom `ValidationAttribute`
+- `StarkAgroAPI/Domain/Commands/Requests/Sensors/CreateSensorRequest.cs` — property to decorate
+- `StarkAgroAPI/Domain/Commands/Requests/Sensors/EditSensorRequest.cs` — property to decorate
+- `StarkAgroAPI/Domain/Handlers/Sensors/CreateSensorHandler.cs` — normalisation insertion point
+- `StarkAgroAPI/Domain/Handlers/Sensors/EditSensorHandler.cs` — normalisation insertion point
+- `StarkAgroAPI.Tests/Validators/EmailAttributeTests.cs` — test structure to mirror
+- `StarkAgroAPI.Tests/Domain/Handlers/Sensors/CreateSensorHandlerTests.cs` — handler test pattern
+- `StarkAgroAPI.Tests/Domain/Handlers/Sensors/EditSensorHandlerTests.cs` — handler test pattern
+- `StarkAgroAPI.Tests/Helpers/MongoMockHelper.cs` — Moq helpers available for handler tests
+- `StarkAgroAPI.Tests/Mocks/MockNotifier.cs` — available mock (not needed for this feature but part of the controller test setup)

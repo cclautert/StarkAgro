@@ -1,0 +1,79 @@
+<div class="plans-container">
+  <h2>Planos de Laudo</h2>
+  <p class="subtitle">
+    Mensalidade fixa que já inclui N laudos; o que passar disso é cobrado por laudo.
+    Os preços vivem aqui — nada de valor fixo no código.
+  </p>
+
+  <div *ngIf="isLoading" class="loading-text">Carregando…</div>
+
+  <table *ngIf="!isLoading && plans.length" class="plans-table">
+    <thead>
+      <tr>
+        <th>Plano</th>
+        <th>Mensalidade</th>
+        <th>Inclusos</th>
+        <th>Excedente</th>
+        <th>Status</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let p of plans" [class.inactive]="!p.active">
+        <td>{{ p.name }}</td>
+        <td>{{ (p.monthlyPriceCents / 100) | currency:'BRL':'symbol':'1.2-2' }}</td>
+        <td>{{ p.includedReportsPerMonth }} laudos</td>
+        <td>{{ (p.overagePriceCents / 100) | currency:'BRL':'symbol':'1.2-2' }} / laudo</td>
+        <td>
+          <span class="badge" [class.badge-on]="p.active" [class.badge-off]="!p.active">
+            {{ p.active ? 'Ativo' : 'Inativo' }}
+          </span>
+        </td>
+        <td class="row-actions">
+          <button type="button" class="btn-link" (click)="startEdit(p)">Editar</button>
+          <button type="button" class="btn-link btn-danger" (click)="remove(p)">Remover</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p *ngIf="!isLoading && !plans.length" class="empty">Nenhum plano cadastrado ainda.</p>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="plan-form">
+    <h3>{{ editingId ? 'Editar plano' : 'Novo plano' }}</h3>
+
+    <div class="form-group">
+      <label for="name">Nome</label>
+      <input id="name" type="text" formControlName="name" placeholder="Ex.: Básico" />
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="monthlyPrice">Mensalidade (R$)</label>
+        <input id="monthlyPrice" type="number" min="0" step="0.01" formControlName="monthlyPrice" />
+      </div>
+      <div class="form-group">
+        <label for="includedReportsPerMonth">Laudos inclusos/mês</label>
+        <input id="includedReportsPerMonth" type="number" min="0" formControlName="includedReportsPerMonth" />
+      </div>
+      <div class="form-group">
+        <label for="overagePrice">Excedente (R$/laudo)</label>
+        <input id="overagePrice" type="number" min="0" step="0.01" formControlName="overagePrice" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="checkbox-label">
+        <input type="checkbox" formControlName="active" />
+        Plano ativo (pode ser atribuído a produtores)
+      </label>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary" [disabled]="isSaving">
+        {{ isSaving ? 'Salvando…' : (editingId ? 'Salvar alterações' : 'Criar plano') }}
+      </button>
+      <button *ngIf="editingId" type="button" class="btn btn-secondary" (click)="cancelEdit()">Cancelar</button>
+    </div>
+  </form>
+</div>

@@ -1,4 +1,4 @@
-# AgripeWeb – API (MongoDB), UI (Angular), MongoDB
+# StarkAgro – API (MongoDB), UI (Angular), MongoDB
 # Run from repo root: docker compose -f docker/docker-compose.yml up -d
 # nginx-proxy: host ports 80 (HTTP->HTTPS redirect) and 443 (HTTPS)
 # MongoDB: internal only (no host port binding)
@@ -9,7 +9,7 @@ services:
     container_name: agripewebapi
     build:
       context: ..
-      dockerfile: AgripeWebAPI/Dockerfile
+      dockerfile: StarkAgroAPI/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_HTTP_PORTS=8080
@@ -41,25 +41,8 @@ services:
   agripewebui:
     container_name: agripewebui
     build:
-      context: ../AgripeWebUI
+      context: ../StarkAgroUI
       dockerfile: Dockerfile
-    environment:
-      - API_BASE_URL=http://agripewebapi:8080
-    depends_on:
-      - agripewebapi
-    networks:
-      - app-network
-
-  agripewebui-mobile:
-    container_name: agripewebui-mobile
-    build:
-      context: ../AgripeWebUI-Mobile
-      dockerfile: Dockerfile
-      args:
-        - EXPO_PUBLIC_API_BASE_URL=/api/v1/
-        - EXPO_PUBLIC_GOOGLE_CLIENT_ID=728628470722-23le0egpfio5jfg14g61i39mjjqcg4vp.apps.googleusercontent.com
-    ports:
-      - "3000:80"
     environment:
       - API_BASE_URL=http://agripewebapi:8080
     depends_on:
@@ -102,7 +85,7 @@ services:
     container_name: agripwebworker
     build:
       context: ..
-      dockerfile: AgripeWebWorker/Dockerfile
+      dockerfile: StarkAgroWorker/Dockerfile
     environment:
       - MongoDb__ConnectionString=mongodb://db:27017/agripeweb?authSource=admin
       - MongoDb__DatabaseName=agripeweb

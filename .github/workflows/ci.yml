@@ -35,14 +35,14 @@ jobs:
             nuget-${{ runner.os }}-
 
       - name: Restore
-        run: dotnet restore AgripeWeb.sln
+        run: dotnet restore StarkAgro.sln
 
       - name: Build
-        run: dotnet build AgripeWeb.sln -c Release --no-restore
+        run: dotnet build StarkAgro.sln -c Release --no-restore
 
       - name: Test with coverage (Coverlet)
         run: |
-          dotnet test AgripeWeb.sln -c Release --no-build --verbosity normal \
+          dotnet test StarkAgro.sln -c Release --no-build --verbosity normal \
             --settings coverlet.runsettings \
             --collect:"XPlat Code Coverage" \
             --results-directory ./TestResults/coverage
@@ -58,7 +58,7 @@ jobs:
             -targetdir:"TestResults/CoverageReport" \
             -reporttypes:"Html;TextSummary"
 
-      - name: Enforce 90% line coverage (AgripeWebAPI + Worker)
+      - name: Enforce 90% line coverage (StarkAgroAPI + Worker)
         run: bash scripts/ci-enforce-line-coverage.sh TestResults/CoverageReport/Summary.txt 90
 
       - name: Upload coverage report
@@ -76,7 +76,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: AgripeWebUI
+        working-directory: StarkAgroUI
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -86,7 +86,7 @@ jobs:
         with:
           node-version: "20"
           cache: npm
-          cache-dependency-path: AgripeWebUI/package-lock.json
+          cache-dependency-path: StarkAgroUI/package-lock.json
 
       - name: Install dependencies
         run: npm ci
@@ -98,31 +98,6 @@ jobs:
 
       - name: Production build
         run: npm run build -- --configuration=production
-
-  mobile:
-    name: Mobile (React Native)
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: AgripeWebUI-Mobile
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
-        with:
-          node-version: "20"
-          cache: npm
-          cache-dependency-path: AgripeWebUI-Mobile/package-lock.json
-
-      - name: Install dependencies
-        run: npm ci
-
-      # Gate de cobertura ligado: o `coverageThreshold` do package.json (linhas/funcs 90%,
-      # branches 80%) agora é cumprido e `--coverage` o cobra — o CI falha se regredir.
-      - name: Unit tests + cobertura (Jest)
-        run: npx jest --ci --coverage
 
   docker-build:
     name: Docker images
@@ -138,9 +113,9 @@ jobs:
         uses: docker/build-push-action@v7
         with:
           context: .
-          file: AgripeWebAPI/Dockerfile
+          file: StarkAgroAPI/Dockerfile
           push: false
-          tags: agripeweb-api:ci
+          tags: starkagro-api:ci
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -148,7 +123,7 @@ jobs:
         uses: docker/build-push-action@v7
         with:
           context: .
-          file: AgripeWebWorker/Dockerfile
+          file: StarkAgroWorker/Dockerfile
           push: false
           tags: agripeweb-worker:ci
           cache-from: type=gha
@@ -157,9 +132,9 @@ jobs:
       - name: Build UI image
         uses: docker/build-push-action@v7
         with:
-          context: AgripeWebUI
-          file: AgripeWebUI/Dockerfile
+          context: StarkAgroUI
+          file: StarkAgroUI/Dockerfile
           push: false
-          tags: agripeweb-ui:ci
+          tags: starkagro-ui:ci
           cache-from: type=gha
           cache-to: type=gha,mode=max

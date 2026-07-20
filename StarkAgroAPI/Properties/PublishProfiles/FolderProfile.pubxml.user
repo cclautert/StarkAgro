@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- https://go.microsoft.com/fwlink/?LinkID=208121. -->
+<Project>
+  <PropertyGroup>
+    <_PublishTargetUrl>C:\Users\Cristiano\source\repos\cclautert\StarkAgro\StarkAgroAPI\bin\Release\net9.0\publish\</_PublishTargetUrl>
+    <History>True|2025-05-30T00:56:38.6710231Z||;True|2025-05-29T21:51:06.9974614-03:00||;False|2025-05-29T21:50:49.4499450-03:00||;True|2025-05-29T21:48:51.4238702-03:00||;True|2025-05-29T21:20:12.9646515-03:00||;True|2025-05-29T21:15:59.7432900-03:00||;True|2025-05-29T21:12:22.9264136-03:00||;True|2025-05-29T21:07:42.9122724-03:00||;True|2025-05-29T20:54:54.5868061-03:00||;True|2025-05-29T19:26:14.8078240-03:00||;</History>
+    <LastFailureDetails />
+  </PropertyGroup>
+</Project>

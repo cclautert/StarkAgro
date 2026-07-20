@@ -1,6 +1,6 @@
 # Plan — Rain Forecast for Irrigation Trend Analysis (Issue #16)
 
-**Issue:** [#16 — Melhoria Previsão de Chuva](https://github.com/cclautert/AgripeWeb/issues/16)
+**Issue:** [#16 — Melhoria Previsão de Chuva](https://github.com/cclautert/StarkAgro/issues/16)
 **Branch (suggested):** `feature/rain-forecast-irrigation`
 
 ---
@@ -48,11 +48,11 @@ The issue assumes the `Pivot` entity has latitude/longitude. **It does not** —
 
 ## Affected Layers
 
-- **Backend (AgripeWebAPI):** new request/response DTOs, new handler, new service abstraction + 2 implementations, new configuration POCO, controller endpoint, DI wiring, NuGet refs.
+- **Backend (StarkAgroAPI):** new request/response DTOs, new handler, new service abstraction + 2 implementations, new configuration POCO, controller endpoint, DI wiring, NuGet refs.
 - **Backend Entity:** `Pivot` gets nullable `Latitude` / `Longitude`.
 - **MongoDB:** existing `pivots` collection — backward-compatible field additions only. No new collections, no new indexes (queries unchanged).
-- **Angular (AgripeWebUI):** new `IrrigationTrend` API call + minimal UI banner on the irrigation dashboard. Trend math stays on the frontend; the new endpoint contributes only the rain-postpone signal.
-- **MQTT worker (`AgripeWebWorker`):** unaffected.
+- **Angular (StarkAgroUI):** new `IrrigationTrend` API call + minimal UI banner on the irrigation dashboard. Trend math stays on the frontend; the new endpoint contributes only the rain-postpone signal.
+- **MQTT worker (`StarkAgroWorker`):** unaffected.
 
 ---
 
@@ -98,41 +98,41 @@ When pivot has no lat/lon, response includes `weatherForecast: null`, `irrigatio
 
 | Path | Type |
 |---|---|
-| `AgripeWebAPI/Configuration/WeatherForecastSettings.cs` | Config POCO |
-| `AgripeWebAPI/Models/WeatherForecast.cs` | Records: `WeatherForecast`, `DailyForecast` |
-| `AgripeWebAPI/Models/Interfaces/IWeatherForecastService.cs` | Interface |
-| `AgripeWebAPI/Services/Forecast/WeatherForecastOrchestrator.cs` | Orchestrator (chooses primary, falls back) |
-| `AgripeWebAPI/Services/Forecast/OpenMeteoForecastService.cs` | Primary impl (HTTP, no key) |
-| `AgripeWebAPI/Services/Forecast/GoogleWeatherAIForecastService.cs` | Optional impl (HTTP, requires key) |
-| `AgripeWebAPI/Domain/Commands/Requests/Pivots/GetIrrigationTrendRequest.cs` | MediatR request |
-| `AgripeWebAPI/Domain/Commands/Responses/Pivots/IrrigationTrendResponse.cs` | Response DTO |
-| `AgripeWebAPI/Domain/Handlers/Pivots/GetIrrigationTrendHandler.cs` | MediatR handler |
-| `AgripeWebAPI.Tests/Services/Forecast/WeatherForecastOrchestratorTests.cs` | Unit tests |
-| `AgripeWebAPI.Tests/Services/Forecast/OpenMeteoForecastServiceTests.cs` | Unit tests with mocked `HttpMessageHandler` |
-| `AgripeWebAPI.Tests/Domain/Handlers/Pivots/GetIrrigationTrendHandlerTests.cs` | Handler tests |
+| `StarkAgroAPI/Configuration/WeatherForecastSettings.cs` | Config POCO |
+| `StarkAgroAPI/Models/WeatherForecast.cs` | Records: `WeatherForecast`, `DailyForecast` |
+| `StarkAgroAPI/Models/Interfaces/IWeatherForecastService.cs` | Interface |
+| `StarkAgroAPI/Services/Forecast/WeatherForecastOrchestrator.cs` | Orchestrator (chooses primary, falls back) |
+| `StarkAgroAPI/Services/Forecast/OpenMeteoForecastService.cs` | Primary impl (HTTP, no key) |
+| `StarkAgroAPI/Services/Forecast/GoogleWeatherAIForecastService.cs` | Optional impl (HTTP, requires key) |
+| `StarkAgroAPI/Domain/Commands/Requests/Pivots/GetIrrigationTrendRequest.cs` | MediatR request |
+| `StarkAgroAPI/Domain/Commands/Responses/Pivots/IrrigationTrendResponse.cs` | Response DTO |
+| `StarkAgroAPI/Domain/Handlers/Pivots/GetIrrigationTrendHandler.cs` | MediatR handler |
+| `StarkAgroAPI.Tests/Services/Forecast/WeatherForecastOrchestratorTests.cs` | Unit tests |
+| `StarkAgroAPI.Tests/Services/Forecast/OpenMeteoForecastServiceTests.cs` | Unit tests with mocked `HttpMessageHandler` |
+| `StarkAgroAPI.Tests/Domain/Handlers/Pivots/GetIrrigationTrendHandlerTests.cs` | Handler tests |
 | `docs/features/rain-forecast-irrigation/plan.md` | This plan (already saved) |
 
 ## Files to Modify
 
 | Path | Change |
 |---|---|
-| `AgripeWebAPI/Models/Entities/Pivot.cs` | Add `decimal? Latitude`, `decimal? Longitude` (nullable, default `null`) |
-| `AgripeWebAPI/Domain/Commands/Requests/Pivots/CreatePivotRequest.cs` | Add `Latitude`, `Longitude` |
-| `AgripeWebAPI/Domain/Commands/Requests/Pivots/EditPivotRequest.cs` | Add `Latitude`, `Longitude` |
-| `AgripeWebAPI/Domain/Handlers/Pivots/CreatePivotHandler.cs` | Persist new fields |
-| `AgripeWebAPI/Domain/Handlers/Pivots/EditPivotHandler.cs` | Persist new fields |
-| `AgripeWebAPI/Domain/Commands/Responses/Pivots/GetPivotResponse.cs` | Surface `Latitude`, `Longitude` |
-| `AgripeWebAPI/Domain/Handlers/Pivots/GetPivotHandler.cs` | Project new fields |
-| `AgripeWebAPI/Controllers/PivotController.cs` | Add `GET /getIrrigationTrend` endpoint |
-| `AgripeWebAPI/Configuration/ApiConfig.cs` | Register `WeatherForecastSettings`, `IMemoryCache`, `IWeatherForecastService`, named `HttpClient` instances |
-| `AgripeWebAPI/AgripeWebAPI.csproj` | Add NuGet refs: `Microsoft.Extensions.Caching.Memory`, `Microsoft.Extensions.Http.Polly` |
-| `AgripeWebAPI/appsettings.json` | Add `"WeatherForecast"` section with safe defaults |
-| `AgripeWebAPI/appsettings.Development.template.json` | Same section with placeholder API key |
-| `AgripeWebAPI/appsettings.Production.template.json` | Same |
-| `AgripeWebUI/src/app/services/api.service.ts` | Add `getIrrigationTrend(pivotId, numberOfReads)` |
-| `AgripeWebUI/src/app/models/irrigation-trend.model.ts` | New TS interface mirroring response |
-| `AgripeWebUI/src/app/components/irrigation-dashboard/irrigation-dashboard.component.ts` | Call new endpoint; expose `irrigationPostponed`, `postponeReason` |
-| `AgripeWebUI/src/app/components/irrigation-dashboard/irrigation-dashboard.component.html` | Banner: when `irrigationPostponed`, render postpone notice |
+| `StarkAgroAPI/Models/Entities/Pivot.cs` | Add `decimal? Latitude`, `decimal? Longitude` (nullable, default `null`) |
+| `StarkAgroAPI/Domain/Commands/Requests/Pivots/CreatePivotRequest.cs` | Add `Latitude`, `Longitude` |
+| `StarkAgroAPI/Domain/Commands/Requests/Pivots/EditPivotRequest.cs` | Add `Latitude`, `Longitude` |
+| `StarkAgroAPI/Domain/Handlers/Pivots/CreatePivotHandler.cs` | Persist new fields |
+| `StarkAgroAPI/Domain/Handlers/Pivots/EditPivotHandler.cs` | Persist new fields |
+| `StarkAgroAPI/Domain/Commands/Responses/Pivots/GetPivotResponse.cs` | Surface `Latitude`, `Longitude` |
+| `StarkAgroAPI/Domain/Handlers/Pivots/GetPivotHandler.cs` | Project new fields |
+| `StarkAgroAPI/Controllers/PivotController.cs` | Add `GET /getIrrigationTrend` endpoint |
+| `StarkAgroAPI/Configuration/ApiConfig.cs` | Register `WeatherForecastSettings`, `IMemoryCache`, `IWeatherForecastService`, named `HttpClient` instances |
+| `StarkAgroAPI/StarkAgroAPI.csproj` | Add NuGet refs: `Microsoft.Extensions.Caching.Memory`, `Microsoft.Extensions.Http.Polly` |
+| `StarkAgroAPI/appsettings.json` | Add `"WeatherForecast"` section with safe defaults |
+| `StarkAgroAPI/appsettings.Development.template.json` | Same section with placeholder API key |
+| `StarkAgroAPI/appsettings.Production.template.json` | Same |
+| `StarkAgroUI/src/app/services/api.service.ts` | Add `getIrrigationTrend(pivotId, numberOfReads)` |
+| `StarkAgroUI/src/app/models/irrigation-trend.model.ts` | New TS interface mirroring response |
+| `StarkAgroUI/src/app/components/irrigation-dashboard/irrigation-dashboard.component.ts` | Call new endpoint; expose `irrigationPostponed`, `postponeReason` |
+| `StarkAgroUI/src/app/components/irrigation-dashboard/irrigation-dashboard.component.html` | Banner: when `irrigationPostponed`, render postpone notice |
 | `CLAUDE.md` | Document new entity fields, services, and endpoint |
 
 ---
@@ -222,16 +222,16 @@ All new service lifetimes are **Scoped** to match the existing pattern (handlers
 
 ```bash
 # Backend build
-dotnet build AgripeWebAPI/AgripeWebAPI.csproj
+dotnet build StarkAgroAPI/StarkAgroAPI.csproj
 
 # Unit tests
-dotnet test AgripeWebAPI.Tests/AgripeWebAPI.Tests.csproj
+dotnet test StarkAgroAPI.Tests/StarkAgroAPI.Tests.csproj
 
 # Manual API test (after `dotnet run`):
 curl -H "Authorization: Bearer <jwt>" \
   "https://localhost:7162/v1/pivot/getIrrigationTrend?pivotId=1&numberOfReads=10"
 
-# UI: from AgripeWebUI/, npm run start, navigate to /pivots, select pivot,
+# UI: from StarkAgroUI/, npm run start, navigate to /pivots, select pivot,
 # verify postpone banner renders when forecast >= threshold.
 ```
 

@@ -1,4 +1,4 @@
-# Production JWT rotation on AgripeWeb Hostinger VPS (STA-86).
+# Production JWT rotation on StarkAgro Hostinger VPS (STA-86).
 # Invalidates existing sessions — users must re-login.
 # Rollback: restore latest .env.bak.* on VPS, then ./scripts/deploy-hostinger-remote.sh .
 

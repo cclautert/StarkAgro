@@ -7,8 +7,8 @@ ROOT="$("$SCRIPT_DIR/resolve-vps-repo-root.sh" "${1:-.}" | tr -d '\r')"
 cd "$ROOT"
 
 git sparse-checkout disable >/dev/null 2>&1 || true
-git checkout -f HEAD -- AgripeWebUI AgripeWebAPI AgripeWebWorker docker scripts
-for dir in AgripeWebUI AgripeWebAPI AgripeWebWorker docker; do
+git checkout -f HEAD -- StarkAgroUI StarkAgroAPI StarkAgroWorker docker scripts
+for dir in StarkAgroUI StarkAgroAPI StarkAgroWorker docker; do
   if [[ ! -d "$dir" ]]; then
     echo "ERROR: $dir still missing under $(pwd) after git checkout" >&2
     ls -la >&2
@@ -83,7 +83,7 @@ if [[ ! -s "$PASSWD_FILE" ]]; then
   echo "ERROR: Mosquitto passwd missing or empty at $PASSWD_FILE" >&2
   exit 1
 fi
-# chmod via docker: file is root-owned (created inside container), agripeweb runner can't chmod it directly
+# chmod via docker: file is root-owned (created inside container), starkagro runner can't chmod it directly
 docker run --rm \
   -v "$ROOT/docker/mosquitto:/mosquitto/config" \
   eclipse-mosquitto:2 \
@@ -94,7 +94,7 @@ mkdir -p "$CERTS_DIR"
 if [[ ! -f "$CERTS_DIR/ca.crt" || ! -f "$CERTS_DIR/server.crt" || ! -f "$CERTS_DIR/server.key" ]]; then
   echo "Generating self-signed MQTT TLS certificates in $CERTS_DIR"
   openssl req -new -x509 -days 3650 -keyout "$CERTS_DIR/ca.key" -out "$CERTS_DIR/ca.crt" \
-    -subj "/CN=AgripeWeb-CA" -nodes
+    -subj "/CN=StarkAgro-CA" -nodes
   openssl genrsa -out "$CERTS_DIR/server.key" 2048
   openssl req -new -key "$CERTS_DIR/server.key" -out "$CERTS_DIR/server.csr" \
     -subj "/CN=agripeweb-mqtt"

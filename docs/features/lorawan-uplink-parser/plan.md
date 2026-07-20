@@ -1,4 +1,4 @@
-﻿Issue: https://github.com/cclautert/AgripeWeb/issues/70
+﻿Issue: https://github.com/cclautert/StarkAgro/issues/70
 
 # Plan — Parser Uplink LoRaWAN ChirpStack
 
@@ -18,9 +18,9 @@ O `MqttWorkerService` atualmente só entende o payload legado `{ "code": "...", 
 
 ## Affected Layers
 
-- **Novo serviço:** `AgripeWebWorker/Services/LoRaWanUplinkParser.cs` (interface + implementação + DTOs + converter)
-- **Modificado:** `AgripeWebWorker/Services/MqttWorkerService.cs` — detecção de formato, caminho LoRaWAN, filtro anomalia `_H`
-- **Modificado:** `AgripeWebWorker/Program.cs` — registrar `ILoRaWanUplinkParser`
+- **Novo serviço:** `StarkAgroWorker/Services/LoRaWanUplinkParser.cs` (interface + implementação + DTOs + converter)
+- **Modificado:** `StarkAgroWorker/Services/MqttWorkerService.cs` — detecção de formato, caminho LoRaWAN, filtro anomalia `_H`
+- **Modificado:** `StarkAgroWorker/Program.cs` — registrar `ILoRaWanUplinkParser`
 
 ## New REST Endpoints
 
@@ -30,15 +30,15 @@ Nenhum — ingestão MQTT-only.
 
 | Path | Type |
 |------|------|
-| `AgripeWebWorker/Services/LoRaWanUplinkParser.cs` | Interface + implementação + DTOs internos + `DecimalNullableConverter` |
-| `AgripeWebWorker.Tests/Services/LoRaWanUplinkParserTests.cs` | xUnit tests |
+| `StarkAgroWorker/Services/LoRaWanUplinkParser.cs` | Interface + implementação + DTOs internos + `DecimalNullableConverter` |
+| `StarkAgroWorker.Tests/Services/LoRaWanUplinkParserTests.cs` | xUnit tests |
 
 ## Files to Modify
 
 | Path | Change |
 |------|--------|
-| `AgripeWebWorker/Services/MqttWorkerService.cs` | Injetar `ILoRaWanUplinkParser`; adicionar detecção de formato; emitir múltiplos requests para LoRaWAN; filtro anomalia `_H`-only |
-| `AgripeWebWorker/Program.cs` | `services.AddSingleton<ILoRaWanUplinkParser, LoRaWanUplinkParser>()` |
+| `StarkAgroWorker/Services/MqttWorkerService.cs` | Injetar `ILoRaWanUplinkParser`; adicionar detecção de formato; emitir múltiplos requests para LoRaWAN; filtro anomalia `_H`-only |
+| `StarkAgroWorker/Program.cs` | `services.AddSingleton<ILoRaWanUplinkParser, LoRaWanUplinkParser>()` |
 
 ## MongoDB Changes
 
@@ -92,7 +92,7 @@ foreach read in uplinkReads:
 services.AddSingleton<ILoRaWanUplinkParser, LoRaWanUplinkParser>();
 ```
 
-Adicionado em `AgripeWebWorker/Program.cs` antes de `AddHostedService<MqttWorkerService>()`.
+Adicionado em `StarkAgroWorker/Program.cs` antes de `AddHostedService<MqttWorkerService>()`.
 
 ## Risks & Flags
 
@@ -127,7 +127,7 @@ Adicionado em `AgripeWebWorker/Program.cs` antes de `AddHostedService<MqttWorker
 ## Verification
 
 ```bash
-dotnet build AgripeWebAPI/AgripeWebAPI.csproj
-dotnet build AgripeWebWorker/AgripeWebWorker.csproj
-dotnet test AgripeWebWorker.Tests/AgripeWebWorker.Tests.csproj
+dotnet build StarkAgroAPI/StarkAgroAPI.csproj
+dotnet build StarkAgroWorker/StarkAgroWorker.csproj
+dotnet test StarkAgroWorker.Tests/StarkAgroWorker.Tests.csproj
 ```

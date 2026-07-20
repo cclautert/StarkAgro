@@ -1,0 +1,67 @@
+﻿using StarkAgroAPI.Domain.Commands.Requests.Reads;
+using StarkAgroAPI.Domain.Commands.Responses.Reads;
+using StarkAgroAPI.Models.Interfaces;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace StarkAgroAPI.Controllers
+{
+    [ApiController]
+    [Route("v1/reads")]
+    [Authorize]
+    public class ReadsController : MainController
+    {
+        public ReadsController(INotifier notificador) : base(notificador)
+        {
+        }
+
+        [HttpGet("GetActive")]
+        public async Task<IActionResult> GetActive(CancellationToken cancellationToken)
+        {
+            return Ok();
+        }
+        
+        [HttpGet("GetAll")]
+        public async Task<IAsyncEnumerable<GetReadResponse>> GetAll(
+            [FromServices] IMediator mediator,
+            [FromQuery] GetListReadRequest command,
+            CancellationToken cancellationToken
+        )
+        {
+            command.UserId = GetCurrentUserId();
+            return await mediator.Send(command, cancellationToken);
+        }
+
+        [HttpGet("GetAllBySensorId")]
+        public async Task<IAsyncEnumerable<GetAllReadBySensorIdResponse>> GetAllBySensorId(
+            [FromServices] IMediator mediator,
+            [FromQuery] GetAllListReadBySensorIdRequest command,
+            CancellationToken cancellationToken
+        )
+        {
+            return await mediator.Send(command, cancellationToken);
+        }
+
+        [HttpGet("GetByPivotId")]
+        public async Task<GetReadByPivotIdResponse> GetByPivotId(
+            [FromServices] IMediator mediator,
+            [FromQuery] GetListReadByPivotIdRequest command,
+            CancellationToken cancellationToken
+        )
+        {
+            command.UserId = GetCurrentUserId();
+            return await mediator.Send(command, cancellationToken);
+        }
+                
+        [HttpPost("Add")]
+        public async Task<CreateReadResponse> Add(
+            [FromServices] IMediator mediator,
+            [FromBody] CreateReadRequest command,
+            CancellationToken cancellationToken
+        )
+        {
+            return await mediator.Send(command, cancellationToken);
+        }
+    }    
+}

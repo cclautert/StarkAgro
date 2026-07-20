@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <coverage line-rate="0.8986" branch-rate="0.8139" version="1.9" timestamp="1775231999" lines-covered="1295" lines-valid="1441" branches-covered="350" branches-valid="430">
   <sources>
-    <source>D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\</source>
+    <source>D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\</source>
   </sources>
   <packages>
-    <package name="AgripeWebAPI" line-rate="0.8986" branch-rate="0.8139" complexity="655">
+    <package name="StarkAgroAPI" line-rate="0.8986" branch-rate="0.8139" complexity="655">
       <classes>
         <class name="Program" filename="Program.cs" line-rate="0" branch-rate="1" complexity="1">
           <methods>
@@ -52,7 +52,7 @@
             <line number="34" hits="0" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Validators.EmailAttribute" filename="Validators\EmailAttribute.cs" line-rate="1" branch-rate="1" complexity="8">
+        <class name="StarkAgroAPI.Validators.EmailAttribute" filename="Validators\EmailAttribute.cs" line-rate="1" branch-rate="1" complexity="8">
           <methods>
             <method name="IsValid" signature="(System.Object)" line-rate="1" branch-rate="1" complexity="6">
               <lines>
@@ -112,7 +112,7 @@
             <line number="10" hits="1" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Validators.PasswordStrengthAttribute" filename="Validators\PasswordStrengthAttribute.cs" line-rate="1" branch-rate="1" complexity="17">
+        <class name="StarkAgroAPI.Validators.PasswordStrengthAttribute" filename="Validators\PasswordStrengthAttribute.cs" line-rate="1" branch-rate="1" complexity="17">
           <methods>
             <method name="IsValid" signature="(System.Object)" line-rate="1" branch-rate="1" complexity="16">
               <lines>
@@ -216,7 +216,7 @@
             <line number="43" hits="1" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Services.CurrentUserContext" filename="Services\CurrentUserContext.cs" line-rate="1" branch-rate="0.8887999999999999" complexity="19">
+        <class name="StarkAgroAPI.Services.CurrentUserContext" filename="Services\CurrentUserContext.cs" line-rate="1" branch-rate="0.8887999999999999" complexity="19">
           <methods>
             <method name="get_UserId" signature="()" line-rate="1" branch-rate="0.875" complexity="16">
               <lines>
@@ -332,9 +332,9 @@
             <line number="18" hits="7" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Services.JwtTokenService" filename="Services\JwtTokenService.cs" line-rate="1" branch-rate="0.75" complexity="8">
+        <class name="StarkAgroAPI.Services.JwtTokenService" filename="Services\JwtTokenService.cs" line-rate="1" branch-rate="0.75" complexity="8">
           <methods>
-            <method name="GenerateTokenAsync" signature="(AgripeWebAPI.Models.Entities.User,System.Threading.CancellationToken)" line-rate="1" branch-rate="0.6666" complexity="6">
+            <method name="GenerateTokenAsync" signature="(StarkAgroAPI.Models.Entities.User,System.Threading.CancellationToken)" line-rate="1" branch-rate="0.6666" complexity="6">
               <lines>
                 <line number="21" hits="5" branch="False" />
                 <line number="22" hits="5" branch="True" condition-coverage="50% (2/4)">
@@ -422,7 +422,7 @@
             <line number="18" hits="5" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Services.LoginAttemptService" filename="Services\LoginAttemptService.cs" line-rate="1" branch-rate="1" complexity="14">
+        <class name="StarkAgroAPI.Services.LoginAttemptService" filename="Services\LoginAttemptService.cs" line-rate="1" branch-rate="1" complexity="14">
           <methods>
             <method name="IsLockedOut" signature="(System.String)" line-rate="1" branch-rate="1" complexity="6">
               <lines>
@@ -526,7 +526,7 @@
             <line number="15" hits="1" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Services.LoginAttemptService/LoginAttemptRecord" filename="Services\LoginAttemptService.cs" line-rate="1" branch-rate="1" complexity="1">
+        <class name="StarkAgroAPI.Services.LoginAttemptService/LoginAttemptRecord" filename="Services\LoginAttemptService.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
             <method name="get_Count" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -538,7 +538,7 @@
             <line number="54" hits="69" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Services.PasswordHasherService" filename="Services\PasswordHasherService.cs" line-rate="1" branch-rate="1" complexity="6">
+        <class name="StarkAgroAPI.Services.PasswordHasherService" filename="Services\PasswordHasherService.cs" line-rate="1" branch-rate="1" complexity="6">
           <methods>
             <method name="HashPassword" signature="(System.String)" line-rate="1" branch-rate="1" complexity="2">
               <lines>
@@ -608,7 +608,7 @@
             <line number="32" hits="7" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Notifications.Notification" filename="Notifications\Notification.cs" line-rate="1" branch-rate="1" complexity="2">
+        <class name="StarkAgroAPI.Notifications.Notification" filename="Notifications\Notification.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
             <method name="get_Mensagem" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -626,7 +626,7 @@
             <line number="3" hits="37" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Notifications.Notificator" filename="Notifications\Notificator.cs" line-rate="1" branch-rate="1" complexity="4">
+        <class name="StarkAgroAPI.Notifications.Notificator" filename="Notifications\Notificator.cs" line-rate="1" branch-rate="1" complexity="4">
           <methods>
             <method name="HasNotification" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -642,7 +642,7 @@
                 <line number="22" hits="3" branch="False" />
               </lines>
             </method>
-            <method name="Handle" signature="(AgripeWebAPI.Notifications.Notification)" line-rate="1" branch-rate="1" complexity="1">
+            <method name="Handle" signature="(StarkAgroAPI.Notifications.Notification)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
                 <line number="25" hits="5" branch="False" />
                 <line number="26" hits="5" branch="False" />
@@ -674,7 +674,7 @@
             <line number="12" hits="4" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Models.agpDBContext" filename="Models\agpDBContext.cs" line-rate="0.9" branch-rate="0.875" complexity="15">
+        <class name="StarkAgroAPI.Models.agpDBContext" filename="Models\agpDBContext.cs" line-rate="0.9" branch-rate="0.875" complexity="15">
           <methods>
             <method name="get_Users" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -715,7 +715,7 @@
                 <line number="12" hits="246" branch="False" />
               </lines>
             </method>
-            <method name=".ctor" signature="(Microsoft.Extensions.Options.IOptions`1&lt;AgripeWebAPI.Configuration.MongoDbSettings&gt;)" line-rate="1" branch-rate="0.875" complexity="8">
+            <method name=".ctor" signature="(Microsoft.Extensions.Options.IOptions`1&lt;StarkAgroAPI.Configuration.MongoDbSettings&gt;)" line-rate="1" branch-rate="0.875" complexity="8">
               <lines>
                 <line number="14" hits="7" branch="False" />
                 <line number="15" hits="7" branch="False" />
@@ -798,7 +798,7 @@
             <line number="39" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Models.agpDBContext/CounterDocument" filename="Models\agpDBContext.cs" line-rate="0" branch-rate="1" complexity="2">
+        <class name="StarkAgroAPI.Models.agpDBContext/CounterDocument" filename="Models\agpDBContext.cs" line-rate="0" branch-rate="1" complexity="2">
           <methods>
             <method name="get_Id" signature="()" line-rate="0" branch-rate="1" complexity="1">
               <lines>
@@ -816,7 +816,7 @@
             <line number="74" hits="0" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Models.agpDBContext/&lt;GetNextIdAsync&gt;d__15" filename="Models\agpDBContext.cs" line-rate="0" branch-rate="1" complexity="1">
+        <class name="StarkAgroAPI.Models.agpDBContext/&lt;GetNextIdAsync&gt;d__15" filename="Models\agpDBContext.cs" line-rate="0" branch-rate="1" complexity="1">
           <methods>
             <method name="MoveNext" signature="()" line-rate="0" branch-rate="1" complexity="1">
               <lines>
@@ -848,7 +848,7 @@
             <line number="59" hits="0" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Models.Entities.Entity" filename="Models\Entities\Entity.cs" line-rate="1" branch-rate="1" complexity="2">
+        <class name="StarkAgroAPI.Models.Entities.Entity" filename="Models\Entities\Entity.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
             <method name="get_Id" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -870,7 +870,7 @@
             <line number="9" hits="77" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Models.Entities.Pivot" filename="Models\Entities\Pivot.cs" line-rate="1" branch-rate="1" complexity="5">
+        <class name="StarkAgroAPI.Models.Entities.Pivot" filename="Models\Entities\Pivot.cs" line-rate="1" branch-rate="1" complexity="5">
           <methods>
             <method name="get_UserId" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -906,7 +906,7 @@
             <line number="16" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Models.Entities.ReadSensor" filename="Models\Entities\ReadSensor.cs" line-rate="1" branch-rate="1" complexity="5">
+        <class name="StarkAgroAPI.Models.Entities.ReadSensor" filename="Models\Entities\ReadSensor.cs" line-rate="1" branch-rate="1" complexity="5">
           <methods>
             <method name="get_SensorId" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -942,7 +942,7 @@
             <line number="16" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Models.Entities.Sensor" filename="Models\Entities\Sensor.cs" line-rate="1" branch-rate="1" complexity="8">
+        <class name="StarkAgroAPI.Models.Entities.Sensor" filename="Models\Entities\Sensor.cs" line-rate="1" branch-rate="1" complexity="8">
           <methods>
             <method name="get_PivoId" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -996,7 +996,7 @@
             <line number="18" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Models.Entities.User" filename="Models\Entities\User.cs" line-rate="1" branch-rate="1" complexity="6">
+        <class name="StarkAgroAPI.Models.Entities.User" filename="Models\Entities\User.cs" line-rate="1" branch-rate="1" complexity="6">
           <methods>
             <method name="get_Name" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -1038,9 +1038,9 @@
             <line number="12" hits="45" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Users.CreateUserHandler" filename="Domain\Handlers\Users\CreateUserHandler.cs" line-rate="1" branch-rate="0.5" complexity="8">
+        <class name="StarkAgroAPI.Domain.Handlers.Users.CreateUserHandler" filename="Domain\Handlers\Users\CreateUserHandler.cs" line-rate="1" branch-rate="0.5" complexity="8">
           <methods>
-            <method name=".ctor" signature="(AgripeWebAPI.Models.agpDBContext,AgripeWebAPI.Models.Interfaces.IPasswordHasher,AgripeWebAPI.Models.Interfaces.INotifier,Microsoft.Extensions.Logging.ILogger`1&lt;AgripeWebAPI.Domain.Handlers.Users.CreateUserHandler&gt;)" line-rate="1" branch-rate="0.5" complexity="8">
+            <method name=".ctor" signature="(StarkAgroAPI.Models.agpDBContext,StarkAgroAPI.Models.Interfaces.IPasswordHasher,StarkAgroAPI.Models.Interfaces.INotifier,Microsoft.Extensions.Logging.ILogger`1&lt;StarkAgroAPI.Domain.Handlers.Users.CreateUserHandler&gt;)" line-rate="1" branch-rate="0.5" complexity="8">
               <lines>
                 <line number="20" hits="3" branch="False" />
                 <line number="21" hits="3" branch="False" />
@@ -1094,7 +1094,7 @@
             <line number="26" hits="3" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Users.CreateUserHandler/&lt;Handle&gt;d__5" filename="Domain\Handlers\Users\CreateUserHandler.cs" line-rate="1" branch-rate="1" complexity="4">
+        <class name="StarkAgroAPI.Domain.Handlers.Users.CreateUserHandler/&lt;Handle&gt;d__5" filename="Domain\Handlers\Users\CreateUserHandler.cs" line-rate="1" branch-rate="1" complexity="4">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="1" complexity="4">
               <lines>
@@ -1176,9 +1176,9 @@
             <line number="65" hits="3" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Users.DeleteUserHandler" filename="Domain\Handlers\Users\DeleteUserHandler.cs" line-rate="1" branch-rate="0.5" complexity="6">
+        <class name="StarkAgroAPI.Domain.Handlers.Users.DeleteUserHandler" filename="Domain\Handlers\Users\DeleteUserHandler.cs" line-rate="1" branch-rate="0.5" complexity="6">
           <methods>
-            <method name=".ctor" signature="(AgripeWebAPI.Models.agpDBContext,AgripeWebAPI.Models.Interfaces.INotifier,Microsoft.Extensions.Logging.ILogger`1&lt;AgripeWebAPI.Domain.Handlers.Users.DeleteUserHandler&gt;)" line-rate="1" branch-rate="0.5" complexity="6">
+            <method name=".ctor" signature="(StarkAgroAPI.Models.agpDBContext,StarkAgroAPI.Models.Interfaces.INotifier,Microsoft.Extensions.Logging.ILogger`1&lt;StarkAgroAPI.Domain.Handlers.Users.DeleteUserHandler&gt;)" line-rate="1" branch-rate="0.5" complexity="6">
               <lines>
                 <line number="18" hits="4" branch="False" />
                 <line number="19" hits="4" branch="False" />
@@ -1222,7 +1222,7 @@
             <line number="23" hits="4" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Users.DeleteUserHandler/&lt;Handle&gt;d__4" filename="Domain\Handlers\Users\DeleteUserHandler.cs" line-rate="1" branch-rate="1" complexity="6">
+        <class name="StarkAgroAPI.Domain.Handlers.Users.DeleteUserHandler/&lt;Handle&gt;d__4" filename="Domain\Handlers\Users\DeleteUserHandler.cs" line-rate="1" branch-rate="1" complexity="6">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="1" complexity="6">
               <lines>
@@ -1294,9 +1294,9 @@
             <line number="57" hits="4" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Users.EditUserHandler" filename="Domain\Handlers\Users\EditUserHandler.cs" line-rate="1" branch-rate="0.5" complexity="9">
+        <class name="StarkAgroAPI.Domain.Handlers.Users.EditUserHandler" filename="Domain\Handlers\Users\EditUserHandler.cs" line-rate="1" branch-rate="0.5" complexity="9">
           <methods>
-            <method name=".ctor" signature="(AgripeWebAPI.Models.agpDBContext,AgripeWebAPI.Models.Interfaces.IPasswordHasher,AgripeWebAPI.Models.Interfaces.INotifier,Microsoft.Extensions.Logging.ILogger`1&lt;AgripeWebAPI.Domain.Handlers.Users.EditUserHandler&gt;)" line-rate="1" branch-rate="0.5" complexity="8">
+            <method name=".ctor" signature="(StarkAgroAPI.Models.agpDBContext,StarkAgroAPI.Models.Interfaces.IPasswordHasher,StarkAgroAPI.Models.Interfaces.INotifier,Microsoft.Extensions.Logging.ILogger`1&lt;StarkAgroAPI.Domain.Handlers.Users.EditUserHandler&gt;)" line-rate="1" branch-rate="0.5" complexity="8">
               <lines>
                 <line number="23" hits="7" branch="False" />
                 <line number="24" hits="7" branch="False" />
@@ -1356,7 +1356,7 @@
             <line number="21" hits="1" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Users.EditUserHandler/&lt;Handle&gt;d__6" filename="Domain\Handlers\Users\EditUserHandler.cs" line-rate="1" branch-rate="1" complexity="12">
+        <class name="StarkAgroAPI.Domain.Handlers.Users.EditUserHandler/&lt;Handle&gt;d__6" filename="Domain\Handlers\Users\EditUserHandler.cs" line-rate="1" branch-rate="1" complexity="12">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="1" complexity="12">
               <lines>
@@ -1502,9 +1502,9 @@
             <line number="95" hits="7" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Users.EditUserLimitsHandler" filename="Domain\Handlers\Users\EditUserLimitsHandler.cs" line-rate="1" branch-rate="1" complexity="2">
+        <class name="StarkAgroAPI.Domain.Handlers.Users.EditUserLimitsHandler" filename="Domain\Handlers\Users\EditUserLimitsHandler.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
-            <method name=".ctor" signature="(AgripeWebAPI.Models.agpDBContext)" line-rate="1" branch-rate="1" complexity="2">
+            <method name=".ctor" signature="(StarkAgroAPI.Models.agpDBContext)" line-rate="1" branch-rate="1" complexity="2">
               <lines>
                 <line number="13" hits="3" branch="False" />
                 <line number="14" hits="3" branch="False" />
@@ -1528,7 +1528,7 @@
             <line number="16" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Users.EditUserLimitsHandler/&lt;Handle&gt;d__2" filename="Domain\Handlers\Users\EditUserLimitsHandler.cs" line-rate="1" branch-rate="1" complexity="2">
+        <class name="StarkAgroAPI.Domain.Handlers.Users.EditUserLimitsHandler/&lt;Handle&gt;d__2" filename="Domain\Handlers\Users\EditUserLimitsHandler.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="1" complexity="2">
               <lines>
@@ -1568,9 +1568,9 @@
             <line number="33" hits="1" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Users.ExternalLoginHandler" filename="Domain\Handlers\Users\ExternalLoginHandler.cs" line-rate="1" branch-rate="0.5" complexity="14">
+        <class name="StarkAgroAPI.Domain.Handlers.Users.ExternalLoginHandler" filename="Domain\Handlers\Users\ExternalLoginHandler.cs" line-rate="1" branch-rate="0.5" complexity="14">
           <methods>
-            <method name=".ctor" signature="(AgripeWebAPI.Models.agpDBContext,System.Net.Http.IHttpClientFactory,AgripeWebAPI.Models.Interfaces.IJwtTokenService,AgripeWebAPI.Models.Interfaces.IPasswordHasher,Microsoft.Extensions.Options.IOptions`1&lt;AgripeWebAPI.Configuration.OAuthSettings&gt;,Microsoft.Extensions.Logging.ILogger`1&lt;AgripeWebAPI.Domain.Handlers.Users.ExternalLoginHandler&gt;)" line-rate="1" branch-rate="0.5" complexity="14">
+            <method name=".ctor" signature="(StarkAgroAPI.Models.agpDBContext,System.Net.Http.IHttpClientFactory,StarkAgroAPI.Models.Interfaces.IJwtTokenService,StarkAgroAPI.Models.Interfaces.IPasswordHasher,Microsoft.Extensions.Options.IOptions`1&lt;StarkAgroAPI.Configuration.OAuthSettings&gt;,Microsoft.Extensions.Logging.ILogger`1&lt;StarkAgroAPI.Domain.Handlers.Users.ExternalLoginHandler&gt;)" line-rate="1" branch-rate="0.5" complexity="14">
               <lines>
                 <line number="29" hits="15" branch="False" />
                 <line number="30" hits="15" branch="False" />
@@ -1658,7 +1658,7 @@
             <line number="43" hits="15" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Users.ExternalLoginHandler/GoogleTokenResponse" filename="Domain\Handlers\Users\ExternalLoginHandler.cs" line-rate="1" branch-rate="1" complexity="1">
+        <class name="StarkAgroAPI.Domain.Handlers.Users.ExternalLoginHandler/GoogleTokenResponse" filename="Domain\Handlers\Users\ExternalLoginHandler.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
             <method name="get_AccessToken" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -1670,7 +1670,7 @@
             <line number="174" hits="22" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Users.ExternalLoginHandler/GoogleUserInfo" filename="Domain\Handlers\Users\ExternalLoginHandler.cs" line-rate="0.75" branch-rate="1" complexity="4">
+        <class name="StarkAgroAPI.Domain.Handlers.Users.ExternalLoginHandler/GoogleUserInfo" filename="Domain\Handlers\Users\ExternalLoginHandler.cs" line-rate="0.75" branch-rate="1" complexity="4">
           <methods>
             <method name="get_Id" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -1700,7 +1700,7 @@
             <line number="186" hits="0" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Users.ExternalLoginHandler/&lt;&gt;c" filename="Domain\Handlers\Users\ExternalLoginHandler.cs" line-rate="1" branch-rate="1" complexity="1">
+        <class name="StarkAgroAPI.Domain.Handlers.Users.ExternalLoginHandler/&lt;&gt;c" filename="Domain\Handlers\Users\ExternalLoginHandler.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
             <method name="&lt;Handle&gt;b__10_0" signature="(System.String)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -1712,7 +1712,7 @@
             <line number="69" hits="10" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Users.ExternalLoginHandler/&lt;Handle&gt;d__10" filename="Domain\Handlers\Users\ExternalLoginHandler.cs" line-rate="1" branch-rate="0.8409" complexity="44">
+        <class name="StarkAgroAPI.Domain.Handlers.Users.ExternalLoginHandler/&lt;Handle&gt;d__10" filename="Domain\Handlers\Users\ExternalLoginHandler.cs" line-rate="1" branch-rate="0.8409" complexity="44">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="0.8409" complexity="44">
               <lines>
@@ -2022,7 +2022,7 @@
             <line number="169" hits="15" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Users.GetToken" filename="Domain\Handlers\Users\GetToken.cs" line-rate="1" branch-rate="0.7222" complexity="18">
+        <class name="StarkAgroAPI.Domain.Handlers.Users.GetToken" filename="Domain\Handlers\Users\GetToken.cs" line-rate="1" branch-rate="0.7222" complexity="18">
           <methods>
             <method name="IsBcryptHash" signature="(System.String)" line-rate="1" branch-rate="1" complexity="8">
               <lines>
@@ -2046,7 +2046,7 @@
                 <line number="89" hits="3" branch="False" />
               </lines>
             </method>
-            <method name=".ctor" signature="(AgripeWebAPI.Models.agpDBContext,AgripeWebAPI.Models.Interfaces.IPasswordHasher,AgripeWebAPI.Models.Interfaces.IJwtTokenService,Microsoft.Extensions.Logging.ILogger`1&lt;AgripeWebAPI.Domain.Handlers.Users.GetToken&gt;,AgripeWebAPI.Services.ILoginAttemptService)" line-rate="1" branch-rate="0.5" complexity="10">
+            <method name=".ctor" signature="(StarkAgroAPI.Models.agpDBContext,StarkAgroAPI.Models.Interfaces.IPasswordHasher,StarkAgroAPI.Models.Interfaces.IJwtTokenService,Microsoft.Extensions.Logging.ILogger`1&lt;StarkAgroAPI.Domain.Handlers.Users.GetToken&gt;,StarkAgroAPI.Services.ILoginAttemptService)" line-rate="1" branch-rate="0.5" complexity="10">
               <lines>
                 <line number="21" hits="7" branch="False" />
                 <line number="22" hits="7" branch="False" />
@@ -2128,7 +2128,7 @@
             <line number="28" hits="7" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Users.GetToken/&lt;Handle&gt;d__6" filename="Domain\Handlers\Users\GetToken.cs" line-rate="1" branch-rate="1" complexity="10">
+        <class name="StarkAgroAPI.Domain.Handlers.Users.GetToken/&lt;Handle&gt;d__6" filename="Domain\Handlers\Users\GetToken.cs" line-rate="1" branch-rate="1" complexity="10">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="1" complexity="10">
               <lines>
@@ -2242,9 +2242,9 @@
             <line number="74" hits="7" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Users.GetUserHandler" filename="Domain\Handlers\Users\GetUserHandler.cs" line-rate="1" branch-rate="0.5" complexity="6">
+        <class name="StarkAgroAPI.Domain.Handlers.Users.GetUserHandler" filename="Domain\Handlers\Users\GetUserHandler.cs" line-rate="1" branch-rate="0.5" complexity="6">
           <methods>
-            <method name=".ctor" signature="(AgripeWebAPI.Models.agpDBContext,AgripeWebAPI.Models.Interfaces.INotifier,Microsoft.Extensions.Logging.ILogger`1&lt;AgripeWebAPI.Domain.Handlers.Users.GetUserHandler&gt;)" line-rate="1" branch-rate="0.5" complexity="6">
+            <method name=".ctor" signature="(StarkAgroAPI.Models.agpDBContext,StarkAgroAPI.Models.Interfaces.INotifier,Microsoft.Extensions.Logging.ILogger`1&lt;StarkAgroAPI.Domain.Handlers.Users.GetUserHandler&gt;)" line-rate="1" branch-rate="0.5" complexity="6">
               <lines>
                 <line number="18" hits="3" branch="False" />
                 <line number="19" hits="3" branch="False" />
@@ -2288,7 +2288,7 @@
             <line number="23" hits="3" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Users.GetUserHandler/&lt;Handle&gt;d__4" filename="Domain\Handlers\Users\GetUserHandler.cs" line-rate="1" branch-rate="1" complexity="6">
+        <class name="StarkAgroAPI.Domain.Handlers.Users.GetUserHandler/&lt;Handle&gt;d__4" filename="Domain\Handlers\Users\GetUserHandler.cs" line-rate="1" branch-rate="1" complexity="6">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="1" complexity="6">
               <lines>
@@ -2364,9 +2364,9 @@
             <line number="55" hits="3" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Sensors.GetListReadBySensorIdHandler" filename="Domain\Handlers\Reads\GetListReadBySensorIdHandler.cs" line-rate="1" branch-rate="1" complexity="2">
+        <class name="StarkAgroAPI.Domain.Handlers.Sensors.GetListReadBySensorIdHandler" filename="Domain\Handlers\Reads\GetListReadBySensorIdHandler.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
-            <method name=".ctor" signature="(AgripeWebAPI.Models.agpDBContext)" line-rate="1" branch-rate="1" complexity="2">
+            <method name=".ctor" signature="(StarkAgroAPI.Models.agpDBContext)" line-rate="1" branch-rate="1" complexity="2">
               <lines>
                 <line number="13" hits="3" branch="False" />
                 <line number="14" hits="3" branch="False" />
@@ -2390,7 +2390,7 @@
             <line number="16" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Sensors.GetListReadBySensorIdHandler/&lt;Handle&gt;d__2" filename="Domain\Handlers\Reads\GetListReadBySensorIdHandler.cs" line-rate="1" branch-rate="1" complexity="1">
+        <class name="StarkAgroAPI.Domain.Handlers.Sensors.GetListReadBySensorIdHandler/&lt;Handle&gt;d__2" filename="Domain\Handlers\Reads\GetListReadBySensorIdHandler.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -2430,7 +2430,7 @@
             <line number="35" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Sensors.GetListReadBySensorIdHandler/&lt;ToAsyncEnumerable&gt;d__3" filename="Domain\Handlers\Reads\GetListReadBySensorIdHandler.cs" line-rate="1" branch-rate="1" complexity="2">
+        <class name="StarkAgroAPI.Domain.Handlers.Sensors.GetListReadBySensorIdHandler/&lt;ToAsyncEnumerable&gt;d__3" filename="Domain\Handlers\Reads\GetListReadBySensorIdHandler.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="1" complexity="2">
               <lines>
@@ -2464,9 +2464,9 @@
             <line number="47" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Sensors.GetListReadHandler" filename="Domain\Handlers\Reads\GetListReadHandler.cs" line-rate="1" branch-rate="0.5" complexity="4">
+        <class name="StarkAgroAPI.Domain.Handlers.Sensors.GetListReadHandler" filename="Domain\Handlers\Reads\GetListReadHandler.cs" line-rate="1" branch-rate="0.5" complexity="4">
           <methods>
-            <method name=".ctor" signature="(AgripeWebAPI.Models.agpDBContext,AgripeWebAPI.Models.Interfaces.ICurrentUserContext)" line-rate="1" branch-rate="0.5" complexity="4">
+            <method name=".ctor" signature="(StarkAgroAPI.Models.agpDBContext,StarkAgroAPI.Models.Interfaces.ICurrentUserContext)" line-rate="1" branch-rate="0.5" complexity="4">
               <lines>
                 <line number="17" hits="2" branch="False" />
                 <line number="18" hits="2" branch="False" />
@@ -2500,7 +2500,7 @@
             <line number="21" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Sensors.GetListReadHandler/&lt;Handle&gt;d__3" filename="Domain\Handlers\Reads\GetListReadHandler.cs" line-rate="1" branch-rate="0.5" complexity="2">
+        <class name="StarkAgroAPI.Domain.Handlers.Sensors.GetListReadHandler/&lt;Handle&gt;d__3" filename="Domain\Handlers\Reads\GetListReadHandler.cs" line-rate="1" branch-rate="0.5" complexity="2">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="0.5" complexity="2">
               <lines>
@@ -2552,7 +2552,7 @@
             <line number="43" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Sensors.GetListReadHandler/&lt;ToAsyncEnumerable&gt;d__4" filename="Domain\Handlers\Reads\GetListReadHandler.cs" line-rate="1" branch-rate="1" complexity="2">
+        <class name="StarkAgroAPI.Domain.Handlers.Sensors.GetListReadHandler/&lt;ToAsyncEnumerable&gt;d__4" filename="Domain\Handlers\Reads\GetListReadHandler.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="1" complexity="2">
               <lines>
@@ -2586,7 +2586,7 @@
             <line number="55" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Sensors.SensorSummary" filename="Domain\Handlers\Reads\GetReadByPivotIdHandler.cs" line-rate="1" branch-rate="1" complexity="1">
+        <class name="StarkAgroAPI.Domain.Handlers.Sensors.SensorSummary" filename="Domain\Handlers\Reads\GetReadByPivotIdHandler.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
             <method name="get_Id" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -2598,9 +2598,9 @@
             <line number="12" hits="9" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Sensors.GetReadByPivotIdHandler" filename="Domain\Handlers\Reads\GetReadByPivotIdHandler.cs" line-rate="1" branch-rate="1" complexity="2">
+        <class name="StarkAgroAPI.Domain.Handlers.Sensors.GetReadByPivotIdHandler" filename="Domain\Handlers\Reads\GetReadByPivotIdHandler.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
-            <method name=".ctor" signature="(AgripeWebAPI.Models.agpDBContext)" line-rate="1" branch-rate="1" complexity="2">
+            <method name=".ctor" signature="(StarkAgroAPI.Models.agpDBContext)" line-rate="1" branch-rate="1" complexity="2">
               <lines>
                 <line number="19" hits="7" branch="False" />
                 <line number="20" hits="7" branch="False" />
@@ -2624,26 +2624,26 @@
             <line number="22" hits="6" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Sensors.GetReadByPivotIdHandler/&lt;&gt;c" filename="Domain\Handlers\Reads\GetReadByPivotIdHandler.cs" line-rate="1" branch-rate="1" complexity="5">
+        <class name="StarkAgroAPI.Domain.Handlers.Sensors.GetReadByPivotIdHandler/&lt;&gt;c" filename="Domain\Handlers\Reads\GetReadByPivotIdHandler.cs" line-rate="1" branch-rate="1" complexity="5">
           <methods>
-            <method name="&lt;Handle&gt;b__2_0" signature="(AgripeWebAPI.Domain.Handlers.Sensors.SensorSummary)" line-rate="1" branch-rate="1" complexity="1">
+            <method name="&lt;Handle&gt;b__2_0" signature="(StarkAgroAPI.Domain.Handlers.Sensors.SensorSummary)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
                 <line number="33" hits="12" branch="False" />
               </lines>
             </method>
-            <method name="&lt;Handle&gt;b__2_4" signature="(System.Linq.IGrouping`2&lt;System.Int32,AgripeWebAPI.Models.Entities.ReadSensor&gt;)" line-rate="1" branch-rate="1" complexity="1">
+            <method name="&lt;Handle&gt;b__2_4" signature="(System.Linq.IGrouping`2&lt;System.Int32,StarkAgroAPI.Models.Entities.ReadSensor&gt;)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
                 <line number="46" hits="2" branch="False" />
               </lines>
             </method>
-            <method name="&lt;Handle&gt;b__2_5" signature="(System.Linq.IGrouping`2&lt;System.Int32,AgripeWebAPI.Models.Entities.ReadSensor&gt;)" line-rate="1" branch-rate="1" complexity="1">
+            <method name="&lt;Handle&gt;b__2_5" signature="(System.Linq.IGrouping`2&lt;System.Int32,StarkAgroAPI.Models.Entities.ReadSensor&gt;)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
                 <line number="47" hits="4" branch="False" />
                 <line number="48" hits="2" branch="False" />
                 <line number="49" hits="2" branch="False" />
               </lines>
             </method>
-            <method name="&lt;Handle&gt;b__2_8" signature="(System.Linq.IGrouping`2&lt;System.Int32,AgripeWebAPI.Models.Entities.ReadSensor&gt;)" line-rate="1" branch-rate="1" complexity="1">
+            <method name="&lt;Handle&gt;b__2_8" signature="(System.Linq.IGrouping`2&lt;System.Int32,StarkAgroAPI.Models.Entities.ReadSensor&gt;)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
                 <line number="80" hits="2" branch="False" />
                 <line number="81" hits="2" branch="False" />
@@ -2672,24 +2672,24 @@
             <line number="86" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Sensors.GetReadByPivotIdHandler/&lt;&gt;c__DisplayClass2_0" filename="Domain\Handlers\Reads\GetReadByPivotIdHandler.cs" line-rate="1" branch-rate="0.75" complexity="8">
+        <class name="StarkAgroAPI.Domain.Handlers.Sensors.GetReadByPivotIdHandler/&lt;&gt;c__DisplayClass2_0" filename="Domain\Handlers\Reads\GetReadByPivotIdHandler.cs" line-rate="1" branch-rate="0.75" complexity="8">
           <methods>
-            <method name="&lt;Handle&gt;b__2" signature="(AgripeWebAPI.Models.Entities.ReadSensor)" line-rate="1" branch-rate="1" complexity="1">
+            <method name="&lt;Handle&gt;b__2" signature="(StarkAgroAPI.Models.Entities.ReadSensor)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
                 <line number="43" hits="2" branch="False" />
               </lines>
             </method>
-            <method name="&lt;Handle&gt;b__3" signature="(AgripeWebAPI.Models.Entities.ReadSensor)" line-rate="1" branch-rate="1" complexity="1">
+            <method name="&lt;Handle&gt;b__3" signature="(StarkAgroAPI.Models.Entities.ReadSensor)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
                 <line number="44" hits="2" branch="False" />
               </lines>
             </method>
-            <method name="&lt;Handle&gt;b__6" signature="(AgripeWebAPI.Models.Entities.ReadSensor)" line-rate="1" branch-rate="1" complexity="1">
+            <method name="&lt;Handle&gt;b__6" signature="(StarkAgroAPI.Models.Entities.ReadSensor)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
                 <line number="78" hits="2" branch="False" />
               </lines>
             </method>
-            <method name="&lt;Handle&gt;b__7" signature="(AgripeWebAPI.Models.Entities.ReadSensor)" line-rate="1" branch-rate="1" complexity="1">
+            <method name="&lt;Handle&gt;b__7" signature="(StarkAgroAPI.Models.Entities.ReadSensor)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
                 <line number="79" hits="2" branch="False" />
               </lines>
@@ -2728,7 +2728,7 @@
             <line number="92" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Sensors.GetReadByPivotIdHandler/&lt;Handle&gt;d__2" filename="Domain\Handlers\Reads\GetReadByPivotIdHandler.cs" line-rate="0.9024" branch-rate="0.9582999999999999" complexity="48">
+        <class name="StarkAgroAPI.Domain.Handlers.Sensors.GetReadByPivotIdHandler/&lt;Handle&gt;d__2" filename="Domain\Handlers\Reads\GetReadByPivotIdHandler.cs" line-rate="0.9024" branch-rate="0.9582999999999999" complexity="48">
           <methods>
             <method name="MoveNext" signature="()" line-rate="0.9024" branch-rate="0.9582999999999999" complexity="48">
               <lines>
@@ -3034,9 +3034,9 @@
             <line number="157" hits="6" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Sensors.CreateSensorHandler" filename="Domain\Handlers\Sensors\CreateSensorHandler.cs" line-rate="1" branch-rate="0.5" complexity="4">
+        <class name="StarkAgroAPI.Domain.Handlers.Sensors.CreateSensorHandler" filename="Domain\Handlers\Sensors\CreateSensorHandler.cs" line-rate="1" branch-rate="0.5" complexity="4">
           <methods>
-            <method name=".ctor" signature="(AgripeWebAPI.Models.agpDBContext,AgripeWebAPI.Models.Interfaces.ICurrentUserContext)" line-rate="1" branch-rate="0.5" complexity="4">
+            <method name=".ctor" signature="(StarkAgroAPI.Models.agpDBContext,StarkAgroAPI.Models.Interfaces.ICurrentUserContext)" line-rate="1" branch-rate="0.5" complexity="4">
               <lines>
                 <line number="16" hits="3" branch="False" />
                 <line number="17" hits="3" branch="False" />
@@ -3070,7 +3070,7 @@
             <line number="20" hits="3" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Sensors.CreateSensorHandler/&lt;Handle&gt;d__3" filename="Domain\Handlers\Sensors\CreateSensorHandler.cs" line-rate="1" branch-rate="1" complexity="6">
+        <class name="StarkAgroAPI.Domain.Handlers.Sensors.CreateSensorHandler/&lt;Handle&gt;d__3" filename="Domain\Handlers\Sensors\CreateSensorHandler.cs" line-rate="1" branch-rate="1" complexity="6">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="1" complexity="6">
               <lines>
@@ -3146,9 +3146,9 @@
             <line number="47" hits="1" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Sensors.DeleteSensorHandler" filename="Domain\Handlers\Sensors\DeleteSensorHandler.cs" line-rate="1" branch-rate="1" complexity="1">
+        <class name="StarkAgroAPI.Domain.Handlers.Sensors.DeleteSensorHandler" filename="Domain\Handlers\Sensors\DeleteSensorHandler.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
-            <method name=".ctor" signature="(AgripeWebAPI.Models.agpDBContext)" line-rate="1" branch-rate="1" complexity="1">
+            <method name=".ctor" signature="(StarkAgroAPI.Models.agpDBContext)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
                 <line number="12" hits="2" branch="False" />
                 <line number="13" hits="2" branch="False" />
@@ -3164,7 +3164,7 @@
             <line number="15" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Sensors.DeleteSensorHandler/&lt;Handle&gt;d__2" filename="Domain\Handlers\Sensors\DeleteSensorHandler.cs" line-rate="1" branch-rate="1" complexity="2">
+        <class name="StarkAgroAPI.Domain.Handlers.Sensors.DeleteSensorHandler/&lt;Handle&gt;d__2" filename="Domain\Handlers\Sensors\DeleteSensorHandler.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="1" complexity="2">
               <lines>
@@ -3198,9 +3198,9 @@
             <line number="26" hits="1" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Sensors.EditSensorHandler" filename="Domain\Handlers\Sensors\EditSensorHandler.cs" line-rate="1" branch-rate="0.5" complexity="2">
+        <class name="StarkAgroAPI.Domain.Handlers.Sensors.EditSensorHandler" filename="Domain\Handlers\Sensors\EditSensorHandler.cs" line-rate="1" branch-rate="0.5" complexity="2">
           <methods>
-            <method name=".ctor" signature="(AgripeWebAPI.Models.agpDBContext)" line-rate="1" branch-rate="0.5" complexity="2">
+            <method name=".ctor" signature="(StarkAgroAPI.Models.agpDBContext)" line-rate="1" branch-rate="0.5" complexity="2">
               <lines>
                 <line number="12" hits="3" branch="False" />
                 <line number="13" hits="3" branch="False" />
@@ -3224,7 +3224,7 @@
             <line number="15" hits="3" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Sensors.EditSensorHandler/&lt;Handle&gt;d__2" filename="Domain\Handlers\Sensors\EditSensorHandler.cs" line-rate="1" branch-rate="1" complexity="4">
+        <class name="StarkAgroAPI.Domain.Handlers.Sensors.EditSensorHandler/&lt;Handle&gt;d__2" filename="Domain\Handlers\Sensors\EditSensorHandler.cs" line-rate="1" branch-rate="1" complexity="4">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="1" complexity="4">
               <lines>
@@ -3280,9 +3280,9 @@
             <line number="34" hits="1" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Sensors.GetListSensorHandler" filename="Domain\Handlers\Sensors\GetListSensorHandler.cs" line-rate="1" branch-rate="0.75" complexity="4">
+        <class name="StarkAgroAPI.Domain.Handlers.Sensors.GetListSensorHandler" filename="Domain\Handlers\Sensors\GetListSensorHandler.cs" line-rate="1" branch-rate="0.75" complexity="4">
           <methods>
-            <method name=".ctor" signature="(AgripeWebAPI.Models.agpDBContext,AgripeWebAPI.Models.Interfaces.ICurrentUserContext)" line-rate="1" branch-rate="0.75" complexity="4">
+            <method name=".ctor" signature="(StarkAgroAPI.Models.agpDBContext,StarkAgroAPI.Models.Interfaces.ICurrentUserContext)" line-rate="1" branch-rate="0.75" complexity="4">
               <lines>
                 <line number="16" hits="3" branch="False" />
                 <line number="17" hits="3" branch="False" />
@@ -3316,14 +3316,14 @@
             <line number="20" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Sensors.GetListSensorHandler/&lt;&gt;c" filename="Domain\Handlers\Sensors\GetListSensorHandler.cs" line-rate="1" branch-rate="1" complexity="2">
+        <class name="StarkAgroAPI.Domain.Handlers.Sensors.GetListSensorHandler/&lt;&gt;c" filename="Domain\Handlers\Sensors\GetListSensorHandler.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
-            <method name="&lt;Handle&gt;b__3_0" signature="(AgripeWebAPI.Models.Entities.Sensor)" line-rate="1" branch-rate="1" complexity="1">
+            <method name="&lt;Handle&gt;b__3_0" signature="(StarkAgroAPI.Models.Entities.Sensor)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
                 <line number="31" hits="4" branch="False" />
               </lines>
             </method>
-            <method name="&lt;Handle&gt;b__3_1" signature="(AgripeWebAPI.Models.Entities.Pivot)" line-rate="1" branch-rate="1" complexity="1">
+            <method name="&lt;Handle&gt;b__3_1" signature="(StarkAgroAPI.Models.Entities.Pivot)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
                 <line number="36" hits="4" branch="False" />
               </lines>
@@ -3334,9 +3334,9 @@
             <line number="36" hits="4" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Sensors.GetListSensorHandler/&lt;&gt;c__DisplayClass3_0" filename="Domain\Handlers\Sensors\GetListSensorHandler.cs" line-rate="1" branch-rate="0.5" complexity="2">
+        <class name="StarkAgroAPI.Domain.Handlers.Sensors.GetListSensorHandler/&lt;&gt;c__DisplayClass3_0" filename="Domain\Handlers\Sensors\GetListSensorHandler.cs" line-rate="1" branch-rate="0.5" complexity="2">
           <methods>
-            <method name="&lt;Handle&gt;b__3" signature="(AgripeWebAPI.Models.Entities.Sensor)" line-rate="1" branch-rate="0.5" complexity="2">
+            <method name="&lt;Handle&gt;b__3" signature="(StarkAgroAPI.Models.Entities.Sensor)" line-rate="1" branch-rate="0.5" complexity="2">
               <lines>
                 <line number="38" hits="4" branch="True" condition-coverage="50% (1/2)">
                   <conditions>
@@ -3368,7 +3368,7 @@
             <line number="45" hits="4" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Sensors.GetListSensorHandler/&lt;Handle&gt;d__3" filename="Domain\Handlers\Sensors\GetListSensorHandler.cs" line-rate="1" branch-rate="0.75" complexity="4">
+        <class name="StarkAgroAPI.Domain.Handlers.Sensors.GetListSensorHandler/&lt;Handle&gt;d__3" filename="Domain\Handlers\Sensors\GetListSensorHandler.cs" line-rate="1" branch-rate="0.75" complexity="4">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="0.75" complexity="4">
               <lines>
@@ -3414,9 +3414,9 @@
             <line number="46" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Sensors.GetListSensorByUserIdHandler" filename="Domain\Handlers\Sensors\GetListSensorHandlerByUserId.cs" line-rate="1" branch-rate="1" complexity="2">
+        <class name="StarkAgroAPI.Domain.Handlers.Sensors.GetListSensorByUserIdHandler" filename="Domain\Handlers\Sensors\GetListSensorHandlerByUserId.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
-            <method name=".ctor" signature="(AgripeWebAPI.Models.agpDBContext)" line-rate="1" branch-rate="1" complexity="2">
+            <method name=".ctor" signature="(StarkAgroAPI.Models.agpDBContext)" line-rate="1" branch-rate="1" complexity="2">
               <lines>
                 <line number="14" hits="4" branch="False" />
                 <line number="15" hits="4" branch="False" />
@@ -3440,9 +3440,9 @@
             <line number="17" hits="3" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Sensors.GetListSensorByUserIdHandler/&lt;&gt;c__DisplayClass2_0" filename="Domain\Handlers\Sensors\GetListSensorHandlerByUserId.cs" line-rate="1" branch-rate="1" complexity="1">
+        <class name="StarkAgroAPI.Domain.Handlers.Sensors.GetListSensorByUserIdHandler/&lt;&gt;c__DisplayClass2_0" filename="Domain\Handlers\Sensors\GetListSensorHandlerByUserId.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
-            <method name="&lt;Handle&gt;b__0" signature="(AgripeWebAPI.Models.Entities.Sensor)" line-rate="1" branch-rate="1" complexity="1">
+            <method name="&lt;Handle&gt;b__0" signature="(StarkAgroAPI.Models.Entities.Sensor)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
                 <line number="30" hits="6" branch="False" />
                 <line number="31" hits="6" branch="False" />
@@ -3466,7 +3466,7 @@
             <line number="37" hits="6" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Sensors.GetListSensorByUserIdHandler/&lt;Handle&gt;d__2" filename="Domain\Handlers\Sensors\GetListSensorHandlerByUserId.cs" line-rate="1" branch-rate="1" complexity="2">
+        <class name="StarkAgroAPI.Domain.Handlers.Sensors.GetListSensorByUserIdHandler/&lt;Handle&gt;d__2" filename="Domain\Handlers\Sensors\GetListSensorHandlerByUserId.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="1" complexity="2">
               <lines>
@@ -3502,9 +3502,9 @@
             <line number="38" hits="3" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Sensors.GetSensorHandler" filename="Domain\Handlers\Sensors\GetSensorHandler.cs" line-rate="1" branch-rate="1" complexity="2">
+        <class name="StarkAgroAPI.Domain.Handlers.Sensors.GetSensorHandler" filename="Domain\Handlers\Sensors\GetSensorHandler.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
-            <method name=".ctor" signature="(AgripeWebAPI.Models.agpDBContext)" line-rate="1" branch-rate="1" complexity="2">
+            <method name=".ctor" signature="(StarkAgroAPI.Models.agpDBContext)" line-rate="1" branch-rate="1" complexity="2">
               <lines>
                 <line number="14" hits="3" branch="False" />
                 <line number="15" hits="3" branch="False" />
@@ -3528,7 +3528,7 @@
             <line number="17" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Sensors.GetSensorHandler/&lt;Handle&gt;d__2" filename="Domain\Handlers\Sensors\GetSensorHandler.cs" line-rate="1" branch-rate="0.75" complexity="4">
+        <class name="StarkAgroAPI.Domain.Handlers.Sensors.GetSensorHandler/&lt;Handle&gt;d__2" filename="Domain\Handlers\Sensors\GetSensorHandler.cs" line-rate="1" branch-rate="0.75" complexity="4">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="0.75" complexity="4">
               <lines>
@@ -3592,9 +3592,9 @@
             <line number="42" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Reads.CreateReadHandler" filename="Domain\Handlers\Reads\CreateReadHandler.cs" line-rate="1" branch-rate="0.5" complexity="2">
+        <class name="StarkAgroAPI.Domain.Handlers.Reads.CreateReadHandler" filename="Domain\Handlers\Reads\CreateReadHandler.cs" line-rate="1" branch-rate="0.5" complexity="2">
           <methods>
-            <method name=".ctor" signature="(AgripeWebAPI.Models.agpDBContext)" line-rate="1" branch-rate="0.5" complexity="2">
+            <method name=".ctor" signature="(StarkAgroAPI.Models.agpDBContext)" line-rate="1" branch-rate="0.5" complexity="2">
               <lines>
                 <line number="14" hits="4" branch="False" />
                 <line number="15" hits="4" branch="False" />
@@ -3618,7 +3618,7 @@
             <line number="17" hits="4" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Reads.CreateReadHandler/&lt;Handle&gt;d__2" filename="Domain\Handlers\Reads\CreateReadHandler.cs" line-rate="1" branch-rate="1" complexity="2">
+        <class name="StarkAgroAPI.Domain.Handlers.Reads.CreateReadHandler/&lt;Handle&gt;d__2" filename="Domain\Handlers\Reads\CreateReadHandler.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="1" complexity="2">
               <lines>
@@ -3668,9 +3668,9 @@
             <line number="39" hits="3" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Pivots.CreatePivotHandler" filename="Domain\Handlers\Pivots\CreatePivotHandler.cs" line-rate="1" branch-rate="0.5" complexity="4">
+        <class name="StarkAgroAPI.Domain.Handlers.Pivots.CreatePivotHandler" filename="Domain\Handlers\Pivots\CreatePivotHandler.cs" line-rate="1" branch-rate="0.5" complexity="4">
           <methods>
-            <method name=".ctor" signature="(AgripeWebAPI.Models.agpDBContext,AgripeWebAPI.Models.Interfaces.ICurrentUserContext)" line-rate="1" branch-rate="0.5" complexity="4">
+            <method name=".ctor" signature="(StarkAgroAPI.Models.agpDBContext,StarkAgroAPI.Models.Interfaces.ICurrentUserContext)" line-rate="1" branch-rate="0.5" complexity="4">
               <lines>
                 <line number="16" hits="1" branch="False" />
                 <line number="17" hits="1" branch="False" />
@@ -3704,7 +3704,7 @@
             <line number="20" hits="1" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Pivots.CreatePivotHandler/&lt;Handle&gt;d__3" filename="Domain\Handlers\Pivots\CreatePivotHandler.cs" line-rate="1" branch-rate="0.5" complexity="2">
+        <class name="StarkAgroAPI.Domain.Handlers.Pivots.CreatePivotHandler/&lt;Handle&gt;d__3" filename="Domain\Handlers\Pivots\CreatePivotHandler.cs" line-rate="1" branch-rate="0.5" complexity="2">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="0.5" complexity="2">
               <lines>
@@ -3752,9 +3752,9 @@
             <line number="41" hits="1" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Pivots.DeletePivotHandler" filename="Domain\Handlers\Pivots\DeletePivotHandler.cs" line-rate="1" branch-rate="1" complexity="1">
+        <class name="StarkAgroAPI.Domain.Handlers.Pivots.DeletePivotHandler" filename="Domain\Handlers\Pivots\DeletePivotHandler.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
-            <method name=".ctor" signature="(AgripeWebAPI.Models.agpDBContext)" line-rate="1" branch-rate="1" complexity="1">
+            <method name=".ctor" signature="(StarkAgroAPI.Models.agpDBContext)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
                 <line number="13" hits="2" branch="False" />
                 <line number="14" hits="2" branch="False" />
@@ -3770,7 +3770,7 @@
             <line number="16" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Pivots.DeletePivotHandler/&lt;Handle&gt;d__2" filename="Domain\Handlers\Pivots\DeletePivotHandler.cs" line-rate="1" branch-rate="1" complexity="2">
+        <class name="StarkAgroAPI.Domain.Handlers.Pivots.DeletePivotHandler/&lt;Handle&gt;d__2" filename="Domain\Handlers\Pivots\DeletePivotHandler.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="1" complexity="2">
               <lines>
@@ -3804,9 +3804,9 @@
             <line number="27" hits="1" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Pivots.EditPivotHandler" filename="Domain\Handlers\Pivots\EditPivotHandler.cs" line-rate="1" branch-rate="1" complexity="1">
+        <class name="StarkAgroAPI.Domain.Handlers.Pivots.EditPivotHandler" filename="Domain\Handlers\Pivots\EditPivotHandler.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
-            <method name=".ctor" signature="(AgripeWebAPI.Models.agpDBContext)" line-rate="1" branch-rate="1" complexity="1">
+            <method name=".ctor" signature="(StarkAgroAPI.Models.agpDBContext)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
                 <line number="12" hits="2" branch="False" />
                 <line number="13" hits="2" branch="False" />
@@ -3822,7 +3822,7 @@
             <line number="15" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Pivots.EditPivotHandler/&lt;Handle&gt;d__2" filename="Domain\Handlers\Pivots\EditPivotHandler.cs" line-rate="1" branch-rate="1" complexity="2">
+        <class name="StarkAgroAPI.Domain.Handlers.Pivots.EditPivotHandler/&lt;Handle&gt;d__2" filename="Domain\Handlers\Pivots\EditPivotHandler.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="1" complexity="2">
               <lines>
@@ -3858,9 +3858,9 @@
             <line number="26" hits="1" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Pivots.EditPivotLimitsHandler" filename="Domain\Handlers\Pivots\EditPivotLimitsHandler.cs" line-rate="1" branch-rate="1" complexity="1">
+        <class name="StarkAgroAPI.Domain.Handlers.Pivots.EditPivotLimitsHandler" filename="Domain\Handlers\Pivots\EditPivotLimitsHandler.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
-            <method name=".ctor" signature="(AgripeWebAPI.Models.agpDBContext)" line-rate="1" branch-rate="1" complexity="1">
+            <method name=".ctor" signature="(StarkAgroAPI.Models.agpDBContext)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
                 <line number="13" hits="2" branch="False" />
                 <line number="14" hits="2" branch="False" />
@@ -3876,7 +3876,7 @@
             <line number="16" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Pivots.EditPivotLimitsHandler/&lt;Handle&gt;d__2" filename="Domain\Handlers\Pivots\EditPivotLimitsHandler.cs" line-rate="1" branch-rate="1" complexity="2">
+        <class name="StarkAgroAPI.Domain.Handlers.Pivots.EditPivotLimitsHandler/&lt;Handle&gt;d__2" filename="Domain\Handlers\Pivots\EditPivotLimitsHandler.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="1" complexity="2">
               <lines>
@@ -3914,9 +3914,9 @@
             <line number="32" hits="1" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Pivots.GetListPivotHandler" filename="Domain\Handlers\Pivots\GetListPivotHandler.cs" line-rate="1" branch-rate="0.5" complexity="4">
+        <class name="StarkAgroAPI.Domain.Handlers.Pivots.GetListPivotHandler" filename="Domain\Handlers\Pivots\GetListPivotHandler.cs" line-rate="1" branch-rate="0.5" complexity="4">
           <methods>
-            <method name=".ctor" signature="(AgripeWebAPI.Models.agpDBContext,AgripeWebAPI.Models.Interfaces.ICurrentUserContext)" line-rate="1" branch-rate="0.5" complexity="4">
+            <method name=".ctor" signature="(StarkAgroAPI.Models.agpDBContext,StarkAgroAPI.Models.Interfaces.ICurrentUserContext)" line-rate="1" branch-rate="0.5" complexity="4">
               <lines>
                 <line number="15" hits="2" branch="False" />
                 <line number="16" hits="2" branch="False" />
@@ -3950,7 +3950,7 @@
             <line number="19" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Pivots.GetListPivotHandler/&lt;Handle&gt;d__3" filename="Domain\Handlers\Pivots\GetListPivotHandler.cs" line-rate="1" branch-rate="0.5" complexity="2">
+        <class name="StarkAgroAPI.Domain.Handlers.Pivots.GetListPivotHandler/&lt;Handle&gt;d__3" filename="Domain\Handlers\Pivots\GetListPivotHandler.cs" line-rate="1" branch-rate="0.5" complexity="2">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="0.5" complexity="2">
               <lines>
@@ -3992,9 +3992,9 @@
             <line number="34" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Pivots.GetPivotHandler" filename="Domain\Handlers\Pivots\GetPivotHandler.cs" line-rate="1" branch-rate="1" complexity="1">
+        <class name="StarkAgroAPI.Domain.Handlers.Pivots.GetPivotHandler" filename="Domain\Handlers\Pivots\GetPivotHandler.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
-            <method name=".ctor" signature="(AgripeWebAPI.Models.agpDBContext)" line-rate="1" branch-rate="1" complexity="1">
+            <method name=".ctor" signature="(StarkAgroAPI.Models.agpDBContext)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
                 <line number="13" hits="1" branch="False" />
                 <line number="14" hits="1" branch="False" />
@@ -4010,7 +4010,7 @@
             <line number="16" hits="1" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Pivots.GetPivotHandler/&lt;Handle&gt;d__2" filename="Domain\Handlers\Pivots\GetPivotHandler.cs" line-rate="1" branch-rate="1" complexity="1">
+        <class name="StarkAgroAPI.Domain.Handlers.Pivots.GetPivotHandler/&lt;Handle&gt;d__2" filename="Domain\Handlers\Pivots\GetPivotHandler.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4046,7 +4046,7 @@
             <line number="32" hits="1" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Responses.Users.CreateUserResponse" filename="Domain\Commands\Responses\Users\CreateUserResponse.cs" line-rate="1" branch-rate="1" complexity="3">
+        <class name="StarkAgroAPI.Domain.Commands.Responses.Users.CreateUserResponse" filename="Domain\Commands\Responses\Users\CreateUserResponse.cs" line-rate="1" branch-rate="1" complexity="3">
           <methods>
             <method name="get_Id" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4070,7 +4070,7 @@
             <line number="7" hits="7" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Responses.Users.DeleteUserResponse" filename="Domain\Commands\Responses\Users\DeleteUserResponse.cs" line-rate="1" branch-rate="1" complexity="1">
+        <class name="StarkAgroAPI.Domain.Commands.Responses.Users.DeleteUserResponse" filename="Domain\Commands\Responses\Users\DeleteUserResponse.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
             <method name="get_Success" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4082,7 +4082,7 @@
             <line number="5" hits="8" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Responses.Users.EditUserResponse" filename="Domain\Commands\Responses\Users\EditUserResponse.cs" line-rate="1" branch-rate="1" complexity="3">
+        <class name="StarkAgroAPI.Domain.Commands.Responses.Users.EditUserResponse" filename="Domain\Commands\Responses\Users\EditUserResponse.cs" line-rate="1" branch-rate="1" complexity="3">
           <methods>
             <method name="get_Id" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4106,7 +4106,7 @@
             <line number="7" hits="11" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Responses.Users.GetUserResponse" filename="Domain\Commands\Responses\Users\GetUserResponse.cs" line-rate="1" branch-rate="1" complexity="5">
+        <class name="StarkAgroAPI.Domain.Commands.Responses.Users.GetUserResponse" filename="Domain\Commands\Responses\Users\GetUserResponse.cs" line-rate="1" branch-rate="1" complexity="5">
           <methods>
             <method name="get_Id" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4142,7 +4142,7 @@
             <line number="9" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Responses.Users.UserTokenResponse" filename="Domain\Commands\Responses\Users\UserTokenResponse.cs" line-rate="1" branch-rate="1" complexity="2">
+        <class name="StarkAgroAPI.Domain.Commands.Responses.Users.UserTokenResponse" filename="Domain\Commands\Responses\Users\UserTokenResponse.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
             <method name="get_Token" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4160,7 +4160,7 @@
             <line number="14" hits="32" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Responses.Sensors.CreateSensorResponse" filename="Domain\Commands\Responses\Sensors\CreateSensorResponse.cs" line-rate="1" branch-rate="1" complexity="1">
+        <class name="StarkAgroAPI.Domain.Commands.Responses.Sensors.CreateSensorResponse" filename="Domain\Commands\Responses\Sensors\CreateSensorResponse.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
             <method name="get_Id" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4172,7 +4172,7 @@
             <line number="5" hits="7" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Responses.Sensors.DeleteSensorResponse" filename="Domain\Commands\Responses\Sensors\DeleteSensorResponse.cs" line-rate="1" branch-rate="1" complexity="1">
+        <class name="StarkAgroAPI.Domain.Commands.Responses.Sensors.DeleteSensorResponse" filename="Domain\Commands\Responses\Sensors\DeleteSensorResponse.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
             <method name="get_Success" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4184,7 +4184,7 @@
             <line number="5" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Responses.Sensors.EditSensorResponse" filename="Domain\Commands\Responses\Sensors\EditSensorResponse.cs" line-rate="1" branch-rate="1" complexity="1">
+        <class name="StarkAgroAPI.Domain.Commands.Responses.Sensors.EditSensorResponse" filename="Domain\Commands\Responses\Sensors\EditSensorResponse.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
             <method name="get_Id" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4196,7 +4196,7 @@
             <line number="5" hits="7" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Responses.Sensors.GetSensorResponse" filename="Domain\Commands\Responses\Sensors\GetSensorResponse.cs" line-rate="1" branch-rate="1" complexity="5">
+        <class name="StarkAgroAPI.Domain.Commands.Responses.Sensors.GetSensorResponse" filename="Domain\Commands\Responses\Sensors\GetSensorResponse.cs" line-rate="1" branch-rate="1" complexity="5">
           <methods>
             <method name="get_Id" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4232,7 +4232,7 @@
             <line number="12" hits="13" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Responses.Reads.CreateReadResponse" filename="Domain\Commands\Responses\Reads\CreateReadResponse.cs" line-rate="1" branch-rate="1" complexity="2">
+        <class name="StarkAgroAPI.Domain.Commands.Responses.Reads.CreateReadResponse" filename="Domain\Commands\Responses\Reads\CreateReadResponse.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
             <method name="get_Id" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4250,7 +4250,7 @@
             <line number="6" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Responses.Reads.GetAllReadBySensorIdResponse" filename="Domain\Commands\Responses\Reads\GetAllReadBySensorIdResponse.cs" line-rate="1" branch-rate="1" complexity="4">
+        <class name="StarkAgroAPI.Domain.Commands.Responses.Reads.GetAllReadBySensorIdResponse" filename="Domain\Commands\Responses\Reads\GetAllReadBySensorIdResponse.cs" line-rate="1" branch-rate="1" complexity="4">
           <methods>
             <method name="get_Id" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4280,7 +4280,7 @@
             <line number="8" hits="5" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Responses.Reads.ReadEntry" filename="Domain\Commands\Responses\Reads\GetReadByPivotIdResponse.cs" line-rate="1" branch-rate="1" complexity="2">
+        <class name="StarkAgroAPI.Domain.Commands.Responses.Reads.ReadEntry" filename="Domain\Commands\Responses\Reads\GetReadByPivotIdResponse.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
             <method name="get_Value" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4298,7 +4298,7 @@
             <line number="6" hits="4" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Responses.Reads.GetReadByPivotIdResponse" filename="Domain\Commands\Responses\Reads\GetReadByPivotIdResponse.cs" line-rate="1" branch-rate="1" complexity="5">
+        <class name="StarkAgroAPI.Domain.Commands.Responses.Reads.GetReadByPivotIdResponse" filename="Domain\Commands\Responses\Reads\GetReadByPivotIdResponse.cs" line-rate="1" branch-rate="1" complexity="5">
           <methods>
             <method name="get_Id" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4334,7 +4334,7 @@
             <line number="15" hits="11" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Responses.Reads.Quadrante" filename="Domain\Commands\Responses\Reads\GetReadByPivotIdResponse.cs" line-rate="1" branch-rate="1" complexity="12">
+        <class name="StarkAgroAPI.Domain.Commands.Responses.Reads.Quadrante" filename="Domain\Commands\Responses\Reads\GetReadByPivotIdResponse.cs" line-rate="1" branch-rate="1" complexity="12">
           <methods>
             <method name="get_TopLeft" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4412,7 +4412,7 @@
             <line number="34" hits="17" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Responses.Reads.GetReadResponse" filename="Domain\Commands\Responses\Reads\GetReadResponse.cs" line-rate="1" branch-rate="1" complexity="4">
+        <class name="StarkAgroAPI.Domain.Commands.Responses.Reads.GetReadResponse" filename="Domain\Commands\Responses\Reads\GetReadResponse.cs" line-rate="1" branch-rate="1" complexity="4">
           <methods>
             <method name="get_Id" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4442,7 +4442,7 @@
             <line number="8" hits="3" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Responses.Pivots.CreatePivotResponse" filename="Domain\Commands\Responses\Pivots\CreatePivotResponse.cs" line-rate="1" branch-rate="1" complexity="1">
+        <class name="StarkAgroAPI.Domain.Commands.Responses.Pivots.CreatePivotResponse" filename="Domain\Commands\Responses\Pivots\CreatePivotResponse.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
             <method name="get_Id" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4454,7 +4454,7 @@
             <line number="5" hits="7" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Responses.Pivots.EditPivotResponse" filename="Domain\Commands\Responses\Pivots\EditPivotResponse.cs" line-rate="1" branch-rate="1" complexity="1">
+        <class name="StarkAgroAPI.Domain.Commands.Responses.Pivots.EditPivotResponse" filename="Domain\Commands\Responses\Pivots\EditPivotResponse.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
             <method name="get_Id" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4466,7 +4466,7 @@
             <line number="5" hits="11" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Responses.Pivots.GetListPivotResponse" filename="Domain\Commands\Responses\Pivots\GetListPivotResponse.cs" line-rate="1" branch-rate="1" complexity="2">
+        <class name="StarkAgroAPI.Domain.Commands.Responses.Pivots.GetListPivotResponse" filename="Domain\Commands\Responses\Pivots\GetListPivotResponse.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
             <method name="get_Id" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4484,7 +4484,7 @@
             <line number="6" hits="3" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Responses.Pivots.GetPivotResponse" filename="Domain\Commands\Responses\Pivots\GetPivotResponse.cs" line-rate="1" branch-rate="1" complexity="4">
+        <class name="StarkAgroAPI.Domain.Commands.Responses.Pivots.GetPivotResponse" filename="Domain\Commands\Responses\Pivots\GetPivotResponse.cs" line-rate="1" branch-rate="1" complexity="4">
           <methods>
             <method name="get_Id" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4514,7 +4514,7 @@
             <line number="8" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Users.CreateUserRequest" filename="Domain\Commands\Requests\Users\CreateUserRequest.cs" line-rate="1" branch-rate="1" complexity="3">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Users.CreateUserRequest" filename="Domain\Commands\Requests\Users\CreateUserRequest.cs" line-rate="1" branch-rate="1" complexity="3">
           <methods>
             <method name="get_Name" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4538,7 +4538,7 @@
             <line number="22" hits="10" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Users.DeleteUserRequest" filename="Domain\Commands\Requests\Users\DeleteUserRequest.cs" line-rate="1" branch-rate="1" complexity="2">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Users.DeleteUserRequest" filename="Domain\Commands\Requests\Users\DeleteUserRequest.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
             <method name="get_Id" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4556,7 +4556,7 @@
             <line number="9" hits="6" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Users.EditUserLimitsRequest" filename="Domain\Commands\Requests\Users\EditUserLimitsRequest.cs" line-rate="1" branch-rate="1" complexity="3">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Users.EditUserLimitsRequest" filename="Domain\Commands\Requests\Users\EditUserLimitsRequest.cs" line-rate="1" branch-rate="1" complexity="3">
           <methods>
             <method name="get_Id" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4580,7 +4580,7 @@
             <line number="10" hits="3" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Users.EditUserRequest" filename="Domain\Commands\Requests\Users\EditUserRequest.cs" line-rate="1" branch-rate="1" complexity="4">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Users.EditUserRequest" filename="Domain\Commands\Requests\Users\EditUserRequest.cs" line-rate="1" branch-rate="1" complexity="4">
           <methods>
             <method name="get_Name" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4610,7 +4610,7 @@
             <line number="24" hits="9" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Users.ExternalLoginRequest" filename="Domain\Commands\Requests\Users\ExternalLoginRequest.cs" line-rate="1" branch-rate="1" complexity="3">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Users.ExternalLoginRequest" filename="Domain\Commands\Requests\Users\ExternalLoginRequest.cs" line-rate="1" branch-rate="1" complexity="3">
           <methods>
             <method name="get_Provider" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4634,7 +4634,7 @@
             <line number="10" hits="52" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Users.GetUserRequest" filename="Domain\Commands\Requests\Users\GetUserRequest.cs" line-rate="1" branch-rate="1" complexity="2">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Users.GetUserRequest" filename="Domain\Commands\Requests\Users\GetUserRequest.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
             <method name="get_Id" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4652,7 +4652,7 @@
             <line number="9" hits="6" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Users.UserTokenRequest" filename="Domain\Commands\Requests\Users\UserTokenRequest.cs" line-rate="1" branch-rate="1" complexity="2">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Users.UserTokenRequest" filename="Domain\Commands\Requests\Users\UserTokenRequest.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
             <method name="get_Email" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4670,7 +4670,7 @@
             <line number="16" hits="18" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Sensors.CreateSensorRequest" filename="Domain\Commands\Requests\Sensors\CreateSensorRequest.cs" line-rate="1" branch-rate="1" complexity="5">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Sensors.CreateSensorRequest" filename="Domain\Commands\Requests\Sensors\CreateSensorRequest.cs" line-rate="1" branch-rate="1" complexity="5">
           <methods>
             <method name="get_Name" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4706,7 +4706,7 @@
             <line number="13" hits="8" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Sensors.DeleteSensorRequest" filename="Domain\Commands\Requests\Sensors\DeleteSensorRequest.cs" line-rate="1" branch-rate="1" complexity="1">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Sensors.DeleteSensorRequest" filename="Domain\Commands\Requests\Sensors\DeleteSensorRequest.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
             <method name="get_Id" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4718,7 +4718,7 @@
             <line number="8" hits="3" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Sensors.EditSensorRequest" filename="Domain\Commands\Requests\Sensors\EditSensorRequest.cs" line-rate="1" branch-rate="1" complexity="6">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Sensors.EditSensorRequest" filename="Domain\Commands\Requests\Sensors\EditSensorRequest.cs" line-rate="1" branch-rate="1" complexity="6">
           <methods>
             <method name="get_Id" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4760,7 +4760,7 @@
             <line number="14" hits="7" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Sensors.GetListSensorByUserIdRequest" filename="Domain\Commands\Requests\Sensors\GetListSensorByUserIdRequest.cs" line-rate="1" branch-rate="1" complexity="1">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Sensors.GetListSensorByUserIdRequest" filename="Domain\Commands\Requests\Sensors\GetListSensorByUserIdRequest.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
             <method name="get_UserId" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4772,7 +4772,7 @@
             <line number="8" hits="6" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Sensors.GetListSensorRequest" filename="Domain\Commands\Requests\Sensors\GetListSensorRequest.cs" line-rate="1" branch-rate="1" complexity="3">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Sensors.GetListSensorRequest" filename="Domain\Commands\Requests\Sensors\GetListSensorRequest.cs" line-rate="1" branch-rate="1" complexity="3">
           <methods>
             <method name="get_PivotId" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4796,7 +4796,7 @@
             <line number="10" hits="1" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Sensors.GetSensorRequest" filename="Domain\Commands\Requests\Sensors\GetSensorRequest.cs" line-rate="1" branch-rate="1" complexity="1">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Sensors.GetSensorRequest" filename="Domain\Commands\Requests\Sensors\GetSensorRequest.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
             <method name="get_Id" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4808,7 +4808,7 @@
             <line number="8" hits="6" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Reads.CreateReadRequest" filename="Domain\Commands\Requests\Reads\CreateReadRequest.cs" line-rate="1" branch-rate="1" complexity="3">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Reads.CreateReadRequest" filename="Domain\Commands\Requests\Reads\CreateReadRequest.cs" line-rate="1" branch-rate="1" complexity="3">
           <methods>
             <method name="get_UserId" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4832,7 +4832,7 @@
             <line number="10" hits="11" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Reads.GetAllListReadBySensorIdRequest" filename="Domain\Commands\Requests\Reads\GetAllListReadBySensorIdRequest.cs" line-rate="1" branch-rate="1" complexity="3">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Reads.GetAllListReadBySensorIdRequest" filename="Domain\Commands\Requests\Reads\GetAllListReadBySensorIdRequest.cs" line-rate="1" branch-rate="1" complexity="3">
           <methods>
             <method name="get_SensorId" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4856,7 +4856,7 @@
             <line number="10" hits="12" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Reads.GetListReadByPivotIdRequest" filename="Domain\Commands\Requests\Reads\GetListReadByPivotIdRequest.cs" line-rate="1" branch-rate="1" complexity="3">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Reads.GetListReadByPivotIdRequest" filename="Domain\Commands\Requests\Reads\GetListReadByPivotIdRequest.cs" line-rate="1" branch-rate="1" complexity="3">
           <methods>
             <method name="get_PivotId" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4880,7 +4880,7 @@
             <line number="10" hits="7" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Reads.GetListReadRequest" filename="Domain\Commands\Requests\Reads\GetListReadRequest.cs" line-rate="1" branch-rate="1" complexity="2">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Reads.GetListReadRequest" filename="Domain\Commands\Requests\Reads\GetListReadRequest.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
             <method name="get_UserId" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4898,7 +4898,7 @@
             <line number="9" hits="12" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Pivots.CreatePivotRequest" filename="Domain\Commands\Requests\Pivots\CreatePivotRequest.cs" line-rate="1" branch-rate="1" complexity="2">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Pivots.CreatePivotRequest" filename="Domain\Commands\Requests\Pivots\CreatePivotRequest.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
             <method name="get_UserId" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4916,7 +4916,7 @@
             <line number="9" hits="8" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Pivots.DeletePivotRequest" filename="Domain\Commands\Requests\Pivots\DeletePivotRequest.cs" line-rate="1" branch-rate="1" complexity="1">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Pivots.DeletePivotRequest" filename="Domain\Commands\Requests\Pivots\DeletePivotRequest.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
             <method name="get_Id" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4928,7 +4928,7 @@
             <line number="8" hits="6" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Pivots.EditPivotLimitsRequest" filename="Domain\Commands\Requests\Pivots\EditPivotLimitsRequest.cs" line-rate="1" branch-rate="1" complexity="3">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Pivots.EditPivotLimitsRequest" filename="Domain\Commands\Requests\Pivots\EditPivotLimitsRequest.cs" line-rate="1" branch-rate="1" complexity="3">
           <methods>
             <method name="get_Id" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4952,7 +4952,7 @@
             <line number="10" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Pivots.EditPivotRequest" filename="Domain\Commands\Requests\Pivots\EditPivotRequest.cs" line-rate="1" branch-rate="1" complexity="2">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Pivots.EditPivotRequest" filename="Domain\Commands\Requests\Pivots\EditPivotRequest.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
             <method name="get_Id" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4970,7 +4970,7 @@
             <line number="9" hits="7" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Pivots.GetListPivotByUserIdRequest" filename="Domain\Commands\Requests\Pivots\GetListPivotByUserIdRequest.cs" line-rate="1" branch-rate="1" complexity="1">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Pivots.GetListPivotByUserIdRequest" filename="Domain\Commands\Requests\Pivots\GetListPivotByUserIdRequest.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
             <method name="get_UserId" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4982,7 +4982,7 @@
             <line number="9" hits="6" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Pivots.GetListPivotRequest" filename="Domain\Commands\Requests\Pivots\GetListPivotRequest.cs" line-rate="1" branch-rate="1" complexity="1">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Pivots.GetListPivotRequest" filename="Domain\Commands\Requests\Pivots\GetListPivotRequest.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
             <method name="get_Id" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -4994,7 +4994,7 @@
             <line number="8" hits="3" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Pivots.GetPivotRequest" filename="Domain\Commands\Requests\Pivots\GetPivotRequest.cs" line-rate="1" branch-rate="1" complexity="1">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Pivots.GetPivotRequest" filename="Domain\Commands\Requests\Pivots\GetPivotRequest.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
             <method name="get_Id" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -5006,9 +5006,9 @@
             <line number="8" hits="4" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Controllers.AuthController" filename="Controllers\AuthController.cs" line-rate="1" branch-rate="1" complexity="1">
+        <class name="StarkAgroAPI.Controllers.AuthController" filename="Controllers\AuthController.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
-            <method name=".ctor" signature="(AgripeWebAPI.Models.Interfaces.INotifier)" line-rate="1" branch-rate="1" complexity="1">
+            <method name=".ctor" signature="(StarkAgroAPI.Models.Interfaces.INotifier)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
                 <line number="13" hits="8" branch="False" />
                 <line number="14" hits="8" branch="False" />
@@ -5022,7 +5022,7 @@
             <line number="15" hits="8" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Controllers.AuthController/&lt;AddUser&gt;d__3" filename="Controllers\AuthController.cs" line-rate="1" branch-rate="1" complexity="2">
+        <class name="StarkAgroAPI.Controllers.AuthController/&lt;AddUser&gt;d__3" filename="Controllers\AuthController.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="1" complexity="2">
               <lines>
@@ -5048,7 +5048,7 @@
             <line number="81" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Controllers.AuthController/&lt;ExternalLogin&gt;d__2" filename="Controllers\AuthController.cs" line-rate="0.9285" branch-rate="0.8332999999999999" complexity="12">
+        <class name="StarkAgroAPI.Controllers.AuthController/&lt;ExternalLogin&gt;d__2" filename="Controllers\AuthController.cs" line-rate="0.9285" branch-rate="0.8332999999999999" complexity="12">
           <methods>
             <method name="MoveNext" signature="()" line-rate="0.9285" branch-rate="0.8332999999999999" complexity="12">
               <lines>
@@ -5116,7 +5116,7 @@
             <line number="68" hits="3" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Controllers.AuthController/&lt;LogIn&gt;d__1" filename="Controllers\AuthController.cs" line-rate="0.8571" branch-rate="0.6666" complexity="6">
+        <class name="StarkAgroAPI.Controllers.AuthController/&lt;LogIn&gt;d__1" filename="Controllers\AuthController.cs" line-rate="0.8571" branch-rate="0.6666" complexity="6">
           <methods>
             <method name="MoveNext" signature="()" line-rate="0.8571" branch-rate="0.6666" complexity="6">
               <lines>
@@ -5170,7 +5170,7 @@
             <line number="38" hits="3" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Controllers.HealthController" filename="Controllers\HealthController.cs" line-rate="1" branch-rate="1" complexity="1">
+        <class name="StarkAgroAPI.Controllers.HealthController" filename="Controllers\HealthController.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
             <method name="Get" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -5182,7 +5182,7 @@
             <line number="14" hits="1" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Controllers.MainController" filename="Controllers\MainController.cs" line-rate="1" branch-rate="0.9" complexity="23">
+        <class name="StarkAgroAPI.Controllers.MainController" filename="Controllers\MainController.cs" line-rate="1" branch-rate="0.9" complexity="23">
           <methods>
             <method name="ValidOperation" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -5294,7 +5294,7 @@
                 <line number="89" hits="19" branch="False" />
               </lines>
             </method>
-            <method name=".ctor" signature="(AgripeWebAPI.Models.Interfaces.INotifier)" line-rate="1" branch-rate="1" complexity="1">
+            <method name=".ctor" signature="(StarkAgroAPI.Models.Interfaces.INotifier)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
                 <line number="15" hits="48" branch="False" />
                 <line number="16" hits="48" branch="False" />
@@ -5392,9 +5392,9 @@
             <line number="18" hits="48" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Controllers.PivotController" filename="Controllers\PivotController.cs" line-rate="1" branch-rate="1" complexity="1">
+        <class name="StarkAgroAPI.Controllers.PivotController" filename="Controllers\PivotController.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
-            <method name=".ctor" signature="(AgripeWebAPI.Models.Interfaces.INotifier)" line-rate="1" branch-rate="1" complexity="1">
+            <method name=".ctor" signature="(StarkAgroAPI.Models.Interfaces.INotifier)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
                 <line number="14" hits="10" branch="False" />
                 <line number="15" hits="10" branch="False" />
@@ -5408,7 +5408,7 @@
             <line number="16" hits="10" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Controllers.PivotController/&lt;Add&gt;d__3" filename="Controllers\PivotController.cs" line-rate="1" branch-rate="0.5" complexity="2">
+        <class name="StarkAgroAPI.Controllers.PivotController/&lt;Add&gt;d__3" filename="Controllers\PivotController.cs" line-rate="1" branch-rate="0.5" complexity="2">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="0.5" complexity="2">
               <lines>
@@ -5436,7 +5436,7 @@
             <line number="59" hits="1" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Controllers.PivotController/&lt;Delete&gt;d__6" filename="Controllers\PivotController.cs" line-rate="1" branch-rate="1" complexity="2">
+        <class name="StarkAgroAPI.Controllers.PivotController/&lt;Delete&gt;d__6" filename="Controllers\PivotController.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="1" complexity="2">
               <lines>
@@ -5462,7 +5462,7 @@
             <line number="98" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Controllers.PivotController/&lt;GetAll&gt;d__2" filename="Controllers\PivotController.cs" line-rate="1" branch-rate="0.5" complexity="2">
+        <class name="StarkAgroAPI.Controllers.PivotController/&lt;GetAll&gt;d__2" filename="Controllers\PivotController.cs" line-rate="1" branch-rate="0.5" complexity="2">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="0.5" complexity="2">
               <lines>
@@ -5492,7 +5492,7 @@
             <line number="45" hits="1" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Controllers.PivotController/&lt;GetById&gt;d__1" filename="Controllers\PivotController.cs" line-rate="1" branch-rate="1" complexity="2">
+        <class name="StarkAgroAPI.Controllers.PivotController/&lt;GetById&gt;d__1" filename="Controllers\PivotController.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="1" complexity="2">
               <lines>
@@ -5518,7 +5518,7 @@
             <line number="29" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Controllers.PivotController/&lt;Update&gt;d__4" filename="Controllers\PivotController.cs" line-rate="1" branch-rate="1" complexity="2">
+        <class name="StarkAgroAPI.Controllers.PivotController/&lt;Update&gt;d__4" filename="Controllers\PivotController.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="1" complexity="2">
               <lines>
@@ -5544,7 +5544,7 @@
             <line number="72" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Controllers.PivotController/&lt;UpdateLimits&gt;d__5" filename="Controllers\PivotController.cs" line-rate="1" branch-rate="1" complexity="2">
+        <class name="StarkAgroAPI.Controllers.PivotController/&lt;UpdateLimits&gt;d__5" filename="Controllers\PivotController.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="1" complexity="2">
               <lines>
@@ -5570,9 +5570,9 @@
             <line number="85" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Controllers.ReadsController" filename="Controllers\ReadsController.cs" line-rate="1" branch-rate="1" complexity="1">
+        <class name="StarkAgroAPI.Controllers.ReadsController" filename="Controllers\ReadsController.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
-            <method name=".ctor" signature="(AgripeWebAPI.Models.Interfaces.INotifier)" line-rate="1" branch-rate="1" complexity="1">
+            <method name=".ctor" signature="(StarkAgroAPI.Models.Interfaces.INotifier)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
                 <line number="15" hits="5" branch="False" />
                 <line number="16" hits="5" branch="False" />
@@ -5586,7 +5586,7 @@
             <line number="17" hits="5" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Controllers.ReadsController/&lt;Add&gt;d__5" filename="Controllers\ReadsController.cs" line-rate="1" branch-rate="1" complexity="1">
+        <class name="StarkAgroAPI.Controllers.ReadsController/&lt;Add&gt;d__5" filename="Controllers\ReadsController.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -5602,7 +5602,7 @@
             <line number="66" hits="1" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Controllers.ReadsController/&lt;GetActive&gt;d__1" filename="Controllers\ReadsController.cs" line-rate="1" branch-rate="1" complexity="1">
+        <class name="StarkAgroAPI.Controllers.ReadsController/&lt;GetActive&gt;d__1" filename="Controllers\ReadsController.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -5618,7 +5618,7 @@
             <line number="23" hits="1" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Controllers.ReadsController/&lt;GetAll&gt;d__2" filename="Controllers\ReadsController.cs" line-rate="1" branch-rate="1" complexity="1">
+        <class name="StarkAgroAPI.Controllers.ReadsController/&lt;GetAll&gt;d__2" filename="Controllers\ReadsController.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -5636,7 +5636,7 @@
             <line number="34" hits="1" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Controllers.ReadsController/&lt;GetAllBySensorId&gt;d__3" filename="Controllers\ReadsController.cs" line-rate="1" branch-rate="1" complexity="1">
+        <class name="StarkAgroAPI.Controllers.ReadsController/&lt;GetAllBySensorId&gt;d__3" filename="Controllers\ReadsController.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -5652,7 +5652,7 @@
             <line number="44" hits="1" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Controllers.ReadsController/&lt;GetByPivotId&gt;d__4" filename="Controllers\ReadsController.cs" line-rate="1" branch-rate="1" complexity="1">
+        <class name="StarkAgroAPI.Controllers.ReadsController/&lt;GetByPivotId&gt;d__4" filename="Controllers\ReadsController.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -5670,9 +5670,9 @@
             <line number="55" hits="1" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Controllers.SensorController" filename="Controllers\SensorController.cs" line-rate="1" branch-rate="1" complexity="1">
+        <class name="StarkAgroAPI.Controllers.SensorController" filename="Controllers\SensorController.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
-            <method name=".ctor" signature="(AgripeWebAPI.Models.Interfaces.INotifier)" line-rate="1" branch-rate="1" complexity="1">
+            <method name=".ctor" signature="(StarkAgroAPI.Models.Interfaces.INotifier)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
                 <line number="14" hits="8" branch="False" />
                 <line number="15" hits="8" branch="False" />
@@ -5686,7 +5686,7 @@
             <line number="16" hits="8" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Controllers.SensorController/&lt;Add&gt;d__4" filename="Controllers\SensorController.cs" line-rate="1" branch-rate="1" complexity="2">
+        <class name="StarkAgroAPI.Controllers.SensorController/&lt;Add&gt;d__4" filename="Controllers\SensorController.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="1" complexity="2">
               <lines>
@@ -5714,7 +5714,7 @@
             <line number="71" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Controllers.SensorController/&lt;GetById&gt;d__1" filename="Controllers\SensorController.cs" line-rate="1" branch-rate="1" complexity="2">
+        <class name="StarkAgroAPI.Controllers.SensorController/&lt;GetById&gt;d__1" filename="Controllers\SensorController.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="1" complexity="2">
               <lines>
@@ -5740,7 +5740,7 @@
             <line number="29" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Controllers.SensorController/&lt;Update&gt;d__5" filename="Controllers\SensorController.cs" line-rate="1" branch-rate="1" complexity="2">
+        <class name="StarkAgroAPI.Controllers.SensorController/&lt;Update&gt;d__5" filename="Controllers\SensorController.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="1" complexity="2">
               <lines>
@@ -5768,7 +5768,7 @@
             <line number="85" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Controllers.SensorController/&lt;getAll&gt;d__2" filename="Controllers\SensorController.cs" line-rate="1" branch-rate="1" complexity="1">
+        <class name="StarkAgroAPI.Controllers.SensorController/&lt;getAll&gt;d__2" filename="Controllers\SensorController.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -5786,7 +5786,7 @@
             <line number="43" hits="1" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Controllers.SensorController/&lt;getAllByPivotId&gt;d__3" filename="Controllers\SensorController.cs" line-rate="1" branch-rate="1" complexity="1">
+        <class name="StarkAgroAPI.Controllers.SensorController/&lt;getAllByPivotId&gt;d__3" filename="Controllers\SensorController.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -5804,9 +5804,9 @@
             <line number="57" hits="1" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Controllers.UserController" filename="Controllers\UserController.cs" line-rate="1" branch-rate="1" complexity="1">
+        <class name="StarkAgroAPI.Controllers.UserController" filename="Controllers\UserController.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
-            <method name=".ctor" signature="(AgripeWebAPI.Models.Interfaces.INotifier)" line-rate="1" branch-rate="1" complexity="1">
+            <method name=".ctor" signature="(StarkAgroAPI.Models.Interfaces.INotifier)" line-rate="1" branch-rate="1" complexity="1">
               <lines>
                 <line number="14" hits="8" branch="False" />
                 <line number="15" hits="8" branch="False" />
@@ -5820,7 +5820,7 @@
             <line number="16" hits="8" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Controllers.UserController/&lt;Add&gt;d__2" filename="Controllers\UserController.cs" line-rate="1" branch-rate="1" complexity="2">
+        <class name="StarkAgroAPI.Controllers.UserController/&lt;Add&gt;d__2" filename="Controllers\UserController.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="1" complexity="2">
               <lines>
@@ -5846,7 +5846,7 @@
             <line number="42" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Controllers.UserController/&lt;GetById&gt;d__1" filename="Controllers\UserController.cs" line-rate="1" branch-rate="1" complexity="2">
+        <class name="StarkAgroAPI.Controllers.UserController/&lt;GetById&gt;d__1" filename="Controllers\UserController.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="1" complexity="2">
               <lines>
@@ -5872,7 +5872,7 @@
             <line number="29" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Controllers.UserController/&lt;Update&gt;d__4" filename="Controllers\UserController.cs" line-rate="1" branch-rate="1" complexity="2">
+        <class name="StarkAgroAPI.Controllers.UserController/&lt;Update&gt;d__4" filename="Controllers\UserController.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="1" complexity="2">
               <lines>
@@ -5898,7 +5898,7 @@
             <line number="69" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Controllers.UserController/&lt;UpdateLimits&gt;d__3" filename="Controllers\UserController.cs" line-rate="1" branch-rate="1" complexity="2">
+        <class name="StarkAgroAPI.Controllers.UserController/&lt;UpdateLimits&gt;d__3" filename="Controllers\UserController.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
             <method name="MoveNext" signature="()" line-rate="1" branch-rate="1" complexity="2">
               <lines>
@@ -5926,7 +5926,7 @@
             <line number="56" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Configuration.ApiConfig" filename="Configuration\ApiConfig.cs" line-rate="0.6213000000000001" branch-rate="0.8332999999999999" complexity="8">
+        <class name="StarkAgroAPI.Configuration.ApiConfig" filename="Configuration\ApiConfig.cs" line-rate="0.6213000000000001" branch-rate="0.8332999999999999" complexity="8">
           <methods>
             <method name="AddApiConfiguration" signature="(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration)" line-rate="0.4" branch-rate="1" complexity="1">
               <lines>
@@ -6174,7 +6174,7 @@
             <line number="143" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Configuration.ApiConfig/&lt;SeedMongoDatabase&gt;d__3" filename="Configuration\ApiConfig.cs" line-rate="0.45" branch-rate="0.25" complexity="4">
+        <class name="StarkAgroAPI.Configuration.ApiConfig/&lt;SeedMongoDatabase&gt;d__3" filename="Configuration\ApiConfig.cs" line-rate="0.45" branch-rate="0.25" complexity="4">
           <methods>
             <method name="MoveNext" signature="()" line-rate="0.45" branch-rate="0.25" complexity="4">
               <lines>
@@ -6240,9 +6240,9 @@
             <line number="171" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Configuration.DependencyInjectionConfig" filename="Configuration\DependencyInjectionConfig.cs" line-rate="0.41369999999999996" branch-rate="0" complexity="10">
+        <class name="StarkAgroAPI.Configuration.DependencyInjectionConfig" filename="Configuration\DependencyInjectionConfig.cs" line-rate="0.41369999999999996" branch-rate="0" complexity="10">
           <methods>
-            <method name="ResolveDependencies" signature="(Microsoft.Extensions.DependencyInjection.IServiceCollection,AgripeWebAPI.Configuration.JwtSettings)" line-rate="0.41369999999999996" branch-rate="0" complexity="10">
+            <method name="ResolveDependencies" signature="(Microsoft.Extensions.DependencyInjection.IServiceCollection,StarkAgroAPI.Configuration.JwtSettings)" line-rate="0.41369999999999996" branch-rate="0" complexity="10">
               <lines>
                 <line number="13" hits="2" branch="False" />
                 <line number="17" hits="2" branch="False" />
@@ -6324,7 +6324,7 @@
             <line number="48" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Configuration.JwtSettings" filename="Configuration\JwtSettings.cs" line-rate="1" branch-rate="1" complexity="3">
+        <class name="StarkAgroAPI.Configuration.JwtSettings" filename="Configuration\JwtSettings.cs" line-rate="1" branch-rate="1" complexity="3">
           <methods>
             <method name="get_secretkey" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -6348,7 +6348,7 @@
             <line number="7" hits="2" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Configuration.MongoDbSettings" filename="Configuration\MongoDbSettings.cs" line-rate="1" branch-rate="1" complexity="2">
+        <class name="StarkAgroAPI.Configuration.MongoDbSettings" filename="Configuration\MongoDbSettings.cs" line-rate="1" branch-rate="1" complexity="2">
           <methods>
             <method name="get_ConnectionString" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -6366,7 +6366,7 @@
             <line number="8" hits="18" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Configuration.OAuthSettings" filename="Configuration\OAuthSettings.cs" line-rate="1" branch-rate="1" complexity="1">
+        <class name="StarkAgroAPI.Configuration.OAuthSettings" filename="Configuration\OAuthSettings.cs" line-rate="1" branch-rate="1" complexity="1">
           <methods>
             <method name="get_Google" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -6378,7 +6378,7 @@
             <line number="7" hits="48" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Configuration.GoogleOAuthSettings" filename="Configuration\OAuthSettings.cs" line-rate="1" branch-rate="1" complexity="3">
+        <class name="StarkAgroAPI.Configuration.GoogleOAuthSettings" filename="Configuration\OAuthSettings.cs" line-rate="1" branch-rate="1" complexity="3">
           <methods>
             <method name="get_ClientId" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -6402,7 +6402,7 @@
             <line number="18" hits="29" branch="False" />
           </lines>
         </class>
-        <class name="AgripeWebAPI.Configuration.SwaggerConfig" filename="Configuration\SwaggerConfig.cs" line-rate="0" branch-rate="1" complexity="2">
+        <class name="StarkAgroAPI.Configuration.SwaggerConfig" filename="Configuration\SwaggerConfig.cs" line-rate="0" branch-rate="1" complexity="2">
           <methods>
             <method name="AddSwaggerConfiguration" signature="(Microsoft.Extensions.DependencyInjection.IServiceCollection)" line-rate="0" branch-rate="1" complexity="1">
               <lines>

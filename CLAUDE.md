@@ -5,15 +5,15 @@ Guide for Claude Code and coding agents in this repository.
 | Doc | Purpose |
 |-----|---------|
 | [README.md](README.md) | Product overview, onboarding (human) |
-| [.cursor/rules/agripeweb-standards.mdc](.cursor/rules/agripeweb-standards.mdc) | Mandatory patterns (Cursor, always applied) |
+| [.cursor/rules/starkagro-standards.mdc](.cursor/rules/starkagro-standards.mdc) | Mandatory patterns (Cursor, always applied) |
 | [docs/agent-behavior.md](docs/agent-behavior.md) | Generic agent behavior (think, simplify, surgical edits) |
 
 ## How to work here
 
 - **Scope:** minimum change that satisfies the request; match existing patterns.
 - **Uncertainty:** state assumptions or ask — don't guess tenant rules, API contracts, or irrigation logic.
-- **Verify:** `dotnet test` for API changes; manual or documented check for UI/IoT.
-- **Features:** large backend work → plan in `docs/features/{name}/plan.md` first (see `.claude/skills/agripeweb-feature-planner/`).
+- **Verify:** `dotnet test` for API changes; manual or documented check for UI.
+- **Features:** large backend work → plan in `docs/features/{name}/plan.md` first (see `.claude/skills/starkagro-feature-planner/`).
 - **Code queries and changes:** use graphify by default — query the graph before exploring code, update the graph after changing code (see [## graphify](#graphify)).
 - **Memory:** every durable fact saved locally must also be saved to Mnemosine (see [## Mnemosine](#mnemosine-long-term-memory)).
 - **Behavior details:** [docs/agent-behavior.md](docs/agent-behavior.md).
@@ -22,10 +22,8 @@ Guide for Claude Code and coding agents in this repository.
 
 | Path | Role |
 |------|------|
-| `AgripeWebAPI/` | ASP.NET Core 10, MediatR/CQRS, MongoDB, JWT + Google OAuth |
-| `AgripeWebUI/` | Angular 19, Material, Chart.js, Leaflet |
-| `AgripeWebUI-Mobile/` | React Native (field use) |
-| `AgripeWebIOT/` | ESP8266 (Wi-Fi), ESP32 LoRa gateway/slave |
+| `StarkAgroAPI/` | ASP.NET Core 10, MediatR/CQRS, MongoDB, JWT + Google OAuth |
+| `StarkAgroUI/` | Angular 19, Material, Chart.js, Leaflet |
 | `docker/`, `.github/workflows/` | Compose, CI, deploy VPS |
 | `terraform/aws/` | ECS Fargate, ALB, optional cloud path |
 
@@ -33,22 +31,24 @@ Guide for Claude Code and coding agents in this repository.
 
 | Situation | Rule |
 |-----------|------|
-| `dotnet build` API on Windows | Kill running `AgripeWebAPI` first (MSB3027/MSB3021 file lock) |
-| UI dev server | Only `npm run start` inside `AgripeWebUI/` — proxy is in `angular.json` |
+| `dotnet build` API on Windows | Kill running `StarkAgroAPI` first (MSB3027/MSB3021 file lock) |
+| UI dev server | Only `npm run start` inside `StarkAgroUI/` — proxy is in `angular.json` |
 | API URLs from UI | Relative `/api/v1/...` — never hardcode host |
 | Pivot without lat/long | Skip weather forecast; show CTA in dashboard |
 | New domain handler | Inject `ICurrentUserContext`; filter `_currentUser.UserId`; never trust `request.UserId` |
 | Any query or write by email | Never compare `Email` with `==`. Read with `EmailNormalizer.ByEmail(...)`, write with `EmailNormalizer.Normalize(...)`. Mongo is case-sensitive, email is not — `==` breaks login for anyone stored with a capital letter |
 | MongoDB | No EF Core / SQL / `dotnet ef` — collections via `agpDBContext` |
-| Upload de imagem | Nginx precisa de `client_max_body_size` em `AgripeWebUI/nginx.conf` **e** `docker/nginx/nginx.conf` — o default de 1 MB rejeita foto de celular com 413 |
+| Upload de imagem | Nginx precisa de `client_max_body_size` em `StarkAgroUI/nginx.conf` **e** `docker/nginx/nginx.conf` — o default de 1 MB rejeita foto de celular com 413 |
 | Testes com Mongo mock | Não use `.AnyAsync()` em handler: ele projeta para `BsonDocument` e o `MongoMockHelper` não cobre — use `.FirstOrDefaultAsync()` |
 | Processamento em background | Lógica rodada pelo worker é **serviço puro**, não handler MediatR — `WorkerUserContext.UserId` é `null` e o assembly scan exporia o handler |
+| Idempotência de leitura LoRaWAN | A `IdempotencyKey` (`CreateLoRaWanReadHandler`) inclui o **timestamp** do uplink: `{DevEUI}:{fcnt}:{time.Ticks}`. Nunca use só `{DevEUI}:{fcnt}` — o `fcnt` **zera no rejoin/reboot** do device e colidiria com leituras antigas, **perdendo dado real**. Duplicata (reentrega QoS 1 do broker) é tratada como **no-op** (read-before-write + `catch` do `DuplicateKey` como backstop de corrida), nunca como erro |
 | Chaves de IA | Ficam no Mongo (`platform_ai_settings`, tela `/admin/ia`), **não** em `appsettings`. `CropHealthEnabled` é o kill-switch do custo por foto |
 | Custo de IA por laudo | Guardado em **centavos inteiros** (`PlatformAiSettings.CropHealthCostCents`, config; `PlantDiagnosis.AiCostCents`, congelado no processamento) — dinheiro em `double` acumula erro. O processador grava o custo em **todos** os desfechos pagos (completo/recusado/só-classificador); `DiagnosisCostService` soma o mês e a tela `/admin/ia` mostra o gasto |
+| Cobrança / planos | Preços **nunca** cravados em código: `DiagnosisPlan` (coleção `diagnosis_plans`, tela `/admin/planos`) tem mensalidade + laudos inclusos + preço do excedente, tudo em **centavos inteiros**. `User.DiagnosisPlanId` associa o produtor. `DiagnosisBillingService` calcula a fatura (mensalidade + excedente) — só **mostra**, não cobra (gateway de pagamento é etapa futura). Painel do agrônomo em `/agronomo/faturamento` (`GET /v1/agronomist/billing`) usa esse serviço por cliente **Active** — nunca lê pivôs/sensores, só faturamento derivado dos laudos. **Cota (bloqueio) e plano (cobrança) são coisas separadas**: o excedente é cobrado, não bloqueado |
 | Laudo gerado por LLM | O disclaimer legal é garantido em código (`EnsureDisclaimer`), nunca só pelo prompt — truncamento ou modelo teimoso o removeria |
 | Kindwise crop.health | `datetime` exige offset (`+00:00`; `Z` e `ToString("o")` dão 400); **não** envie `similar_images: false`; a resposta de sucesso é **201** |
 | PDF (QuestPDF) | Licença **Community** declarada em `ApiConfig` — gratuita só até US$ 1 mi de receita anual. Não dá para asserir texto nos bytes do PDF (fonte subsetada): teste o conteúdo via `DiagnosisPdfService.FooterLines`/`StatusLabel` |
-| Firmware | No real Wi-Fi passwords, tokens, or MACs in committed `.ino` files |
+| Firmware / dispositivos em campo | O código do firmware **não vive mais neste repo**, mas os dispositivos continuam chamando `Auth/LogIn` e `reads/add`. Mudar payload ou rota dessas chamadas **quebra sensor em campo** — trate como contrato público |
 | Deploy | `main` + green CI; secrets only via env / user secrets — placeholders in repo |
 | Google login button | Show only when `environment.googleClientId` is set |
 
@@ -56,11 +56,11 @@ Guide for Claude Code and coding agents in this repository.
 
 ### API
 ```bash
-dotnet run --project AgripeWebAPI/AgripeWebAPI.csproj
-dotnet build AgripeWebAPI/AgripeWebAPI.csproj   # stop API process first on Windows
+dotnet run --project StarkAgroAPI/StarkAgroAPI.csproj
+dotnet build StarkAgroAPI/StarkAgroAPI.csproj   # stop API process first on Windows
 ```
 
-### UI (from `AgripeWebUI/`)
+### UI (from `StarkAgroUI/`)
 ```bash
 npm install
 npm run start    # http://localhost:4200 — proxy to API
@@ -68,8 +68,8 @@ npm run start    # http://localhost:4200 — proxy to API
 
 ### Tests
 ```bash
-dotnet test AgripeWebAPI.Tests/AgripeWebAPI.Tests.csproj
-dotnet test AgripeWebAPI.Tests/AgripeWebAPI.Tests.csproj --filter "FullyQualifiedName~TestMethodName"
+dotnet test StarkAgroAPI.Tests/StarkAgroAPI.Tests.csproj
+dotnet test StarkAgroAPI.Tests/StarkAgroAPI.Tests.csproj --filter "FullyQualifiedName~TestMethodName"
 ```
 
 Handler tests: **xUnit + Moq**, MongoDB cursor mocking (not EF InMemory). Pattern: Arrange–Act–Assert.
@@ -88,20 +88,19 @@ docker compose -f docker/docker-compose.yml up --build
 | Task | Location |
 |------|----------|
 | REST endpoint | `Controllers/` → `Domain/Commands/Requests|Responses/` → `Domain/Handlers/` |
-| Entity / collection | `Models/Entities/`, register in `agpDBContext` — [agripeweb-mongo-setup skill](.claude/skills/agripeweb-mongo-setup/SKILL.md) |
-| Angular route / screen | `AgripeWebUI/src/app/app.routes.ts` + component; auth under `LayoutComponent` |
+| Entity / collection | `Models/Entities/`, register in `agpDBContext` — [starkagro-mongo-setup skill](.claude/skills/starkagro-mongo-setup/SKILL.md) |
+| Angular route / screen | `StarkAgroUI/src/app/app.routes.ts` + component; auth under `LayoutComponent` |
 | Weather / irrigation logic | `Services/Forecast/`, irrigation trend handlers |
-| Laudo fitossanitário (foto + IA) | `Controllers/PlantDiagnosisController.cs`, `Domain/Handlers/Diagnosis/`, `Services/Diagnosis/`, `AgripeWebWorker/Services/PlantDiagnosisProcessor.cs` — plano em [docs/features/laudo-fitossanitario-ia/plan.md](docs/features/laudo-fitossanitario-ia/plan.md) |
+| Laudo fitossanitário (foto + IA) | `Controllers/PlantDiagnosisController.cs`, `Domain/Handlers/Diagnosis/`, `Services/Diagnosis/`, `StarkAgroWorker/Services/PlantDiagnosisProcessor.cs` — plano em [docs/features/laudo-fitossanitario-ia/plan.md](docs/features/laudo-fitossanitario-ia/plan.md) |
 | OAuth | API `Auth/external-login`; UI `/login/callback` |
-| Firmware / field device | `AgripeWebIOT/` — coordinate API contract with backend |
 | Multi-agent (Paperclip) | [docs/agents/README.md](docs/agents/README.md) |
 
 ## Feature workflow
 
 1. GitHub issue → acceptance criteria clear  
-2. Plan → `docs/features/{name}/plan.md` (optional skill: `agripeweb-feature-planner`)  
-3. Implement → handler + tests; UI and IoT in parallel only if contract is defined  
-4. Review → tenant isolation, no secrets in diff (`agripeweb-code-reviewer` skill)
+2. Plan → `docs/features/{name}/plan.md` (optional skill: `starkagro-feature-planner`)  
+3. Implement → handler + tests; UI in parallel only if contract is defined  
+4. Review → tenant isolation, no secrets in diff (`starkagro-code-reviewer` skill)
 
 ## Architecture
 
@@ -123,7 +122,7 @@ Controllers delegate to handlers; **no business logic in controllers.**
 ### MongoDB
 
 - `agpDBContext` → `IMongoCollection<T>`  
-- Collections: `users`, `pivots`, `sensors`, `read_sensors`, `plant_diagnoses`, `agronomist_clients`, `counters`  
+- Collections: `users`, `pivots`, `sensors`, `read_sensors`, `plant_diagnoses`, `agronomist_clients`, `diagnosis_plans`, `counters`  
 - `agronomist_clients` tem **índice único parcial** em `{ClientUserId}` filtrando `Status: "Active"` — o banco garante *um agrônomo ativo por produtor*  
 - Binários: bucket GridFS `diagnosis_images` (`agpDBContext.DiagnosisImages`) — fotos dos laudos; **nunca** base64 no documento  
 - Sequential `int` IDs: `counters` + `GetNextIdAsync`  
@@ -151,7 +150,7 @@ Controllers delegate to handlers; **no business logic in controllers.**
 
 - **Routes:** single source `app.routes.ts` + `provideRouter` in `app.config.ts` — **not** `RouterModule.forRoot` in `AppModule`  
 - Login outside layout; authenticated routes are children of `LayoutComponent`  
-- **Routes:** `/login`, `/login/callback`, `/home`, `/irrigation-dashboard`, `/config`, `/pivots`, `/pivots/novo`, `/pivots/editar/:id`, `/sensores`, `/sensores/novo`, `/sensores/editar/:id`, `/diagnosticos`, `/diagnosticos/novo`, `/diagnosticos/:id`, `/agronomo/fila`, `/agronomo/laudo/:id`, `/agronomo/clientes` (`AgronomistGuard`), `/dashboard/:pivoId/:quadrante`, `/dashboard/:pivoId/:quadrante/config`, `/user`  
+- **Routes:** `/login`, `/login/callback`, `/home`, `/irrigation-dashboard`, `/config`, `/pivots`, `/pivots/novo`, `/pivots/editar/:id`, `/sensores`, `/sensores/novo`, `/sensores/editar/:id`, `/diagnosticos`, `/diagnosticos/novo`, `/diagnosticos/:id`, `/agronomo/fila`, `/agronomo/laudo/:id`, `/agronomo/clientes`, `/agronomo/faturamento` (`AgronomistGuard`), `/dashboard/:pivoId/:quadrante`, `/dashboard/:pivoId/:quadrante/config`, `/user`  
 - `ApiService` → `/api/v1/*`  
 - Imagem protegida (laudo): buscar como **blob** via `HttpClient` (`responseType: 'blob'` → `createObjectURL`) — `<img src>` não envia `Authorization`  
 - `PivotLocationMapComponent` — dynamic `import('leaflet')`; Nominatim + Open-Meteo elevation  
@@ -171,16 +170,16 @@ Controllers delegate to handlers; **no business logic in controllers.**
 - Secrets in repo: placeholders only (`CHANGE_ME`, `YOUR_GOOGLE_CLIENT_ID`)  
 - Stable .NET / NuGet versions — no previews without explicit approval  
 - UI OAuth button only if `environment.googleClientId` is configured  
-- IoT login/read endpoints must stay aligned with API routes used in `.ino` files
+- IoT login/read endpoints are a public contract with devices already in the field — the firmware source is no longer in this repo, so a breaking change here cannot be caught by CI
 
 ## Documentation and skills
 
 - [docs/contratacao-time.md](docs/contratacao-time.md) — team roles  
 - [docs/agents/README.md](docs/agents/README.md) — Paperclip SOUL/HEARTBEAT  
-- `.claude/skills/agripeweb-backend-expert` — handlers/endpoints  
-- `.claude/skills/agripeweb-implement` — full issue workflow  
-- `.claude/skills/agripeweb-test-writer` — xUnit + Mongo mocks  
-- `.claude/skills/agripeweb-code-reviewer` — pre-merge review
+- `.claude/skills/starkagro-backend-expert` — handlers/endpoints  
+- `.claude/skills/starkagro-implement` — full issue workflow  
+- `.claude/skills/starkagro-test-writer` — xUnit + Mongo mocks  
+- `.claude/skills/starkagro-code-reviewer` — pre-merge review
 
 ## graphify
 

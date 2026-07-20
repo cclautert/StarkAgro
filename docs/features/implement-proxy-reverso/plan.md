@@ -295,9 +295,9 @@ The `agripewebui` container's internal Nginx already sets the correct forwarding
 
 ## Impact on Existing `agripewebui` Internal Nginx
 
-The `nginx.conf.template` inside the `agripewebui` image (at `AgripeWebUI/nginx.conf.template`) proxies `/api/` using `proxy_set_header X-Forwarded-Proto $scheme`. When the outer Nginx proxy forwards a request on port 80 to `agripewebui`, `$scheme` inside the inner Nginx will be `http` even though the original client used HTTPS. This is expected and harmless for most functionality, but the outer Nginx must set `X-Forwarded-Proto: https` so the .NET API behind it reports the correct scheme.
+The `nginx.conf.template` inside the `agripewebui` image (at `StarkAgroUI/nginx.conf.template`) proxies `/api/` using `proxy_set_header X-Forwarded-Proto $scheme`. When the outer Nginx proxy forwards a request on port 80 to `agripewebui`, `$scheme` inside the inner Nginx will be `http` even though the original client used HTTPS. This is expected and harmless for most functionality, but the outer Nginx must set `X-Forwarded-Proto: https` so the .NET API behind it reports the correct scheme.
 
-No changes to `AgripeWebUI/nginx.conf.template` or `AgripeWebUI/entrypoint.sh` are required.
+No changes to `StarkAgroUI/nginx.conf.template` or `StarkAgroUI/entrypoint.sh` are required.
 
 ---
 
@@ -307,7 +307,7 @@ No changes to `AgripeWebUI/nginx.conf.template` or `AgripeWebUI/entrypoint.sh` a
 
 **Google OAuth.** The Google OAuth `redirect_uri` registered in Google Cloud Console must include the HTTPS URL (e.g., `https://agripeweb.com/login/callback`). This is an external configuration step, not a code change, but the implementer must verify it.
 
-**JWT Issuer/Audience.** If `JwtSettings` in `appsettings.json` contains an issuer URL, it must match the HTTPS domain. Check `AgripeWebAPI/appsettings.json`.
+**JWT Issuer/Audience.** If `JwtSettings` in `appsettings.json` contains an issuer URL, it must match the HTTPS domain. Check `StarkAgroAPI/appsettings.json`.
 
 ---
 

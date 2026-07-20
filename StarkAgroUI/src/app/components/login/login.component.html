@@ -1,0 +1,23 @@
+<div class="login-page">
+  <div class="login-panel">
+    <div class="login-brand">
+      <span class="brand-icon">💧</span>
+      <h1 class="brand-name">StarkAgro</h1>
+      <p class="brand-subtitle">Monitoramento de Irrigação</p>
+    </div>
+    <form (ngSubmit)="login()" #loginForm="ngForm">
+      <div class="field-group">
+        <label>Email</label>
+        <input type="text" name="email" [(ngModel)]="email" placeholder="seu@email.com" required />
+      </div>
+      <div class="field-group">
+        <label>Senha</label>
+        <input type="password" name="password" [(ngModel)]="password" placeholder="••••••••" required />
+      </div>
+      <button type="submit" class="btn-login">Entrar</button>
+      <button *ngIf="googleLoginEnabled" type="button" class="google-btn" (click)="loginWithGoogle()">
+        Entrar com Google
+      </button>
+    </form>
+  </div>
+</div>

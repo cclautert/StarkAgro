@@ -1,6 +1,6 @@
 # Plan: RainThresholdMm Configurável por Pivot e Global
 
-Issue: https://github.com/cclautert/AgripeWeb/issues/23
+Issue: https://github.com/cclautert/StarkAgro/issues/23
 
 ---
 
@@ -61,28 +61,28 @@ None.
 
 | File | Change |
 |---|---|
-| `AgripeWebAPI/Models/Entities/User.cs` | Add `public double? RainThresholdMm { get; set; }` |
-| `AgripeWebAPI/Models/Entities/Pivot.cs` | Add `public double? RainThresholdMm { get; set; }` |
-| `AgripeWebAPI/Domain/Commands/Requests/Users/EditUserLimitsRequest.cs` | Add `public double? RainThresholdMm { get; set; }` |
-| `AgripeWebAPI/Domain/Handlers/Users/EditUserLimitsHandler.cs` | Add `user.RainThresholdMm = request.RainThresholdMm;` before `ReplaceOneAsync` |
-| `AgripeWebAPI/Domain/Commands/Responses/Users/GetUserResponse.cs` | Add `public double? RainThresholdMm { get; set; }` |
-| `AgripeWebAPI/Domain/Handlers/Users/GetUserHandler.cs` | Add `RainThresholdMm = x.RainThresholdMm` to the `Project()` expression |
-| `AgripeWebAPI/Domain/Commands/Requests/Pivots/EditPivotLimitsRequest.cs` | Add `public double? RainThresholdMm { get; set; }` |
-| `AgripeWebAPI/Domain/Handlers/Pivots/EditPivotLimitsHandler.cs` | Add `pivot.RainThresholdMm = request.RainThresholdMm;` before `ReplaceOneAsync` |
-| `AgripeWebAPI/Domain/Handlers/Pivots/GetIrrigationTrendHandler.cs` | After fetching `user` (~line 59), compute `var rainThreshold = pivot.RainThresholdMm ?? user?.RainThresholdMm ?? _settings.RainThresholdMm;`; replace `_settings.RainThresholdMm` on line 117 with `rainThreshold` |
+| `StarkAgroAPI/Models/Entities/User.cs` | Add `public double? RainThresholdMm { get; set; }` |
+| `StarkAgroAPI/Models/Entities/Pivot.cs` | Add `public double? RainThresholdMm { get; set; }` |
+| `StarkAgroAPI/Domain/Commands/Requests/Users/EditUserLimitsRequest.cs` | Add `public double? RainThresholdMm { get; set; }` |
+| `StarkAgroAPI/Domain/Handlers/Users/EditUserLimitsHandler.cs` | Add `user.RainThresholdMm = request.RainThresholdMm;` before `ReplaceOneAsync` |
+| `StarkAgroAPI/Domain/Commands/Responses/Users/GetUserResponse.cs` | Add `public double? RainThresholdMm { get; set; }` |
+| `StarkAgroAPI/Domain/Handlers/Users/GetUserHandler.cs` | Add `RainThresholdMm = x.RainThresholdMm` to the `Project()` expression |
+| `StarkAgroAPI/Domain/Commands/Requests/Pivots/EditPivotLimitsRequest.cs` | Add `public double? RainThresholdMm { get; set; }` |
+| `StarkAgroAPI/Domain/Handlers/Pivots/EditPivotLimitsHandler.cs` | Add `pivot.RainThresholdMm = request.RainThresholdMm;` before `ReplaceOneAsync` |
+| `StarkAgroAPI/Domain/Handlers/Pivots/GetIrrigationTrendHandler.cs` | After fetching `user` (~line 59), compute `var rainThreshold = pivot.RainThresholdMm ?? user?.RainThresholdMm ?? _settings.RainThresholdMm;`; replace `_settings.RainThresholdMm` on line 117 with `rainThreshold` |
 
 ### Frontend
 
 | File | Change |
 |---|---|
-| `AgripeWebUI/src/app/models/user.model.ts` | Add `rainThresholdMm?: number \| null;` |
-| `AgripeWebUI/src/app/models/pivot.model.ts` | Add `rainThresholdMm?: number \| null;` |
-| `AgripeWebUI/src/app/services/user.service.ts` | Add `rainThresholdMm?: number \| null` param to `updateLimits()`, include in request body |
-| `AgripeWebUI/src/app/services/pivot.service.ts` | Add `rainThresholdMm?: number \| null` param to `updateLimits()`, include in request body |
-| `AgripeWebUI/src/app/components/global-config/global-config.component.ts` | Add `rainThresholdMm: [null, Validators.min(0)]` to form; load/save the field |
-| `AgripeWebUI/src/app/components/global-config/global-config.component.html` | Add input: label "Chuva mínima para adiar irrigação (mm)", placeholder "Padrão global: 5 mm", step 0.1 |
-| `AgripeWebUI/src/app/components/pivot-config/pivot-config.component.ts` | Add `rainThresholdMm: [null, Validators.min(0)]` to form; load/save the field |
-| `AgripeWebUI/src/app/components/pivot-config/pivot-config.component.html` | Add input: same label/placeholder, step 0.1 |
+| `StarkAgroUI/src/app/models/user.model.ts` | Add `rainThresholdMm?: number \| null;` |
+| `StarkAgroUI/src/app/models/pivot.model.ts` | Add `rainThresholdMm?: number \| null;` |
+| `StarkAgroUI/src/app/services/user.service.ts` | Add `rainThresholdMm?: number \| null` param to `updateLimits()`, include in request body |
+| `StarkAgroUI/src/app/services/pivot.service.ts` | Add `rainThresholdMm?: number \| null` param to `updateLimits()`, include in request body |
+| `StarkAgroUI/src/app/components/global-config/global-config.component.ts` | Add `rainThresholdMm: [null, Validators.min(0)]` to form; load/save the field |
+| `StarkAgroUI/src/app/components/global-config/global-config.component.html` | Add input: label "Chuva mínima para adiar irrigação (mm)", placeholder "Padrão global: 5 mm", step 0.1 |
+| `StarkAgroUI/src/app/components/pivot-config/pivot-config.component.ts` | Add `rainThresholdMm: [null, Validators.min(0)]` to form; load/save the field |
+| `StarkAgroUI/src/app/components/pivot-config/pivot-config.component.html` | Add input: same label/placeholder, step 0.1 |
 
 ---
 
@@ -119,10 +119,10 @@ No new services. All handlers are already registered via MediatR assembly scanni
 
 ```bash
 # Build
-dotnet build AgripeWebAPI/AgripeWebAPI.csproj
+dotnet build StarkAgroAPI/StarkAgroAPI.csproj
 
 # Tests
-dotnet test AgripeWebAPI.Tests/AgripeWebAPI.Tests.csproj
+dotnet test StarkAgroAPI.Tests/StarkAgroAPI.Tests.csproj
 
 # Manual — set user threshold
 # PUT /api/v1/user/updateLimits  { "limiteInferior": 25, "limiteSuperior": 75, "rainThresholdMm": 10 }

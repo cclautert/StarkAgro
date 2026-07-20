@@ -1,0 +1,167 @@
+<mat-sidenav-container class="sidenav-container">
+
+  <!-- Sidebar -->
+  <mat-sidenav
+    #sidenav
+    class="sidenav"
+    [opened]="showLayout && !(isSmallScreen$ | async)"
+    [mode]="(isSmallScreen$ | async) ? 'over' : 'side'">
+
+    <div class="sidenav-header">
+      <span class="sidenav-logo">💧</span>
+      <span class="sidenav-title">StarkAgro</span>
+    </div>
+
+    <nav class="sidenav-nav">
+      <a class="nav-link" routerLink="/home" routerLinkActive="active-link">
+        <mat-icon>home</mat-icon>
+        <span>Início</span>
+      </a>
+      <a class="nav-link" routerLink="/irrigation-dashboard" routerLinkActive="active-link">
+        <mat-icon>show_chart</mat-icon>
+        <span>Gráficos</span>
+      </a>
+      <a class="nav-link" routerLink="/sensores" routerLinkActive="active-link">
+        <mat-icon>sensors</mat-icon>
+        <span>Sensores</span>
+      </a>
+      <a class="nav-link" routerLink="/pivots" routerLinkActive="active-link">
+        <mat-icon>rotate_right</mat-icon>
+        <span>Pivôs</span>
+      </a>
+      <a class="nav-link" routerLink="/diagnosticos" routerLinkActive="active-link">
+        <mat-icon>eco</mat-icon>
+        <span>Laudos</span>
+      </a>
+
+      <a class="nav-link" routerLink="/config" routerLinkActive="active-link">
+        <mat-icon>settings</mat-icon>
+        <span>Configurações</span>
+      </a>
+
+      <!-- Seção do Agrônomo — visível apenas para quem tem o papel -->
+      <div class="nav-section" *ngIf="isAgronomist">
+        <div class="nav-section-label">Agrônomo</div>
+        <a class="nav-link" routerLink="/agronomo/fila" routerLinkActive="active-link">
+          <mat-icon>fact_check</mat-icon>
+          <span>Fila de Laudos</span>
+        </a>
+        <a class="nav-link" routerLink="/agronomo/clientes" routerLinkActive="active-link">
+          <mat-icon>groups</mat-icon>
+          <span>Meus Clientes</span>
+        </a>
+        <a class="nav-link" routerLink="/agronomo/faturamento" routerLinkActive="active-link">
+          <mat-icon>receipt_long</mat-icon>
+          <span>Faturamento</span>
+        </a>
+      </div>
+
+      <!-- Seção Administração — visível apenas para super usuário -->
+      <div class="nav-section" *ngIf="isAdmin">
+        <div class="nav-section-label">Administração</div>
+        <a class="nav-link" routerLink="/admin/usuarios" routerLinkActive="active-link">
+          <mat-icon>manage_accounts</mat-icon>
+          <span>Usuários</span>
+        </a>
+        <a class="nav-link" routerLink="/admin/ia" routerLinkActive="active-link">
+          <mat-icon>smart_toy</mat-icon>
+          <span>Config. IA</span>
+        </a>
+        <a class="nav-link" routerLink="/admin/planos" routerLinkActive="active-link">
+          <mat-icon>sell</mat-icon>
+          <span>Planos</span>
+        </a>
+      </div>
+
+      <a class="nav-link logout-link" (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        <span>Sair</span>
+      </a>
+    </nav>
+  </mat-sidenav>
+
+  <!-- Main Content -->
+  <mat-sidenav-content>
+    <mat-toolbar class="main-toolbar" *ngIf="showLayout">
+      <button mat-icon-button (click)="sidenav.toggle()">
+        <mat-icon>{{ sidenav.opened ? 'menu_open' : 'menu' }}</mat-icon>
+      </button>
+      <span class="toolbar-title">StarkAgro</span>
+      <span class="toolbar-subtitle">Monitoramento de Irrigação</span>
+
+      <span class="toolbar-spacer"></span>
+
+      <!-- Notification Bell -->
+      <div class="notification-wrapper">
+        <button mat-icon-button class="bell-btn" (click)="toggleAlertPanel()" aria-label="Notificações">
+          <mat-icon
+            [matBadge]="alertService.unreadCount > 0 ? alertService.unreadCount : null"
+            matBadgeColor="warn"
+            matBadgeSize="small"
+            [matBadgeHidden]="alertService.unreadCount === 0">
+            notifications
+          </mat-icon>
+        </button>
+
+        <!-- Alert Dropdown Panel -->
+        <div class="alert-panel" *ngIf="alertPanelOpen">
+          <div class="alert-panel-header">
+            <span class="alert-panel-title">Notificações</span>
+            <button mat-icon-button class="refresh-btn" (click)="refreshAlerts($event)" title="Atualizar">
+              <mat-icon>refresh</mat-icon>
+            </button>
+          </div>
+
+          <!-- Loading -->
+          <div class="alert-state" *ngIf="loading$ | async">
+            <mat-icon class="state-icon spin">sync</mat-icon>
+            <span>Carregando...</span>
+          </div>
+
+          <!-- Error -->
+          <div class="alert-state alert-error" *ngIf="(error$ | async) && !(loading$ | async)">
+            <mat-icon class="state-icon">wifi_off</mat-icon>
+            <span>Sem conexão. <a (click)="refreshAlerts($event)">Tentar novamente</a></span>
+          </div>
+
+          <!-- Empty -->
+          <div class="alert-state"
+            *ngIf="!(loading$ | async) && !(error$ | async) && (alerts$ | async)?.length === 0">
+            <mat-icon class="state-icon">check_circle</mat-icon>
+            <span>Nenhuma notificação</span>
+          </div>
+
+          <!-- Alert List -->
+          <ul class="alert-list"
+            *ngIf="!(loading$ | async) && (alerts$ | async) as alerts">
+            <li class="alert-item" *ngFor="let alert of alerts"
+              [class.unread]="!alert.isRead"
+              [class.actionable]="isInvite(alert)"
+              (click)="openAlert(alert)">
+              <div class="alert-type-badge" [class]="'type-' + alert.alertType">
+                {{ alertTypeLabel(alert.alertType) }}
+              </div>
+              <div class="alert-title">{{ alert.title }}</div>
+              <div class="alert-meta">
+                <ng-container *ngIf="!isInvite(alert)">
+                  <mat-icon class="meta-icon">rotate_right</mat-icon>
+                  <span>{{ alert.pivotName }}</span>
+                </ng-container>
+                <mat-icon class="meta-icon">schedule</mat-icon>
+                <span>{{ alert.createdAt | date:'dd/MM HH:mm' }}</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </mat-toolbar>
+
+    <!-- Overlay to close panel on outside click -->
+    <div class="panel-overlay" *ngIf="alertPanelOpen" (click)="closeAlertPanel()"></div>
+
+    <main class="main-content">
+      <router-outlet></router-outlet>
+    </main>
+  </mat-sidenav-content>
+
+</mat-sidenav-container>

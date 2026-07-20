@@ -1,4 +1,4 @@
-Issue: https://github.com/cclautert/AgripeWeb/issues/71
+Issue: https://github.com/cclautert/StarkAgro/issues/71
 
 # Plan — Sensor.MetricType e Telemetria Agrupada por Dispositivo
 
@@ -58,24 +58,24 @@ Com a ingestão LoRaWAN, um dispositivo SN50 gera 3 sensores por quadrante (`_H`
 
 | Path | Type |
 |------|------|
-| `AgripeWebAPI/Models/Entities/MetricType.cs` | Enum |
-| `AgripeWebAPI/Domain/Commands/Requests/Sensors/GetSensorTelemetryRequest.cs` | MediatR request |
-| `AgripeWebAPI/Domain/Commands/Responses/Sensors/SensorTelemetryResponse.cs` | Response DTO |
-| `AgripeWebAPI/Domain/Handlers/Sensors/GetSensorTelemetryHandler.cs` | Handler |
-| `AgripeWebAPI.Tests/Domain/Handlers/Sensors/GetSensorTelemetryHandlerTests.cs` | xUnit tests |
+| `StarkAgroAPI/Models/Entities/MetricType.cs` | Enum |
+| `StarkAgroAPI/Domain/Commands/Requests/Sensors/GetSensorTelemetryRequest.cs` | MediatR request |
+| `StarkAgroAPI/Domain/Commands/Responses/Sensors/SensorTelemetryResponse.cs` | Response DTO |
+| `StarkAgroAPI/Domain/Handlers/Sensors/GetSensorTelemetryHandler.cs` | Handler |
+| `StarkAgroAPI.Tests/Domain/Handlers/Sensors/GetSensorTelemetryHandlerTests.cs` | xUnit tests |
 
 ## Files to Modify
 
 | Path | Change |
 |------|--------|
-| `AgripeWebAPI/Models/Entities/Sensor.cs` | Adicionar `public MetricType MetricType { get; set; } = MetricType.Humidity;` |
-| `AgripeWebAPI/Domain/Commands/Requests/Sensors/CreateSensorRequest.cs` | Adicionar `MetricType MetricType { get; set; }` |
-| `AgripeWebAPI/Domain/Commands/Requests/Sensors/EditSensorRequest.cs` | Adicionar `MetricType MetricType { get; set; }` |
-| `AgripeWebAPI/Domain/Handlers/Sensors/CreateSensorHandler.cs` | Persistir `MetricType = request.MetricType` |
-| `AgripeWebAPI/Domain/Handlers/Sensors/EditSensorHandler.cs` | Atualizar `sensor.MetricType = request.MetricType` |
-| `AgripeWebAPI/Domain/Handlers/Reads/GetReadByPivotIdHandler.cs` | Filtrar sensores por Humidity (OR campo ausente) |
-| `AgripeWebAPI/Domain/Handlers/Pivots/GetIrrigationTrendHandler.cs` | Filtrar sensores por Humidity (OR campo ausente) |
-| `AgripeWebAPI/Controllers/SensorController.cs` | Adicionar endpoint `[Route("telemetry")][HttpGet]` |
+| `StarkAgroAPI/Models/Entities/Sensor.cs` | Adicionar `public MetricType MetricType { get; set; } = MetricType.Humidity;` |
+| `StarkAgroAPI/Domain/Commands/Requests/Sensors/CreateSensorRequest.cs` | Adicionar `MetricType MetricType { get; set; }` |
+| `StarkAgroAPI/Domain/Commands/Requests/Sensors/EditSensorRequest.cs` | Adicionar `MetricType MetricType { get; set; }` |
+| `StarkAgroAPI/Domain/Handlers/Sensors/CreateSensorHandler.cs` | Persistir `MetricType = request.MetricType` |
+| `StarkAgroAPI/Domain/Handlers/Sensors/EditSensorHandler.cs` | Atualizar `sensor.MetricType = request.MetricType` |
+| `StarkAgroAPI/Domain/Handlers/Reads/GetReadByPivotIdHandler.cs` | Filtrar sensores por Humidity (OR campo ausente) |
+| `StarkAgroAPI/Domain/Handlers/Pivots/GetIrrigationTrendHandler.cs` | Filtrar sensores por Humidity (OR campo ausente) |
+| `StarkAgroAPI/Controllers/SensorController.cs` | Adicionar endpoint `[Route("telemetry")][HttpGet]` |
 
 ## MongoDB Changes
 
@@ -154,8 +154,8 @@ Nenhuma — MediatR descobre handlers automaticamente.
 ## Verification
 
 ```bash
-dotnet build AgripeWebAPI/AgripeWebAPI.csproj
-dotnet test AgripeWebAPI.Tests/AgripeWebAPI.Tests.csproj
+dotnet build StarkAgroAPI/StarkAgroAPI.csproj
+dotnet test StarkAgroAPI.Tests/StarkAgroAPI.Tests.csproj
 
 # Sample request (após login)
 GET /api/v1/sensor/telemetry?pivotId=1

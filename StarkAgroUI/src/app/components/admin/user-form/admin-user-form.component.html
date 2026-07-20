@@ -1,0 +1,106 @@
+<div class="form-container">
+  <h2>{{ isEditMode ? 'Editar Usuário' : 'Novo Usuário' }}</h2>
+
+  <div *ngIf="isLoading" class="loading-text">Carregando...</div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!isLoading">
+    <div class="form-group">
+      <label for="name">Nome</label>
+      <input id="name" type="text" formControlName="name" placeholder="Nome completo" />
+      <div class="error" *ngIf="name?.invalid && (name?.dirty || name?.touched)">
+        <div *ngIf="name?.errors?.['required']">Nome é obrigatório.</div>
+        <div *ngIf="name?.errors?.['minlength']">Mínimo 2 caracteres.</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="email">E-mail</label>
+      <input id="email" type="email" formControlName="email" placeholder="email@exemplo.com" />
+      <div class="error" *ngIf="email?.invalid && (email?.dirty || email?.touched)">
+        <div *ngIf="email?.errors?.['required']">E-mail é obrigatório.</div>
+        <div *ngIf="email?.errors?.['email']">E-mail inválido.</div>
+      </div>
+    </div>
+
+    <!-- Senha obrigatória apenas na criação -->
+    <div class="form-group" *ngIf="!isEditMode">
+      <label for="password">Senha</label>
+      <input id="password" type="password" formControlName="password" placeholder="Mínimo 8 caracteres" />
+      <div class="error" *ngIf="password?.invalid && (password?.dirty || password?.touched)">
+        <div *ngIf="password?.errors?.['required']">Senha é obrigatória.</div>
+        <div *ngIf="password?.errors?.['minlength']">Mínimo 8 caracteres.</div>
+      </div>
+    </div>
+
+    <!-- Toggle de troca de senha na edição -->
+    <div class="form-group checkbox-group" *ngIf="isEditMode">
+      <label class="checkbox-label">
+        <input type="checkbox" formControlName="changePassword" />
+        Alterar senha
+      </label>
+    </div>
+
+    <div class="form-group" *ngIf="isEditMode && changePassword?.value">
+      <label for="newPassword">Nova Senha</label>
+      <input id="newPassword" type="password" formControlName="password" placeholder="Mínimo 8 caracteres" />
+      <div class="error" *ngIf="password?.invalid && (password?.dirty || password?.touched)">
+        <div *ngIf="password?.errors?.['required']">Senha é obrigatória.</div>
+        <div *ngIf="password?.errors?.['minlength']">Mínimo 8 caracteres.</div>
+      </div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <div class="form-group checkbox-group">
+      <label class="checkbox-label">
+        <input type="checkbox" formControlName="active" />
+        Usuário ativo
+      </label>
+    </div>
+
+    <div class="form-group checkbox-group">
+      <label class="checkbox-label">
+        <input type="checkbox" formControlName="isAdmin" />
+        Administrador do sistema
+      </label>
+    </div>
+
+    <div class="form-group checkbox-group">
+      <label class="checkbox-label">
+        <input type="checkbox" formControlName="isAgronomist" />
+        Engenheiro agrônomo (revisa e assina laudos dos clientes vinculados)
+      </label>
+    </div>
+
+    <div class="form-group" *ngIf="form.get('isAgronomist')?.value">
+      <label for="agronomistCrea">Registro no CREA</label>
+      <input id="agronomistCrea" type="text" formControlName="agronomistCrea"
+             placeholder="CREA-RS 123456" />
+    </div>
+
+    <div class="form-group">
+      <label for="diagnosisQuotaPerMonth">Cota de laudos por mês</label>
+      <input id="diagnosisQuotaPerMonth" type="number" min="0" formControlName="diagnosisQuotaPerMonth"
+             placeholder="Vazio = usa o padrão da plataforma" />
+      <small class="form-hint">Limite rígido (bloqueia). 0 = ilimitado. Cada laudo consome uma análise paga.</small>
+    </div>
+
+    <div class="form-group" *ngIf="isEditMode">
+      <label for="diagnosisPlanId">Plano de cobrança</label>
+      <select id="diagnosisPlanId" formControlName="diagnosisPlanId">
+        <option [ngValue]="null">Sem plano (não fatura)</option>
+        <option *ngFor="let p of plans" [ngValue]="p.id" [disabled]="!p.active">
+          {{ p.name }}{{ p.active ? '' : ' (inativo)' }}
+        </option>
+      </select>
+      <small class="form-hint">Define o que o produtor paga: mensalidade + excedente. Gerencie em Administração → Planos.</small>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary" [disabled]="isSaving">
+        {{ isSaving ? 'Salvando...' : 'Salvar' }}
+      </button>
+      <button type="button" class="btn btn-secondary" (click)="voltar()">Cancelar</button>
+    </div>
+  </form>
+</div>

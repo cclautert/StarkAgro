@@ -1,9 +1,9 @@
 # Agent behavior guidelines
 
-Generic guidelines to reduce common LLM coding mistakes when working on AgripeWeb.  
+Generic guidelines to reduce common LLM coding mistakes when working on StarkAgro.  
 **Tradeoff:** bias toward caution over speed. For trivial tasks, use judgment.
 
-Referenced from [CLAUDE.md](../CLAUDE.md). Cursor users also get project rules via `.cursor/rules/agripeweb-standards.mdc`.
+Referenced from [CLAUDE.md](../CLAUDE.md). Cursor users also get project rules via `.cursor/rules/starkagro-standards.mdc`.
 
 ---
 
@@ -62,9 +62,9 @@ Weak criteria ("make it work") require constant clarification.
 
 ---
 
-## AgripeWeb-specific behavior
+## StarkAgro-specific behavior
 
 - **Multi-tenant** is a security requirement, not an optional refactor — always filter by `ICurrentUserContext.UserId`.
-- **IoT/API contract:** don't change read/login payloads without considering `AgripeWebIOT/` firmware.
+- **IoT/API contract:** don't change read/login payloads — devices are in the field and their firmware is no longer in this repo, so nothing here will fail to warn you.
 - **Irrigation thresholds** need explicit acceptance criteria; don't tune limiares silently.
 - **Secrets:** never commit real MongoDB, JWT, OAuth, or Wi-Fi credentials.
