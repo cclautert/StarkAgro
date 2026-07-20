@@ -46,6 +46,10 @@ namespace StarkAgroAPI.Domain.Handlers.Users
             // produtor não tem motivo nenhum para abrir aquela tela sabendo que foi convidado.
             var invites = await GetPendingInvitesAsync(userId, user?.Email, cancellationToken);
 
+            // Mesma lógica para o convite de revenda: sem o sininho, o membro só chegaria em
+            // /revenda/convites por URL.
+            var revendaInvites = await GetPendingRevendaInvitesAsync(userId, user?.Email, cancellationToken);
+
             var pivotIds = irrigationAlerts.Select(x => x.PivotId)
                 .Concat(anomalies.Select(x => x.PivotId))
                 .Distinct()
@@ -87,11 +91,52 @@ namespace StarkAgroAPI.Domain.Handlers.Users
                     IsRead = readAt.HasValue && a.Date <= readAt.Value
                 }))
                 .Concat(invites)
+                .Concat(revendaInvites)
                 .OrderByDescending(x => x.CreatedAt)
                 .Take(MaxAlerts)
                 .ToList();
 
             return alerts;
+        }
+
+        /// <summary>
+        /// Convites de revenda aguardando resposta. Casa por id <b>ou</b> por e-mail (o convite
+        /// pode ter sido criado antes de o membro ter conta), igual ao convite de agrônomo.
+        /// </summary>
+        private async Task<List<UserAlertResponse>> GetPendingRevendaInvitesAsync(
+            int userId,
+            string? userEmail,
+            CancellationToken cancellationToken)
+        {
+            var email = Services.EmailNormalizer.Normalize(userEmail);
+            var now = DateTime.UtcNow;
+
+            var pending = await _dbContext.RevendaMemberships
+                .Find(m => m.Status == RevendaMembershipStatus.Pending
+                           && m.InviteExpiresAt > now
+                           && (m.MemberUserId == userId || m.MemberEmail == email))
+                .ToListAsync(cancellationToken);
+
+            if (pending.Count == 0) return [];
+
+            var revendaIds = pending.Select(m => m.RevendaId).Distinct().ToList();
+            var revendas = await _dbContext.Revendas
+                .Find(r => revendaIds.Contains(r.Id))
+                .ToListAsync(cancellationToken);
+            var namesById = revendas.ToDictionary(r => r.Id, r => r.Name);
+
+            return pending.Select(m => new UserAlertResponse
+            {
+                Id = $"revenda-invite-{m.Id}",
+                Title = $"{namesById.GetValueOrDefault(m.RevendaId) ?? "Uma revenda"} te convidou. " +
+                        "Toque para responder ao convite.",
+                PivotName = "—",
+                AlertType = "RevendaInvite",
+
+                // Convite não fica "lido": some quando o membro aceita ou recusa.
+                CreatedAt = m.InvitedAt,
+                IsRead = false
+            }).ToList();
         }
 
         /// <summary>

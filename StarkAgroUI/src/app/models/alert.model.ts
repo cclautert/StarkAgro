@@ -1,4 +1,4 @@
-export type AlertType = 'MoistureLow' | 'AnomalyPersisted' | 'AgronomistInvite';
+export type AlertType = 'MoistureLow' | 'AnomalyPersisted' | 'AgronomistInvite' | 'RevendaInvite';
 
 export interface UserAlert {
   id: string;
