@@ -4,7 +4,7 @@
 
 **Ambiente Paperclip:** `$PAPERCLIP_API_URL`, `$PAPERCLIP_API_KEY`, `$PAPERCLIP_AGENT_ID`, `$PAPERCLIP_COMPANY_ID`
 
-**Repositório:** AgripeWeb (monorepo). Paths relativos a partir da raiz do workspace.
+**Repositório:** StarkAgro (monorepo). Paths relativos a partir da raiz do workspace.
 
 ---
 
@@ -41,15 +41,15 @@ curl -s -H "Authorization: Bearer $PAPERCLIP_API_KEY" \
 
 ---
 
-## Step 2 — Triage AgripeWeb
+## Step 2 — Triage StarkAgro
 
 Verificar alinhamento com o produto:
 
-- [ ] Há issues de **IoT/campo** paradas? → **IoT Lead AgripeWeb**
-- [ ] Há issues de **API/MongoDB/auth**? → **Backend AgripeWeb**
-- [ ] Há issues de **UI/dashboard/mapa**? → **Frontend AgripeWeb**
-- [ ] Há falha de **deploy/CI**? → **DevOps AgripeWeb**
-- [ ] Há dúvida de **regra de irrigação/limiares**? → **PO Agro AgripeWeb**
+- [ ] Há issues de **IoT/campo** paradas? → **IoT Lead StarkAgro**
+- [ ] Há issues de **API/MongoDB/auth**? → **Backend StarkAgro**
+- [ ] Há issues de **UI/dashboard/mapa**? → **Frontend StarkAgro**
+- [ ] Há falha de **deploy/CI**? → **DevOps StarkAgro**
+- [ ] Há dúvida de **regra de irrigação/limiares**? → **PO Agro StarkAgro**
 - [ ] Contratação/time (`docs/contratacao-time.md`)? → sub-issues por papel ou manter issue única com checklist
 
 **Anti-padrão:** não deixar duas issues no mesmo componente sem prioridade explícita.

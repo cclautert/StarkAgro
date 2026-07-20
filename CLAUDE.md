@@ -5,7 +5,7 @@ Guide for Claude Code and coding agents in this repository.
 | Doc | Purpose |
 |-----|---------|
 | [README.md](README.md) | Product overview, onboarding (human) |
-| [.cursor/rules/agripeweb-standards.mdc](.cursor/rules/agripeweb-standards.mdc) | Mandatory patterns (Cursor, always applied) |
+| [.cursor/rules/starkagro-standards.mdc](.cursor/rules/starkagro-standards.mdc) | Mandatory patterns (Cursor, always applied) |
 | [docs/agent-behavior.md](docs/agent-behavior.md) | Generic agent behavior (think, simplify, surgical edits) |
 
 ## How to work here
@@ -13,7 +13,7 @@ Guide for Claude Code and coding agents in this repository.
 - **Scope:** minimum change that satisfies the request; match existing patterns.
 - **Uncertainty:** state assumptions or ask — don't guess tenant rules, API contracts, or irrigation logic.
 - **Verify:** `dotnet test` for API changes; manual or documented check for UI/IoT.
-- **Features:** large backend work → plan in `docs/features/{name}/plan.md` first (see `.claude/skills/agripeweb-feature-planner/`).
+- **Features:** large backend work → plan in `docs/features/{name}/plan.md` first (see `.claude/skills/starkagro-feature-planner/`).
 - **Code queries and changes:** use graphify by default — query the graph before exploring code, update the graph after changing code (see [## graphify](#graphify)).
 - **Memory:** every durable fact saved locally must also be saved to Mnemosine (see [## Mnemosine](#mnemosine-long-term-memory)).
 - **Behavior details:** [docs/agent-behavior.md](docs/agent-behavior.md).
@@ -22,10 +22,10 @@ Guide for Claude Code and coding agents in this repository.
 
 | Path | Role |
 |------|------|
-| `AgripeWebAPI/` | ASP.NET Core 10, MediatR/CQRS, MongoDB, JWT + Google OAuth |
-| `AgripeWebUI/` | Angular 19, Material, Chart.js, Leaflet |
-| `AgripeWebUI-Mobile/` | React Native (field use) |
-| `AgripeWebIOT/` | ESP8266 (Wi-Fi), ESP32 LoRa gateway/slave |
+| `StarkAgroAPI/` | ASP.NET Core 10, MediatR/CQRS, MongoDB, JWT + Google OAuth |
+| `StarkAgroUI/` | Angular 19, Material, Chart.js, Leaflet |
+| `StarkAgroUI-Mobile/` | React Native (field use) |
+| `StarkAgroIOT/` | ESP8266 (Wi-Fi), ESP32 LoRa gateway/slave |
 | `docker/`, `.github/workflows/` | Compose, CI, deploy VPS |
 | `terraform/aws/` | ECS Fargate, ALB, optional cloud path |
 
@@ -33,14 +33,14 @@ Guide for Claude Code and coding agents in this repository.
 
 | Situation | Rule |
 |-----------|------|
-| `dotnet build` API on Windows | Kill running `AgripeWebAPI` first (MSB3027/MSB3021 file lock) |
-| UI dev server | Only `npm run start` inside `AgripeWebUI/` — proxy is in `angular.json` |
+| `dotnet build` API on Windows | Kill running `StarkAgroAPI` first (MSB3027/MSB3021 file lock) |
+| UI dev server | Only `npm run start` inside `StarkAgroUI/` — proxy is in `angular.json` |
 | API URLs from UI | Relative `/api/v1/...` — never hardcode host |
 | Pivot without lat/long | Skip weather forecast; show CTA in dashboard |
 | New domain handler | Inject `ICurrentUserContext`; filter `_currentUser.UserId`; never trust `request.UserId` |
 | Any query or write by email | Never compare `Email` with `==`. Read with `EmailNormalizer.ByEmail(...)`, write with `EmailNormalizer.Normalize(...)`. Mongo is case-sensitive, email is not — `==` breaks login for anyone stored with a capital letter |
 | MongoDB | No EF Core / SQL / `dotnet ef` — collections via `agpDBContext` |
-| Upload de imagem | Nginx precisa de `client_max_body_size` em `AgripeWebUI/nginx.conf` **e** `docker/nginx/nginx.conf` — o default de 1 MB rejeita foto de celular com 413 |
+| Upload de imagem | Nginx precisa de `client_max_body_size` em `StarkAgroUI/nginx.conf` **e** `docker/nginx/nginx.conf` — o default de 1 MB rejeita foto de celular com 413 |
 | Testes com Mongo mock | Não use `.AnyAsync()` em handler: ele projeta para `BsonDocument` e o `MongoMockHelper` não cobre — use `.FirstOrDefaultAsync()` |
 | Processamento em background | Lógica rodada pelo worker é **serviço puro**, não handler MediatR — `WorkerUserContext.UserId` é `null` e o assembly scan exporia o handler |
 | Idempotência de leitura LoRaWAN | A `IdempotencyKey` (`CreateLoRaWanReadHandler`) inclui o **timestamp** do uplink: `{DevEUI}:{fcnt}:{time.Ticks}`. Nunca use só `{DevEUI}:{fcnt}` — o `fcnt` **zera no rejoin/reboot** do device e colidiria com leituras antigas, **perdendo dado real**. Duplicata (reentrega QoS 1 do broker) é tratada como **no-op** (read-before-write + `catch` do `DuplicateKey` como backstop de corrida), nunca como erro |
@@ -58,11 +58,11 @@ Guide for Claude Code and coding agents in this repository.
 
 ### API
 ```bash
-dotnet run --project AgripeWebAPI/AgripeWebAPI.csproj
-dotnet build AgripeWebAPI/AgripeWebAPI.csproj   # stop API process first on Windows
+dotnet run --project StarkAgroAPI/StarkAgroAPI.csproj
+dotnet build StarkAgroAPI/StarkAgroAPI.csproj   # stop API process first on Windows
 ```
 
-### UI (from `AgripeWebUI/`)
+### UI (from `StarkAgroUI/`)
 ```bash
 npm install
 npm run start    # http://localhost:4200 — proxy to API
@@ -70,8 +70,8 @@ npm run start    # http://localhost:4200 — proxy to API
 
 ### Tests
 ```bash
-dotnet test AgripeWebAPI.Tests/AgripeWebAPI.Tests.csproj
-dotnet test AgripeWebAPI.Tests/AgripeWebAPI.Tests.csproj --filter "FullyQualifiedName~TestMethodName"
+dotnet test StarkAgroAPI.Tests/StarkAgroAPI.Tests.csproj
+dotnet test StarkAgroAPI.Tests/StarkAgroAPI.Tests.csproj --filter "FullyQualifiedName~TestMethodName"
 ```
 
 Handler tests: **xUnit + Moq**, MongoDB cursor mocking (not EF InMemory). Pattern: Arrange–Act–Assert.
@@ -90,20 +90,20 @@ docker compose -f docker/docker-compose.yml up --build
 | Task | Location |
 |------|----------|
 | REST endpoint | `Controllers/` → `Domain/Commands/Requests|Responses/` → `Domain/Handlers/` |
-| Entity / collection | `Models/Entities/`, register in `agpDBContext` — [agripeweb-mongo-setup skill](.claude/skills/agripeweb-mongo-setup/SKILL.md) |
-| Angular route / screen | `AgripeWebUI/src/app/app.routes.ts` + component; auth under `LayoutComponent` |
+| Entity / collection | `Models/Entities/`, register in `agpDBContext` — [starkagro-mongo-setup skill](.claude/skills/starkagro-mongo-setup/SKILL.md) |
+| Angular route / screen | `StarkAgroUI/src/app/app.routes.ts` + component; auth under `LayoutComponent` |
 | Weather / irrigation logic | `Services/Forecast/`, irrigation trend handlers |
-| Laudo fitossanitário (foto + IA) | `Controllers/PlantDiagnosisController.cs`, `Domain/Handlers/Diagnosis/`, `Services/Diagnosis/`, `AgripeWebWorker/Services/PlantDiagnosisProcessor.cs` — plano em [docs/features/laudo-fitossanitario-ia/plan.md](docs/features/laudo-fitossanitario-ia/plan.md) |
+| Laudo fitossanitário (foto + IA) | `Controllers/PlantDiagnosisController.cs`, `Domain/Handlers/Diagnosis/`, `Services/Diagnosis/`, `StarkAgroWorker/Services/PlantDiagnosisProcessor.cs` — plano em [docs/features/laudo-fitossanitario-ia/plan.md](docs/features/laudo-fitossanitario-ia/plan.md) |
 | OAuth | API `Auth/external-login`; UI `/login/callback` |
-| Firmware / field device | `AgripeWebIOT/` — coordinate API contract with backend |
+| Firmware / field device | `StarkAgroIOT/` — coordinate API contract with backend |
 | Multi-agent (Paperclip) | [docs/agents/README.md](docs/agents/README.md) |
 
 ## Feature workflow
 
 1. GitHub issue → acceptance criteria clear  
-2. Plan → `docs/features/{name}/plan.md` (optional skill: `agripeweb-feature-planner`)  
+2. Plan → `docs/features/{name}/plan.md` (optional skill: `starkagro-feature-planner`)  
 3. Implement → handler + tests; UI and IoT in parallel only if contract is defined  
-4. Review → tenant isolation, no secrets in diff (`agripeweb-code-reviewer` skill)
+4. Review → tenant isolation, no secrets in diff (`starkagro-code-reviewer` skill)
 
 ## Architecture
 
@@ -179,10 +179,10 @@ Controllers delegate to handlers; **no business logic in controllers.**
 
 - [docs/contratacao-time.md](docs/contratacao-time.md) — team roles  
 - [docs/agents/README.md](docs/agents/README.md) — Paperclip SOUL/HEARTBEAT  
-- `.claude/skills/agripeweb-backend-expert` — handlers/endpoints  
-- `.claude/skills/agripeweb-implement` — full issue workflow  
-- `.claude/skills/agripeweb-test-writer` — xUnit + Mongo mocks  
-- `.claude/skills/agripeweb-code-reviewer` — pre-merge review
+- `.claude/skills/starkagro-backend-expert` — handlers/endpoints  
+- `.claude/skills/starkagro-implement` — full issue workflow  
+- `.claude/skills/starkagro-test-writer` — xUnit + Mongo mocks  
+- `.claude/skills/starkagro-code-reviewer` — pre-merge review
 
 ## graphify
 

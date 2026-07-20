@@ -2,11 +2,11 @@
 <coverage generated="1775482618" clover="4.3.1">
   <project timestamp="1775482618">
     <metrics complexity="0" elements="1601" coveredelements="1429" conditionals="552" coveredconditionals="403" statements="1601" coveredstatements="1429" coveredmethods="316" methods="335" classes="99" loc="3230" ncloc="1601" files="95" packages="1" />
-    <package name="AgripeWebAPI">
+    <package name="StarkAgroAPI">
       <metrics complexity="0" elements="1601" coveredelements="1429" conditionals="552" coveredconditionals="403" statements="1601" coveredstatements="1429" coveredmethods="316" methods="335" classes="99" loc="3230" ncloc="1601" files="95" />
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Configuration\ApiConfig.cs" name="ApiConfig.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Configuration\ApiConfig.cs" name="ApiConfig.cs">
         <metrics complexity="0" elements="123" coveredelements="73" conditionals="10" coveredconditionals="6" statements="123" coveredstatements="73" coveredmethods="4" methods="4" classes="1" loc="173" ncloc="123" />
-        <class name="AgripeWebAPI.Configuration.ApiConfig">
+        <class name="StarkAgroAPI.Configuration.ApiConfig">
           <metrics complexity="0" elements="123" coveredelements="73" conditionals="10" coveredconditionals="6" statements="123" coveredstatements="73" coveredmethods="4" methods="4" />
         </class>
         <line complexity="1" signature="AddApiConfiguration(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration)" num="13" count="24" type="method" />
@@ -133,12 +133,12 @@
         <line num="170" count="0" type="stmt" />
         <line num="171" count="6" type="stmt" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Configuration\DependencyInjectionConfig.cs" name="DependencyInjectionConfig.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Configuration\DependencyInjectionConfig.cs" name="DependencyInjectionConfig.cs">
         <metrics complexity="0" elements="29" coveredelements="12" conditionals="10" coveredconditionals="0" statements="29" coveredstatements="12" coveredmethods="1" methods="1" classes="1" loc="50" ncloc="29" />
-        <class name="AgripeWebAPI.Configuration.DependencyInjectionConfig">
+        <class name="StarkAgroAPI.Configuration.DependencyInjectionConfig">
           <metrics complexity="0" elements="29" coveredelements="12" conditionals="10" coveredconditionals="0" statements="29" coveredstatements="12" coveredmethods="1" methods="1" />
         </class>
-        <line complexity="10" signature="ResolveDependencies(Microsoft.Extensions.DependencyInjection.IServiceCollection,AgripeWebAPI.Configuration.JwtSettings)" num="13" count="8" type="method" />
+        <line complexity="10" signature="ResolveDependencies(Microsoft.Extensions.DependencyInjection.IServiceCollection,StarkAgroAPI.Configuration.JwtSettings)" num="13" count="8" type="method" />
         <line num="17" count="8" type="stmt" />
         <line num="18" count="8" type="stmt" />
         <line num="19" count="8" type="stmt" />
@@ -168,12 +168,12 @@
         <line num="47" count="8" type="stmt" />
         <line num="48" count="8" type="stmt" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Configuration\OAuthSettings.cs" name="OAuthSettings.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Configuration\OAuthSettings.cs" name="OAuthSettings.cs">
         <metrics complexity="0" elements="4" coveredelements="4" conditionals="0" coveredconditionals="0" statements="4" coveredstatements="4" coveredmethods="4" methods="4" classes="2" loc="20" ncloc="4" />
-        <class name="AgripeWebAPI.Configuration.OAuthSettings">
+        <class name="StarkAgroAPI.Configuration.OAuthSettings">
           <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" />
         </class>
-        <class name="AgripeWebAPI.Configuration.GoogleOAuthSettings">
+        <class name="StarkAgroAPI.Configuration.GoogleOAuthSettings">
           <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" />
         </class>
         <line complexity="1" signature="get_ClientId()" num="12" count="160" type="method" />
@@ -181,26 +181,26 @@
         <line complexity="1" signature="get_AllowedRedirectUris()" num="18" count="116" type="method" />
         <line complexity="1" signature="get_Google()" num="7" count="192" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Configuration\JwtSettings.cs" name="JwtSettings.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Configuration\JwtSettings.cs" name="JwtSettings.cs">
         <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" classes="1" loc="9" ncloc="3" />
-        <class name="AgripeWebAPI.Configuration.JwtSettings">
+        <class name="StarkAgroAPI.Configuration.JwtSettings">
           <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" />
         </class>
         <line complexity="1" signature="get_secretkey()" num="5" count="8" type="method" />
         <line complexity="1" signature="get_issuer()" num="6" count="8" type="method" />
         <line complexity="1" signature="get_audience()" num="7" count="8" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Configuration\MongoDbSettings.cs" name="MongoDbSettings.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Configuration\MongoDbSettings.cs" name="MongoDbSettings.cs">
         <metrics complexity="0" elements="2" coveredelements="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" coveredmethods="2" methods="2" classes="1" loc="10" ncloc="2" />
-        <class name="AgripeWebAPI.Configuration.MongoDbSettings">
+        <class name="StarkAgroAPI.Configuration.MongoDbSettings">
           <metrics complexity="0" elements="2" coveredelements="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" coveredmethods="2" methods="2" />
         </class>
         <line complexity="1" signature="get_ConnectionString()" num="7" count="80" type="method" />
         <line complexity="1" signature="get_DatabaseName()" num="8" count="72" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Configuration\SwaggerConfig.cs" name="SwaggerConfig.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Configuration\SwaggerConfig.cs" name="SwaggerConfig.cs">
         <metrics complexity="0" elements="33" coveredelements="0" conditionals="0" coveredconditionals="0" statements="33" coveredstatements="0" coveredmethods="0" methods="2" classes="1" loc="44" ncloc="33" />
-        <class name="AgripeWebAPI.Configuration.SwaggerConfig">
+        <class name="StarkAgroAPI.Configuration.SwaggerConfig">
           <metrics complexity="0" elements="33" coveredelements="0" conditionals="0" coveredconditionals="0" statements="33" coveredstatements="0" coveredmethods="0" methods="2" />
         </class>
         <line complexity="1" signature="AddSwaggerConfiguration(Microsoft.Extensions.DependencyInjection.IServiceCollection)" num="8" count="0" type="method" />
@@ -237,13 +237,13 @@
         <line num="41" count="0" type="stmt" />
         <line num="42" count="0" type="stmt" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Controllers\AuthController.cs" name="AuthController.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Controllers\AuthController.cs" name="AuthController.cs">
         <metrics complexity="0" elements="51" coveredelements="50" conditionals="32" coveredconditionals="27" statements="51" coveredstatements="50" coveredmethods="8" methods="8" classes="1" loc="83" ncloc="51" />
-        <class name="AgripeWebAPI.Controllers.AuthController">
+        <class name="StarkAgroAPI.Controllers.AuthController">
           <metrics complexity="0" elements="51" coveredelements="50" conditionals="32" coveredconditionals="27" statements="51" coveredstatements="50" coveredmethods="8" methods="8" />
         </class>
-        <line complexity="1" signature=".ctor(AgripeWebAPI.Models.Interfaces.INotifier)" num="12" count="40" type="method" />
-        <line complexity="1" signature=".ctor(AgripeWebAPI.Models.Interfaces.INotifier)" num="13" count="40" type="method" />
+        <line complexity="1" signature=".ctor(StarkAgroAPI.Models.Interfaces.INotifier)" num="12" count="40" type="method" />
+        <line complexity="1" signature=".ctor(StarkAgroAPI.Models.Interfaces.INotifier)" num="13" count="40" type="method" />
         <line num="14" count="40" type="stmt" />
         <line num="15" count="32" type="stmt" />
         <line complexity="4" signature="LogIn()" num="21" count="18" type="method" />
@@ -294,19 +294,19 @@
         <line num="80" count="4" type="stmt" />
         <line num="81" count="8" type="stmt" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Controllers\HealthController.cs" name="HealthController.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Controllers\HealthController.cs" name="HealthController.cs">
         <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" classes="1" loc="16" ncloc="1" />
-        <class name="AgripeWebAPI.Controllers.HealthController">
+        <class name="StarkAgroAPI.Controllers.HealthController">
           <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" />
         </class>
         <line complexity="1" signature="Get()" num="14" count="5" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Controllers\MainController.cs" name="MainController.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Controllers\MainController.cs" name="MainController.cs">
         <metrics complexity="0" elements="52" coveredelements="52" conditionals="20" coveredconditionals="18" statements="52" coveredstatements="52" coveredmethods="8" methods="8" classes="1" loc="91" ncloc="52" />
-        <class name="AgripeWebAPI.Controllers.MainController">
+        <class name="StarkAgroAPI.Controllers.MainController">
           <metrics complexity="0" elements="52" coveredelements="52" conditionals="20" coveredconditionals="18" statements="52" coveredstatements="52" coveredmethods="8" methods="8" />
         </class>
-        <line complexity="1" signature=".ctor(AgripeWebAPI.Models.Interfaces.INotifier)" num="15" count="228" type="method" />
+        <line complexity="1" signature=".ctor(StarkAgroAPI.Models.Interfaces.INotifier)" num="15" count="228" type="method" />
         <line num="16" count="228" type="stmt" />
         <line num="17" count="228" type="stmt" />
         <line num="18" count="228" type="stmt" />
@@ -359,12 +359,12 @@
         <line num="88" count="90" type="stmt" />
         <line num="89" count="90" type="stmt" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Controllers\PivotController.cs" name="PivotController.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Controllers\PivotController.cs" name="PivotController.cs">
         <metrics complexity="0" elements="30" coveredelements="30" conditionals="12" coveredconditionals="10" statements="30" coveredstatements="30" coveredmethods="7" methods="8" classes="1" loc="100" ncloc="30" />
-        <class name="AgripeWebAPI.Controllers.PivotController">
+        <class name="StarkAgroAPI.Controllers.PivotController">
           <metrics complexity="0" elements="30" coveredelements="30" conditionals="12" coveredconditionals="10" statements="30" coveredstatements="30" coveredmethods="7" methods="8" />
         </class>
-        <line complexity="1" signature=".ctor(AgripeWebAPI.Models.Interfaces.INotifier)" num="14" count="44" type="method" />
+        <line complexity="1" signature=".ctor(StarkAgroAPI.Models.Interfaces.INotifier)" num="14" count="44" type="method" />
         <line num="15" count="44" type="stmt" />
         <line num="16" count="44" type="stmt" />
         <line complexity="2" signature="GetById()" num="25" count="15" type="method" />
@@ -395,14 +395,14 @@
         <line num="97" count="4" type="stmt" />
         <line num="98" count="8" type="stmt" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Controllers\ReadsController.cs" name="ReadsController.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Controllers\ReadsController.cs" name="ReadsController.cs">
         <metrics complexity="0" elements="34" coveredelements="34" conditionals="0" coveredconditionals="0" statements="34" coveredstatements="34" coveredmethods="12" methods="12" classes="1" loc="68" ncloc="34" />
-        <class name="AgripeWebAPI.Controllers.ReadsController">
+        <class name="StarkAgroAPI.Controllers.ReadsController">
           <metrics complexity="0" elements="34" coveredelements="34" conditionals="0" coveredconditionals="0" statements="34" coveredstatements="34" coveredmethods="12" methods="12" />
         </class>
-        <line complexity="1" signature=".ctor(AgripeWebAPI.Models.Interfaces.INotifier)" num="13" count="25" type="method" />
+        <line complexity="1" signature=".ctor(StarkAgroAPI.Models.Interfaces.INotifier)" num="13" count="25" type="method" />
         <line num="14" count="5" type="stmt" />
-        <line complexity="1" signature=".ctor(AgripeWebAPI.Models.Interfaces.INotifier)" num="15" count="25" type="method" />
+        <line complexity="1" signature=".ctor(StarkAgroAPI.Models.Interfaces.INotifier)" num="15" count="25" type="method" />
         <line num="16" count="20" type="stmt" />
         <line num="17" count="20" type="stmt" />
         <line complexity="1" signature="GetActive()" num="19" count="5" type="method" />
@@ -435,12 +435,12 @@
         <line num="65" count="4" type="stmt" />
         <line num="66" count="4" type="stmt" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Controllers\SensorController.cs" name="SensorController.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Controllers\SensorController.cs" name="SensorController.cs">
         <metrics complexity="0" elements="29" coveredelements="29" conditionals="10" coveredconditionals="10" statements="29" coveredstatements="29" coveredmethods="8" methods="8" classes="1" loc="87" ncloc="29" />
-        <class name="AgripeWebAPI.Controllers.SensorController">
+        <class name="StarkAgroAPI.Controllers.SensorController">
           <metrics complexity="0" elements="29" coveredelements="29" conditionals="10" coveredconditionals="10" statements="29" coveredstatements="29" coveredmethods="8" methods="8" />
         </class>
-        <line complexity="1" signature=".ctor(AgripeWebAPI.Models.Interfaces.INotifier)" num="14" count="40" type="method" />
+        <line complexity="1" signature=".ctor(StarkAgroAPI.Models.Interfaces.INotifier)" num="14" count="40" type="method" />
         <line num="15" count="40" type="stmt" />
         <line num="16" count="40" type="stmt" />
         <line complexity="2" signature="GetById()" num="25" count="15" type="method" />
@@ -470,12 +470,12 @@
         <line num="84" count="6" type="stmt" />
         <line num="85" count="8" type="stmt" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Controllers\UserController.cs" name="UserController.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Controllers\UserController.cs" name="UserController.cs">
         <metrics complexity="0" elements="20" coveredelements="20" conditionals="8" coveredconditionals="8" statements="20" coveredstatements="20" coveredmethods="5" methods="6" classes="1" loc="71" ncloc="20" />
-        <class name="AgripeWebAPI.Controllers.UserController">
+        <class name="StarkAgroAPI.Controllers.UserController">
           <metrics complexity="0" elements="20" coveredelements="20" conditionals="8" coveredconditionals="8" statements="20" coveredstatements="20" coveredmethods="5" methods="6" />
         </class>
-        <line complexity="1" signature=".ctor(AgripeWebAPI.Models.Interfaces.INotifier)" num="14" count="34" type="method" />
+        <line complexity="1" signature=".ctor(StarkAgroAPI.Models.Interfaces.INotifier)" num="14" count="34" type="method" />
         <line num="15" count="34" type="stmt" />
         <line num="16" count="34" type="stmt" />
         <line complexity="2" signature="GetById()" num="25" count="15" type="method" />
@@ -496,106 +496,106 @@
         <line num="68" count="4" type="stmt" />
         <line num="69" count="8" type="stmt" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Pivots\CreatePivotRequest.cs" name="CreatePivotRequest.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Requests\Pivots\CreatePivotRequest.cs" name="CreatePivotRequest.cs">
         <metrics complexity="0" elements="2" coveredelements="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" coveredmethods="2" methods="2" classes="1" loc="11" ncloc="2" />
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Pivots.CreatePivotRequest">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Pivots.CreatePivotRequest">
           <metrics complexity="0" elements="2" coveredelements="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" coveredmethods="2" methods="2" />
         </class>
         <line complexity="1" signature="get_UserId()" num="8" count="30" type="method" />
         <line complexity="1" signature="get_Name()" num="9" count="40" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Pivots\DeletePivotRequest.cs" name="DeletePivotRequest.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Requests\Pivots\DeletePivotRequest.cs" name="DeletePivotRequest.cs">
         <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" classes="1" loc="10" ncloc="1" />
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Pivots.DeletePivotRequest">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Pivots.DeletePivotRequest">
           <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" />
         </class>
         <line complexity="1" signature="get_Id()" num="8" count="30" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Pivots\EditPivotLimitsRequest.cs" name="EditPivotLimitsRequest.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Requests\Pivots\EditPivotLimitsRequest.cs" name="EditPivotLimitsRequest.cs">
         <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" classes="1" loc="12" ncloc="3" />
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Pivots.EditPivotLimitsRequest">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Pivots.EditPivotLimitsRequest">
           <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" />
         </class>
         <line complexity="1" signature="get_Id()" num="8" count="10" type="method" />
         <line complexity="1" signature="get_LimiteInferior()" num="9" count="8" type="method" />
         <line complexity="1" signature="get_LimiteSuperior()" num="10" count="8" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Pivots\EditPivotRequest.cs" name="EditPivotRequest.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Requests\Pivots\EditPivotRequest.cs" name="EditPivotRequest.cs">
         <metrics complexity="0" elements="2" coveredelements="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" coveredmethods="2" methods="2" classes="1" loc="11" ncloc="2" />
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Pivots.EditPivotRequest">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Pivots.EditPivotRequest">
           <metrics complexity="0" elements="2" coveredelements="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" coveredmethods="2" methods="2" />
         </class>
         <line complexity="1" signature="get_Id()" num="8" count="25" type="method" />
         <line complexity="1" signature="get_Name()" num="9" count="35" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Pivots\GetListPivotByUserIdRequest.cs" name="GetListPivotByUserIdRequest.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Requests\Pivots\GetListPivotByUserIdRequest.cs" name="GetListPivotByUserIdRequest.cs">
         <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" classes="1" loc="11" ncloc="1" />
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Pivots.GetListPivotByUserIdRequest">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Pivots.GetListPivotByUserIdRequest">
           <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" />
         </class>
         <line complexity="1" signature="get_UserId()" num="9" count="30" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Pivots\GetListPivotRequest.cs" name="GetListPivotRequest.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Requests\Pivots\GetListPivotRequest.cs" name="GetListPivotRequest.cs">
         <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" classes="1" loc="10" ncloc="1" />
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Pivots.GetListPivotRequest">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Pivots.GetListPivotRequest">
           <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" />
         </class>
         <line complexity="1" signature="get_Id()" num="8" count="15" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Pivots\GetPivotRequest.cs" name="GetPivotRequest.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Requests\Pivots\GetPivotRequest.cs" name="GetPivotRequest.cs">
         <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" classes="1" loc="10" ncloc="1" />
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Pivots.GetPivotRequest">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Pivots.GetPivotRequest">
           <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" />
         </class>
         <line complexity="1" signature="get_Id()" num="8" count="20" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Reads\CreateReadRequest.cs" name="CreateReadRequest.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Requests\Reads\CreateReadRequest.cs" name="CreateReadRequest.cs">
         <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" classes="1" loc="12" ncloc="3" />
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Reads.CreateReadRequest">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Reads.CreateReadRequest">
           <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" />
         </class>
         <line complexity="1" signature="get_UserId()" num="8" count="9" type="method" />
         <line complexity="1" signature="get_Code()" num="9" count="55" type="method" />
         <line complexity="1" signature="get_Value()" num="10" count="56" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Reads\GetAllListReadByPivotIdRequest.cs" name="GetAllListReadByPivotIdRequest.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Requests\Reads\GetAllListReadByPivotIdRequest.cs" name="GetAllListReadByPivotIdRequest.cs">
         <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" classes="1" loc="11" ncloc="3" />
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Reads.GetAllListReadByPivotIdRequest">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Reads.GetAllListReadByPivotIdRequest">
           <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" />
         </class>
         <line complexity="1" signature="get_SensorId()" num="8" count="6" type="method" />
         <line complexity="1" signature="get_Quadrante()" num="9" count="11" type="method" />
         <line complexity="1" signature="get_NumberOfReads()" num="10" count="12" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Reads\GetAllListReadBySensorIdRequest.cs" name="GetAllListReadBySensorIdRequest.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Requests\Reads\GetAllListReadBySensorIdRequest.cs" name="GetAllListReadBySensorIdRequest.cs">
         <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" classes="1" loc="12" ncloc="3" />
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Reads.GetAllListReadBySensorIdRequest">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Reads.GetAllListReadBySensorIdRequest">
           <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" />
         </class>
         <line complexity="1" signature="get_SensorId()" num="8" count="24" type="method" />
         <line complexity="1" signature="get_Quadrante()" num="9" count="44" type="method" />
         <line complexity="1" signature="get_NumberOfReads()" num="10" count="48" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Reads\GetListReadByPivotIdRequest.cs" name="GetListReadByPivotIdRequest.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Requests\Reads\GetListReadByPivotIdRequest.cs" name="GetListReadByPivotIdRequest.cs">
         <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" classes="1" loc="12" ncloc="3" />
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Reads.GetListReadByPivotIdRequest">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Reads.GetListReadByPivotIdRequest">
           <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" />
         </class>
         <line complexity="1" signature="get_PivotId()" num="8" count="44" type="method" />
         <line complexity="1" signature="get_NumberOfReads()" num="9" count="66" type="method" />
         <line complexity="1" signature="get_UserId()" num="10" count="16" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Reads\GetListReadRequest.cs" name="GetListReadRequest.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Requests\Reads\GetListReadRequest.cs" name="GetListReadRequest.cs">
         <metrics complexity="0" elements="2" coveredelements="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" coveredmethods="2" methods="2" classes="1" loc="11" ncloc="2" />
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Reads.GetListReadRequest">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Reads.GetListReadRequest">
           <metrics complexity="0" elements="2" coveredelements="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" coveredmethods="2" methods="2" />
         </class>
         <line complexity="1" signature="get_UserId()" num="8" count="30" type="method" />
         <line complexity="1" signature="get_NumberOfReads()" num="9" count="60" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Sensors\CreateSensorRequest.cs" name="CreateSensorRequest.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Requests\Sensors\CreateSensorRequest.cs" name="CreateSensorRequest.cs">
         <metrics complexity="0" elements="5" coveredelements="5" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="5" coveredmethods="5" methods="5" classes="1" loc="15" ncloc="5" />
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Sensors.CreateSensorRequest">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Sensors.CreateSensorRequest">
           <metrics complexity="0" elements="5" coveredelements="5" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="5" coveredmethods="5" methods="5" />
         </class>
         <line complexity="1" signature="get_Name()" num="9" count="10" type="method" />
@@ -604,16 +604,16 @@
         <line complexity="1" signature="get_Code()" num="12" count="45" type="method" />
         <line complexity="1" signature="get_Quadrante()" num="13" count="40" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Sensors\DeleteSensorRequest.cs" name="DeleteSensorRequest.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Requests\Sensors\DeleteSensorRequest.cs" name="DeleteSensorRequest.cs">
         <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" classes="1" loc="10" ncloc="1" />
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Sensors.DeleteSensorRequest">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Sensors.DeleteSensorRequest">
           <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" />
         </class>
         <line complexity="1" signature="get_Id()" num="8" count="15" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Sensors\EditSensorRequest.cs" name="EditSensorRequest.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Requests\Sensors\EditSensorRequest.cs" name="EditSensorRequest.cs">
         <metrics complexity="0" elements="6" coveredelements="6" conditionals="0" coveredconditionals="0" statements="6" coveredstatements="6" coveredmethods="6" methods="6" classes="1" loc="16" ncloc="6" />
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Sensors.EditSensorRequest">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Sensors.EditSensorRequest">
           <metrics complexity="0" elements="6" coveredelements="6" conditionals="0" coveredconditionals="0" statements="6" coveredstatements="6" coveredmethods="6" methods="6" />
         </class>
         <line complexity="1" signature="get_Id()" num="9" count="35" type="method" />
@@ -623,58 +623,58 @@
         <line complexity="1" signature="get_Code()" num="13" count="35" type="method" />
         <line complexity="1" signature="get_Quadrante()" num="14" count="35" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Sensors\GetListSensorByUserIdRequest.cs" name="GetListSensorByUserIdRequest.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Requests\Sensors\GetListSensorByUserIdRequest.cs" name="GetListSensorByUserIdRequest.cs">
         <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" classes="1" loc="10" ncloc="1" />
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Sensors.GetListSensorByUserIdRequest">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Sensors.GetListSensorByUserIdRequest">
           <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" />
         </class>
         <line complexity="1" signature="get_UserId()" num="8" count="30" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Sensors\GetListSensorRequest.cs" name="GetListSensorRequest.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Requests\Sensors\GetListSensorRequest.cs" name="GetListSensorRequest.cs">
         <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" classes="1" loc="12" ncloc="3" />
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Sensors.GetListSensorRequest">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Sensors.GetListSensorRequest">
           <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" />
         </class>
         <line complexity="1" signature="get_PivotId()" num="8" count="45" type="method" />
         <line complexity="1" signature="get_Quadrante()" num="9" count="20" type="method" />
         <line complexity="1" signature="get_UserId()" num="10" count="4" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Sensors\GetSensorRequest.cs" name="GetSensorRequest.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Requests\Sensors\GetSensorRequest.cs" name="GetSensorRequest.cs">
         <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" classes="1" loc="10" ncloc="1" />
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Sensors.GetSensorRequest">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Sensors.GetSensorRequest">
           <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" />
         </class>
         <line complexity="1" signature="get_Id()" num="8" count="30" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Users\CreateUserRequest.cs" name="CreateUserRequest.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Requests\Users\CreateUserRequest.cs" name="CreateUserRequest.cs">
         <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" classes="1" loc="24" ncloc="3" />
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Users.CreateUserRequest">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Users.CreateUserRequest">
           <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" />
         </class>
         <line complexity="1" signature="get_Name()" num="12" count="50" type="method" />
         <line complexity="1" signature="get_Email()" num="18" count="65" type="method" />
         <line complexity="1" signature="get_Password()" num="22" count="50" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Users\DeleteUserRequest.cs" name="DeleteUserRequest.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Requests\Users\DeleteUserRequest.cs" name="DeleteUserRequest.cs">
         <metrics complexity="0" elements="2" coveredelements="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" coveredmethods="2" methods="2" classes="1" loc="11" ncloc="2" />
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Users.DeleteUserRequest">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Users.DeleteUserRequest">
           <metrics complexity="0" elements="2" coveredelements="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" coveredmethods="2" methods="2" />
         </class>
         <line complexity="1" signature="get_Id()" num="8" count="45" type="method" />
         <line complexity="1" signature="get_CurrentUserId()" num="9" count="30" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Users\EditUserLimitsRequest.cs" name="EditUserLimitsRequest.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Requests\Users\EditUserLimitsRequest.cs" name="EditUserLimitsRequest.cs">
         <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" classes="1" loc="12" ncloc="3" />
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Users.EditUserLimitsRequest">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Users.EditUserLimitsRequest">
           <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" />
         </class>
         <line complexity="1" signature="get_Id()" num="8" count="14" type="method" />
         <line complexity="1" signature="get_LimiteInferior()" num="9" count="10" type="method" />
         <line complexity="1" signature="get_LimiteSuperior()" num="10" count="10" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Users\EditUserRequest.cs" name="EditUserRequest.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Requests\Users\EditUserRequest.cs" name="EditUserRequest.cs">
         <metrics complexity="0" elements="4" coveredelements="4" conditionals="0" coveredconditionals="0" statements="4" coveredstatements="4" coveredmethods="4" methods="4" classes="1" loc="26" ncloc="4" />
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Users.EditUserRequest">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Users.EditUserRequest">
           <metrics complexity="0" elements="4" coveredelements="4" conditionals="0" coveredconditionals="0" statements="4" coveredstatements="4" coveredmethods="4" methods="4" />
         </class>
         <line complexity="1" signature="get_Name()" num="12" count="80" type="method" />
@@ -682,56 +682,56 @@
         <line complexity="1" signature="get_Password()" num="22" count="90" type="method" />
         <line complexity="1" signature="get_CurrentUserId()" num="24" count="45" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Users\ExternalLoginRequest.cs" name="ExternalLoginRequest.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Requests\Users\ExternalLoginRequest.cs" name="ExternalLoginRequest.cs">
         <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" classes="1" loc="12" ncloc="3" />
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Users.ExternalLoginRequest">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Users.ExternalLoginRequest">
           <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" />
         </class>
         <line complexity="1" signature="get_Provider()" num="8" count="350" type="method" />
         <line complexity="1" signature="get_Code()" num="9" count="340" type="method" />
         <line complexity="1" signature="get_RedirectUri()" num="10" count="260" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Users\GetUserRequest.cs" name="GetUserRequest.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Requests\Users\GetUserRequest.cs" name="GetUserRequest.cs">
         <metrics complexity="0" elements="2" coveredelements="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" coveredmethods="2" methods="2" classes="1" loc="11" ncloc="2" />
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Users.GetUserRequest">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Users.GetUserRequest">
           <metrics complexity="0" elements="2" coveredelements="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" coveredmethods="2" methods="2" />
         </class>
         <line complexity="1" signature="get_Id()" num="8" count="50" type="method" />
         <line complexity="1" signature="get_CurrentUserId()" num="9" count="30" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Requests\Users\UserTokenRequest.cs" name="UserTokenRequest.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Requests\Users\UserTokenRequest.cs" name="UserTokenRequest.cs">
         <metrics complexity="0" elements="2" coveredelements="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" coveredmethods="2" methods="2" classes="1" loc="18" ncloc="2" />
-        <class name="AgripeWebAPI.Domain.Commands.Requests.Users.UserTokenRequest">
+        <class name="StarkAgroAPI.Domain.Commands.Requests.Users.UserTokenRequest">
           <metrics complexity="0" elements="2" coveredelements="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" coveredmethods="2" methods="2" />
         </class>
         <line complexity="1" signature="get_Email()" num="13" count="151" type="method" />
         <line complexity="1" signature="get_Password()" num="16" count="89" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Responses\Pivots\CreatePivotResponse.cs" name="CreatePivotResponse.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Responses\Pivots\CreatePivotResponse.cs" name="CreatePivotResponse.cs">
         <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" classes="1" loc="7" ncloc="1" />
-        <class name="AgripeWebAPI.Domain.Commands.Responses.Pivots.CreatePivotResponse">
+        <class name="StarkAgroAPI.Domain.Commands.Responses.Pivots.CreatePivotResponse">
           <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" />
         </class>
         <line complexity="1" signature="get_Id()" num="5" count="35" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Responses\Pivots\EditPivotResponse.cs" name="EditPivotResponse.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Responses\Pivots\EditPivotResponse.cs" name="EditPivotResponse.cs">
         <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" classes="1" loc="7" ncloc="1" />
-        <class name="AgripeWebAPI.Domain.Commands.Responses.Pivots.EditPivotResponse">
+        <class name="StarkAgroAPI.Domain.Commands.Responses.Pivots.EditPivotResponse">
           <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" />
         </class>
         <line complexity="1" signature="get_Id()" num="5" count="47" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Responses\Pivots\GetListPivotResponse.cs" name="GetListPivotResponse.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Responses\Pivots\GetListPivotResponse.cs" name="GetListPivotResponse.cs">
         <metrics complexity="0" elements="2" coveredelements="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" coveredmethods="2" methods="2" classes="1" loc="8" ncloc="2" />
-        <class name="AgripeWebAPI.Domain.Commands.Responses.Pivots.GetListPivotResponse">
+        <class name="StarkAgroAPI.Domain.Commands.Responses.Pivots.GetListPivotResponse">
           <metrics complexity="0" elements="2" coveredelements="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" coveredmethods="2" methods="2" />
         </class>
         <line complexity="1" signature="get_Id()" num="5" count="15" type="method" />
         <line complexity="1" signature="get_Name()" num="6" count="15" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Responses\Pivots\GetPivotResponse.cs" name="GetPivotResponse.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Responses\Pivots\GetPivotResponse.cs" name="GetPivotResponse.cs">
         <metrics complexity="0" elements="4" coveredelements="4" conditionals="0" coveredconditionals="0" statements="4" coveredstatements="4" coveredmethods="4" methods="4" classes="1" loc="10" ncloc="4" />
-        <class name="AgripeWebAPI.Domain.Commands.Responses.Pivots.GetPivotResponse">
+        <class name="StarkAgroAPI.Domain.Commands.Responses.Pivots.GetPivotResponse">
           <metrics complexity="0" elements="4" coveredelements="4" conditionals="0" coveredconditionals="0" statements="4" coveredstatements="4" coveredmethods="4" methods="4" />
         </class>
         <line complexity="1" signature="get_Id()" num="5" count="70" type="method" />
@@ -739,17 +739,17 @@
         <line complexity="1" signature="get_LimiteInferior()" num="7" count="4" type="method" />
         <line complexity="1" signature="get_LimiteSuperior()" num="8" count="4" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Responses\Reads\CreateReadResponse.cs" name="CreateReadResponse.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Responses\Reads\CreateReadResponse.cs" name="CreateReadResponse.cs">
         <metrics complexity="0" elements="2" coveredelements="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" coveredmethods="2" methods="2" classes="1" loc="8" ncloc="2" />
-        <class name="AgripeWebAPI.Domain.Commands.Responses.Reads.CreateReadResponse">
+        <class name="StarkAgroAPI.Domain.Commands.Responses.Reads.CreateReadResponse">
           <metrics complexity="0" elements="2" coveredelements="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" coveredmethods="2" methods="2" />
         </class>
         <line complexity="1" signature="get_Id()" num="5" count="25" type="method" />
         <line complexity="1" signature="get_Content()" num="6" count="10" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Responses\Reads\GetAllReadByPivotIdResponse.cs" name="GetAllReadByPivotIdResponse.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Responses\Reads\GetAllReadByPivotIdResponse.cs" name="GetAllReadByPivotIdResponse.cs">
         <metrics complexity="0" elements="4" coveredelements="4" conditionals="0" coveredconditionals="0" statements="4" coveredstatements="4" coveredmethods="4" methods="4" classes="1" loc="9" ncloc="4" />
-        <class name="AgripeWebAPI.Domain.Commands.Responses.Reads.GetAllReadByPivotIdResponse">
+        <class name="StarkAgroAPI.Domain.Commands.Responses.Reads.GetAllReadByPivotIdResponse">
           <metrics complexity="0" elements="4" coveredelements="4" conditionals="0" coveredconditionals="0" statements="4" coveredstatements="4" coveredmethods="4" methods="4" />
         </class>
         <line complexity="1" signature="get_Id()" num="5" count="9" type="method" />
@@ -757,9 +757,9 @@
         <line complexity="1" signature="get_Value()" num="7" count="8" type="method" />
         <line complexity="1" signature="get_Date()" num="8" count="5" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Responses\Reads\GetAllReadBySensorIdResponse.cs" name="GetAllReadBySensorIdResponse.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Responses\Reads\GetAllReadBySensorIdResponse.cs" name="GetAllReadBySensorIdResponse.cs">
         <metrics complexity="0" elements="4" coveredelements="4" conditionals="0" coveredconditionals="0" statements="4" coveredstatements="4" coveredmethods="4" methods="4" classes="1" loc="10" ncloc="4" />
-        <class name="AgripeWebAPI.Domain.Commands.Responses.Reads.GetAllReadBySensorIdResponse">
+        <class name="StarkAgroAPI.Domain.Commands.Responses.Reads.GetAllReadBySensorIdResponse">
           <metrics complexity="0" elements="4" coveredelements="4" conditionals="0" coveredconditionals="0" statements="4" coveredstatements="4" coveredmethods="4" methods="4" />
         </class>
         <line complexity="1" signature="get_Id()" num="5" count="36" type="method" />
@@ -767,15 +767,15 @@
         <line complexity="1" signature="get_Value()" num="7" count="32" type="method" />
         <line complexity="1" signature="get_Date()" num="8" count="20" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Responses\Reads\GetReadByPivotIdResponse.cs" name="GetReadByPivotIdResponse.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Responses\Reads\GetReadByPivotIdResponse.cs" name="GetReadByPivotIdResponse.cs">
         <metrics complexity="0" elements="30" coveredelements="30" conditionals="0" coveredconditionals="0" statements="30" coveredstatements="30" coveredmethods="24" methods="30" classes="3" loc="36" ncloc="30" />
-        <class name="AgripeWebAPI.Domain.Commands.Responses.Reads.ReadEntry">
+        <class name="StarkAgroAPI.Domain.Commands.Responses.Reads.ReadEntry">
           <metrics complexity="0" elements="2" coveredelements="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" coveredmethods="0" methods="2" />
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Responses.Reads.Quadrante">
+        <class name="StarkAgroAPI.Domain.Commands.Responses.Reads.Quadrante">
           <metrics complexity="0" elements="20" coveredelements="20" conditionals="0" coveredconditionals="0" statements="20" coveredstatements="20" coveredmethods="16" methods="20" />
         </class>
-        <class name="AgripeWebAPI.Domain.Commands.Responses.Reads.GetReadByPivotIdResponse">
+        <class name="StarkAgroAPI.Domain.Commands.Responses.Reads.GetReadByPivotIdResponse">
           <metrics complexity="0" elements="8" coveredelements="8" conditionals="0" coveredconditionals="0" statements="8" coveredstatements="8" coveredmethods="8" methods="8" />
         </class>
         <line complexity="1" signature="get_Id()" num="5" count="5" type="method" />
@@ -803,9 +803,9 @@
         <line complexity="1" signature="get_BottomRightAvg()" num="33" count="14" type="method" />
         <line complexity="1" signature="get_BottomRightReads()" num="34" count="38" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Responses\Reads\GetReadResponse.cs" name="GetReadResponse.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Responses\Reads\GetReadResponse.cs" name="GetReadResponse.cs">
         <metrics complexity="0" elements="4" coveredelements="4" conditionals="0" coveredconditionals="0" statements="4" coveredstatements="4" coveredmethods="4" methods="4" classes="1" loc="10" ncloc="4" />
-        <class name="AgripeWebAPI.Domain.Commands.Responses.Reads.GetReadResponse">
+        <class name="StarkAgroAPI.Domain.Commands.Responses.Reads.GetReadResponse">
           <metrics complexity="0" elements="4" coveredelements="4" conditionals="0" coveredconditionals="0" statements="4" coveredstatements="4" coveredmethods="4" methods="4" />
         </class>
         <line complexity="1" signature="get_Id()" num="5" count="35" type="method" />
@@ -813,30 +813,30 @@
         <line complexity="1" signature="get_Value()" num="7" count="25" type="method" />
         <line complexity="1" signature="get_Date()" num="8" count="15" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Responses\Sensors\CreateSensorResponse.cs" name="CreateSensorResponse.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Responses\Sensors\CreateSensorResponse.cs" name="CreateSensorResponse.cs">
         <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" classes="1" loc="7" ncloc="1" />
-        <class name="AgripeWebAPI.Domain.Commands.Responses.Sensors.CreateSensorResponse">
+        <class name="StarkAgroAPI.Domain.Commands.Responses.Sensors.CreateSensorResponse">
           <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" />
         </class>
         <line complexity="1" signature="get_Id()" num="5" count="35" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Responses\Sensors\DeleteSensorResponse.cs" name="DeleteSensorResponse.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Responses\Sensors\DeleteSensorResponse.cs" name="DeleteSensorResponse.cs">
         <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" classes="1" loc="7" ncloc="1" />
-        <class name="AgripeWebAPI.Domain.Commands.Responses.Sensors.DeleteSensorResponse">
+        <class name="StarkAgroAPI.Domain.Commands.Responses.Sensors.DeleteSensorResponse">
           <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" />
         </class>
         <line complexity="1" signature="get_Success()" num="5" count="10" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Responses\Sensors\EditSensorResponse.cs" name="EditSensorResponse.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Responses\Sensors\EditSensorResponse.cs" name="EditSensorResponse.cs">
         <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" classes="1" loc="7" ncloc="1" />
-        <class name="AgripeWebAPI.Domain.Commands.Responses.Sensors.EditSensorResponse">
+        <class name="StarkAgroAPI.Domain.Commands.Responses.Sensors.EditSensorResponse">
           <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" />
         </class>
         <line complexity="1" signature="get_Id()" num="5" count="35" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Responses\Sensors\GetSensorResponse.cs" name="GetSensorResponse.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Responses\Sensors\GetSensorResponse.cs" name="GetSensorResponse.cs">
         <metrics complexity="0" elements="5" coveredelements="5" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="5" coveredmethods="5" methods="5" classes="1" loc="14" ncloc="5" />
-        <class name="AgripeWebAPI.Domain.Commands.Responses.Sensors.GetSensorResponse">
+        <class name="StarkAgroAPI.Domain.Commands.Responses.Sensors.GetSensorResponse">
           <metrics complexity="0" elements="5" coveredelements="5" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="5" coveredmethods="5" methods="5" />
         </class>
         <line complexity="1" signature="get_Id()" num="8" count="95" type="method" />
@@ -845,34 +845,34 @@
         <line complexity="1" signature="get_Quadrante()" num="11" count="55" type="method" />
         <line complexity="1" signature="get_Code()" num="12" count="65" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Responses\Users\CreateUserResponse.cs" name="CreateUserResponse.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Responses\Users\CreateUserResponse.cs" name="CreateUserResponse.cs">
         <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" classes="1" loc="9" ncloc="3" />
-        <class name="AgripeWebAPI.Domain.Commands.Responses.Users.CreateUserResponse">
+        <class name="StarkAgroAPI.Domain.Commands.Responses.Users.CreateUserResponse">
           <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" />
         </class>
         <line complexity="1" signature="get_Id()" num="5" count="40" type="method" />
         <line complexity="1" signature="get_Name()" num="6" count="45" type="method" />
         <line complexity="1" signature="get_Email()" num="7" count="35" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Responses\Users\DeleteUserResponse.cs" name="DeleteUserResponse.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Responses\Users\DeleteUserResponse.cs" name="DeleteUserResponse.cs">
         <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" classes="1" loc="7" ncloc="1" />
-        <class name="AgripeWebAPI.Domain.Commands.Responses.Users.DeleteUserResponse">
+        <class name="StarkAgroAPI.Domain.Commands.Responses.Users.DeleteUserResponse">
           <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" />
         </class>
         <line complexity="1" signature="get_Success()" num="5" count="40" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Responses\Users\EditUserResponse.cs" name="EditUserResponse.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Responses\Users\EditUserResponse.cs" name="EditUserResponse.cs">
         <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" classes="1" loc="9" ncloc="3" />
-        <class name="AgripeWebAPI.Domain.Commands.Responses.Users.EditUserResponse">
+        <class name="StarkAgroAPI.Domain.Commands.Responses.Users.EditUserResponse">
           <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" />
         </class>
         <line complexity="1" signature="get_Id()" num="5" count="52" type="method" />
         <line complexity="1" signature="get_Name()" num="6" count="55" type="method" />
         <line complexity="1" signature="get_Email()" num="7" count="50" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Responses\Users\GetUserResponse.cs" name="GetUserResponse.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Responses\Users\GetUserResponse.cs" name="GetUserResponse.cs">
         <metrics complexity="0" elements="5" coveredelements="5" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="5" coveredmethods="5" methods="5" classes="1" loc="11" ncloc="5" />
-        <class name="AgripeWebAPI.Domain.Commands.Responses.Users.GetUserResponse">
+        <class name="StarkAgroAPI.Domain.Commands.Responses.Users.GetUserResponse">
           <metrics complexity="0" elements="5" coveredelements="5" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="5" coveredmethods="5" methods="5" />
         </class>
         <line complexity="1" signature="get_Id()" num="5" count="35" type="method" />
@@ -881,21 +881,21 @@
         <line complexity="1" signature="get_LimiteInferior()" num="8" count="4" type="method" />
         <line complexity="1" signature="get_LimiteSuperior()" num="9" count="4" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Commands\Responses\Users\UserTokenResponse.cs" name="UserTokenResponse.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Commands\Responses\Users\UserTokenResponse.cs" name="UserTokenResponse.cs">
         <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" classes="1" loc="16" ncloc="3" />
-        <class name="AgripeWebAPI.Domain.Commands.Responses.Users.UserTokenResponse">
+        <class name="StarkAgroAPI.Domain.Commands.Responses.Users.UserTokenResponse">
           <metrics complexity="0" elements="3" coveredelements="3" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="3" coveredmethods="3" methods="3" />
         </class>
         <line complexity="1" signature="get_Token()" num="5" count="18" type="method" />
         <line complexity="1" signature="get_Token()" num="13" count="73" type="method" />
         <line complexity="1" signature="get_ErrorCode()" num="14" count="125" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Pivots\CreatePivotHandler.cs" name="CreatePivotHandler.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Handlers\Pivots\CreatePivotHandler.cs" name="CreatePivotHandler.cs">
         <metrics complexity="0" elements="20" coveredelements="20" conditionals="6" coveredconditionals="3" statements="20" coveredstatements="20" coveredmethods="2" methods="2" classes="1" loc="43" ncloc="20" />
-        <class name="AgripeWebAPI.Domain.Handlers.Pivots.CreatePivotHandler">
+        <class name="StarkAgroAPI.Domain.Handlers.Pivots.CreatePivotHandler">
           <metrics complexity="0" elements="20" coveredelements="20" conditionals="6" coveredconditionals="3" statements="20" coveredstatements="20" coveredmethods="2" methods="2" />
         </class>
-        <line complexity="4" signature=".ctor(AgripeWebAPI.Models.agpDBContext,AgripeWebAPI.Models.Interfaces.ICurrentUserContext)" num="16" count="5" type="method" />
+        <line complexity="4" signature=".ctor(StarkAgroAPI.Models.agpDBContext,StarkAgroAPI.Models.Interfaces.ICurrentUserContext)" num="16" count="5" type="method" />
         <line num="17" count="5" type="stmt" />
         <line falsecount="1" truecount="1" num="18" type="cond" />
         <line falsecount="1" truecount="1" num="19" type="cond" />
@@ -916,12 +916,12 @@
         <line num="39" count="5" type="stmt" />
         <line num="41" count="5" type="stmt" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Pivots\DeletePivotHandler.cs" name="DeletePivotHandler.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Handlers\Pivots\DeletePivotHandler.cs" name="DeletePivotHandler.cs">
         <metrics complexity="0" elements="12" coveredelements="12" conditionals="2" coveredconditionals="2" statements="12" coveredstatements="12" coveredmethods="2" methods="2" classes="1" loc="29" ncloc="12" />
-        <class name="AgripeWebAPI.Domain.Handlers.Pivots.DeletePivotHandler">
+        <class name="StarkAgroAPI.Domain.Handlers.Pivots.DeletePivotHandler">
           <metrics complexity="0" elements="12" coveredelements="12" conditionals="2" coveredconditionals="2" statements="12" coveredstatements="12" coveredmethods="2" methods="2" />
         </class>
-        <line complexity="1" signature=".ctor(AgripeWebAPI.Models.agpDBContext)" num="13" count="10" type="method" />
+        <line complexity="1" signature=".ctor(StarkAgroAPI.Models.agpDBContext)" num="13" count="10" type="method" />
         <line num="14" count="10" type="stmt" />
         <line num="15" count="10" type="stmt" />
         <line num="16" count="10" type="stmt" />
@@ -934,12 +934,12 @@
         <line num="26" count="5" type="stmt" />
         <line num="27" count="5" type="stmt" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Pivots\EditPivotHandler.cs" name="EditPivotHandler.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Handlers\Pivots\EditPivotHandler.cs" name="EditPivotHandler.cs">
         <metrics complexity="0" elements="13" coveredelements="13" conditionals="2" coveredconditionals="2" statements="13" coveredstatements="13" coveredmethods="2" methods="2" classes="1" loc="28" ncloc="13" />
-        <class name="AgripeWebAPI.Domain.Handlers.Pivots.EditPivotHandler">
+        <class name="StarkAgroAPI.Domain.Handlers.Pivots.EditPivotHandler">
           <metrics complexity="0" elements="13" coveredelements="13" conditionals="2" coveredconditionals="2" statements="13" coveredstatements="13" coveredmethods="2" methods="2" />
         </class>
-        <line complexity="1" signature=".ctor(AgripeWebAPI.Models.agpDBContext)" num="12" count="10" type="method" />
+        <line complexity="1" signature=".ctor(StarkAgroAPI.Models.agpDBContext)" num="12" count="10" type="method" />
         <line num="13" count="10" type="stmt" />
         <line num="14" count="10" type="stmt" />
         <line num="15" count="10" type="stmt" />
@@ -953,12 +953,12 @@
         <line num="25" count="5" type="stmt" />
         <line num="26" count="5" type="stmt" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Pivots\EditPivotLimitsHandler.cs" name="EditPivotLimitsHandler.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Handlers\Pivots\EditPivotLimitsHandler.cs" name="EditPivotLimitsHandler.cs">
         <metrics complexity="0" elements="14" coveredelements="14" conditionals="2" coveredconditionals="2" statements="14" coveredstatements="14" coveredmethods="2" methods="2" classes="1" loc="34" ncloc="14" />
-        <class name="AgripeWebAPI.Domain.Handlers.Pivots.EditPivotLimitsHandler">
+        <class name="StarkAgroAPI.Domain.Handlers.Pivots.EditPivotLimitsHandler">
           <metrics complexity="0" elements="14" coveredelements="14" conditionals="2" coveredconditionals="2" statements="14" coveredstatements="14" coveredmethods="2" methods="2" />
         </class>
-        <line complexity="1" signature=".ctor(AgripeWebAPI.Models.agpDBContext)" num="13" count="8" type="method" />
+        <line complexity="1" signature=".ctor(StarkAgroAPI.Models.agpDBContext)" num="13" count="8" type="method" />
         <line num="14" count="8" type="stmt" />
         <line num="15" count="8" type="stmt" />
         <line num="16" count="8" type="stmt" />
@@ -973,12 +973,12 @@
         <line num="31" count="4" type="stmt" />
         <line num="32" count="4" type="stmt" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Pivots\GetListPivotHandler.cs" name="GetListPivotHandler.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Handlers\Pivots\GetListPivotHandler.cs" name="GetListPivotHandler.cs">
         <metrics complexity="0" elements="17" coveredelements="17" conditionals="6" coveredconditionals="3" statements="17" coveredstatements="17" coveredmethods="2" methods="2" classes="1" loc="36" ncloc="17" />
-        <class name="AgripeWebAPI.Domain.Handlers.Pivots.GetListPivotHandler">
+        <class name="StarkAgroAPI.Domain.Handlers.Pivots.GetListPivotHandler">
           <metrics complexity="0" elements="17" coveredelements="17" conditionals="6" coveredconditionals="3" statements="17" coveredstatements="17" coveredmethods="2" methods="2" />
         </class>
-        <line complexity="4" signature=".ctor(AgripeWebAPI.Models.agpDBContext,AgripeWebAPI.Models.Interfaces.ICurrentUserContext)" num="15" count="10" type="method" />
+        <line complexity="4" signature=".ctor(StarkAgroAPI.Models.agpDBContext,StarkAgroAPI.Models.Interfaces.ICurrentUserContext)" num="15" count="10" type="method" />
         <line num="16" count="10" type="stmt" />
         <line falsecount="1" truecount="1" num="17" type="cond" />
         <line falsecount="1" truecount="1" num="18" type="cond" />
@@ -996,12 +996,12 @@
         <line num="33" count="10" type="stmt" />
         <line num="34" count="10" type="stmt" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Pivots\GetPivotHandler.cs" name="GetPivotHandler.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Handlers\Pivots\GetPivotHandler.cs" name="GetPivotHandler.cs">
         <metrics complexity="0" elements="18" coveredelements="18" conditionals="0" coveredconditionals="0" statements="18" coveredstatements="18" coveredmethods="2" methods="2" classes="1" loc="34" ncloc="18" />
-        <class name="AgripeWebAPI.Domain.Handlers.Pivots.GetPivotHandler">
+        <class name="StarkAgroAPI.Domain.Handlers.Pivots.GetPivotHandler">
           <metrics complexity="0" elements="18" coveredelements="18" conditionals="0" coveredconditionals="0" statements="18" coveredstatements="18" coveredmethods="2" methods="2" />
         </class>
-        <line complexity="1" signature=".ctor(AgripeWebAPI.Models.agpDBContext)" num="13" count="5" type="method" />
+        <line complexity="1" signature=".ctor(StarkAgroAPI.Models.agpDBContext)" num="13" count="5" type="method" />
         <line num="14" count="5" type="stmt" />
         <line num="15" count="5" type="stmt" />
         <line num="16" count="5" type="stmt" />
@@ -1020,13 +1020,13 @@
         <line num="31" count="4" type="stmt" />
         <line num="32" count="4" type="stmt" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Reads\CreateReadHandler.cs" name="CreateReadHandler.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Handlers\Reads\CreateReadHandler.cs" name="CreateReadHandler.cs">
         <metrics complexity="0" elements="37" coveredelements="37" conditionals="12" coveredconditionals="9" statements="37" coveredstatements="37" coveredmethods="4" methods="4" classes="1" loc="41" ncloc="37" />
-        <class name="AgripeWebAPI.Domain.Handlers.Reads.CreateReadHandler">
+        <class name="StarkAgroAPI.Domain.Handlers.Reads.CreateReadHandler">
           <metrics complexity="0" elements="37" coveredelements="37" conditionals="12" coveredconditionals="9" statements="37" coveredstatements="37" coveredmethods="4" methods="4" />
         </class>
-        <line complexity="2" signature=".ctor(AgripeWebAPI.Models.agpDBContext)" num="14" count="20" type="method" />
-        <line complexity="4" signature=".ctor(AgripeWebAPI.Models.agpDBContext,AgripeWebAPI.Models.Interfaces.ICurrentUserContext)" num="15" count="20" type="method" />
+        <line complexity="2" signature=".ctor(StarkAgroAPI.Models.agpDBContext)" num="14" count="20" type="method" />
+        <line complexity="4" signature=".ctor(StarkAgroAPI.Models.agpDBContext,StarkAgroAPI.Models.Interfaces.ICurrentUserContext)" num="15" count="20" type="method" />
         <line falsecount="1" truecount="1" num="16" type="cond" />
         <line num="17" count="20" type="stmt" />
         <line num="18" count="4" type="stmt" />
@@ -1051,12 +1051,12 @@
         <line num="38" count="13" type="stmt" />
         <line num="39" count="12" type="stmt" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Sensors\CreateSensorHandler.cs" name="CreateSensorHandler.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Handlers\Sensors\CreateSensorHandler.cs" name="CreateSensorHandler.cs">
         <metrics complexity="0" elements="26" coveredelements="26" conditionals="10" coveredconditionals="8" statements="26" coveredstatements="26" coveredmethods="2" methods="2" classes="1" loc="49" ncloc="26" />
-        <class name="AgripeWebAPI.Domain.Handlers.Sensors.CreateSensorHandler">
+        <class name="StarkAgroAPI.Domain.Handlers.Sensors.CreateSensorHandler">
           <metrics complexity="0" elements="26" coveredelements="26" conditionals="10" coveredconditionals="8" statements="26" coveredstatements="26" coveredmethods="2" methods="2" />
         </class>
-        <line complexity="4" signature=".ctor(AgripeWebAPI.Models.agpDBContext,AgripeWebAPI.Models.Interfaces.ICurrentUserContext)" num="16" count="15" type="method" />
+        <line complexity="4" signature=".ctor(StarkAgroAPI.Models.agpDBContext,StarkAgroAPI.Models.Interfaces.ICurrentUserContext)" num="16" count="15" type="method" />
         <line num="17" count="15" type="stmt" />
         <line falsecount="1" truecount="1" num="18" type="cond" />
         <line falsecount="1" truecount="1" num="19" type="cond" />
@@ -1083,12 +1083,12 @@
         <line num="46" count="5" type="stmt" />
         <line num="47" count="5" type="stmt" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Sensors\DeleteSensorHandler.cs" name="DeleteSensorHandler.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Handlers\Sensors\DeleteSensorHandler.cs" name="DeleteSensorHandler.cs">
         <metrics complexity="0" elements="12" coveredelements="12" conditionals="2" coveredconditionals="2" statements="12" coveredstatements="12" coveredmethods="2" methods="2" classes="1" loc="28" ncloc="12" />
-        <class name="AgripeWebAPI.Domain.Handlers.Sensors.DeleteSensorHandler">
+        <class name="StarkAgroAPI.Domain.Handlers.Sensors.DeleteSensorHandler">
           <metrics complexity="0" elements="12" coveredelements="12" conditionals="2" coveredconditionals="2" statements="12" coveredstatements="12" coveredmethods="2" methods="2" />
         </class>
-        <line complexity="1" signature=".ctor(AgripeWebAPI.Models.agpDBContext)" num="12" count="10" type="method" />
+        <line complexity="1" signature=".ctor(StarkAgroAPI.Models.agpDBContext)" num="12" count="10" type="method" />
         <line num="13" count="10" type="stmt" />
         <line num="14" count="10" type="stmt" />
         <line num="15" count="10" type="stmt" />
@@ -1101,12 +1101,12 @@
         <line num="25" count="5" type="stmt" />
         <line num="26" count="5" type="stmt" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Sensors\EditSensorHandler.cs" name="EditSensorHandler.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Handlers\Sensors\EditSensorHandler.cs" name="EditSensorHandler.cs">
         <metrics complexity="0" elements="19" coveredelements="19" conditionals="6" coveredconditionals="5" statements="19" coveredstatements="19" coveredmethods="2" methods="2" classes="1" loc="36" ncloc="19" />
-        <class name="AgripeWebAPI.Domain.Handlers.Sensors.EditSensorHandler">
+        <class name="StarkAgroAPI.Domain.Handlers.Sensors.EditSensorHandler">
           <metrics complexity="0" elements="19" coveredelements="19" conditionals="6" coveredconditionals="5" statements="19" coveredstatements="19" coveredmethods="2" methods="2" />
         </class>
-        <line complexity="2" signature=".ctor(AgripeWebAPI.Models.agpDBContext)" num="12" count="15" type="method" />
+        <line complexity="2" signature=".ctor(StarkAgroAPI.Models.agpDBContext)" num="12" count="15" type="method" />
         <line num="13" count="15" type="stmt" />
         <line falsecount="1" truecount="1" num="14" type="cond" />
         <line num="15" count="15" type="stmt" />
@@ -1126,12 +1126,12 @@
         <line num="33" count="5" type="stmt" />
         <line num="34" count="5" type="stmt" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Reads\GetListReadByPivotIdHandler.cs" name="GetListReadByPivotIdHandler.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Handlers\Reads\GetListReadByPivotIdHandler.cs" name="GetListReadByPivotIdHandler.cs">
         <metrics complexity="0" elements="33" coveredelements="33" conditionals="6" coveredconditionals="6" statements="33" coveredstatements="33" coveredmethods="3" methods="3" classes="1" loc="59" ncloc="33" />
-        <class name="AgripeWebAPI.Domain.Handlers.Sensors.GetListReadByPivotIdHandler">
+        <class name="StarkAgroAPI.Domain.Handlers.Sensors.GetListReadByPivotIdHandler">
           <metrics complexity="0" elements="33" coveredelements="33" conditionals="6" coveredconditionals="6" statements="33" coveredstatements="33" coveredmethods="3" methods="3" />
         </class>
-        <line complexity="2" signature=".ctor(AgripeWebAPI.Models.agpDBContext)" num="16" count="3" type="method" />
+        <line complexity="2" signature=".ctor(StarkAgroAPI.Models.agpDBContext)" num="16" count="3" type="method" />
         <line num="17" count="3" type="stmt" />
         <line falsecount="0" truecount="2" num="18" type="cond" />
         <line num="19" count="2" type="stmt" />
@@ -1165,12 +1165,12 @@
         <line num="57" count="2" type="stmt" />
         <line num="58" count="2" type="stmt" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Reads\GetListReadBySensorIdHandler.cs" name="GetListReadBySensorIdHandler.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Handlers\Reads\GetListReadBySensorIdHandler.cs" name="GetListReadBySensorIdHandler.cs">
         <metrics complexity="0" elements="27" coveredelements="27" conditionals="4" coveredconditionals="4" statements="27" coveredstatements="27" coveredmethods="3" methods="3" classes="1" loc="49" ncloc="27" />
-        <class name="AgripeWebAPI.Domain.Handlers.Sensors.GetListReadBySensorIdHandler">
+        <class name="StarkAgroAPI.Domain.Handlers.Sensors.GetListReadBySensorIdHandler">
           <metrics complexity="0" elements="27" coveredelements="27" conditionals="4" coveredconditionals="4" statements="27" coveredstatements="27" coveredmethods="3" methods="3" />
         </class>
-        <line complexity="2" signature=".ctor(AgripeWebAPI.Models.agpDBContext)" num="13" count="12" type="method" />
+        <line complexity="2" signature=".ctor(StarkAgroAPI.Models.agpDBContext)" num="13" count="12" type="method" />
         <line num="14" count="12" type="stmt" />
         <line falsecount="0" truecount="2" num="15" type="cond" />
         <line num="16" count="8" type="stmt" />
@@ -1198,12 +1198,12 @@
         <line num="46" count="8" type="stmt" />
         <line num="47" count="8" type="stmt" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Reads\GetListReadHandler.cs" name="GetListReadHandler.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Handlers\Reads\GetListReadHandler.cs" name="GetListReadHandler.cs">
         <metrics complexity="0" elements="30" coveredelements="30" conditionals="8" coveredconditionals="5" statements="30" coveredstatements="30" coveredmethods="3" methods="3" classes="1" loc="57" ncloc="30" />
-        <class name="AgripeWebAPI.Domain.Handlers.Sensors.GetListReadHandler">
+        <class name="StarkAgroAPI.Domain.Handlers.Sensors.GetListReadHandler">
           <metrics complexity="0" elements="30" coveredelements="30" conditionals="8" coveredconditionals="5" statements="30" coveredstatements="30" coveredmethods="3" methods="3" />
         </class>
-        <line complexity="4" signature=".ctor(AgripeWebAPI.Models.agpDBContext,AgripeWebAPI.Models.Interfaces.ICurrentUserContext)" num="17" count="10" type="method" />
+        <line complexity="4" signature=".ctor(StarkAgroAPI.Models.agpDBContext,StarkAgroAPI.Models.Interfaces.ICurrentUserContext)" num="17" count="10" type="method" />
         <line num="18" count="10" type="stmt" />
         <line falsecount="1" truecount="1" num="19" type="cond" />
         <line falsecount="1" truecount="1" num="20" type="cond" />
@@ -1234,12 +1234,12 @@
         <line num="54" count="10" type="stmt" />
         <line num="55" count="10" type="stmt" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Sensors\GetListSensorHandlerByUserId.cs" name="GetListSensorHandlerByUserId.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Handlers\Sensors\GetListSensorHandlerByUserId.cs" name="GetListSensorHandlerByUserId.cs">
         <metrics complexity="0" elements="23" coveredelements="23" conditionals="6" coveredconditionals="6" statements="23" coveredstatements="23" coveredmethods="2" methods="2" classes="1" loc="40" ncloc="23" />
-        <class name="AgripeWebAPI.Domain.Handlers.Sensors.GetListSensorByUserIdHandler">
+        <class name="StarkAgroAPI.Domain.Handlers.Sensors.GetListSensorByUserIdHandler">
           <metrics complexity="0" elements="23" coveredelements="23" conditionals="6" coveredconditionals="6" statements="23" coveredstatements="23" coveredmethods="2" methods="2" />
         </class>
-        <line complexity="2" signature=".ctor(AgripeWebAPI.Models.agpDBContext)" num="14" count="20" type="method" />
+        <line complexity="2" signature=".ctor(StarkAgroAPI.Models.agpDBContext)" num="14" count="20" type="method" />
         <line num="15" count="20" type="stmt" />
         <line falsecount="0" truecount="2" num="16" type="cond" />
         <line num="17" count="15" type="stmt" />
@@ -1263,12 +1263,12 @@
         <line num="37" count="24" type="stmt" />
         <line num="38" count="12" type="stmt" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Sensors\GetListSensorHandler.cs" name="GetListSensorHandler.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Handlers\Sensors\GetListSensorHandler.cs" name="GetListSensorHandler.cs">
         <metrics complexity="0" elements="25" coveredelements="25" conditionals="10" coveredconditionals="7" statements="25" coveredstatements="25" coveredmethods="2" methods="2" classes="1" loc="48" ncloc="25" />
-        <class name="AgripeWebAPI.Domain.Handlers.Sensors.GetListSensorHandler">
+        <class name="StarkAgroAPI.Domain.Handlers.Sensors.GetListSensorHandler">
           <metrics complexity="0" elements="25" coveredelements="25" conditionals="10" coveredconditionals="7" statements="25" coveredstatements="25" coveredmethods="2" methods="2" />
         </class>
-        <line complexity="4" signature=".ctor(AgripeWebAPI.Models.agpDBContext,AgripeWebAPI.Models.Interfaces.ICurrentUserContext)" num="16" count="15" type="method" />
+        <line complexity="4" signature=".ctor(StarkAgroAPI.Models.agpDBContext,StarkAgroAPI.Models.Interfaces.ICurrentUserContext)" num="16" count="15" type="method" />
         <line num="17" count="15" type="stmt" />
         <line falsecount="0" truecount="2" num="18" type="cond" />
         <line falsecount="1" truecount="1" num="19" type="cond" />
@@ -1294,18 +1294,18 @@
         <line num="45" count="20" type="stmt" />
         <line num="46" count="10" type="stmt" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Reads\GetReadByPivotIdHandler.cs" name="GetReadByPivotIdHandler.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Handlers\Reads\GetReadByPivotIdHandler.cs" name="GetReadByPivotIdHandler.cs">
         <metrics complexity="0" elements="143" coveredelements="107" conditionals="122" coveredconditionals="55" statements="143" coveredstatements="107" coveredmethods="7" methods="7" classes="2" loc="159" ncloc="143" />
-        <class name="AgripeWebAPI.Domain.Handlers.Sensors.SensorSummary">
+        <class name="StarkAgroAPI.Domain.Handlers.Sensors.SensorSummary">
           <metrics complexity="0" elements="1" coveredelements="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" coveredmethods="1" methods="1" />
         </class>
-        <class name="AgripeWebAPI.Domain.Handlers.Sensors.GetReadByPivotIdHandler">
+        <class name="StarkAgroAPI.Domain.Handlers.Sensors.GetReadByPivotIdHandler">
           <metrics complexity="0" elements="142" coveredelements="106" conditionals="122" coveredconditionals="55" statements="142" coveredstatements="106" coveredmethods="6" methods="6" />
         </class>
-        <line complexity="2" signature=".ctor(AgripeWebAPI.Models.agpDBContext)" num="16" count="16" type="method" />
-        <line complexity="2" signature=".ctor(AgripeWebAPI.Models.agpDBContext)" num="17" count="16" type="method" />
+        <line complexity="2" signature=".ctor(StarkAgroAPI.Models.agpDBContext)" num="16" count="16" type="method" />
+        <line complexity="2" signature=".ctor(StarkAgroAPI.Models.agpDBContext)" num="17" count="16" type="method" />
         <line falsecount="1" truecount="1" num="18" type="cond" />
-        <line complexity="2" signature=".ctor(AgripeWebAPI.Models.agpDBContext)" num="19" count="16" type="method" />
+        <line complexity="2" signature=".ctor(StarkAgroAPI.Models.agpDBContext)" num="19" count="16" type="method" />
         <line num="20" count="14" type="stmt" />
         <line falsecount="0" truecount="2" num="21" type="cond" />
         <line complexity="10" signature="Handle()" num="22" count="48" type="method" />
@@ -1446,12 +1446,12 @@
         <line num="157" count="12" type="stmt" />
         <line complexity="1" signature="get_Id()" num="12" count="18" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Sensors\GetSensorHandler.cs" name="GetSensorHandler.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Handlers\Sensors\GetSensorHandler.cs" name="GetSensorHandler.cs">
         <metrics complexity="0" elements="23" coveredelements="23" conditionals="6" coveredconditionals="5" statements="23" coveredstatements="23" coveredmethods="2" methods="2" classes="1" loc="44" ncloc="23" />
-        <class name="AgripeWebAPI.Domain.Handlers.Sensors.GetSensorHandler">
+        <class name="StarkAgroAPI.Domain.Handlers.Sensors.GetSensorHandler">
           <metrics complexity="0" elements="23" coveredelements="23" conditionals="6" coveredconditionals="5" statements="23" coveredstatements="23" coveredmethods="2" methods="2" />
         </class>
-        <line complexity="2" signature=".ctor(AgripeWebAPI.Models.agpDBContext)" num="14" count="15" type="method" />
+        <line complexity="2" signature=".ctor(StarkAgroAPI.Models.agpDBContext)" num="14" count="15" type="method" />
         <line num="15" count="15" type="stmt" />
         <line falsecount="0" truecount="2" num="16" type="cond" />
         <line num="17" count="10" type="stmt" />
@@ -1475,12 +1475,12 @@
         <line num="41" count="5" type="stmt" />
         <line num="42" count="10" type="stmt" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Users\CreateUserHandler.cs" name="CreateUserHandler.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Handlers\Users\CreateUserHandler.cs" name="CreateUserHandler.cs">
         <metrics complexity="0" elements="35" coveredelements="35" conditionals="12" coveredconditionals="8" statements="35" coveredstatements="35" coveredmethods="2" methods="2" classes="1" loc="67" ncloc="35" />
-        <class name="AgripeWebAPI.Domain.Handlers.Users.CreateUserHandler">
+        <class name="StarkAgroAPI.Domain.Handlers.Users.CreateUserHandler">
           <metrics complexity="0" elements="35" coveredelements="35" conditionals="12" coveredconditionals="8" statements="35" coveredstatements="35" coveredmethods="2" methods="2" />
         </class>
-        <line complexity="8" signature=".ctor(AgripeWebAPI.Models.agpDBContext,AgripeWebAPI.Models.Interfaces.IPasswordHasher,AgripeWebAPI.Models.Interfaces.INotifier,Microsoft.Extensions.Logging.ILogger`1&lt;AgripeWebAPI.Domain.Handlers.Users.CreateUserHandler&gt;)" num="20" count="15" type="method" />
+        <line complexity="8" signature=".ctor(StarkAgroAPI.Models.agpDBContext,StarkAgroAPI.Models.Interfaces.IPasswordHasher,StarkAgroAPI.Models.Interfaces.INotifier,Microsoft.Extensions.Logging.ILogger`1&lt;StarkAgroAPI.Domain.Handlers.Users.CreateUserHandler&gt;)" num="20" count="15" type="method" />
         <line num="21" count="15" type="stmt" />
         <line falsecount="1" truecount="1" num="22" type="cond" />
         <line falsecount="1" truecount="1" num="23" type="cond" />
@@ -1516,12 +1516,12 @@
         <line num="63" count="5" type="stmt" />
         <line num="65" count="15" type="stmt" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Users\DeleteUserHandler.cs" name="DeleteUserHandler.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Handlers\Users\DeleteUserHandler.cs" name="DeleteUserHandler.cs">
         <metrics complexity="0" elements="28" coveredelements="28" conditionals="12" coveredconditionals="9" statements="28" coveredstatements="28" coveredmethods="2" methods="2" classes="1" loc="59" ncloc="28" />
-        <class name="AgripeWebAPI.Domain.Handlers.Users.DeleteUserHandler">
+        <class name="StarkAgroAPI.Domain.Handlers.Users.DeleteUserHandler">
           <metrics complexity="0" elements="28" coveredelements="28" conditionals="12" coveredconditionals="9" statements="28" coveredstatements="28" coveredmethods="2" methods="2" />
         </class>
-        <line complexity="6" signature=".ctor(AgripeWebAPI.Models.agpDBContext,AgripeWebAPI.Models.Interfaces.INotifier,Microsoft.Extensions.Logging.ILogger`1&lt;AgripeWebAPI.Domain.Handlers.Users.DeleteUserHandler&gt;)" num="18" count="20" type="method" />
+        <line complexity="6" signature=".ctor(StarkAgroAPI.Models.agpDBContext,StarkAgroAPI.Models.Interfaces.INotifier,Microsoft.Extensions.Logging.ILogger`1&lt;StarkAgroAPI.Domain.Handlers.Users.DeleteUserHandler&gt;)" num="18" count="20" type="method" />
         <line num="19" count="20" type="stmt" />
         <line falsecount="1" truecount="1" num="20" type="cond" />
         <line falsecount="1" truecount="1" num="21" type="cond" />
@@ -1550,13 +1550,13 @@
         <line num="55" count="5" type="stmt" />
         <line num="57" count="20" type="stmt" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Users\EditUserHandler.cs" name="EditUserHandler.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Handlers\Users\EditUserHandler.cs" name="EditUserHandler.cs">
         <metrics complexity="0" elements="55" coveredelements="55" conditionals="20" coveredconditionals="16" statements="55" coveredstatements="55" coveredmethods="3" methods="3" classes="1" loc="97" ncloc="55" />
-        <class name="AgripeWebAPI.Domain.Handlers.Users.EditUserHandler">
+        <class name="StarkAgroAPI.Domain.Handlers.Users.EditUserHandler">
           <metrics complexity="0" elements="55" coveredelements="55" conditionals="20" coveredconditionals="16" statements="55" coveredstatements="55" coveredmethods="3" methods="3" />
         </class>
         <line complexity="1" signature=".cctor()" num="21" count="5" type="method" />
-        <line complexity="8" signature=".ctor(AgripeWebAPI.Models.agpDBContext,AgripeWebAPI.Models.Interfaces.IPasswordHasher,AgripeWebAPI.Models.Interfaces.INotifier,Microsoft.Extensions.Logging.ILogger`1&lt;AgripeWebAPI.Domain.Handlers.Users.EditUserHandler&gt;)" num="23" count="35" type="method" />
+        <line complexity="8" signature=".ctor(StarkAgroAPI.Models.agpDBContext,StarkAgroAPI.Models.Interfaces.IPasswordHasher,StarkAgroAPI.Models.Interfaces.INotifier,Microsoft.Extensions.Logging.ILogger`1&lt;StarkAgroAPI.Domain.Handlers.Users.EditUserHandler&gt;)" num="23" count="35" type="method" />
         <line num="24" count="35" type="stmt" />
         <line falsecount="1" truecount="1" num="25" type="cond" />
         <line falsecount="1" truecount="1" num="26" type="cond" />
@@ -1611,12 +1611,12 @@
         <line num="93" count="5" type="stmt" />
         <line num="95" count="35" type="stmt" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Users\EditUserLimitsHandler.cs" name="EditUserLimitsHandler.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Handlers\Users\EditUserLimitsHandler.cs" name="EditUserLimitsHandler.cs">
         <metrics complexity="0" elements="15" coveredelements="15" conditionals="4" coveredconditionals="4" statements="15" coveredstatements="15" coveredmethods="2" methods="2" classes="1" loc="35" ncloc="15" />
-        <class name="AgripeWebAPI.Domain.Handlers.Users.EditUserLimitsHandler">
+        <class name="StarkAgroAPI.Domain.Handlers.Users.EditUserLimitsHandler">
           <metrics complexity="0" elements="15" coveredelements="15" conditionals="4" coveredconditionals="4" statements="15" coveredstatements="15" coveredmethods="2" methods="2" />
         </class>
-        <line complexity="2" signature=".ctor(AgripeWebAPI.Models.agpDBContext)" num="13" count="12" type="method" />
+        <line complexity="2" signature=".ctor(StarkAgroAPI.Models.agpDBContext)" num="13" count="12" type="method" />
         <line num="14" count="12" type="stmt" />
         <line falsecount="0" truecount="2" num="15" type="cond" />
         <line num="16" count="8" type="stmt" />
@@ -1632,12 +1632,12 @@
         <line num="32" count="4" type="stmt" />
         <line num="33" count="4" type="stmt" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Users\ExternalLoginHandler.cs" name="ExternalLoginHandler.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Handlers\Users\ExternalLoginHandler.cs" name="ExternalLoginHandler.cs">
         <metrics complexity="0" elements="110" coveredelements="109" conditionals="58" coveredconditionals="44" statements="110" coveredstatements="109" coveredmethods="6" methods="7" classes="1" loc="189" ncloc="110" />
-        <class name="AgripeWebAPI.Domain.Handlers.Users.ExternalLoginHandler">
+        <class name="StarkAgroAPI.Domain.Handlers.Users.ExternalLoginHandler">
           <metrics complexity="0" elements="110" coveredelements="109" conditionals="58" coveredconditionals="44" statements="110" coveredstatements="109" coveredmethods="6" methods="7" />
         </class>
-        <line complexity="14" signature=".ctor(AgripeWebAPI.Models.agpDBContext,System.Net.Http.IHttpClientFactory,AgripeWebAPI.Models.Interfaces.IJwtTokenService,AgripeWebAPI.Models.Interfaces.IPasswordHasher,Microsoft.Extensions.Options.IOptions`1&lt;AgripeWebAPI.Configuration.OAuthSettings&gt;,Microsoft.Extensions.Logging.ILogger`1&lt;AgripeWebAPI.Domain.Handlers.Users.ExternalLoginHandler&gt;)" num="29" count="75" type="method" />
+        <line complexity="14" signature=".ctor(StarkAgroAPI.Models.agpDBContext,System.Net.Http.IHttpClientFactory,StarkAgroAPI.Models.Interfaces.IJwtTokenService,StarkAgroAPI.Models.Interfaces.IPasswordHasher,Microsoft.Extensions.Options.IOptions`1&lt;StarkAgroAPI.Configuration.OAuthSettings&gt;,Microsoft.Extensions.Logging.ILogger`1&lt;StarkAgroAPI.Domain.Handlers.Users.ExternalLoginHandler&gt;)" num="29" count="75" type="method" />
         <line num="30" count="75" type="stmt" />
         <line num="31" count="75" type="stmt" />
         <line num="32" count="75" type="stmt" />
@@ -1748,14 +1748,14 @@
         <line complexity="1" signature="get_Name()" num="184" count="30" type="method" />
         <line complexity="1" signature="get_Picture()" num="186" count="0" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Users\GetToken.cs" name="GetToken.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Handlers\Users\GetToken.cs" name="GetToken.cs">
         <metrics complexity="0" elements="64" coveredelements="64" conditionals="48" coveredconditionals="41" statements="64" coveredstatements="64" coveredmethods="6" methods="6" classes="1" loc="91" ncloc="64" />
-        <class name="AgripeWebAPI.Domain.Handlers.Users.GetToken">
+        <class name="StarkAgroAPI.Domain.Handlers.Users.GetToken">
           <metrics complexity="0" elements="64" coveredelements="64" conditionals="48" coveredconditionals="41" statements="64" coveredstatements="64" coveredmethods="6" methods="6" />
         </class>
-        <line complexity="8" signature=".ctor(AgripeWebAPI.Models.agpDBContext,AgripeWebAPI.Models.Interfaces.IPasswordHasher,AgripeWebAPI.Models.Interfaces.IJwtTokenService,Microsoft.Extensions.Logging.ILogger`1&lt;AgripeWebAPI.Domain.Handlers.Users.GetToken&gt;)" num="19" count="34" type="method" />
+        <line complexity="8" signature=".ctor(StarkAgroAPI.Models.agpDBContext,StarkAgroAPI.Models.Interfaces.IPasswordHasher,StarkAgroAPI.Models.Interfaces.IJwtTokenService,Microsoft.Extensions.Logging.ILogger`1&lt;StarkAgroAPI.Domain.Handlers.Users.GetToken&gt;)" num="19" count="34" type="method" />
         <line num="20" count="6" type="stmt" />
-        <line complexity="10" signature=".ctor(AgripeWebAPI.Models.agpDBContext,AgripeWebAPI.Models.Interfaces.IPasswordHasher,AgripeWebAPI.Models.Interfaces.IJwtTokenService,Microsoft.Extensions.Logging.ILogger`1&lt;AgripeWebAPI.Domain.Handlers.Users.GetToken&gt;,AgripeWebAPI.Services.ILoginAttemptService)" num="21" count="34" type="method" />
+        <line complexity="10" signature=".ctor(StarkAgroAPI.Models.agpDBContext,StarkAgroAPI.Models.Interfaces.IPasswordHasher,StarkAgroAPI.Models.Interfaces.IJwtTokenService,Microsoft.Extensions.Logging.ILogger`1&lt;StarkAgroAPI.Domain.Handlers.Users.GetToken&gt;,StarkAgroAPI.Services.ILoginAttemptService)" num="21" count="34" type="method" />
         <line falsecount="1" truecount="1" num="22" type="cond" />
         <line falsecount="1" truecount="1" num="23" type="cond" />
         <line falsecount="1" truecount="1" num="24" type="cond" />
@@ -1818,12 +1818,12 @@
         <line num="88" count="8" type="stmt" />
         <line num="89" count="12" type="stmt" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Domain\Handlers\Users\GetUserHandler.cs" name="GetUserHandler.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Domain\Handlers\Users\GetUserHandler.cs" name="GetUserHandler.cs">
         <metrics complexity="0" elements="33" coveredelements="33" conditionals="14" coveredconditionals="11" statements="33" coveredstatements="33" coveredmethods="2" methods="2" classes="1" loc="57" ncloc="33" />
-        <class name="AgripeWebAPI.Domain.Handlers.Users.GetUserHandler">
+        <class name="StarkAgroAPI.Domain.Handlers.Users.GetUserHandler">
           <metrics complexity="0" elements="33" coveredelements="33" conditionals="14" coveredconditionals="11" statements="33" coveredstatements="33" coveredmethods="2" methods="2" />
         </class>
-        <line complexity="6" signature=".ctor(AgripeWebAPI.Models.agpDBContext,AgripeWebAPI.Models.Interfaces.INotifier,Microsoft.Extensions.Logging.ILogger`1&lt;AgripeWebAPI.Domain.Handlers.Users.GetUserHandler&gt;)" num="18" count="15" type="method" />
+        <line complexity="6" signature=".ctor(StarkAgroAPI.Models.agpDBContext,StarkAgroAPI.Models.Interfaces.INotifier,Microsoft.Extensions.Logging.ILogger`1&lt;StarkAgroAPI.Domain.Handlers.Users.GetUserHandler&gt;)" num="18" count="15" type="method" />
         <line num="19" count="15" type="stmt" />
         <line falsecount="1" truecount="1" num="20" type="cond" />
         <line falsecount="1" truecount="1" num="21" type="cond" />
@@ -1857,13 +1857,13 @@
         <line num="54" count="4" type="stmt" />
         <line num="55" count="12" type="stmt" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Models\agpDBContext.cs" name="agpDBContext.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Models\agpDBContext.cs" name="agpDBContext.cs">
         <metrics complexity="0" elements="43" coveredelements="27" conditionals="8" coveredconditionals="7" statements="43" coveredstatements="27" coveredmethods="5" methods="11" classes="1" loc="77" ncloc="43" />
-        <class name="AgripeWebAPI.Models.agpDBContext">
+        <class name="StarkAgroAPI.Models.agpDBContext">
           <metrics complexity="0" elements="43" coveredelements="27" conditionals="8" coveredconditionals="7" statements="43" coveredstatements="27" coveredmethods="5" methods="11" />
         </class>
         <line complexity="1" signature=".ctor()" num="12" count="1161" type="method" />
-        <line complexity="8" signature=".ctor(Microsoft.Extensions.Options.IOptions`1&lt;AgripeWebAPI.Configuration.MongoDbSettings&gt;)" num="14" count="35" type="method" />
+        <line complexity="8" signature=".ctor(Microsoft.Extensions.Options.IOptions`1&lt;StarkAgroAPI.Configuration.MongoDbSettings&gt;)" num="14" count="35" type="method" />
         <line num="15" count="35" type="stmt" />
         <line falsecount="1" truecount="3" num="16" type="cond" />
         <line num="17" count="5" type="stmt" />
@@ -1906,9 +1906,9 @@
         <line complexity="1" signature="get_Id()" num="73" count="0" type="method" />
         <line complexity="1" signature="get_Sequence()" num="74" count="0" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Models\Entities\Entity.cs" name="Entity.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Models\Entities\Entity.cs" name="Entity.cs">
         <metrics complexity="0" elements="4" coveredelements="4" conditionals="0" coveredconditionals="0" statements="4" coveredstatements="4" coveredmethods="2" methods="2" classes="1" loc="14" ncloc="4" />
-        <class name="AgripeWebAPI.Models.Entities.Entity">
+        <class name="StarkAgroAPI.Models.Entities.Entity">
           <metrics complexity="0" elements="4" coveredelements="4" conditionals="0" coveredconditionals="0" statements="4" coveredstatements="4" coveredmethods="2" methods="2" />
         </class>
         <line complexity="1" signature=".ctor()" num="7" count="348" type="method" />
@@ -1916,9 +1916,9 @@
         <line num="9" count="348" type="stmt" />
         <line complexity="1" signature="get_Id()" num="12" count="581" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Models\Entities\Pivot.cs" name="Pivot.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Models\Entities\Pivot.cs" name="Pivot.cs">
         <metrics complexity="0" elements="5" coveredelements="5" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="5" coveredmethods="5" methods="6" classes="1" loc="18" ncloc="5" />
-        <class name="AgripeWebAPI.Models.Entities.Pivot">
+        <class name="StarkAgroAPI.Models.Entities.Pivot">
           <metrics complexity="0" elements="5" coveredelements="5" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="5" coveredmethods="5" methods="6" />
         </class>
         <line complexity="1" signature="get_UserId()" num="8" count="19" type="method" />
@@ -1927,9 +1927,9 @@
         <line complexity="1" signature="get_LimiteSuperior()" num="14" count="30" type="method" />
         <line complexity="1" signature="get_Sensors()" num="16" count="8" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Models\Entities\ReadSensor.cs" name="ReadSensor.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Models\Entities\ReadSensor.cs" name="ReadSensor.cs">
         <metrics complexity="0" elements="5" coveredelements="5" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="5" coveredmethods="5" methods="5" classes="1" loc="18" ncloc="5" />
-        <class name="AgripeWebAPI.Models.Entities.ReadSensor">
+        <class name="StarkAgroAPI.Models.Entities.ReadSensor">
           <metrics complexity="0" elements="5" coveredelements="5" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="5" coveredmethods="5" methods="5" />
         </class>
         <line complexity="1" signature="get_SensorId()" num="10" count="46" type="method" />
@@ -1938,9 +1938,9 @@
         <line complexity="1" signature="get_Date()" num="14" count="31" type="method" />
         <line complexity="1" signature="get_Sensor()" num="16" count="10" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Models\Entities\Sensor.cs" name="Sensor.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Models\Entities\Sensor.cs" name="Sensor.cs">
         <metrics complexity="0" elements="8" coveredelements="8" conditionals="0" coveredconditionals="0" statements="8" coveredstatements="8" coveredmethods="8" methods="8" classes="1" loc="20" ncloc="8" />
-        <class name="AgripeWebAPI.Models.Entities.Sensor">
+        <class name="StarkAgroAPI.Models.Entities.Sensor">
           <metrics complexity="0" elements="8" coveredelements="8" conditionals="0" coveredconditionals="0" statements="8" coveredstatements="8" coveredmethods="8" methods="8" />
         </class>
         <line complexity="1" signature="get_PivoId()" num="9" count="76" type="method" />
@@ -1952,9 +1952,9 @@
         <line complexity="1" signature="get_User()" num="17" count="10" type="method" />
         <line complexity="1" signature="get_Reads()" num="18" count="10" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Models\Entities\User.cs" name="User.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Models\Entities\User.cs" name="User.cs">
         <metrics complexity="0" elements="6" coveredelements="6" conditionals="0" coveredconditionals="0" statements="6" coveredstatements="6" coveredmethods="6" methods="6" classes="1" loc="14" ncloc="6" />
-        <class name="AgripeWebAPI.Models.Entities.User">
+        <class name="StarkAgroAPI.Models.Entities.User">
           <metrics complexity="0" elements="6" coveredelements="6" conditionals="0" coveredconditionals="0" statements="6" coveredstatements="6" coveredmethods="6" methods="6" />
         </class>
         <line complexity="1" signature="get_Name()" num="7" count="228" type="method" />
@@ -1964,17 +1964,17 @@
         <line complexity="1" signature="get_LimiteInferior()" num="11" count="152" type="method" />
         <line complexity="1" signature="get_LimiteSuperior()" num="12" count="152" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Notifications\Notification.cs" name="Notification.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Notifications\Notification.cs" name="Notification.cs">
         <metrics complexity="0" elements="2" coveredelements="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" coveredmethods="2" methods="2" classes="1" loc="7" ncloc="2" />
-        <class name="AgripeWebAPI.Notifications.Notification">
+        <class name="StarkAgroAPI.Notifications.Notification">
           <metrics complexity="0" elements="2" coveredelements="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" coveredmethods="2" methods="2" />
         </class>
         <line complexity="1" signature=".ctor(System.String)" num="3" count="180" type="method" />
         <line complexity="1" signature="get_Mensagem()" num="5" count="245" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Notifications\Notificator.cs" name="Notificator.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Notifications\Notificator.cs" name="Notificator.cs">
         <metrics complexity="0" elements="13" coveredelements="13" conditionals="0" coveredconditionals="0" statements="13" coveredstatements="13" coveredmethods="4" methods="4" classes="1" loc="29" ncloc="13" />
-        <class name="AgripeWebAPI.Notifications.Notificator">
+        <class name="StarkAgroAPI.Notifications.Notificator">
           <metrics complexity="0" elements="13" coveredelements="13" conditionals="0" coveredconditionals="0" statements="13" coveredstatements="13" coveredmethods="4" methods="4" />
         </class>
         <line complexity="1" signature=".ctor()" num="9" count="20" type="method" />
@@ -1987,13 +1987,13 @@
         <line complexity="1" signature="getNotifications()" num="20" count="15" type="method" />
         <line num="21" count="15" type="stmt" />
         <line num="22" count="15" type="stmt" />
-        <line complexity="1" signature="Handle(AgripeWebAPI.Notifications.Notification)" num="25" count="25" type="method" />
+        <line complexity="1" signature="Handle(StarkAgroAPI.Notifications.Notification)" num="25" count="25" type="method" />
         <line num="26" count="25" type="stmt" />
         <line num="27" count="25" type="stmt" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Services\CurrentUserContext.cs" name="CurrentUserContext.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Services\CurrentUserContext.cs" name="CurrentUserContext.cs">
         <metrics complexity="0" elements="22" coveredelements="22" conditionals="18" coveredconditionals="16" statements="22" coveredstatements="22" coveredmethods="3" methods="3" classes="1" loc="49" ncloc="22" />
-        <class name="AgripeWebAPI.Services.CurrentUserContext">
+        <class name="StarkAgroAPI.Services.CurrentUserContext">
           <metrics complexity="0" elements="22" coveredelements="22" conditionals="18" coveredconditionals="16" statements="22" coveredstatements="22" coveredmethods="3" methods="3" />
         </class>
         <line complexity="2" signature=".ctor(Microsoft.AspNetCore.Http.IHttpContextAccessor)" num="15" count="40" type="method" />
@@ -2019,16 +2019,16 @@
         <line num="43" count="40" type="stmt" />
         <line complexity="1" signature="get_IsAuthenticated()" num="46" count="10" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Services\JwtTokenService.cs" name="JwtTokenService.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Services\JwtTokenService.cs" name="JwtTokenService.cs">
         <metrics complexity="0" elements="25" coveredelements="25" conditionals="8" coveredconditionals="6" statements="25" coveredstatements="25" coveredmethods="2" methods="2" classes="1" loc="46" ncloc="25" />
-        <class name="AgripeWebAPI.Services.JwtTokenService">
+        <class name="StarkAgroAPI.Services.JwtTokenService">
           <metrics complexity="0" elements="25" coveredelements="25" conditionals="8" coveredconditionals="6" statements="25" coveredstatements="25" coveredmethods="2" methods="2" />
         </class>
         <line complexity="2" signature=".ctor(Microsoft.Extensions.Configuration.IConfiguration)" num="15" count="30" type="method" />
         <line num="16" count="30" type="stmt" />
         <line falsecount="0" truecount="2" num="17" type="cond" />
         <line num="18" count="25" type="stmt" />
-        <line complexity="6" signature="GenerateTokenAsync(AgripeWebAPI.Models.Entities.User,System.Threading.CancellationToken)" num="21" count="25" type="method" />
+        <line complexity="6" signature="GenerateTokenAsync(StarkAgroAPI.Models.Entities.User,System.Threading.CancellationToken)" num="21" count="25" type="method" />
         <line falsecount="2" truecount="2" num="22" type="cond" />
         <line num="23" count="25" type="stmt" />
         <line num="24" count="25" type="stmt" />
@@ -2050,9 +2050,9 @@
         <line num="43" count="20" type="stmt" />
         <line num="44" count="20" type="stmt" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Services\LoginAttemptService.cs" name="LoginAttemptService.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Services\LoginAttemptService.cs" name="LoginAttemptService.cs">
         <metrics complexity="0" elements="24" coveredelements="24" conditionals="10" coveredconditionals="10" statements="24" coveredstatements="24" coveredmethods="7" methods="7" classes="1" loc="56" ncloc="24" />
-        <class name="AgripeWebAPI.Services.LoginAttemptService">
+        <class name="StarkAgroAPI.Services.LoginAttemptService">
           <metrics complexity="0" elements="24" coveredelements="24" conditionals="10" coveredconditionals="10" statements="24" coveredstatements="24" coveredmethods="7" methods="7" />
         </class>
         <line complexity="1" signature=".cctor()" num="15" count="4" type="method" />
@@ -2080,9 +2080,9 @@
         <line complexity="1" signature="CacheKey(System.String)" num="52" count="132" type="method" />
         <line complexity="1" signature="get_Count()" num="54" count="276" type="method" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Services\PasswordHasherService.cs" name="PasswordHasherService.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Services\PasswordHasherService.cs" name="PasswordHasherService.cs">
         <metrics complexity="0" elements="16" coveredelements="16" conditionals="6" coveredconditionals="6" statements="16" coveredstatements="16" coveredmethods="2" methods="2" classes="1" loc="34" ncloc="16" />
-        <class name="AgripeWebAPI.Services.PasswordHasherService">
+        <class name="StarkAgroAPI.Services.PasswordHasherService">
           <metrics complexity="0" elements="16" coveredelements="16" conditionals="6" coveredconditionals="6" statements="16" coveredstatements="16" coveredmethods="2" methods="2" />
         </class>
         <line complexity="2" signature="HashPassword(System.String)" num="9" count="40" type="method" />
@@ -2102,9 +2102,9 @@
         <line num="30" count="5" type="stmt" />
         <line num="32" count="35" type="stmt" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Validators\EmailAttribute.cs" name="EmailAttribute.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Validators\EmailAttribute.cs" name="EmailAttribute.cs">
         <metrics complexity="0" elements="12" coveredelements="12" conditionals="6" coveredconditionals="6" statements="12" coveredstatements="12" coveredmethods="3" methods="3" classes="1" loc="26" ncloc="12" />
-        <class name="AgripeWebAPI.Validators.EmailAttribute">
+        <class name="StarkAgroAPI.Validators.EmailAttribute">
           <metrics complexity="0" elements="12" coveredelements="12" conditionals="6" coveredconditionals="6" statements="12" coveredstatements="12" coveredmethods="3" methods="3" />
         </class>
         <line complexity="1" signature=".cctor()" num="8" count="5" type="method" />
@@ -2120,9 +2120,9 @@
         <line num="23" count="5" type="stmt" />
         <line num="24" count="5" type="stmt" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Validators\PasswordStrengthAttribute.cs" name="PasswordStrengthAttribute.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Validators\PasswordStrengthAttribute.cs" name="PasswordStrengthAttribute.cs">
         <metrics complexity="0" elements="19" coveredelements="19" conditionals="16" coveredconditionals="16" statements="19" coveredstatements="19" coveredmethods="2" methods="2" classes="1" loc="45" ncloc="19" />
-        <class name="AgripeWebAPI.Validators.PasswordStrengthAttribute">
+        <class name="StarkAgroAPI.Validators.PasswordStrengthAttribute">
           <metrics complexity="0" elements="19" coveredelements="19" conditionals="16" coveredconditionals="16" statements="19" coveredstatements="19" coveredmethods="2" methods="2" />
         </class>
         <line complexity="16" signature="IsValid(System.Object)" num="12" count="65" type="method" />
@@ -2145,7 +2145,7 @@
         <line num="42" count="5" type="stmt" />
         <line num="43" count="5" type="stmt" />
       </file>
-      <file path="D:\Source\Repos\cclautert\AgripeWeb\AgripeWebAPI\Program.cs" name="Program.cs">
+      <file path="D:\Source\Repos\cclautert\StarkAgro\StarkAgroAPI\Program.cs" name="Program.cs">
         <metrics complexity="0" elements="18" coveredelements="0" conditionals="0" coveredconditionals="0" statements="18" coveredstatements="0" coveredmethods="0" methods="1" classes="1" loc="34" ncloc="18" />
         <class name="Program">
           <metrics complexity="0" elements="18" coveredelements="0" conditionals="0" coveredconditionals="0" statements="18" coveredstatements="0" coveredmethods="0" methods="1" />

@@ -1,10 +1,10 @@
-# AgripeWeb
+# StarkAgro
 
 Plataforma web para monitoramento agrícola e apoio à decisão de irrigação, integrando sensores de campo, painéis visuais e previsão meteorológica.
 
 ## Sobre o projeto
 
-O **AgripeWeb** é uma solução de IoT agrícola voltada a produtores e técnicos que precisam acompanhar a umidade do solo em pivôs de irrigação e tomar decisões de irrigação com mais contexto. O sistema organiza a propriedade em **pivôs** (áreas de irrigação), cada um dividido em **quadrantes**, onde sensores enviam leituras periódicas de umidade.
+O **StarkAgro** é uma solução de IoT agrícola voltada a produtores e técnicos que precisam acompanhar a umidade do solo em pivôs de irrigação e tomar decisões de irrigação com mais contexto. O sistema organiza a propriedade em **pivôs** (áreas de irrigação), cada um dividido em **quadrantes**, onde sensores enviam leituras periódicas de umidade.
 
 Na interface web, o usuário visualiza o estado de cada quadrante (mapa circular com cores e médias), acessa gráficos históricos por quadrante, cadastra pivôs e sensores, define limites de umidade e consulta um **painel de irrigação** com tendências, alertas e recomendações. Quando o pivô possui localização geográfica, a API integra **previsão de chuva** (Open-Meteo e, opcionalmente, Google Weather AI) para adiar recomendações de irrigação quando há precipitação prevista no horizonte configurável.
 
@@ -24,11 +24,11 @@ O acesso é **multi-tenant**: cada usuário autenticado (login/senha ou Google O
 
 | Componente | Descrição |
 |------------|-----------|
-| **AgripeWebAPI** | API REST (.NET 10, MediatR/CQRS, MongoDB, JWT/OAuth) |
-| **AgripeWebUI** | SPA Angular 19 (Material, Chart.js, proxy para API em desenvolvimento) |
-| **AgripeWebIOT** | Firmware Arduino para sensores (ESP8266, ESP32 LoRa gateway/slave) |
+| **StarkAgroAPI** | API REST (.NET 10, MediatR/CQRS, MongoDB, JWT/OAuth) |
+| **StarkAgroUI** | SPA Angular 19 (Material, Chart.js, proxy para API em desenvolvimento) |
+| **StarkAgroIOT** | Firmware Arduino para sensores (ESP8266, ESP32 LoRa gateway/slave) |
 
-Há também um app móvel em **AgripeWebUI-Mobile** (React Native) para consulta em campo, quando aplicável ao seu fluxo de deploy.
+Há também um app móvel em **StarkAgroUI-Mobile** (React Native) para consulta em campo, quando aplicável ao seu fluxo de deploy.
 
 ```
 Sensores (campo) → API (MongoDB) ← UI Web / Mobile
@@ -54,15 +54,15 @@ Sensores (campo) → API (MongoDB) ← UI Web / Mobile
 ### API
 
 ```bash
-dotnet run --project AgripeWebAPI/AgripeWebAPI.csproj
+dotnet run --project StarkAgroAPI/StarkAgroAPI.csproj
 ```
 
-Configure a seção `MongoDb` em `AgripeWebAPI/appsettings.Development.json` (connection string e nome do banco). Antes de `dotnet build`, encerre qualquer instância da API em execução para evitar bloqueio do executável.
+Configure a seção `MongoDb` em `StarkAgroAPI/appsettings.Development.json` (connection string e nome do banco). Antes de `dotnet build`, encerre qualquer instância da API em execução para evitar bloqueio do executável.
 
 ### Interface web
 
 ```bash
-cd AgripeWebUI
+cd StarkAgroUI
 npm install
 npm run start
 ```
@@ -72,7 +72,7 @@ Acesse [http://localhost:4200](http://localhost:4200). A UI chama a API por URLs
 ### Testes
 
 ```bash
-dotnet test AgripeWebAPI.Tests/AgripeWebAPI.Tests.csproj
+dotnet test StarkAgroAPI.Tests/StarkAgroAPI.Tests.csproj
 ```
 
 ### Docker (stack completa)
@@ -86,12 +86,12 @@ API em `localhost:8080`, UI em `localhost:80`, MongoDB em `localhost:27027`.
 ## Estrutura do repositório
 
 ```
-AgripeWeb/
-├── AgripeWebAPI/          # API REST e domínio (handlers MediatR)
-├── AgripeWebAPI.Tests/    # Testes unitários (xUnit + Moq)
-├── AgripeWebUI/           # Frontend Angular
-├── AgripeWebUI-Mobile/    # App móvel (opcional)
-├── AgripeWebIOT/          # Firmware dos sensores
+StarkAgro/
+├── StarkAgroAPI/          # API REST e domínio (handlers MediatR)
+├── StarkAgroAPI.Tests/    # Testes unitários (xUnit + Moq)
+├── StarkAgroUI/           # Frontend Angular
+├── StarkAgroUI-Mobile/    # App móvel (opcional)
+├── StarkAgroIOT/          # Firmware dos sensores
 ├── docker/                # Compose e imagens
 ├── docs/                  # Documentação (deploy, features)
 ├── terraform/aws/         # Infraestrutura AWS

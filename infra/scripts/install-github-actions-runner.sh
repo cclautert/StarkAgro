@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Install a GitHub Actions self-hosted runner on the AgripeWeb Hostinger VPS.
+# Install a GitHub Actions self-hosted runner on the StarkAgro Hostinger VPS.
 # Outbound-only — avoids inbound SSH from GitHub-hosted runner IP ranges.
 #
 # Usage (on VPS):
@@ -7,14 +7,14 @@
 #   sudo -E ./infra/scripts/install-github-actions-runner.sh
 #
 # Rollback:
-#   cd /opt/actions-runner-agripeweb && sudo ./svc.sh stop && sudo ./svc.sh uninstall
-#   sudo rm -rf /opt/actions-runner-agripeweb
+#   cd /opt/actions-runner-starkagro && sudo ./svc.sh stop && sudo ./svc.sh uninstall
+#   sudo rm -rf /opt/actions-runner-starkagro
 
 set -euo pipefail
 
-REPO="${GITHUB_REPOSITORY:-cclautert/AgripeWeb}"
+REPO="${GITHUB_REPOSITORY:-cclautert/StarkAgro}"
 RUNNER_VERSION="${RUNNER_VERSION:-2.325.0}"
-INSTALL_DIR="${RUNNER_INSTALL_DIR:-/opt/actions-runner-agripeweb}"
+INSTALL_DIR="${RUNNER_INSTALL_DIR:-/opt/actions-runner-starkagro}"
 RUNNER_USER="${RUNNER_USER:-${SUDO_USER:-$(whoami)}}"
 RUNNER_LABELS="${RUNNER_LABELS:-self-hosted,linux,agripeweb-prod}"
 RUNNER_NAME="${RUNNER_NAME:-agripeweb-prod-vps}"

@@ -18,10 +18,10 @@ entities / handlers / services (PushNotifications) — sem novas rotas, sem muda
 ## Files to Modify
 | Path | Change |
 |---|---|
-| `AgripeWebAPI/Models/Entities/User.cs` | + `public List<string> WebPushSubscriptions { get; set; } = new();` |
-| `AgripeWebAPI/Domain/Handlers/Users/RegisterWebPushSubscriptionHandler.cs` | Dedup por endpoint + append + migração do legado + cap 5 |
-| `AgripeWebAPI/Services/PushNotifications/WebPushNotificationService.cs` | Loop sobre inscrições; remoção de endpoints 404/410 via `ReplaceOneAsync`; helper de parse já existe (`WebPushSubscriptionDto`) |
-| `AgripeWebAPI.Tests/Domain/Handlers/Users/RegisterWebPushSubscriptionHandlerTests.cs` | Novos cenários (dedup, migração, cap) |
+| `StarkAgroAPI/Models/Entities/User.cs` | + `public List<string> WebPushSubscriptions { get; set; } = new();` |
+| `StarkAgroAPI/Domain/Handlers/Users/RegisterWebPushSubscriptionHandler.cs` | Dedup por endpoint + append + migração do legado + cap 5 |
+| `StarkAgroAPI/Services/PushNotifications/WebPushNotificationService.cs` | Loop sobre inscrições; remoção de endpoints 404/410 via `ReplaceOneAsync`; helper de parse já existe (`WebPushSubscriptionDto`) |
+| `StarkAgroAPI.Tests/Domain/Handlers/Users/RegisterWebPushSubscriptionHandlerTests.cs` | Novos cenários (dedup, migração, cap) |
 
 ## MongoDB Changes
 Campo novo `WebPushSubscriptions` (array de string) em `users` — default vazio, sem migração/índice.
@@ -35,6 +35,6 @@ Inalterado — handler continua operando no usuário resolvido pelo controller (
 
 ## Verification
 ```bash
-dotnet test AgripeWebAPI.Tests/AgripeWebAPI.Tests.csproj
+dotnet test StarkAgroAPI.Tests/StarkAgroAPI.Tests.csproj
 ```
 Pós-deploy: ativar notificações no iPhone e abrir o site no Chrome desktop; conferir no MongoDB que `WebPushSubscriptions` tem 2 entradas (endpoints `web.push.apple.com` + `fcm.googleapis.com`); disparar alerta de teste (subir `LimiteInferior` de um pivô) e receber o push em ambos os dispositivos.

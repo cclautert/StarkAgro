@@ -168,7 +168,7 @@ export default function App() {
       {/* ── Header ── */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20, flexWrap: "wrap", gap: 12 }}>
         <div>
-          <div style={{ fontSize: 11, color: "#64748b", letterSpacing: 1, textTransform: "uppercase", marginBottom: 2 }}>AgripeWeb · Pivô Central — Quadrante 1</div>
+          <div style={{ fontSize: 11, color: "#64748b", letterSpacing: 1, textTransform: "uppercase", marginBottom: 2 }}>StarkAgro · Pivô Central — Quadrante 1</div>
           <h1 style={{ fontSize: 20, fontWeight: 700, margin: 0, color: "#f1f5f9" }}>Dashboard · Sensor S-01 — Umidade</h1>
         </div>
         <div style={{ display: "flex", gap: 8 }}>
@@ -360,7 +360,7 @@ export default function App() {
       </div>
 
       <div style={{ textAlign: "center", marginTop: 16, fontSize: 11, color: "#334155" }}>
-        AgripeWeb · Mockup de Análise de Tendência · Dados simulados para visualização
+        StarkAgro · Mockup de Análise de Tendência · Dados simulados para visualização
       </div>
     </div>
   );

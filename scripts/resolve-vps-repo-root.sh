@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
-# Resolve AgripeWeb repo root on Hostinger VPS (prints absolute path to stdout).
+# Resolve StarkAgro repo root on Hostinger VPS (prints absolute path to stdout).
 set -euo pipefail
 
-REQUIRED_DIRS=(AgripeWebUI AgripeWebAPI AgripeWebWorker docker)
+REQUIRED_DIRS=(StarkAgroUI StarkAgroAPI StarkAgroWorker docker)
 
 has_all_app_dirs() {
   local base="$1"
-  [[ -f "$base/AgripeWebUI/Dockerfile" ]] || return 1
-  [[ -f "$base/AgripeWebAPI/Dockerfile" ]] || return 1
-  [[ -f "$base/AgripeWebWorker/Dockerfile" ]] || return 1
+  [[ -f "$base/StarkAgroUI/Dockerfile" ]] || return 1
+  [[ -f "$base/StarkAgroAPI/Dockerfile" ]] || return 1
+  [[ -f "$base/StarkAgroWorker/Dockerfile" ]] || return 1
   [[ -f "$base/docker/docker-compose.yml" ]] || return 1
   return 0
 }
@@ -18,7 +18,7 @@ restore_app_dirs() {
   cd "$root"
   echo "Restoring tracked application directories under $root"
   git sparse-checkout disable >/dev/null 2>&1 || true
-  git checkout -f HEAD -- AgripeWebUI AgripeWebAPI AgripeWebWorker docker scripts
+  git checkout -f HEAD -- StarkAgroUI StarkAgroAPI StarkAgroWorker docker scripts
   for d in "${REQUIRED_DIRS[@]}"; do
     if [[ ! -d "$d" ]]; then
       echo "WARN: missing $d — restoring from git"
@@ -46,7 +46,7 @@ collect_candidates() {
   raw+=("/opt")
 
   local found_ui
-  found_ui=$(find /opt -maxdepth 5 -type f -path '*/AgripeWebUI/Dockerfile' 2>/dev/null | head -1 || true)
+  found_ui=$(find /opt -maxdepth 5 -type f -path '*/StarkAgroUI/Dockerfile' 2>/dev/null | head -1 || true)
   if [[ -n "$found_ui" ]]; then
     raw+=("$(dirname "$(dirname "$found_ui")")")
   fi
@@ -82,7 +82,7 @@ pick_repo_root() {
     fi
   done < <(collect_candidates "$start")
 
-  echo "ERROR: Could not resolve AgripeWeb git repo root with required app directories" >&2
+  echo "ERROR: Could not resolve StarkAgro git repo root with required app directories" >&2
   collect_candidates "$start" | while IFS= read -r candidate; do
     echo "Candidate $candidate (git=$([[ -d "$candidate/.git" ]] && echo yes || echo no)):" >&2
     ls -la "$candidate" >&2 || true

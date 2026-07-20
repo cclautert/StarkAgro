@@ -1,6 +1,6 @@
 # Pivot Location Map — Implementation Plan
 
-Issue: https://github.com/cclautert/AgripeWeb/issues/17
+Issue: https://github.com/cclautert/StarkAgro/issues/17
 
 ## Context
 
@@ -71,38 +71,38 @@ When the pivot has no coordinates: `hasCoordinates: false`, `forecast: null`, `m
 
 ## Files to Create
 
-- `AgripeWebAPI/Domain/Commands/Requests/Pivots/GetPivotForecastRequest.cs`
-- `AgripeWebAPI/Domain/Commands/Responses/Pivots/GetPivotForecastResponse.cs`
-- `AgripeWebAPI/Domain/Handlers/Pivots/GetPivotForecastHandler.cs`
-- `AgripeWebAPI.Tests/Domain/Handlers/Pivots/GetPivotForecastHandlerTests.cs`
-- `AgripeWebAPI.Tests/Domain/Handlers/Pivots/EditPivotHandlerTests.cs` (currently absent — added to cover the tenant fix and new validation)
-- `AgripeWebUI/src/app/components/pivot-location-map/pivot-location-map.component.ts`
-- `AgripeWebUI/src/app/components/pivot-location-map/pivot-location-map.component.html`
-- `AgripeWebUI/src/app/components/pivot-location-map/pivot-location-map.component.css`
+- `StarkAgroAPI/Domain/Commands/Requests/Pivots/GetPivotForecastRequest.cs`
+- `StarkAgroAPI/Domain/Commands/Responses/Pivots/GetPivotForecastResponse.cs`
+- `StarkAgroAPI/Domain/Handlers/Pivots/GetPivotForecastHandler.cs`
+- `StarkAgroAPI.Tests/Domain/Handlers/Pivots/GetPivotForecastHandlerTests.cs`
+- `StarkAgroAPI.Tests/Domain/Handlers/Pivots/EditPivotHandlerTests.cs` (currently absent — added to cover the tenant fix and new validation)
+- `StarkAgroUI/src/app/components/pivot-location-map/pivot-location-map.component.ts`
+- `StarkAgroUI/src/app/components/pivot-location-map/pivot-location-map.component.html`
+- `StarkAgroUI/src/app/components/pivot-location-map/pivot-location-map.component.css`
 
 ## Files to Modify
 
 ### Backend
-- `AgripeWebAPI/Models/Entities/Pivot.cs` — add `double? Altitude`, `string? LocationAddress`, `DateTime? LocationUpdatedAt`.
-- `AgripeWebAPI/Domain/Commands/Requests/Pivots/CreatePivotRequest.cs` — add `Altitude`, `LocationAddress`.
-- `AgripeWebAPI/Domain/Commands/Requests/Pivots/EditPivotRequest.cs` — add `Altitude`, `LocationAddress`.
-- `AgripeWebAPI/Domain/Commands/Responses/Pivots/GetPivotResponse.cs` — add `Altitude`, `LocationAddress`, `LocationUpdatedAt`.
-- `AgripeWebAPI/Domain/Handlers/Pivots/CreatePivotHandler.cs` — validate ranges via `INotifier`, persist new fields, set `LocationUpdatedAt = DateTime.UtcNow` when coordinates supplied. Inject `INotifier` (currently throws — but handler creation is straightforward; the invalid-input path will switch to `_notifier.Handle(...) → return null`).
-- `AgripeWebAPI/Domain/Handlers/Pivots/EditPivotHandler.cs` — refactor: inject `ICurrentUserContext` and `INotifier`; filter find by `Id == request.Id && UserId == _currentUser.UserId`; replace `throw KeyNotFoundException` with `_notifier.Handle(...) + return null`; validate ranges; update `LocationUpdatedAt` only when coordinates change.
-- `AgripeWebAPI/Controllers/PivotController.cs` — add `GET /forecast` action (`[Authorize]`, sets `command.UserId = GetCurrentUserId()`, returns `CustomResponse(...)`).
-- `AgripeWebAPI/Configuration/WeatherForecastSettings.cs` — add `int PivotDashboardForecastDays { get; set; } = 7;`.
-- `AgripeWebAPI/appsettings.json` and `appsettings.Development.json` — add `"PivotDashboardForecastDays": 7` under the `WeatherForecast` section.
-- `AgripeWebAPI.Tests/Domain/Handlers/Pivots/CreatePivotHandlerTests.cs` — extend with happy-path-with-coords, invalid-lat, invalid-lon, invalid-altitude, no-user-context cases.
+- `StarkAgroAPI/Models/Entities/Pivot.cs` — add `double? Altitude`, `string? LocationAddress`, `DateTime? LocationUpdatedAt`.
+- `StarkAgroAPI/Domain/Commands/Requests/Pivots/CreatePivotRequest.cs` — add `Altitude`, `LocationAddress`.
+- `StarkAgroAPI/Domain/Commands/Requests/Pivots/EditPivotRequest.cs` — add `Altitude`, `LocationAddress`.
+- `StarkAgroAPI/Domain/Commands/Responses/Pivots/GetPivotResponse.cs` — add `Altitude`, `LocationAddress`, `LocationUpdatedAt`.
+- `StarkAgroAPI/Domain/Handlers/Pivots/CreatePivotHandler.cs` — validate ranges via `INotifier`, persist new fields, set `LocationUpdatedAt = DateTime.UtcNow` when coordinates supplied. Inject `INotifier` (currently throws — but handler creation is straightforward; the invalid-input path will switch to `_notifier.Handle(...) → return null`).
+- `StarkAgroAPI/Domain/Handlers/Pivots/EditPivotHandler.cs` — refactor: inject `ICurrentUserContext` and `INotifier`; filter find by `Id == request.Id && UserId == _currentUser.UserId`; replace `throw KeyNotFoundException` with `_notifier.Handle(...) + return null`; validate ranges; update `LocationUpdatedAt` only when coordinates change.
+- `StarkAgroAPI/Controllers/PivotController.cs` — add `GET /forecast` action (`[Authorize]`, sets `command.UserId = GetCurrentUserId()`, returns `CustomResponse(...)`).
+- `StarkAgroAPI/Configuration/WeatherForecastSettings.cs` — add `int PivotDashboardForecastDays { get; set; } = 7;`.
+- `StarkAgroAPI/appsettings.json` and `appsettings.Development.json` — add `"PivotDashboardForecastDays": 7` under the `WeatherForecast` section.
+- `StarkAgroAPI.Tests/Domain/Handlers/Pivots/CreatePivotHandlerTests.cs` — extend with happy-path-with-coords, invalid-lat, invalid-lon, invalid-altitude, no-user-context cases.
 
 ### Front-end
-- `AgripeWebUI/src/app/models/pivot.model.ts` — add `latitude?`, `longitude?`, `altitude?`, `locationAddress?`, `locationUpdatedAt?`.
-- `AgripeWebUI/src/app/services/pivot.service.ts` — add `getForecast(pivotId: number, days = 7): Observable<PivotForecast>`.
-- `AgripeWebUI/src/app/components/pivot-form/pivot-form.component.ts` — extend reactive form with lat/lon/altitude/locationAddress controls (validators and `disabled: true` so they're filled only via the map); add `openLocationMap()` opening `MatDialog` with `PivotLocationMapComponent`; on submit forward all fields.
-- `AgripeWebUI/src/app/components/pivot-form/pivot-form.component.html` — add the "Selecionar Localização no Mapa" button, lat/lon/altitude/address read-only fields, and validation messages.
-- `AgripeWebUI/src/app/components/pivot-form/pivot-form.component.css` — minor styles for the location panel.
-- `AgripeWebUI/src/app/components/dashboard/dashboard.component.ts` — add `forecast: PivotForecast | null`; subscribe to `pivotService.getForecast(...)` after `pivoId` is known.
-- `AgripeWebUI/src/app/components/dashboard/dashboard.component.html` — add a forecast tile (7-day strip with date / precip / probability) and a "configure location" CTA when `forecast.hasCoordinates === false`.
-- `AgripeWebUI/package.json` — add `leaflet` (~1.9) and `@types/leaflet` (dev). Add `leaflet/dist/leaflet.css` import in `pivot-location-map.component.ts` (or `angular.json` if global is preferred — chosen: per-component to keep the bundle lazy).
+- `StarkAgroUI/src/app/models/pivot.model.ts` — add `latitude?`, `longitude?`, `altitude?`, `locationAddress?`, `locationUpdatedAt?`.
+- `StarkAgroUI/src/app/services/pivot.service.ts` — add `getForecast(pivotId: number, days = 7): Observable<PivotForecast>`.
+- `StarkAgroUI/src/app/components/pivot-form/pivot-form.component.ts` — extend reactive form with lat/lon/altitude/locationAddress controls (validators and `disabled: true` so they're filled only via the map); add `openLocationMap()` opening `MatDialog` with `PivotLocationMapComponent`; on submit forward all fields.
+- `StarkAgroUI/src/app/components/pivot-form/pivot-form.component.html` — add the "Selecionar Localização no Mapa" button, lat/lon/altitude/address read-only fields, and validation messages.
+- `StarkAgroUI/src/app/components/pivot-form/pivot-form.component.css` — minor styles for the location panel.
+- `StarkAgroUI/src/app/components/dashboard/dashboard.component.ts` — add `forecast: PivotForecast | null`; subscribe to `pivotService.getForecast(...)` after `pivoId` is known.
+- `StarkAgroUI/src/app/components/dashboard/dashboard.component.html` — add a forecast tile (7-day strip with date / precip / probability) and a "configure location" CTA when `forecast.hasCoordinates === false`.
+- `StarkAgroUI/package.json` — add `leaflet` (~1.9) and `@types/leaflet` (dev). Add `leaflet/dist/leaflet.css` import in `pivot-location-map.component.ts` (or `angular.json` if global is preferred — chosen: per-component to keep the bundle lazy).
 - `CLAUDE.md` — extend the Pivot entity bullet (new fields), add the forecast endpoint to UI conventions, mention Leaflet.
 
 ## MongoDB Changes
@@ -132,7 +132,7 @@ Every new query is scoped by `_currentUser.UserId`:
 - **R1 (CRITICAL): EditPivotHandler tenant leak.** Pre-existing bug we are inheriting because we are extending the handler. Must fix in this PR.
 - **R2 (out of scope): GetPivotHandler also lacks tenant scoping.** Same pattern. Not touched by #17 but should be fixed in a follow-up — flagged for the review report.
 - **R3: Map provider.** Issue text mentions Google Maps as primary option but flags cost. Plan uses **Leaflet + OpenStreetMap** (free, MIT, no API key). If the user wants Google Maps, the map component would need a `@angular/google-maps` swap and a key. **Confirm choice before implementation.**
-- **R4: Nominatim TOS.** Free reverse-geocoding limit is 1 request/sec. Acceptable for interactive search. We send a `User-Agent: AgripeWeb/1.0` header to comply with their usage policy.
+- **R4: Nominatim TOS.** Free reverse-geocoding limit is 1 request/sec. Acceptable for interactive search. We send a `User-Agent: StarkAgro/1.0` header to comply with their usage policy.
 - **R5: SSR safety.** Leaflet requires `window`. Component does dynamic `import('leaflet')` inside `ngAfterViewInit`, gated by `typeof window !== 'undefined'`, so the SSR build succeeds (Angular 19 with `provideClientHydration`).
 - **R6: Issue says fields will be NOT NULL after rollout, but AC7 requires graceful behaviour for legacy pivots without coords.** We keep them nullable and let the UI prompt for coordinates on legacy records — matches AC7. The "NOT NULL" line in the issue is treated as a target state, not a hard requirement now.
 - **R7: Forecast horizon.** Open-Meteo supports up to 16 days; we cap at 14 in the validation to be safe. Default 7 from settings.
@@ -148,12 +148,12 @@ Every new query is scoped by `_currentUser.UserId`:
 ### Build
 ```bash
 # Kill any running API exe first to avoid MSB3027
-dotnet build AgripeWebAPI/AgripeWebAPI.csproj
+dotnet build StarkAgroAPI/StarkAgroAPI.csproj
 ```
 
 ### Tests
 ```bash
-dotnet test AgripeWebAPI.Tests/AgripeWebAPI.Tests.csproj
+dotnet test StarkAgroAPI.Tests/StarkAgroAPI.Tests.csproj
 ```
 
 ### Sample HTTP requests
@@ -191,7 +191,7 @@ GET /api/v1/pivot/forecast?pivotId=42
 ```
 
 ### Manual UI smoke test
-1. `cd AgripeWebUI && npm install && npm run start`
+1. `cd StarkAgroUI && npm install && npm run start`
 2. Navigate to `/pivots/novo`, click **Selecionar Localização no Mapa**.
 3. Click on the map → coords appear; drag the marker → coords update; click **Usar minha localização atual** → map centres on browser geolocation; type an address in the search → autocomplete works.
 4. Confirm → form fields populated. Save → returns to list.

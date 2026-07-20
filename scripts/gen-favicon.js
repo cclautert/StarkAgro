@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Generates favicon.ico (16x16 + 32x32 PNG-in-ICO) for AgripeWeb.
+// Generates favicon.ico (16x16 + 32x32 PNG-in-ICO) for StarkAgro.
 // Brand: water drop, gradient from #38bdf8 (top) to #2563eb (bottom).
 // No external deps — uses only Node.js built-ins (zlib + Buffer).
 
@@ -134,7 +134,7 @@ const entries = sizes.map((s, i) => {
 
 const ico = Buffer.concat([header, ...entries, ...pngs]);
 
-const dest = path.join(__dirname, '../AgripeWebUI/public/favicon.ico');
+const dest = path.join(__dirname, '../StarkAgroUI/public/favicon.ico');
 fs.writeFileSync(dest, ico);
 console.log(`Written ${ico.length} bytes → ${dest}`);
 console.log(`Sizes: ${sizes.map((s, i) => `${s}x${s} (${pngs[i].length}B)`).join(', ')}`);

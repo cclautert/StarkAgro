@@ -6,7 +6,7 @@ Firmware running on edge devices (ESP8266 / ESP32) can perform local anomaly det
 
 ## MQTT Payload Schema
 
-Topic: configured via `MqttSettings:Topic` (default `agripeweb/reads`)
+Topic: configured via `MqttSettings:Topic` (default `starkagro/reads`)
 
 ### Minimal (no edge detection)
 

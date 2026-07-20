@@ -105,10 +105,10 @@ secrets.json
 *.secrets.json
 
 ## Firmware secrets — never commit credentials or LittleFS images
-AgripeWebIOT/**/secrets.h
-AgripeWebIOT/**/.pio/
-AgripeWebIOT/**/littlefs.bin
-AgripeWebIOT/**/spiffs.bin
+StarkAgroIOT/**/secrets.h
+StarkAgroIOT/**/.pio/
+StarkAgroIOT/**/littlefs.bin
+StarkAgroIOT/**/spiffs.bin
 
 ## Database
 *.db

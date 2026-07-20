@@ -1,10 +1,10 @@
-# Contratação do time — AgripeWeb
+# Contratação do time — StarkAgro
 
 Documento de referência para a issue **Contratação do time** (planejamento de vagas e alocações).
 
 ## Objetivo
 
-Definir e contratar (ou alocar) o time mínimo viável para evoluir o **AgripeWeb** — plataforma de IoT agrícola para monitoramento de umidade em pivôs/quadrantes, dashboards, recomendações de irrigação com previsão de chuva, app web (Angular), API (.NET), firmware (ESP8266/ESP32) e app móvel (React Native).
+Definir e contratar (ou alocar) o time mínimo viável para evoluir o **StarkAgro** — plataforma de IoT agrícola para monitoramento de umidade em pivôs/quadrantes, dashboards, recomendações de irrigação com previsão de chuva, app web (Angular), API (.NET), firmware (ESP8266/ESP32) e app móvel (React Native).
 
 Repositório: monorepo com API, UI, IoT, Docker, CI/CD e Terraform (AWS).
 
@@ -22,7 +22,7 @@ Visão geral do produto: [README.md](../README.md).
 
 ### Fase 1 — Produto em produção e evolução contínua (mínimo)
 
-| Papel | Dedicação sugerida | Foco no AgripeWeb |
+| Papel | Dedicação sugerida | Foco no StarkAgro |
 |-------|-------------------|-------------------|
 | **Tech Lead / Arquiteto** | 20–40% ou 1 FTE compartilhado | Visão técnica, revisão de PRs, tenant isolation, padrões CQRS/MongoDB, roadmap |
 | **Backend .NET** | 1 FTE | Handlers MediatR, API REST, auth JWT/OAuth, integrações (previsão tempo), testes xUnit |
@@ -36,7 +36,7 @@ Visão geral do produto: [README.md](../README.md).
 | Papel | Quando contratar | Foco |
 |-------|------------------|------|
 | **Engenheiro IoT / Embarcados** | Sensores em escala ou LoRa | Firmware ESP8266/ESP32, gateway LoRa, confiabilidade e consumo |
-| **Mobile React Native** | App móvel no roadmap | AgripeWebUI-Mobile, leitura em campo offline/online |
+| **Mobile React Native** | App móvel no roadmap | StarkAgroUI-Mobile, leitura em campo offline/online |
 | **Data / ML (opcional)** | Insights com IA | Refinar previsão e recomendações (ex.: Google Weather AI, anomalias) |
 
 ### Papéis que podem ser terceirizados no início
@@ -142,4 +142,4 @@ Depois: PO agro → QA → IoT conforme crescer a base de pivôs/sensores.
 
 ## Prompt para delegação (Paperclip / gestão)
 
-> Montar proposta de time para o projeto **AgripeWeb** (IoT agrícola: API .NET + MongoDB, Angular 19, firmware ESP, React Native, Docker/CI, deploy VPS e AWS). Preciso de: (1) time mínimo Fase 1 com papéis, % de dedicação e senioridade; (2) time Fase 2 para IoT em escala e mobile; (3) matriz RACI API/UI/IoT/Infra; (4) ordem de contratação e orçamento rough; (5) critérios de aceite e riscos sem cada papel. Basear neste documento e no README do repositório.
+> Montar proposta de time para o projeto **StarkAgro** (IoT agrícola: API .NET + MongoDB, Angular 19, firmware ESP, React Native, Docker/CI, deploy VPS e AWS). Preciso de: (1) time mínimo Fase 1 com papéis, % de dedicação e senioridade; (2) time Fase 2 para IoT em escala e mobile; (3) matriz RACI API/UI/IoT/Infra; (4) ordem de contratação e orçamento rough; (5) critérios de aceite e riscos sem cada papel. Basear neste documento e no README do repositório.

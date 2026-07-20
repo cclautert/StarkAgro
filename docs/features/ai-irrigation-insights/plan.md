@@ -1,6 +1,6 @@
 # AI Irrigation Insights
 
-Issue: https://github.com/cclautert/AgripeWeb/issues/26
+Issue: https://github.com/cclautert/StarkAgro/issues/26
 
 ## Context
 
@@ -38,22 +38,22 @@ Issue: https://github.com/cclautert/AgripeWeb/issues/26
 
 ## Files Created
 
-- `AgripeWebAPI/Configuration/AISettings.cs`
-- `AgripeWebAPI/Models/Interfaces/IAIInsightsService.cs`
-- `AgripeWebAPI/Services/AIInsights/PivotAIContext.cs`
-- `AgripeWebAPI/Services/AIInsights/ClaudeInsightsService.cs`
-- `AgripeWebAPI/Domain/Commands/Requests/Pivots/GetPivotAIInsightsRequest.cs`
-- `AgripeWebAPI/Domain/Commands/Responses/Pivots/PivotAIInsightsResponse.cs`
-- `AgripeWebAPI/Domain/Handlers/Pivots/GetPivotAIInsightsHandler.cs`
-- `AgripeWebAPI.Tests/Domain/Handlers/Pivots/GetPivotAIInsightsHandlerTests.cs`
+- `StarkAgroAPI/Configuration/AISettings.cs`
+- `StarkAgroAPI/Models/Interfaces/IAIInsightsService.cs`
+- `StarkAgroAPI/Services/AIInsights/PivotAIContext.cs`
+- `StarkAgroAPI/Services/AIInsights/ClaudeInsightsService.cs`
+- `StarkAgroAPI/Domain/Commands/Requests/Pivots/GetPivotAIInsightsRequest.cs`
+- `StarkAgroAPI/Domain/Commands/Responses/Pivots/PivotAIInsightsResponse.cs`
+- `StarkAgroAPI/Domain/Handlers/Pivots/GetPivotAIInsightsHandler.cs`
+- `StarkAgroAPI.Tests/Domain/Handlers/Pivots/GetPivotAIInsightsHandlerTests.cs`
 
 ## Files Modified
 
-- `AgripeWebAPI/Configuration/ApiConfig.cs` — `AISettings`, `HttpClient<ClaudeInsightsService>`, `IAIInsightsService`
-- `AgripeWebAPI/appsettings.Development.json` — `AI` section with placeholder key
-- `AgripeWebAPI/Controllers/PivotController.cs` — `POST {pivotId}/ai-insights`
-- `AgripeWebUI/src/app/services/pivot.service.ts` — `getAIInsights()`
-- `AgripeWebUI/src/app/components/dashboard/dashboard.component.*` — AI insights panel
+- `StarkAgroAPI/Configuration/ApiConfig.cs` — `AISettings`, `HttpClient<ClaudeInsightsService>`, `IAIInsightsService`
+- `StarkAgroAPI/appsettings.Development.json` — `AI` section with placeholder key
+- `StarkAgroAPI/Controllers/PivotController.cs` — `POST {pivotId}/ai-insights`
+- `StarkAgroUI/src/app/services/pivot.service.ts` — `getAIInsights()`
+- `StarkAgroUI/src/app/components/dashboard/dashboard.component.*` — AI insights panel
 
 ## MongoDB Changes
 

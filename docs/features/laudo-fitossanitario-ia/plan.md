@@ -1,17 +1,17 @@
-# Laudo Fitossanitário Assistido por IA — AgripeWeb
+# Laudo Fitossanitário Assistido por IA — StarkAgro
 
 ## Context
 
-O cunhado do usuário é **engenheiro agrônomo** e cuida da fazenda onde o AgripeWeb será testado. O objetivo não é só técnico: é criar dentro do AgripeWeb um produto que **ele possa vender casado com o software** — assessoria agronômica recorrente, não uma venda de licença.
+O cunhado do usuário é **engenheiro agrônomo** e cuida da fazenda onde o StarkAgro será testado. O objetivo não é só técnico: é criar dentro do StarkAgro um produto que **ele possa vender casado com o software** — assessoria agronômica recorrente, não uma venda de licença.
 
-O gancho: o produtor vê uma planta com sintoma, fotografa, o AgripeWeb faz a **pré-análise por IA**, gera um **laudo em PT-BR**, e o **agrônomo revisa, edita e assina** antes de voltar ao cliente. A IA faz o volume; o agrônomo entrega o que a IA nunca poderá entregar: responsabilidade técnica.
+O gancho: o produtor vê uma planta com sintoma, fotografa, o StarkAgro faz a **pré-análise por IA**, gera um **laudo em PT-BR**, e o **agrônomo revisa, edita e assina** antes de voltar ao cliente. A IA faz o volume; o agrônomo entrega o que a IA nunca poderá entregar: responsabilidade técnica.
 
 ### O que a pesquisa de mercado mostrou (fundamenta as decisões)
 
 1. **Modelo especializado > LLM genérico para doença de planta.** Em benchmark agrícola, o melhor VLM genérico (Gemini-3 Pro) fica em ~62% de acerto; modelos especializados chegam a 90%+. Um laudo que um agrônomo assina não pode nascer de um chute de 62%.
 2. **[Kindwise crop.health](https://www.kindwise.com/crop-health)**: REST, imagem base64, **23 culturas / 288 doenças e pragas**, retorna doença + probabilidade + sintomas + severidade + tratamento, com localização de idioma. **€0,01–0,05 por foto** (100 créditos grátis para testar). O custo de IA por laudo é desprezível perto do preço de uma assessoria.
 3. **O valor está na assinatura do agrônomo, e a lei garante isso.** Receituário agronômico é obrigatório para agrotóxico (Lei 14.785/2023) e **só engenheiro agrônomo com CREA + ART pode prescrever** — já válido com assinatura eletrônica em 16 estados. **Nenhuma IA pode substituir esse ato.** A IA é a triagem; ele é o produto.
-4. **Diferencial que ninguém tem:** concorrentes (Plantix, On Agri) diagnosticam a foto isolada. O AgripeWeb já tem **umidade do solo, histórico de irrigação, anomalias de sensor e previsão do tempo daquele pivô** — o laudo pode dizer *"antracnose provável (78%); a umidade do solo ficou acima de 85% por 6 dias e há chuva prevista — condição favorável ao patógeno; reveja a lâmina do quadrante 3"*. Isso é assessoria, não classificação de imagem.
+4. **Diferencial que ninguém tem:** concorrentes (Plantix, On Agri) diagnosticam a foto isolada. O StarkAgro já tem **umidade do solo, histórico de irrigação, anomalias de sensor e previsão do tempo daquele pivô** — o laudo pode dizer *"antracnose provável (78%); a umidade do solo ficou acima de 85% por 6 dias e há chuva prevista — condição favorável ao patógeno; reveja a lâmina do quadrante 3"*. Isso é assessoria, não classificação de imagem.
 
 ### Decisões tomadas com o usuário
 - **Perfil "Agrônomo" com carteira de clientes** (produtor → agrônomo vinculado; ele vê a fila de todos os clientes).
@@ -30,7 +30,7 @@ Documento único com **duas seções**, para dois leitores:
 - A dor: *"Viu uma mancha na folha. E agora? Espera o agrônomo poder vir? Chuta o defensivo? Perde o talhão?"*
 - Como funciona em 3 passos: **tira a foto → laudo em minutos → agrônomo assina**.
 - O que o laudo entrega (mockup da tela de laudo): doença provável com probabilidade, **correlação com a irrigação e a chuva prevista do SEU pivô**, recomendação de manejo, assinatura do Eng. Agrônomo com CREA.
-- Por que não é "só um app de foto": o AgripeWeb já sabe a umidade do seu solo e o que vai chover.
+- Por que não é "só um app de foto": o StarkAgro já sabe a umidade do seu solo e o que vai chover.
 - Planos e preço (a definir com o cunhado — deixar tabela com placeholders).
 
 **Parte 2 — Business case (para o cunhado / sócio):**
@@ -42,7 +42,7 @@ Documento único com **duas seções**, para dois leitores:
 
 **Como gerar:** escrever `comercial.html` autocontido (CSS inline, `@page` para A4, sem assets externos) e converter com Edge headless — `msedge --headless --disable-gpu --print-to-pdf="...comercial.pdf" --no-pdf-header-footer "file:///...comercial.html"` (Edge está no Windows 11; fallback: Chrome, mesma flag). Manter o `.html` versionado para futuras edições.
 
-### 2. Cinco issues épicas no GitHub (`cclautert/AgripeWeb`)
+### 2. Cinco issues épicas no GitHub (`cclautert/StarkAgro`)
 
 Uma por fase, cada uma com **objetivo, critérios de aceite e checklist de tarefas**, criadas via `gh issue create` (confirmar `gh auth status` antes):
 
@@ -68,7 +68,7 @@ Isso reduz o "furo" no isolamento por tenant de N coleções para 1, torna a aut
 
 ## Modelo de dados
 
-### `PlantDiagnosis` — `AgripeWebAPI/Models/Entities/PlantDiagnosis.cs` (coleção `plant_diagnoses`)
+### `PlantDiagnosis` — `StarkAgroAPI/Models/Entities/PlantDiagnosis.cs` (coleção `plant_diagnoses`)
 
 Herda de `Entity` (id int sequencial via `GetNextIdAsync`).
 
@@ -131,7 +131,7 @@ O agrônomo **não** ganha acesso a `/v1/pivot/*`, `/v1/sensor/*`, `/v1/reads/*`
 
 - `agpDBContext`: guardar o `IMongoDatabase` em campo (hoje é variável local) e expor `IGridFSBucket DiagnosisImages` (bucket `diagnosis_images`). Envolver em `IDiagnosisImageStore` (Upload/Download/Delete) para os handlers ficarem testáveis.
 - Servir de volta: `GET /v1/diagnosis/{id}/image` aplica `CanAccessAsync` **antes** de abrir o stream. Como `<img src>` não manda `Authorization`, o front busca como **blob** (`responseType: 'blob'` → `createObjectURL`, com `revokeObjectURL` no destroy). Nada de token na query string.
-- **BLOQUEADOR DE INFRA:** nenhum `client_max_body_size` configurado → **default de 1MB do nginx rejeita foto de celular (2–8MB) com 413 silencioso.** Adicionar `client_max_body_size 12m;` em **`AgripeWebUI/nginx.conf` E `docker/nginx/nginx.conf`** (o proxy externo rejeita antes de o interno ver).
+- **BLOQUEADOR DE INFRA:** nenhum `client_max_body_size` configurado → **default de 1MB do nginx rejeita foto de celular (2–8MB) com 413 silencioso.** Adicionar `client_max_body_size 12m;` em **`StarkAgroUI/nginx.conf` E `docker/nginx/nginx.conf`** (o proxy externo rejeita antes de o interno ver).
 - Defesas: downscale no front (canvas, máx 1600px, JPEG q0.8 → ~300–600KB), `[RequestSizeLimit]`, allowlist de content-type **+ sniff de magic bytes**, dedup por `ImageSha256`.
 
 ---
@@ -140,14 +140,14 @@ O agrônomo **não** ganha acesso a `/v1/pivot/*`, `/v1/sensor/*`, `/v1/reads/*`
 
 `POST /v1/diagnosis` grava a imagem, resolve o `AgronomistId` do vínculo ativo, insere `Status=Uploaded` e devolve **202** — a API não segura a request por 10–30s esperando IA.
 
-`PlantDiagnosisProcessor` (novo `BackgroundService` no Worker, `PeriodicTimer` de 30s — o produtor está olhando a tela; molde: `AgripeWebWorker/Services/IrrigationAlertScheduler.cs:8-70`):
+`PlantDiagnosisProcessor` (novo `BackgroundService` no Worker, `PeriodicTimer` de 30s — o produtor está olhando a tela; molde: `StarkAgroWorker/Services/IrrigationAlertScheduler.cs:8-70`):
 1. **Claim atômico:** `FindOneAndUpdateAsync` filtrando `Status=="Uploaded" && NextAttemptAt <= now`, setando `Processing` + `WorkerId`. É o lock — seguro com N workers, sem Redis/Hangfire (mesmo espírito do `GetNextIdAsync`).
 2. **Reclaim de zumbis:** `Processing` há mais de 10min → volta para `Uploaded` (ou `Failed` se `RetryCount >= 3`). Backoff 1/5/15 min.
 3. Monta `ContextSnapshot` → Kindwise → LLM → grava laudo → status final → `IPushNotificationService.SendAsync` (já registrado no worker) para produtor e/ou agrônomo.
 
 **Resolvendo `WorkerUserContext.UserId == null`:** a lógica de processamento **não vira handler MediatR**. Vira serviço puro `IPlantDiagnosisProcessingService.ProcessAsync(diagnosisId, ct)` que **não injeta `ICurrentUserContext`** — o tenant está *dentro* do documento (`d.UserId`), que é o que todas as queries de contexto usam. Um handler MediatR seria auto-registrado pelo assembly scan (`ApiConfig.cs:105-108`) e bastaria alguém mapeá-lo num controller para virar um IDOR perfeito. Serviço fora do pipeline sinaliza "roda em contexto de sistema" e mantém a regra da casa **auditável por grep**.
 
-**Registro faltante no Worker:** `IWeatherForecastService`/`WeatherForecastOrchestrator` não está registrado lá (só OpenMeteo). Adicionar em `AgripeWebWorker/Program.cs`, espelhando `ApiConfig.cs:34-38`.
+**Registro faltante no Worker:** `IWeatherForecastService`/`WeatherForecastOrchestrator` não está registrado lá (só OpenMeteo). Adicionar em `StarkAgroWorker/Program.cs`, espelhando `ApiConfig.cs:34-38`.
 
 ---
 
@@ -209,7 +209,7 @@ Menu (`layout.component.html`): item "Laudos" para todos; seção `*ngIf="isAgro
 
 ---
 
-## Testes (`AgripeWebAPI.Tests/` — xUnit + Moq + `MongoMockHelper`)
+## Testes (`StarkAgroAPI.Tests/` — xUnit + Moq + `MongoMockHelper`)
 
 **A matriz de autorização cruzada é o entregável de segurança.** `[Theory]` para cada endpoint de leitura (detalhe, **imagem**) e de escrita (sign):
 
@@ -245,7 +245,7 @@ Por handler: `CreatePlantDiagnosisHandler` (ignora `request.UserId` forjado; sna
 ## Verificação
 
 0. **Entregáveis desta rodada:** abrir o `comercial.pdf` e conferir que as duas seções renderizaram em A4 sem cortes e sem depender de asset externo; conferir as 5 issues criadas com `gh issue list --label laudo-fitossanitario`.
-1. **Testes:** `dotnet test AgripeWebAPI.Tests/AgripeWebAPI.Tests.csproj` — a matriz de autorização cruzada tem que passar inteira (é o gate de merge desta feature).
+1. **Testes:** `dotnet test StarkAgroAPI.Tests/StarkAgroAPI.Tests.csproj` — a matriz de autorização cruzada tem que passar inteira (é o gate de merge desta feature).
 2. **Upload real (o que quebra primeiro):** subir o stack (`docker compose -f docker/docker-compose.yml up --build`), abrir `/diagnosticos/novo` **no celular pelo 4G**, tirar foto de uma folha e confirmar que **não volta 413** e que a imagem aparece na listagem. Fazer isso na Fase 0, antes de escrever uma linha de IA.
 3. **Pipeline de IA:** cadastrar a `CropHealthKey` (100 créditos grátis) em `/admin/ai-settings`, subir foto de folha visivelmente doente e acompanhar `Uploaded → Processing → PendingReview` no polling; conferir no Mongo que `ContextSnapshot` trouxe umidade/clima reais do pivô e que `AiReportMarkdown` **cita a correlação com o manejo** (é o diferencial — se o laudo não citar, o prompt está errado).
 4. **Fluxo do agrônomo (ponta a ponta):** criar um usuário agrônomo pelo admin, convidar o produtor, aceitar o convite, ver o laudo na fila, assinar — e confirmar que o produtor recebe o push e vê o selo de assinatura.

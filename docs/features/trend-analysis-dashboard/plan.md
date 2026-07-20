@@ -61,7 +61,7 @@ not daily aggregates. The UI must group readings by day before computing statist
 
 ## Files to Create
 
-### 1. `AgripeWebUI/src/app/services/trend-analysis.service.ts`
+### 1. `StarkAgroUI/src/app/services/trend-analysis.service.ts`
 
 Type: Angular service (pure computation, no HTTP calls)
 
@@ -114,7 +114,7 @@ Internal helpers (private methods):
 The service takes raw `Read[]` (from `GetAllReadBySensorIdResponse`), groups by UTC day, takes the
 last reading per day, applies moving average and regression, and returns the fully computed dataset.
 
-### 2. `AgripeWebUI/src/app/services/trend-analysis.service.spec.ts`
+### 2. `StarkAgroUI/src/app/services/trend-analysis.service.spec.ts`
 
 Type: Angular unit test (Jasmine/Karma)
 
@@ -139,7 +139,7 @@ the service file).
 
 ## Files to Modify
 
-### 1. `AgripeWebUI/src/app/components/dashboard/dashboard.component.ts`
+### 1. `StarkAgroUI/src/app/components/dashboard/dashboard.component.ts`
 
 Changes:
 - Inject `TrendAnalysisService` via `inject()` (already using `inject()` pattern in sensor-form).
@@ -170,7 +170,7 @@ datasets with `fill: '+1'` (fill between them) and a low `borderWidth: 0` for th
 Alternatively use the `chartjs-plugin-annotation` package for reference lines and areas — see Risk
 R1 below.
 
-### 2. `AgripeWebUI/src/app/components/dashboard/dashboard.component.html`
+### 2. `StarkAgroUI/src/app/components/dashboard/dashboard.component.html`
 
 Changes:
 - Add the toggle checkboxes row above the chart (Tendencia, Media Movel, Projecao).
@@ -182,7 +182,7 @@ Changes:
   Conformidade, Variabilidade) — all bound to `trendStats` properties.
 - All new elements follow the dark-theme CSS already established in `dashboard.component.css`.
 
-### 3. `AgripeWebUI/src/app/components/dashboard/dashboard.component.css`
+### 3. `StarkAgroUI/src/app/components/dashboard/dashboard.component.css`
 
 Changes:
 - Add CSS classes from the mockup's inline styles, converted to classes:
@@ -192,7 +192,7 @@ Changes:
 - Maintain the existing dark theme variables (`#0f172a`, `#1e293b`, `#334155`).
 - Add responsive breakpoints for the metric card grid (`flex-wrap: wrap`, `min-width: 130px`).
 
-### 4. `AgripeWebUI/src/app/models/read.model.ts`
+### 4. `StarkAgroUI/src/app/models/read.model.ts`
 
 No changes required — existing `Read` interface `{ sensorId, value, date }` is sufficient. The
 `TrendAnalysisService` consumes this directly.
@@ -358,7 +358,7 @@ confirm the call order is preserved when restructuring `loadReads()`.
 3. Modify `DashboardComponent` TypeScript — inject service, update `loadReads()`, add overlay state.
 4. Modify `DashboardComponent` HTML — add toggles, metric cards, analysis panel.
 5. Modify `DashboardComponent` CSS — add dark-theme utility classes.
-6. Run the Angular dev server (`npm run start` inside `AgripeWebUI/`) and verify visually against
+6. Run the Angular dev server (`npm run start` inside `StarkAgroUI/`) and verify visually against
    the mockup in `trend-analysis-mockup.jsx`.
 7. Run the full test suite (`ng test`).
 
@@ -369,14 +369,14 @@ confirm the call order is preserved when restructuring `loadReads()`.
 ### Angular unit tests
 
 ```bash
-cd AgripeWebUI
+cd StarkAgroUI
 npm run test -- --include=**/trend-analysis.service.spec.ts
 ```
 
 ### Full test suite
 
 ```bash
-cd AgripeWebUI
+cd StarkAgroUI
 npm run test
 ```
 
@@ -404,16 +404,16 @@ Verify:
 
 - `trend-analysis-mockup.jsx` — the exact visual specification; all formulas and colour codes are
   taken from this file.
-- `AgripeWebUI/src/app/components/dashboard/dashboard.component.ts` — existing chart setup,
+- `StarkAgroUI/src/app/components/dashboard/dashboard.component.ts` — existing chart setup,
   dataset structure (indices 0-3), `loadReads()` shape, `setDays()`, auto-refresh, route params.
-- `AgripeWebUI/src/app/components/dashboard/dashboard.component.html` — current template to extend.
-- `AgripeWebUI/src/app/components/dashboard/dashboard.component.css` — dark theme variables.
-- `AgripeWebUI/src/app/models/read.model.ts` — `Read` interface consumed by the service.
-- `AgripeWebUI/src/app/components/irrigation-dashboard/irrigation-dashboard.component.ts` — shows
+- `StarkAgroUI/src/app/components/dashboard/dashboard.component.html` — current template to extend.
+- `StarkAgroUI/src/app/components/dashboard/dashboard.component.css` — dark theme variables.
+- `StarkAgroUI/src/app/models/read.model.ts` — `Read` interface consumed by the service.
+- `StarkAgroUI/src/app/components/irrigation-dashboard/irrigation-dashboard.component.ts` — shows
   the multi-quadrant chart pattern; useful reference for `ComposedChart`-style multi-dataset builds
   in ng2-charts.
-- `AgripeWebUI/src/app/services/sensor.service.ts` — `getAllByPivotId` for context on how the
+- `StarkAgroUI/src/app/services/sensor.service.ts` — `getAllByPivotId` for context on how the
   existing sensor data flow works.
-- `AgripeWebUI/src/app/services/api.service.ts` — `getAllReadsBySensorId` call signature.
-- `AgripeWebAPI/Domain/Handlers/Reads/GetListReadBySensorIdHandler.cs` — confirms the `NumberOfReads`
+- `StarkAgroUI/src/app/services/api.service.ts` — `getAllReadsBySensorId` call signature.
+- `StarkAgroAPI/Domain/Handlers/Reads/GetListReadBySensorIdHandler.cs` — confirms the `NumberOfReads`
   parameter is days, not a record count.

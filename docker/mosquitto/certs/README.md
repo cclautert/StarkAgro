@@ -16,7 +16,7 @@ Place the following files here to enable the TLS listener on port 8883:
 # CA key and certificate
 openssl genrsa -out ca.key 4096
 openssl req -new -x509 -days 3650 -key ca.key -out ca.crt \
-  -subj "/CN=AgripeWeb MQTT CA"
+  -subj "/CN=StarkAgro MQTT CA"
 
 # Server key and CSR
 openssl genrsa -out server.key 2048

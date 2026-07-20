@@ -1,0 +1,34 @@
+﻿using StarkAgroAPI.Domain.Commands.Requests.Reads;
+using Xunit;
+
+namespace StarkAgroAPI.Tests.Domain.Commands.Requests.Reads
+{
+    public class GetListReadRequestTests
+    {
+        [Fact]
+        public void Can_Set_And_Get_Properties()
+        {
+            // Arrange
+            var request = new GetListReadRequest();
+
+            // Act
+            request.UserId = 5;
+            request.NumberOfReads = 25;
+
+            // Assert
+            Assert.Equal(5, request.UserId);
+            Assert.Equal(25, request.NumberOfReads);
+        }
+
+        [Fact]
+        public void Default_Values_Are_Correct()
+        {
+            // Arrange & Act
+            var request = new GetListReadRequest();
+
+            // Assert
+            Assert.Null(request.UserId);
+            Assert.Equal(10, request.NumberOfReads);
+        }
+    }
+}
