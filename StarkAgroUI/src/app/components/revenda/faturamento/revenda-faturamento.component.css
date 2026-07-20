@@ -1,0 +1,19 @@
+.billing-container { max-width: 800px; margin: 0 auto; padding: 1rem; }
+h2 { font-size: 1.4rem; margin: 0 0 .25rem; }
+.subtitle { color: #666; font-size: .9rem; margin: 0 0 1rem; }
+.state { color: #666; padding: 1rem 0; }
+.state.error { color: #c62828; }
+.total-panel { display: flex; flex-direction: column; gap: .2rem; background: #e8f5e9; border: 1px solid #cfe8d2; border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 1rem; }
+.total-label { color: #2e7d32; font-size: .85rem; }
+.total-value { font-size: 1.8rem; font-weight: 700; color: #1b5e20; }
+.total-sub { color: #557; font-size: .82rem; }
+.empty { color: #888; }
+.table-scroll { overflow-x: auto; }
+.billing-table { width: 100%; border-collapse: collapse; }
+.billing-table th, .billing-table td { text-align: left; padding: .55rem .6rem; border-bottom: 1px solid #eee; }
+.billing-table th.num, .billing-table td.num { text-align: right; }
+.client-name { font-weight: 600; }
+.client-email { color: #888; font-size: .8rem; }
+.foot-label { font-weight: 600; }
+.foot-total { font-weight: 700; }
+.disclaimer { color: #888; font-size: .8rem; margin-top: 1rem; }
