@@ -15,10 +15,6 @@ services:
     ports:
       - "80:80"
 
-  agripewebui-mobile:
-    ports:
-      - "3000:80"
-
   db:
     ports:
       - "27027:27017"

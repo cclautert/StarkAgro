@@ -65,6 +65,6 @@ Weak criteria ("make it work") require constant clarification.
 ## StarkAgro-specific behavior
 
 - **Multi-tenant** is a security requirement, not an optional refactor — always filter by `ICurrentUserContext.UserId`.
-- **IoT/API contract:** don't change read/login payloads without considering `StarkAgroIOT/` firmware.
+- **IoT/API contract:** don't change read/login payloads — devices are in the field and their firmware is no longer in this repo, so nothing here will fail to warn you.
 - **Irrigation thresholds** need explicit acceptance criteria; don't tune limiares silently.
 - **Secrets:** never commit real MongoDB, JWT, OAuth, or Wi-Fi credentials.

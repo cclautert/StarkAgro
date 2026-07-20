@@ -99,31 +99,6 @@ jobs:
       - name: Production build
         run: npm run build -- --configuration=production
 
-  mobile:
-    name: Mobile (React Native)
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: StarkAgroUI-Mobile
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
-        with:
-          node-version: "20"
-          cache: npm
-          cache-dependency-path: StarkAgroUI-Mobile/package-lock.json
-
-      - name: Install dependencies
-        run: npm ci
-
-      # Gate de cobertura ligado: o `coverageThreshold` do package.json (linhas/funcs 90%,
-      # branches 80%) agora é cumprido e `--coverage` o cobra — o CI falha se regredir.
-      - name: Unit tests + cobertura (Jest)
-        run: npx jest --ci --coverage
-
   docker-build:
     name: Docker images
     runs-on: ubuntu-latest

@@ -26,12 +26,11 @@ O acesso é **multi-tenant**: cada usuário autenticado (login/senha ou Google O
 |------------|-----------|
 | **StarkAgroAPI** | API REST (.NET 10, MediatR/CQRS, MongoDB, JWT/OAuth) |
 | **StarkAgroUI** | SPA Angular 19 (Material, Chart.js, proxy para API em desenvolvimento) |
-| **StarkAgroIOT** | Firmware Arduino para sensores (ESP8266, ESP32 LoRa gateway/slave) |
 
-Há também um app móvel em **StarkAgroUI-Mobile** (React Native) para consulta em campo, quando aplicável ao seu fluxo de deploy.
+O firmware dos sensores (ESP8266 / ESP32 LoRa) e o app móvel React Native não fazem mais parte deste repositório. Os dispositivos em campo continuam consumindo os endpoints de login e de leitura da API, então mudanças nesses contratos ainda precisam ser coordenadas com o firmware.
 
 ```
-Sensores (campo) → API (MongoDB) ← UI Web / Mobile
+Sensores (campo) → API (MongoDB) ← UI Web
                         ↓
               Previsão meteorológica (Open-Meteo / Google)
 ```
@@ -90,8 +89,6 @@ StarkAgro/
 ├── StarkAgroAPI/          # API REST e domínio (handlers MediatR)
 ├── StarkAgroAPI.Tests/    # Testes unitários (xUnit + Moq)
 ├── StarkAgroUI/           # Frontend Angular
-├── StarkAgroUI-Mobile/    # App móvel (opcional)
-├── StarkAgroIOT/          # Firmware dos sensores
 ├── docker/                # Compose e imagens
 ├── docs/                  # Documentação (deploy, features)
 ├── terraform/aws/         # Infraestrutura AWS

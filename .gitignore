@@ -104,12 +104,6 @@ out-tsc/
 secrets.json
 *.secrets.json
 
-## Firmware secrets — never commit credentials or LittleFS images
-StarkAgroIOT/**/secrets.h
-StarkAgroIOT/**/.pio/
-StarkAgroIOT/**/littlefs.bin
-StarkAgroIOT/**/spiffs.bin
-
 ## Database
 *.db
 *.sqlite

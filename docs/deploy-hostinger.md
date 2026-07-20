@@ -152,7 +152,7 @@ Em cada `push` bem-sucedido em `main`, após o CI passar:
 3. `docker image prune -f`
 4. Health check: `curl https://agripeweb.com/api/v1/health`
 
-Serviços **não** atualizados automaticamente neste pipeline: `agripewebui-mobile`, `nginx-proxy`, `certbot`.
+Serviços **não** atualizados automaticamente neste pipeline: `nginx-proxy`, `certbot`.
 
 ## Branch protection (recomendado)
 

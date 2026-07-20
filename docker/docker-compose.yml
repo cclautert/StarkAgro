@@ -50,23 +50,6 @@ services:
     networks:
       - app-network
 
-  agripewebui-mobile:
-    container_name: agripewebui-mobile
-    build:
-      context: ../StarkAgroUI-Mobile
-      dockerfile: Dockerfile
-      args:
-        - EXPO_PUBLIC_API_BASE_URL=/api/v1/
-        - EXPO_PUBLIC_GOOGLE_CLIENT_ID=728628470722-23le0egpfio5jfg14g61i39mjjqcg4vp.apps.googleusercontent.com
-    ports:
-      - "3000:80"
-    environment:
-      - API_BASE_URL=http://agripewebapi:8080
-    depends_on:
-      - agripewebapi
-    networks:
-      - app-network
-
   db:
     image: mongo:8
     container_name: agripewebdb

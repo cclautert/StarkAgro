@@ -12,7 +12,7 @@ Guide for Claude Code and coding agents in this repository.
 
 - **Scope:** minimum change that satisfies the request; match existing patterns.
 - **Uncertainty:** state assumptions or ask — don't guess tenant rules, API contracts, or irrigation logic.
-- **Verify:** `dotnet test` for API changes; manual or documented check for UI/IoT.
+- **Verify:** `dotnet test` for API changes; manual or documented check for UI.
 - **Features:** large backend work → plan in `docs/features/{name}/plan.md` first (see `.claude/skills/starkagro-feature-planner/`).
 - **Code queries and changes:** use graphify by default — query the graph before exploring code, update the graph after changing code (see [## graphify](#graphify)).
 - **Memory:** every durable fact saved locally must also be saved to Mnemosine (see [## Mnemosine](#mnemosine-long-term-memory)).
@@ -24,8 +24,6 @@ Guide for Claude Code and coding agents in this repository.
 |------|------|
 | `StarkAgroAPI/` | ASP.NET Core 10, MediatR/CQRS, MongoDB, JWT + Google OAuth |
 | `StarkAgroUI/` | Angular 19, Material, Chart.js, Leaflet |
-| `StarkAgroUI-Mobile/` | React Native (field use) |
-| `StarkAgroIOT/` | ESP8266 (Wi-Fi), ESP32 LoRa gateway/slave |
 | `docker/`, `.github/workflows/` | Compose, CI, deploy VPS |
 | `terraform/aws/` | ECS Fargate, ALB, optional cloud path |
 
@@ -50,7 +48,7 @@ Guide for Claude Code and coding agents in this repository.
 | Laudo gerado por LLM | O disclaimer legal é garantido em código (`EnsureDisclaimer`), nunca só pelo prompt — truncamento ou modelo teimoso o removeria |
 | Kindwise crop.health | `datetime` exige offset (`+00:00`; `Z` e `ToString("o")` dão 400); **não** envie `similar_images: false`; a resposta de sucesso é **201** |
 | PDF (QuestPDF) | Licença **Community** declarada em `ApiConfig` — gratuita só até US$ 1 mi de receita anual. Não dá para asserir texto nos bytes do PDF (fonte subsetada): teste o conteúdo via `DiagnosisPdfService.FooterLines`/`StatusLabel` |
-| Firmware | No real Wi-Fi passwords, tokens, or MACs in committed `.ino` files |
+| Firmware / dispositivos em campo | O código do firmware **não vive mais neste repo**, mas os dispositivos continuam chamando `Auth/LogIn` e `reads/add`. Mudar payload ou rota dessas chamadas **quebra sensor em campo** — trate como contrato público |
 | Deploy | `main` + green CI; secrets only via env / user secrets — placeholders in repo |
 | Google login button | Show only when `environment.googleClientId` is set |
 
@@ -95,14 +93,13 @@ docker compose -f docker/docker-compose.yml up --build
 | Weather / irrigation logic | `Services/Forecast/`, irrigation trend handlers |
 | Laudo fitossanitário (foto + IA) | `Controllers/PlantDiagnosisController.cs`, `Domain/Handlers/Diagnosis/`, `Services/Diagnosis/`, `StarkAgroWorker/Services/PlantDiagnosisProcessor.cs` — plano em [docs/features/laudo-fitossanitario-ia/plan.md](docs/features/laudo-fitossanitario-ia/plan.md) |
 | OAuth | API `Auth/external-login`; UI `/login/callback` |
-| Firmware / field device | `StarkAgroIOT/` — coordinate API contract with backend |
 | Multi-agent (Paperclip) | [docs/agents/README.md](docs/agents/README.md) |
 
 ## Feature workflow
 
 1. GitHub issue → acceptance criteria clear  
 2. Plan → `docs/features/{name}/plan.md` (optional skill: `starkagro-feature-planner`)  
-3. Implement → handler + tests; UI and IoT in parallel only if contract is defined  
+3. Implement → handler + tests; UI in parallel only if contract is defined  
 4. Review → tenant isolation, no secrets in diff (`starkagro-code-reviewer` skill)
 
 ## Architecture
@@ -173,7 +170,7 @@ Controllers delegate to handlers; **no business logic in controllers.**
 - Secrets in repo: placeholders only (`CHANGE_ME`, `YOUR_GOOGLE_CLIENT_ID`)  
 - Stable .NET / NuGet versions — no previews without explicit approval  
 - UI OAuth button only if `environment.googleClientId` is configured  
-- IoT login/read endpoints must stay aligned with API routes used in `.ino` files
+- IoT login/read endpoints are a public contract with devices already in the field — the firmware source is no longer in this repo, so a breaking change here cannot be caught by CI
 
 ## Documentation and skills
 
