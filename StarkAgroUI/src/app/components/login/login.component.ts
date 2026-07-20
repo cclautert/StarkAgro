@@ -64,6 +64,7 @@ export class LoginComponent {
             localStorage.setItem('userId', userId.toString());
             localStorage.setItem('isAdmin', (String(decodedToken.isAdmin) === 'true').toString());
             localStorage.setItem('isAgronomist', (String(decodedToken.isAgronomist) === 'true').toString());
+            localStorage.setItem('isResellerManager', (String((decodedToken as any).isResellerManager) === 'true').toString());
 
             // 5. NAVEGUE PARA A HOME
             this.router.navigate(['/home']);

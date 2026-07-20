@@ -1,0 +1,24 @@
+<div class="container">
+  <h1 class="page-title">✉️ Convites de Revenda</h1>
+  <p class="subtitle">Revendas que te convidaram para fazer parte da carteira delas.</p>
+
+  <p class="loading-text" *ngIf="loading">Carregando convites...</p>
+
+  <div class="invites" *ngIf="!loading">
+    <div class="invite-card" *ngFor="let inv of invites">
+      <div class="invite-info">
+        <span class="revenda-name">{{ inv.revendaName || 'Revenda #' + inv.revendaId }}</span>
+        <span class="role">como {{ roleLabel(inv.memberRole) }}</span>
+        <span class="expires">expira em {{ inv.inviteExpiresAt | date:'dd/MM/yyyy' }}</span>
+      </div>
+      <div class="invite-actions">
+        <button class="btn-primary" (click)="accept(inv)" [disabled]="acting">Aceitar</button>
+        <button class="btn-secondary" (click)="decline(inv)" [disabled]="acting">Recusar</button>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="invites.length === 0">
+      Nenhum convite de revenda pendente.
+    </div>
+  </div>
+</div>

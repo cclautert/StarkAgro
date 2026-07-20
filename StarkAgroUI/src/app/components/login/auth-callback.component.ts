@@ -64,6 +64,7 @@ export class AuthCallbackComponent implements OnInit {
                   localStorage.setItem('userId', String(userId));
                   localStorage.setItem('isAdmin', (String(decoded.isAdmin) === 'true').toString());
                   localStorage.setItem('isAgronomist', (String(decoded.isAgronomist) === 'true').toString());
+                  localStorage.setItem('isResellerManager', (String((decoded as any).isResellerManager) === 'true').toString());
                 }
               }
             } catch {

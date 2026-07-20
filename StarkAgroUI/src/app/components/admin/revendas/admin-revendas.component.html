@@ -1,0 +1,83 @@
+<div class="container">
+  <h1 class="page-title">🏬 Revendas</h1>
+
+  <form class="card form-card" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <h2 class="card-title">{{ editingId ? 'Editar revenda' : 'Nova revenda' }}</h2>
+
+    <div class="grid">
+      <label>Nome
+        <input type="text" formControlName="name" maxlength="120" />
+      </label>
+      <label>CNPJ
+        <input type="text" formControlName="cnpj" />
+      </label>
+      <label>Email de contato
+        <input type="email" formControlName="contactEmail" />
+      </label>
+      <label>Plano
+        <select formControlName="diagnosisPlanId">
+          <option [ngValue]="null">Sem plano</option>
+          <option *ngFor="let p of plans" [ngValue]="p.id">{{ p.name }}</option>
+        </select>
+      </label>
+      <label>Cota/mês (opcional)
+        <input type="number" formControlName="diagnosisQuotaPerMonth" min="0" />
+      </label>
+      <label class="check">
+        <input type="checkbox" formControlName="active" /> Ativa
+      </label>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn-primary" [disabled]="isSaving">{{ editingId ? 'Salvar' : 'Criar' }}</button>
+      <button type="button" class="btn-secondary" *ngIf="editingId" (click)="cancelEdit()">Cancelar</button>
+    </div>
+  </form>
+
+  <p class="loading-text" *ngIf="isLoading">Carregando revendas...</p>
+
+  <div class="revendas" *ngIf="!isLoading">
+    <div class="revenda-card" *ngFor="let r of revendas">
+      <div class="revenda-head">
+        <div>
+          <span class="revenda-name">{{ r.name }}</span>
+          <span class="status" [class.inactive]="!r.active">{{ r.active ? 'Ativa' : 'Inativa' }}</span>
+        </div>
+        <div class="revenda-actions">
+          <button class="btn-link" (click)="startEdit(r)">Editar</button>
+          <button class="btn-link" (click)="startAssign(r)">Atribuir gestor</button>
+          <button class="btn-link" (click)="toggleBilling(r)">Faturamento</button>
+        </div>
+      </div>
+
+      <div class="revenda-meta">
+        <span *ngIf="r.cnpj">CNPJ: {{ r.cnpj }}</span>
+        <span>Plano: {{ planName(r.diagnosisPlanId) }}</span>
+        <span *ngIf="r.contactEmail">{{ r.contactEmail }}</span>
+      </div>
+
+      <div class="assign-row" *ngIf="assigningId === r.id">
+        <input type="number" [(ngModel)]="managerUserId" placeholder="ID do usuário gestor" min="1" />
+        <button class="btn-primary" (click)="assignManager(r)" [disabled]="!managerUserId">Confirmar</button>
+      </div>
+
+      <div class="billing-box" *ngIf="billingForId === r.id">
+        <p *ngIf="!billing" class="loading-text">Carregando faturamento…</p>
+        <div *ngIf="billing">
+          <div class="billing-total">
+            {{ billing.planName }} —
+            <strong>{{ (billing.totalCents / 100) | currency:'BRL':'symbol':'1.2-2' }}</strong>
+            <span class="billing-sub">
+              {{ billing.usedReports }} laudo(s) · inclusos {{ billing.includedReports }} ·
+              excedente {{ billing.overageReports }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="revendas.length === 0">
+      Nenhuma revenda cadastrada. Crie uma no formulário acima.
+    </div>
+  </div>
+</div>
