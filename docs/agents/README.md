@@ -5,7 +5,6 @@ Arquivos de identidade e heartbeat para orquestração multi-agente ([Paperclip]
 | Agente | Papel | Modo heartbeat | Arquivos |
 |--------|-------|----------------|----------|
 | **CEO Stark** | Coordenação, triagem, dispatch, escalação | `proactive` | [ceo-stark/SOUL.md](ceo-stark/SOUL.md), [ceo-stark/HEARTBEAT.md](ceo-stark/HEARTBEAT.md) |
-| **IoT Lead StarkAgro** | Firmware, campo, pipeline sensores→API | `proactive` | [iot-lead-starkagro/SOUL.md](iot-lead-starkagro/SOUL.md), [iot-lead-starkagro/HEARTBEAT.md](iot-lead-starkagro/HEARTBEAT.md) |
 
 ## Uso no Paperclip
 

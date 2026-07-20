@@ -45,8 +45,7 @@ curl -s -H "Authorization: Bearer $PAPERCLIP_API_KEY" \
 
 Verificar alinhamento com o produto:
 
-- [ ] Há issues de **IoT/campo** paradas? → **IoT Lead StarkAgro**
-- [ ] Há issues de **API/MongoDB/auth**? → **Backend StarkAgro**
+- [ ] Há issues de **API/MongoDB/auth** ou de **ingestão de leituras dos sensores**? → **Backend StarkAgro**
 - [ ] Há issues de **UI/dashboard/mapa**? → **Frontend StarkAgro**
 - [ ] Há falha de **deploy/CI**? → **DevOps StarkAgro**
 - [ ] Há dúvida de **regra de irrigação/limiares**? → **PO Agro StarkAgro**
@@ -61,18 +60,18 @@ Verificar alinhamento com o produto:
 Para cada issue que precisa avançar:
 
 1. `PATCH` assignee + status (`todo` → `in_progress` quando agente estiver livre).
-2. Comentário na issue: **objetivo**, **critério de aceite**, **arquivos prováveis**, **agente downstream** (ex.: IoT Lead depende de contrato API com Backend).
-3. Criar **sub-issues** quando o escopo cruzar camadas (ex.: "Firmware envia leitura" + "Handler valida tenant").
+2. Comentário na issue: **objetivo**, **critério de aceite**, **arquivos prováveis**, **agente downstream** (ex.: Frontend depende de contrato REST do Backend).
+3. Criar **sub-issues** quando o escopo cruzar camadas (ex.: "Handler valida tenant" + "Dashboard consome nova rota").
 
 ---
 
 ## Step 4 — Coordenação cross-agent
 
-- **IoT ↔ Backend:** leituras em `/api/v1/reads` (ou rota vigente); auth do dispositivo; nunca `UserId` do payload para tenant.
+- **Dispositivos de campo ↔ Backend:** leituras em `/api/v1/reads` (ou rota vigente) e `Auth/LogIn` são **contrato público** com o firmware, que não vive mais neste repo — mudança nesse payload/rota não é pega por CI e quebra sensor em campo; auth do dispositivo; nunca `UserId` do payload para tenant.
 - **Frontend ↔ Backend:** URLs relativas `/api/v1/...`; proxy em dev.
 - **DevOps:** `main` só com CI verde; secrets fora do repo.
 
-Se IoT Lead reportou `[Alert]` (sensor offline, LoRa down), garantir issue de Backend se for API; senão manter com IoT.
+Issue `[Alert]` de campo (sensor offline, sem leitura) é triada como **Backend** quando a causa for API/ingestão; se a suspeita for o dispositivo em si, escalar ao humano — não há mais agente de firmware.
 
 ---
 
