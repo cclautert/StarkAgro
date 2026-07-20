@@ -59,6 +59,7 @@ namespace StarkAgroAPI.Models
             AgronomistClients = database.GetCollection<AgronomistClient>("agronomist_clients");
             DiagnosisPlans = database.GetCollection<DiagnosisPlan>("diagnosis_plans");
             MonitoredAreas = database.GetCollection<MonitoredArea>("monitored_areas");
+            NdviReadings = database.GetCollection<NdviReading>("ndvi_readings");
             _counters = database.GetCollection<CounterDocument>("counters");
 
             // Fotos dos laudos ficam no GridFS: o driver já traz o suporte (nenhum pacote novo),
@@ -153,6 +154,19 @@ namespace StarkAgroAPI.Models
                     // 2dsphere: consultas geoespaciais sobre a geometria da área
                     await MonitoredAreas.Indexes.CreateOneAsync(new CreateIndexModel<MonitoredArea>(
                         Builders<MonitoredArea>.IndexKeys.Geo2DSphere(a => a.Geometry)));
+
+                    await NdviReadings.Indexes.CreateOneAsync(new CreateIndexModel<NdviReading>(
+                        Builders<NdviReading>.IndexKeys
+                            .Ascending(r => r.AreaId)
+                            .Descending(r => r.AcquisitionDate)));
+                    await NdviReadings.Indexes.CreateOneAsync(new CreateIndexModel<NdviReading>(
+                        Builders<NdviReading>.IndexKeys.Ascending(r => r.UserId)));
+                    // Único: uma passagem por área — idempotência de refetch mesmo com workers concorrentes.
+                    await NdviReadings.Indexes.CreateOneAsync(new CreateIndexModel<NdviReading>(
+                        Builders<NdviReading>.IndexKeys
+                            .Ascending(r => r.AreaId)
+                            .Ascending(r => r.AcquisitionDate),
+                        new CreateIndexOptions { Unique = true }));
                 }
                 catch
                 {
@@ -174,6 +188,7 @@ namespace StarkAgroAPI.Models
         public virtual IMongoCollection<AgronomistClient> AgronomistClients { get; }
         public virtual IMongoCollection<DiagnosisPlan> DiagnosisPlans { get; }
         public virtual IMongoCollection<MonitoredArea> MonitoredAreas { get; }
+        public virtual IMongoCollection<NdviReading> NdviReadings { get; }
         public virtual IGridFSBucket DiagnosisImages { get; }
 
         public virtual async Task<int> GetNextIdAsync(string entityName, CancellationToken cancellationToken = default)

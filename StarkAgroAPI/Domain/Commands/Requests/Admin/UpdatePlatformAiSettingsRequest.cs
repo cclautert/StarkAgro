@@ -26,5 +26,13 @@ namespace StarkAgroAPI.Domain.Commands.Requests.Admin
         [Required]
         [RegularExpression("^(openai|anthropic|gemini)$", ErrorMessage = "ActiveProvider deve ser 'openai', 'anthropic' ou 'gemini'.")]
         public string ActiveProvider { get; set; } = "gemini";
+
+        /// <summary>Credenciais CDSE (Copernicus) e o kill-switch do NDVI.</summary>
+        public string? CdseClientId { get; set; }
+        public string? CdseClientSecret { get; set; }
+        public bool Sentinel2Enabled { get; set; }
+
+        [Range(0, 100000, ErrorMessage = "NdviCostCents deve estar entre 0 e 100000.")]
+        public int NdviCostCents { get; set; } = 1;
     }
 }

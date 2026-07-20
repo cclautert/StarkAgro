@@ -34,6 +34,15 @@ namespace StarkAgroAPI.Controllers
             return CustomResponse(await mediator.Send(new GetMonitoredAreaRequest { Id = id }, cancellationToken));
         }
 
+        [HttpGet("{id:int}/trend")]
+        public async Task<ActionResult<NdviTrendResponse>> Trend(
+            [FromServices] IMediator mediator,
+            [FromRoute] int id,
+            CancellationToken cancellationToken)
+        {
+            return CustomResponse(await mediator.Send(new GetNdviTrendRequest { AreaId = id }, cancellationToken));
+        }
+
         [HttpPost]
         public async Task<ActionResult<MonitoredAreaResponse>> Create(
             [FromServices] IMediator mediator,

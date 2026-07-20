@@ -26,6 +26,19 @@ namespace StarkAgroAPI.Tests.Controllers
         }
 
         [Fact]
+        public async Task Trend_ReturnsOk()
+        {
+            var mediator = new Mock<IMediator>();
+            mediator.Setup(m => m.Send(It.IsAny<GetNdviTrendRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new NdviTrendResponse { AreaId = 5 });
+
+            var result = await CreateController().Trend(mediator.Object, 5, default);
+
+            var obj = Assert.IsType<ObjectResult>(result.Result);
+            Assert.Equal(200, obj.StatusCode);
+        }
+
+        [Fact]
         public async Task Get_ReturnsOk()
         {
             var mediator = new Mock<IMediator>();

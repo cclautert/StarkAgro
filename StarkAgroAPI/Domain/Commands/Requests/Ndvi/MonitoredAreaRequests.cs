@@ -14,6 +14,11 @@ namespace StarkAgroAPI.Domain.Commands.Requests.Ndvi
         public int Id { get; set; }
     }
 
+    public class GetNdviTrendRequest : IRequest<Responses.Ndvi.NdviTrendResponse?>
+    {
+        public int AreaId { get; set; }
+    }
+
     public class DeleteMonitoredAreaRequest : IRequest<bool>
     {
         public int Id { get; set; }
