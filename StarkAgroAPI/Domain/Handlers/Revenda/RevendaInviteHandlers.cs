@@ -122,12 +122,16 @@ namespace StarkAgroAPI.Domain.Handlers.Revenda
                 null,
                 cancellationToken);
 
-            // Cache denormalizado da revenda no usuário.
-            await _dbContext.Users.UpdateOneAsync(
-                u => u.Id == userId,
-                Builders<User>.Update.Set(u => u.RevendaId, invite.RevendaId),
-                null,
-                cancellationToken);
+            // Cache denormalizado da revenda no usuário. Para o produtor (Client), zera também o
+            // plano individual: ele passa a ser cobrado pela revenda (evita dupla cobrança).
+            var userUpdate = Builders<User>.Update.Set(u => u.RevendaId, invite.RevendaId);
+            if (invite.MemberRole == RevendaMemberRole.Client)
+            {
+                userUpdate = Builders<User>.Update.Combine(
+                    userUpdate,
+                    Builders<User>.Update.Set(u => u.DiagnosisPlanId, (int?)null));
+            }
+            await _dbContext.Users.UpdateOneAsync(u => u.Id == userId, userUpdate, null, cancellationToken);
 
             return true;
         }

@@ -108,5 +108,18 @@ namespace StarkAgroAPI.Tests.Controllers
             var sc = Assert.IsType<StatusCodeResult>(result);
             Assert.Equal(400, sc.StatusCode);
         }
+
+        [Fact]
+        public async Task GetBilling_ReturnsOk()
+        {
+            var mediator = new Mock<IMediator>();
+            mediator.Setup(m => m.Send(It.IsAny<GetMyRevendaBillingRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new RevendaBillingResponse { RevendaId = 7, TotalCents = 12400 });
+
+            var result = await CreateController().GetBilling(mediator.Object, default);
+
+            var obj = Assert.IsType<ObjectResult>(result.Result);
+            Assert.Equal(200, obj.StatusCode);
+        }
     }
 }

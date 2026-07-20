@@ -2,6 +2,7 @@ using System.Security.Claims;
 using StarkAgroAPI.Controllers;
 using StarkAgroAPI.Domain.Commands.Requests.Admin;
 using StarkAgroAPI.Domain.Commands.Responses.Admin;
+using StarkAgroAPI.Domain.Commands.Responses.Revenda;
 using StarkAgroAPI.Tests.Mocks;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -336,6 +337,26 @@ namespace StarkAgroAPI.Tests.Controllers
         {
             var result = await CreateController(false).AssignRevendaManager(new Mock<IMediator>().Object, 3,
                 new AssignRevendaManagerRequest { UserId = 9 }, default);
+            AssertObjectResult(result.Result!, 403);
+        }
+
+        [Fact]
+        public async Task GetRevendaBilling_AsAdmin_ReturnsOk()
+        {
+            var mediator = new Mock<IMediator>();
+            mediator.Setup(m => m.Send(It.IsAny<GetRevendaBillingRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new RevendaBillingResponse { RevendaId = 7, TotalCents = 12400 });
+
+            var result = await CreateController(true).GetRevendaBilling(mediator.Object, 7, default);
+
+            var obj = AssertObjectResult(result.Result!, 200);
+            Assert.Equal(12400, (obj.Value as RevendaBillingResponse)?.TotalCents);
+        }
+
+        [Fact]
+        public async Task GetRevendaBilling_NonAdmin_Returns403()
+        {
+            var result = await CreateController(false).GetRevendaBilling(new Mock<IMediator>().Object, 7, default);
             AssertObjectResult(result.Result!, 403);
         }
     }

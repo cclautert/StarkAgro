@@ -1,5 +1,6 @@
 using StarkAgroAPI.Domain.Commands.Requests.Admin;
 using StarkAgroAPI.Domain.Commands.Responses.Admin;
+using StarkAgroAPI.Domain.Commands.Responses.Revenda;
 using StarkAgroAPI.Models.Interfaces;
 using StarkAgroAPI.Notifications;
 using MediatR;
@@ -182,6 +183,16 @@ namespace StarkAgroAPI.Controllers
             if (!ModelState.IsValid) return CustomResponse(ModelState);
             command.RevendaId = id;
             return CustomResponse(await mediator.Send(command, cancellationToken));
+        }
+
+        [HttpGet("revendas/{id}/billing")]
+        public async Task<ActionResult<RevendaBillingResponse>> GetRevendaBilling(
+            [FromServices] IMediator mediator,
+            [FromRoute] int id,
+            CancellationToken cancellationToken)
+        {
+            if (!GetCurrentUserIsAdmin()) return StatusCode(403, new { errors = new[] { "Acesso negado." } });
+            return CustomResponse(await mediator.Send(new GetRevendaBillingRequest { RevendaId = id }, cancellationToken));
         }
     }
 }
