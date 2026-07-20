@@ -46,6 +46,7 @@ Guide for Claude Code and coding agents in this repository.
 | Custo de IA por laudo | Guardado em **centavos inteiros** (`PlatformAiSettings.CropHealthCostCents`, config; `PlantDiagnosis.AiCostCents`, congelado no processamento) — dinheiro em `double` acumula erro. O processador grava o custo em **todos** os desfechos pagos (completo/recusado/só-classificador); `DiagnosisCostService` soma o mês e a tela `/admin/ia` mostra o gasto |
 | Cobrança / planos | Preços **nunca** cravados em código: `DiagnosisPlan` (coleção `diagnosis_plans`, tela `/admin/planos`) tem mensalidade + laudos inclusos + preço do excedente, tudo em **centavos inteiros**. `User.DiagnosisPlanId` associa o produtor. `DiagnosisBillingService` calcula a fatura (mensalidade + excedente) — só **mostra**, não cobra (gateway de pagamento é etapa futura). Painel do agrônomo em `/agronomo/faturamento` (`GET /v1/agronomist/billing`) usa esse serviço por cliente **Active** — nunca lê pivôs/sensores, só faturamento derivado dos laudos. **Cota (bloqueio) e plano (cobrança) são coisas separadas**: o excedente é cobrado, não bloqueado |
 | Laudo gerado por LLM | O disclaimer legal é garantido em código (`EnsureDisclaimer`), nunca só pelo prompt — truncamento ou modelo teimoso o removeria |
+| Geometria de área NDVI | A geometria da `MonitoredArea` (coleção `monitored_areas`) é um `GeoJsonPolygon` — ordem **`[lng, lat]`** (`GeoJson2DGeographicCoordinates(lng, lat)`), fonte clássica de bug. O REST usa `GeoCoordinate {lat, lng}` **nomeado**; a conversão vive **só** em `Services/Ndvi/MonitoredAreaGeometry` (fábrica pura, testada). O front sempre manda um **anel** de pontos (o círculo é aproximado a polígono antes de enviar). Índice `2dsphere` em `Geometry`. Polígono é validado (fechamento, ranges, ≤500 vértices, bbox ≤0.5°, auto-interseção básica) — bloquear polígono gigante guarda o custo de PU nas fases de fetch |
 | Kindwise crop.health | `datetime` exige offset (`+00:00`; `Z` e `ToString("o")` dão 400); **não** envie `similar_images: false`; a resposta de sucesso é **201** |
 | PDF (QuestPDF) | Licença **Community** declarada em `ApiConfig` — gratuita só até US$ 1 mi de receita anual. Não dá para asserir texto nos bytes do PDF (fonte subsetada): teste o conteúdo via `DiagnosisPdfService.FooterLines`/`StatusLabel` |
 | Firmware / dispositivos em campo | O código do firmware **não vive mais neste repo**, mas os dispositivos continuam chamando `Auth/LogIn` e `reads/add`. Mudar payload ou rota dessas chamadas **quebra sensor em campo** — trate como contrato público |
@@ -122,7 +123,7 @@ Controllers delegate to handlers; **no business logic in controllers.**
 ### MongoDB
 
 - `agpDBContext` → `IMongoCollection<T>`  
-- Collections: `users`, `pivots`, `sensors`, `read_sensors`, `plant_diagnoses`, `agronomist_clients`, `diagnosis_plans`, `counters`  
+- Collections: `users`, `pivots`, `sensors`, `read_sensors`, `plant_diagnoses`, `agronomist_clients`, `diagnosis_plans`, `monitored_areas`, `counters`  
 - `agronomist_clients` tem **índice único parcial** em `{ClientUserId}` filtrando `Status: "Active"` — o banco garante *um agrônomo ativo por produtor*  
 - Binários: bucket GridFS `diagnosis_images` (`agpDBContext.DiagnosisImages`) — fotos dos laudos; **nunca** base64 no documento  
 - Sequential `int` IDs: `counters` + `GetNextIdAsync`  
