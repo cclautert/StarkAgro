@@ -11,7 +11,7 @@ namespace StarkAgroAPI.Domain.Handlers.Admin
 {
     internal static class RevendaMapper
     {
-        public static RevendaResponse ToResponse(Revenda r) => new()
+        public static RevendaResponse ToResponse(Models.Entities.Revenda r) => new()
         {
             Id = r.Id,
             Name = r.Name,
@@ -55,9 +55,9 @@ namespace StarkAgroAPI.Domain.Handlers.Admin
             if (!await PlanExistsAsync(_dbContext, request.DiagnosisPlanId, _notifier, cancellationToken))
                 return null!;
 
-            var revenda = new Revenda
+            var revenda = new Models.Entities.Revenda
             {
-                Id = await _dbContext.GetNextIdAsync(nameof(Revenda), cancellationToken),
+                Id = await _dbContext.GetNextIdAsync(nameof(Models.Entities.Revenda), cancellationToken),
                 Name = request.Name.Trim(),
                 Cnpj = string.IsNullOrWhiteSpace(request.Cnpj) ? null : request.Cnpj.Trim(),
                 ContactEmail = string.IsNullOrWhiteSpace(request.ContactEmail) ? null : request.ContactEmail.Trim(),
@@ -116,7 +116,7 @@ namespace StarkAgroAPI.Domain.Handlers.Admin
             var cnpj = string.IsNullOrWhiteSpace(request.Cnpj) ? null : request.Cnpj.Trim();
             var contactEmail = string.IsNullOrWhiteSpace(request.ContactEmail) ? null : request.ContactEmail.Trim();
 
-            var update = Builders<Revenda>.Update
+            var update = Builders<Models.Entities.Revenda>.Update
                 .Set(r => r.Name, name)
                 .Set(r => r.Cnpj, cnpj)
                 .Set(r => r.ContactEmail, contactEmail)

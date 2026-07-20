@@ -72,6 +72,12 @@ namespace StarkAgroAPI.Models.Entities
         /// </summary>
         public int? DiagnosisPlanId { get; set; }
 
+        /// <summary>
+        /// Cache denormalizado da revenda à qual o usuário pertence (vínculo ativo). A fonte da
+        /// verdade é a <c>RevendaMembership</c>; este campo só acelera leituras. <c>null</c> = sem revenda.
+        /// </summary>
+        public int? RevendaId { get; set; }
+
         public DateTime? AlertsReadAt { get; set; }
     }
 }
