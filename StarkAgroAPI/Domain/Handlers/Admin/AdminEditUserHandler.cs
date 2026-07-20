@@ -1,6 +1,7 @@
 using StarkAgroAPI.Domain.Commands.Requests.Admin;
 using StarkAgroAPI.Domain.Commands.Responses.Admin;
 using StarkAgroAPI.Models;
+using StarkAgroAPI.Models.Entities;
 using StarkAgroAPI.Services;
 using StarkAgroAPI.Models.Interfaces;
 using StarkAgroAPI.Notifications;
@@ -43,8 +44,8 @@ namespace StarkAgroAPI.Domain.Handlers.Admin
             user.Name = request.Name;
             user.Email = EmailNormalizer.Normalize(request.Email);
             user.Active = request.Active;
-            user.IsAdmin = request.IsAdmin;
-            user.IsAgronomist = request.IsAgronomist;
+            user.SetRole(UserRole.Admin, request.IsAdmin);
+            user.SetRole(UserRole.Agronomist, request.IsAgronomist);
             user.AgronomistCrea = request.AgronomistCrea;
             user.DiagnosisQuotaPerMonth = request.DiagnosisQuotaPerMonth;
             user.DiagnosisPlanId = request.DiagnosisPlanId;

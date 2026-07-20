@@ -136,7 +136,13 @@ Controllers delegate to handlers; **no business logic in controllers.**
 - **Never** use client-supplied `request.UserId` for isolation  
 - Examples: `CreatePivotHandler`, `CreateReadHandler`, `GetListSensorHandler`
 
-**Única exceção — o agrônomo** (papel `IsAgronomist`, claim `isAgronomist`, policy `"Agronomist"`):
+### Papéis (Roles)
+
+- `User.Roles` (`List<string>`, constantes em `UserRole`: `Admin`, `Agronomist`, `ResellerManager`) é a **fonte da verdade** — substituiu os antigos booleans `IsAdmin`/`IsAgronomist`. `User.IsAdmin`/`IsAgronomist`/`IsResellerManager` são **computados `[BsonIgnore]`** sobre `Roles`; use `SetRole(role, bool)` para escrever.
+- JWT (`JwtTokenService`) emite as claims booleanas derivadas (`isAdmin`/`isAgronomist`/`isResellerManager`, para a UI/guards) **e** uma claim `role` por papel. `ICurrentUserContext` expõe `IsAdmin`/`IsAgronomist`/`IsResellerManager` + `HasRole(role)`. Policies: `"Agronomist"`, `"ResellerManager"`.
+- Documentos gravados no formato antigo são convertidos no boot por `MigrateUserRolesAsync` (`ApiConfig`, idempotente; lógica pura em `UserRoleMigration.DeriveRoles`). Papéis são atribuídos pelo admin em `AdminEditUserHandler` (`SetRole`).
+
+**Única exceção de leitura cross-tenant — o agrônomo** (papel `Agronomist`, claim `isAgronomist`, policy `"Agronomist"`):
 - Ele lê laudos cujo `UserId` não é o dele. A regra vive **em um lugar só**, `IDiagnosisAccessService`: lê o laudo `d` **sse** `d.UserId == u` **OU** (`d.AgronomistId == u` **E** existe vínculo `Active` entre eles). A segunda condição é o que faz a **revogação ter efeito imediato**.
 - Ele **não** lê `pivots`/`sensors`/`read_sensors` do cliente — todo o contexto vem do `ContextSnapshot` congelado dentro do laudo. Não crie endpoints que furem isso.
 - **Admin não tem acesso a laudo** (é ato profissional).

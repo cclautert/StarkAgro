@@ -98,6 +98,54 @@ namespace StarkAgroAPI.Tests.Services
         }
 
         [Fact]
+        public async Task GenerateTokenAsync_EmitsDerivedBooleanRoleClaims()
+        {
+            var service = new JwtTokenService(CreateValidConfig());
+            var user = CreateTestUser();
+            user.SetRole(UserRole.Admin, true);
+            user.SetRole(UserRole.ResellerManager, true);
+
+            var token = await service.GenerateTokenAsync(user);
+            var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
+
+            Assert.Equal("true", jwt.Claims.First(c => c.Type == "isAdmin").Value);
+            Assert.Equal("false", jwt.Claims.First(c => c.Type == "isAgronomist").Value);
+            Assert.Equal("true", jwt.Claims.First(c => c.Type == "isResellerManager").Value);
+        }
+
+        [Fact]
+        public async Task GenerateTokenAsync_EmitsOneRoleClaimPerRole()
+        {
+            var service = new JwtTokenService(CreateValidConfig());
+            var user = CreateTestUser();
+            user.SetRole(UserRole.Admin, true);
+            user.SetRole(UserRole.Agronomist, true);
+
+            var token = await service.GenerateTokenAsync(user);
+            var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
+
+            var roles = jwt.Claims.Where(c => c.Type == "role").Select(c => c.Value).ToList();
+            Assert.Contains(UserRole.Admin, roles);
+            Assert.Contains(UserRole.Agronomist, roles);
+            Assert.Equal(2, roles.Count);
+        }
+
+        [Fact]
+        public async Task GenerateTokenAsync_NoRoles_EmitsFalseBooleanClaimsAndNoRoleClaim()
+        {
+            var service = new JwtTokenService(CreateValidConfig());
+            var user = CreateTestUser();
+
+            var token = await service.GenerateTokenAsync(user);
+            var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
+
+            Assert.Equal("false", jwt.Claims.First(c => c.Type == "isAdmin").Value);
+            Assert.Equal("false", jwt.Claims.First(c => c.Type == "isAgronomist").Value);
+            Assert.Equal("false", jwt.Claims.First(c => c.Type == "isResellerManager").Value);
+            Assert.DoesNotContain(jwt.Claims, c => c.Type == "role");
+        }
+
+        [Fact]
         public async Task GenerateTokenAsync_MissingSecretKey_Throws()
         {
             // Arrange
