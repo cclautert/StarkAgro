@@ -12,5 +12,7 @@ namespace StarkAgroWorker.Services
         public bool IsAuthenticated => false;
         public bool IsAdmin => false;
         public bool IsAgronomist => false;
+        public bool IsResellerManager => false;
+        public bool HasRole(string role) => false;
     }
 }
