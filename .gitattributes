@@ -1,0 +1,5 @@
+# Arquivos que rodam em Linux/containers precisam de fim de linha LF, mesmo em checkout no Windows.
+*.sh              text eol=lf
+docker/**/*.conf  text eol=lf
+docker/**/*.yml   text eol=lf
+docker/**/*.yaml  text eol=lf
