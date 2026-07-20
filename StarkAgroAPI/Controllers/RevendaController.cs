@@ -57,5 +57,13 @@ namespace StarkAgroAPI.Controllers
             var ok = await mediator.Send(new RevokeRevendaMemberRequest { LinkId = linkId }, cancellationToken);
             return ok ? CustomResponse(null, HttpStatusCode.NoContent) : CustomResponse(null, HttpStatusCode.BadRequest);
         }
+
+        [HttpGet("billing")]
+        public async Task<ActionResult<RevendaBillingResponse>> GetBilling(
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken)
+        {
+            return CustomResponse(await mediator.Send(new GetMyRevendaBillingRequest(), cancellationToken));
+        }
     }
 }
