@@ -51,5 +51,17 @@ namespace StarkAgroAPI.Models.Entities
 
         /// <summary>Custo de uma busca NDVI (Processing Units), em <b>centavos</b> — congelado por reading.</summary>
         public int NdviCostCents { get; set; } = 1;
+
+        /// <summary>
+        /// Teto mensal de custo NDVI (PU), em <b>centavos</b>. Batido o teto, o <c>NdviProcessor</c>
+        /// para de enfileirar buscas até o mês virar ou o admin subir o valor. <c>0</c> = ilimitado.
+        /// </summary>
+        public int NdviMonthlyBudgetCents { get; set; } = 0;
+
+        /// <summary>
+        /// Teto de áreas monitoradas por usuário. <c>0</c> = ilimitado (comportamento de antes desta
+        /// configuração existir). O admin liga sem redeploy.
+        /// </summary>
+        public int NdviMaxAreasPerUser { get; set; } = 0;
     }
 }

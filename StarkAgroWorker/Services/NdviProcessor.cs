@@ -47,6 +47,20 @@ namespace StarkAgroWorker.Services
             var settings = await db.PlatformAiSettings.Find(_ => true).FirstOrDefaultAsync(cancellationToken);
             if (settings is null || !settings.Sentinel2Enabled) return;
 
+            // Teto de orçamento: batido o custo do mês, para de enfileirar (nunca truncar em silêncio).
+            if (settings.NdviMonthlyBudgetCents > 0)
+            {
+                var costService = scope.ServiceProvider.GetRequiredService<INdviCostService>();
+                var monthCost = await costService.GetCurrentMonthCostCentsAsync(cancellationToken);
+                if (monthCost >= settings.NdviMonthlyBudgetCents)
+                {
+                    _logger.LogWarning(
+                        "NdviProcessor: teto mensal de PU atingido ({Cost}c >= {Budget}c) — buscas represadas até o mês virar ou o admin subir o teto.",
+                        monthCost, settings.NdviMonthlyBudgetCents);
+                    return;
+                }
+            }
+
             var fetchService = scope.ServiceProvider.GetRequiredService<INdviFetchService>();
 
             await ReleaseZombiesAsync(db, cancellationToken);

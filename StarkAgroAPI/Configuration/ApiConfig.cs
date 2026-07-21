@@ -86,6 +86,7 @@ namespace StarkAgroAPI.Configuration
             services.AddScoped<Services.Ndvi.ICdseProcessService>(sp =>
                 sp.GetRequiredService<Services.Ndvi.CdseProcessService>());
             services.AddScoped<INdviOverlayStore, Services.Ndvi.GridFsNdviOverlayStore>();
+            services.AddScoped<Services.Ndvi.INdviCostService, Services.Ndvi.NdviCostService>();
             services.AddScoped<Services.Ndvi.INdviFetchService, Services.Ndvi.NdviFetchService>();
 
             services.AddSingleton<ILoRaWanDownlinkService, MqttDownlinkService>();

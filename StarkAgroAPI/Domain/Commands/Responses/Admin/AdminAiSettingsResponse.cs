@@ -29,5 +29,14 @@ namespace StarkAgroAPI.Domain.Commands.Responses.Admin
         public string? CdseClientSecret { get; set; }
         public bool Sentinel2Enabled { get; set; }
         public int NdviCostCents { get; set; }
+
+        /// <summary>Teto mensal de custo NDVI (PU), em centavos. 0 = ilimitado.</summary>
+        public int NdviMonthlyBudgetCents { get; set; }
+
+        /// <summary>Teto de áreas monitoradas por usuário. 0 = ilimitado.</summary>
+        public int NdviMaxAreasPerUser { get; set; }
+
+        /// <summary>Custo NDVI já incorrido no mês corrente, em centavos (só leitura).</summary>
+        public int CurrentMonthNdviCostCents { get; set; }
     }
 }

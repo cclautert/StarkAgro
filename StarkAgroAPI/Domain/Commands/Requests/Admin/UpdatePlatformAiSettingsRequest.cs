@@ -34,5 +34,13 @@ namespace StarkAgroAPI.Domain.Commands.Requests.Admin
 
         [Range(0, 100000, ErrorMessage = "NdviCostCents deve estar entre 0 e 100000.")]
         public int NdviCostCents { get; set; } = 1;
+
+        /// <summary>Teto mensal de custo NDVI (PU), em centavos. 0 = ilimitado.</summary>
+        [Range(0, 100000000, ErrorMessage = "NdviMonthlyBudgetCents deve estar entre 0 e 100000000.")]
+        public int NdviMonthlyBudgetCents { get; set; } = 0;
+
+        /// <summary>Teto de áreas monitoradas por usuário. 0 = ilimitado.</summary>
+        [Range(0, 100000, ErrorMessage = "NdviMaxAreasPerUser deve estar entre 0 e 100000.")]
+        public int NdviMaxAreasPerUser { get; set; } = 0;
     }
 }
