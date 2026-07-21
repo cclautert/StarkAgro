@@ -1,0 +1,43 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { AreaRequest, MonitoredArea, NdviTrendResponse } from '../models/monitored-area.model';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AreaService {
+  /** Relativo para o proxy do ng serve encaminhar /api à API (evita CORS). */
+  private baseUrl = '/api/v1/areas';
+
+  constructor(private http: HttpClient) { }
+
+  list(): Observable<MonitoredArea[]> {
+    return this.http.get<MonitoredArea[]>(this.baseUrl);
+  }
+
+  get(id: number): Observable<MonitoredArea> {
+    return this.http.get<MonitoredArea>(`${this.baseUrl}/${id}`);
+  }
+
+  create(body: AreaRequest): Observable<MonitoredArea> {
+    return this.http.post<MonitoredArea>(this.baseUrl, body);
+  }
+
+  update(id: number, body: AreaRequest): Observable<MonitoredArea> {
+    return this.http.put<MonitoredArea>(`${this.baseUrl}/${id}`, body);
+  }
+
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  }
+
+  trend(id: number): Observable<NdviTrendResponse> {
+    return this.http.get<NdviTrendResponse>(`${this.baseUrl}/${id}/trend`);
+  }
+
+  /** PNG protegido: buscar como blob (o interceptor injeta o Bearer; <img> não). */
+  overlay(areaId: number, readingId: number): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/${areaId}/overlay/${readingId}`, { responseType: 'blob' });
+  }
+}

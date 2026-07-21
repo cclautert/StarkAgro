@@ -16,6 +16,9 @@
             "outputPath": "dist/starkagro-ui",
             "index": "src/index.html",
             "browser": "src/main.ts",
+            "allowedCommonJsDependencies": [
+              "leaflet"
+            ],
             "polyfills": [
               "zone.js"
             ],
