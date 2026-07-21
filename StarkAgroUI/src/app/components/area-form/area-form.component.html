@@ -1,0 +1,63 @@
+<div class="container">
+  <div class="page-header">
+    <h1 class="page-title">{{ isEditMode ? '✏️ Editar Área' : '🛰️ Nova Área NDVI' }}</h1>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="area-form">
+    <div class="field">
+      <label>Nome *</label>
+      <input type="text" formControlName="name" placeholder="Ex.: Talhão Norte" />
+      <small class="err" *ngIf="form.get('name')?.touched && form.get('name')?.invalid">Informe o nome.</small>
+    </div>
+
+    <div class="field">
+      <label>Cultura</label>
+      <input type="text" formControlName="crop" placeholder="Ex.: Soja" />
+    </div>
+
+    <div class="field">
+      <label>Tipo de área</label>
+      <select formControlName="areaKind">
+        <option value="Circle">Círculo (centro + raio)</option>
+        <option value="Polygon" [disabled]="!isEditMode">Polígono</option>
+      </select>
+      <small class="hint" *ngIf="isPolygon">
+        Desenho livre de polígono chega em breve. A geometria atual é preservada ao salvar.
+      </small>
+    </div>
+
+    <ng-container *ngIf="!isPolygon">
+      <div class="field">
+        <label>Centro da área</label>
+        <div class="location-row">
+          <button type="button" class="btn-map" (click)="openLocationMap()">
+            📍 {{ hasCenter ? 'Alterar no mapa' : 'Escolher no mapa' }}
+          </button>
+          <span class="coords" *ngIf="hasCenter">{{ centerLat }}, {{ centerLng }}</span>
+          <span class="coords coords-muted" *ngIf="!hasCenter">Nenhum ponto escolhido</span>
+        </div>
+        <small class="hint" *ngIf="locationAddress">{{ locationAddress }}</small>
+      </div>
+
+      <div class="field">
+        <label>Raio (metros)</label>
+        <input type="number" formControlName="radiusM" min="10" max="20000" />
+        <small class="err" *ngIf="form.get('radiusM')?.touched && form.get('radiusM')?.invalid">Raio entre 10 e 20000 m.</small>
+      </div>
+    </ng-container>
+
+    <div class="field field-inline">
+      <label class="checkbox">
+        <input type="checkbox" formControlName="monitoringEnabled" />
+        Monitorar NDVI automaticamente
+      </label>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="btn-cancel" (click)="cancel()">Cancelar</button>
+      <button type="submit" class="btn-save" [disabled]="saving">
+        {{ saving ? 'Salvando...' : (isEditMode ? 'Salvar' : 'Criar área') }}
+      </button>
+    </div>
+  </form>
+</div>

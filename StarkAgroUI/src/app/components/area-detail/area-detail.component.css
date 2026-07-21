@@ -1,0 +1,113 @@
+.container {
+  padding: 1.5rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.back-link {
+  color: #1565c0;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.btn-edit {
+  background: #fff3e0;
+  color: #ef6c00;
+  border: none;
+  border-radius: 6px;
+  padding: 0.4rem 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.area-title { font-size: 1.6rem; margin: 0.5rem 0 0.25rem; }
+
+.area-sub {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #555;
+  margin-bottom: 1.25rem;
+}
+
+.badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 0.15rem 0.6rem;
+}
+
+.badge-on { background: #e8f5e9; color: #2e7d32; }
+.badge-off { background: #eceff1; color: #607d8b; }
+
+.latest-card {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.latest-value {
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: #2e7d32;
+  line-height: 1;
+}
+
+.latest-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.latest-label { font-weight: 600; color: #333; }
+.latest-date { color: #666; font-size: 0.9rem; }
+
+.cloud-badge {
+  font-size: 0.78rem;
+  color: #607d8b;
+  background: #eceff1;
+  border-radius: 999px;
+  padding: 0.1rem 0.5rem;
+  width: fit-content;
+}
+
+.cloud-ok { background: #fff8e1; color: #f9a825; }
+
+.latest-empty { color: #888; justify-content: center; }
+
+.panel {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.panel-title { font-size: 1.05rem; margin: 0 0 1rem; }
+
+.chart-box { position: relative; height: 300px; }
+
+.map-box {
+  height: 380px;
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.muted { color: #888; font-size: 0.9rem; }
+.map-hint { margin-top: 0.5rem; }
+.loading-text, .error-text { color: #666; }
+.error-text { color: #c62828; }
