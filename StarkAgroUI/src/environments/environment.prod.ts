@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  googleClientId: '728628470722-23le0egpfio5jfg14g61i39mjjqcg4vp.apps.googleusercontent.com',
+  googleClientId: '33242671638-jcbmn942hc030633s34idmcmmj4o1tv8.apps.googleusercontent.com',
   vapidPublicKey: 'BOvxKvguHVcp6VcxJjeckFFfLz1c2DAGwFwoGGLKsCn5TvX_NpOY8gVn_Wtjr7qEsBPDtmZ670MNXhFfmCKc3x4'
 };
