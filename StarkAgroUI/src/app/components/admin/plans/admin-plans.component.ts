@@ -31,6 +31,10 @@ export class AdminPlansComponent implements OnInit {
       monthlyPrice: [0, [Validators.required, Validators.min(0)]],
       includedReportsPerMonth: [0, [Validators.required, Validators.min(0)]],
       overagePrice: [0, [Validators.required, Validators.min(0)]],
+      // Assentos só valem para plano de revenda; num plano de produtor ficam zerados.
+      includedMembers: [0, [Validators.required, Validators.min(0)]],
+      memberOveragePrice: [0, [Validators.required, Validators.min(0)]],
+      maxMembers: [0, [Validators.required, Validators.min(0)]],
       active: [true]
     });
     this.load();
@@ -54,13 +58,19 @@ export class AdminPlansComponent implements OnInit {
       monthlyPrice: plan.monthlyPriceCents / 100,
       includedReportsPerMonth: plan.includedReportsPerMonth,
       overagePrice: plan.overagePriceCents / 100,
+      includedMembers: plan.includedMembers ?? 0,
+      memberOveragePrice: (plan.memberOveragePriceCents ?? 0) / 100,
+      maxMembers: plan.maxMembers ?? 0,
       active: plan.active
     });
   }
 
   cancelEdit(): void {
     this.editingId = null;
-    this.form.reset({ name: '', monthlyPrice: 0, includedReportsPerMonth: 0, overagePrice: 0, active: true });
+    this.form.reset({
+      name: '', monthlyPrice: 0, includedReportsPerMonth: 0, overagePrice: 0,
+      includedMembers: 0, memberOveragePrice: 0, maxMembers: 0, active: true
+    });
   }
 
   onSubmit(): void {
@@ -74,6 +84,9 @@ export class AdminPlansComponent implements OnInit {
       monthlyPriceCents: Math.round(Number(v.monthlyPrice) * 100),
       includedReportsPerMonth: Number(v.includedReportsPerMonth) || 0,
       overagePriceCents: Math.round(Number(v.overagePrice) * 100),
+      includedMembers: Number(v.includedMembers) || 0,
+      memberOveragePriceCents: Math.round(Number(v.memberOveragePrice) * 100),
+      maxMembers: Number(v.maxMembers) || 0,
       active: !!v.active
     };
 

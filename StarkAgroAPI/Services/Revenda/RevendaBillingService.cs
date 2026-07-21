@@ -11,6 +11,10 @@ namespace StarkAgroAPI.Services.Revenda
     /// <summary>
     /// Fatura mensal da revenda no modelo <b>pool</b>: um plano para toda a base. <see cref="UsedReports"/>
     /// é a soma dos laudos de todos os clientes ativos; o excedente é calculado sobre esse total.
+    /// <para>
+    /// Duas linhas de excedente, dois eixos: <b>laudo</b> é custo (cada foto é chamada paga de IA) e
+    /// <b>assento</b> é comercial (tamanho da carteira atendida).
+    /// </para>
     /// </summary>
     public record RevendaInvoice(
         int RevendaId,
@@ -22,6 +26,11 @@ namespace StarkAgroAPI.Services.Revenda
         int UsedReports,
         int OverageReports,
         int OveragePriceCents,
+        int SeatsUsed,
+        int IncludedMembers,
+        int SeatOverage,
+        int SeatOveragePriceCents,
+        int SeatOverageCents,
         int TotalCents,
         IReadOnlyList<RevendaInvoiceClientLine> Clients,
         DateTime PeriodStart,
@@ -42,11 +51,13 @@ namespace StarkAgroAPI.Services.Revenda
     {
         private readonly agpDBContext _dbContext;
         private readonly IDiagnosisBillingService _billing;
+        private readonly IRevendaSeatService _seats;
 
-        public RevendaBillingService(agpDBContext dbContext, IDiagnosisBillingService billing)
+        public RevendaBillingService(agpDBContext dbContext, IDiagnosisBillingService billing, IRevendaSeatService seats)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             _billing = billing ?? throw new ArgumentNullException(nameof(billing));
+            _seats = seats ?? throw new ArgumentNullException(nameof(seats));
         }
 
         public async Task<RevendaInvoice?> GetRevendaInvoiceAsync(int revendaId, CancellationToken cancellationToken)
@@ -86,25 +97,34 @@ namespace StarkAgroAPI.Services.Revenda
                 totalUsed += invoice.UsedReports;
             }
 
+            // Assentos contam a base inteira (inclusive convite pendente), não só quem consumiu no mês.
+            var seats = await _seats.GetAsync(revendaId, cancellationToken);
+
             var plan = revenda.DiagnosisPlanId is int planId
                 ? await _dbContext.DiagnosisPlans.Find(p => p.Id == planId).FirstOrDefaultAsync(cancellationToken)
                 : null;
 
             if (plan is null)
             {
-                // Sem plano: nada a faturar; só mostra o consumo agregado.
+                // Sem plano: nada a faturar; só mostra o consumo agregado e o tamanho da base.
                 return new RevendaInvoice(
                     revendaId, revenda.Name, null, "Sem plano",
-                    0, 0, totalUsed, 0, 0, 0, lines, monthStart, nextMonth);
+                    0, 0, totalUsed, 0, 0,
+                    seats.Used, 0, 0, 0, 0,
+                    0, lines, monthStart, nextMonth);
             }
 
             var overage = Math.Max(0, totalUsed - plan.IncludedReportsPerMonth);
-            var total = plan.MonthlyPriceCents + overage * plan.OveragePriceCents;
+            var reportOverageCents = overage * plan.OveragePriceCents;
+            var seatOverageCents = seats.Overage * plan.MemberOveragePriceCents;
+            var total = plan.MonthlyPriceCents + reportOverageCents + seatOverageCents;
 
             return new RevendaInvoice(
                 revendaId, revenda.Name, plan.Id, plan.Name,
                 plan.MonthlyPriceCents, plan.IncludedReportsPerMonth, totalUsed, overage,
-                plan.OveragePriceCents, total, lines, monthStart, nextMonth);
+                plan.OveragePriceCents,
+                seats.Used, plan.IncludedMembers, seats.Overage, plan.MemberOveragePriceCents, seatOverageCents,
+                total, lines, monthStart, nextMonth);
         }
     }
 }

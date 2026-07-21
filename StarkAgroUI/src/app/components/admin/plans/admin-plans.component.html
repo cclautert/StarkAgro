@@ -4,6 +4,11 @@
     Mensalidade fixa que já inclui N laudos; o que passar disso é cobrado por laudo.
     Os preços vivem aqui — nada de valor fixo no código.
   </p>
+  <p class="subtitle">
+    Quando o plano é vendido a uma <strong>revenda</strong>, os campos de produtor valem também:
+    além dos inclusos cobra-se por produtor, e no teto o convite de novo produtor é bloqueado
+    (0 = ilimitado). Agrônomos e gestores da revenda não ocupam assento.
+  </p>
 
   <div *ngIf="isLoading" class="loading-text">Carregando…</div>
 
@@ -14,6 +19,7 @@
         <th>Mensalidade</th>
         <th>Inclusos</th>
         <th>Excedente</th>
+        <th>Produtores</th>
         <th>Status</th>
         <th></th>
       </tr>
@@ -24,6 +30,13 @@
         <td>{{ (p.monthlyPriceCents / 100) | currency:'BRL':'symbol':'1.2-2' }}</td>
         <td>{{ p.includedReportsPerMonth }} laudos</td>
         <td>{{ (p.overagePriceCents / 100) | currency:'BRL':'symbol':'1.2-2' }} / laudo</td>
+        <td class="seats-cell">
+          {{ p.includedMembers || 0 }} inclusos
+          <small>
+            {{ (p.memberOveragePriceCents || 0) / 100 | currency:'BRL':'symbol':'1.2-2' }} / extra ·
+            teto {{ p.maxMembers ? p.maxMembers : 'ilimitado' }}
+          </small>
+        </td>
         <td>
           <span class="badge" [class.badge-on]="p.active" [class.badge-off]="!p.active">
             {{ p.active ? 'Ativo' : 'Inativo' }}
@@ -59,6 +72,21 @@
       <div class="form-group">
         <label for="overagePrice">Excedente (R$/laudo)</label>
         <input id="overagePrice" type="number" min="0" step="0.01" formControlName="overagePrice" />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="includedMembers">Produtores inclusos (revenda)</label>
+        <input id="includedMembers" type="number" min="0" formControlName="includedMembers" />
+      </div>
+      <div class="form-group">
+        <label for="memberOveragePrice">Excedente (R$/produtor)</label>
+        <input id="memberOveragePrice" type="number" min="0" step="0.01" formControlName="memberOveragePrice" />
+      </div>
+      <div class="form-group">
+        <label for="maxMembers">Teto de produtores (0 = ilimitado)</label>
+        <input id="maxMembers" type="number" min="0" formControlName="maxMembers" />
       </div>
     </div>
 

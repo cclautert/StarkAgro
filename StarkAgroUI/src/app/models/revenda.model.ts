@@ -30,6 +30,16 @@ export interface RevendaInvite {
   inviteExpiresAt: string;
 }
 
+export interface RevendaSeats {
+  used: number;
+  included: number;
+  /** 0 = ilimitado. */
+  max: number;
+  overage: number;
+  isUnlimited: boolean;
+  isFull: boolean;
+}
+
 export interface RevendaBillingClientLine {
   clientUserId: number;
   clientName?: string | null;
@@ -47,6 +57,12 @@ export interface RevendaBilling {
   usedReports: number;
   overageReports: number;
   overagePriceCents: number;
+  /** Produtores ocupando assento (ativos + convites pendentes válidos). */
+  seatsUsed: number;
+  includedMembers: number;
+  seatOverage: number;
+  seatOveragePriceCents: number;
+  seatOverageCents: number;
   totalCents: number;
   clients: RevendaBillingClientLine[];
   periodStart: string;

@@ -40,7 +40,11 @@ namespace StarkAgroAPI.Tests.Services.Revenda
             billing.Setup(b => b.GetProducerInvoiceAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync((int id, CancellationToken _) => Invoice(id, usageByClient?.GetValueOrDefault(id) ?? 0));
 
-            return (new RevendaBillingService(db.Object, billing.Object), billing);
+            // Serviço de assentos real sobre o mesmo mock: a contagem sai das mesmas memberships,
+            // então a fatura e o teto não podem divergir.
+            var seats = new RevendaSeatService(db.Object);
+
+            return (new RevendaBillingService(db.Object, billing.Object, seats), billing);
         }
 
         [Fact]
@@ -116,6 +120,63 @@ namespace StarkAgroAPI.Tests.Services.Revenda
             Assert.Equal(0, inv!.UsedReports);
             Assert.Empty(inv.Clients);
             Assert.Equal(9900, inv.TotalCents); // mensalidade mesmo sem consumo
+        }
+
+        [Fact]
+        public async Task AssentosAlemDoIncluso_EntramNoTotal()
+        {
+            var (svc, _) = Build(
+                revendas: [new RevendaEntity { Id = 7, Name = "AgroSul", DiagnosisPlanId = 1 }],
+                memberships:
+                [
+                    new RevendaMembership { Id = 1, RevendaId = 7, MemberUserId = 3, MemberRole = RevendaMemberRole.Client, Status = RevendaMembershipStatus.Active },
+                    new RevendaMembership { Id = 2, RevendaId = 7, MemberUserId = 4, MemberRole = RevendaMemberRole.Client, Status = RevendaMembershipStatus.Active },
+                    new RevendaMembership { Id = 3, RevendaId = 7, MemberUserId = 5, MemberRole = RevendaMemberRole.Client, Status = RevendaMembershipStatus.Active }
+                ],
+                users: [new User { Id = 3 }, new User { Id = 4 }, new User { Id = 5 }],
+                plans:
+                [
+                    new DiagnosisPlan
+                    {
+                        Id = 1, Name = "Pro", MonthlyPriceCents = 9900,
+                        IncludedReportsPerMonth = 100, OveragePriceCents = 500,
+                        IncludedMembers = 2, MemberOveragePriceCents = 1500
+                    }
+                ],
+                usageByClient: new() { [3] = 1 });
+
+            var inv = await svc.GetRevendaInvoiceAsync(7, CancellationToken.None);
+
+            Assert.Equal(3, inv!.SeatsUsed);
+            Assert.Equal(2, inv.IncludedMembers);
+            Assert.Equal(1, inv.SeatOverage);           // max(0, 3 - 2)
+            Assert.Equal(1500, inv.SeatOverageCents);
+            Assert.Equal(0, inv.OverageReports);        // 1 laudo, 100 inclusos
+            Assert.Equal(11400, inv.TotalCents);        // 9900 + 1500
+        }
+
+        [Fact]
+        public async Task PlanoLegadoSemCamposDeAssento_MantemFaturaDeAntes()
+        {
+            // Documento gravado antes de assentos existirem desserializa com 0 nos campos novos:
+            // 0 incluso × 0 centavos = nada a cobrar por assento.
+            var (svc, _) = Build(
+                revendas: [new RevendaEntity { Id = 7, Name = "AgroSul", DiagnosisPlanId = 1 }],
+                memberships:
+                [
+                    new RevendaMembership { Id = 1, RevendaId = 7, MemberUserId = 3, MemberRole = RevendaMemberRole.Client, Status = RevendaMembershipStatus.Active },
+                    new RevendaMembership { Id = 2, RevendaId = 7, MemberUserId = 4, MemberRole = RevendaMemberRole.Client, Status = RevendaMembershipStatus.Active }
+                ],
+                users: [new User { Id = 3 }, new User { Id = 4 }],
+                plans: [new DiagnosisPlan { Id = 1, Name = "Antigo", MonthlyPriceCents = 9900, IncludedReportsPerMonth = 10, OveragePriceCents = 500 }],
+                usageByClient: new() { [3] = 2 });
+
+            var inv = await svc.GetRevendaInvoiceAsync(7, CancellationToken.None);
+
+            Assert.Equal(2, inv!.SeatsUsed);
+            Assert.Equal(2, inv.SeatOverage);        // sem incluso, tudo é excedente...
+            Assert.Equal(0, inv.SeatOverageCents);   // ...mas a 0 centavos
+            Assert.Equal(9900, inv.TotalCents);
         }
 
         [Fact]

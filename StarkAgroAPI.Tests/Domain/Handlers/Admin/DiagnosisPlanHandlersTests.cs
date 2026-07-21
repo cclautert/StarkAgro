@@ -14,6 +14,7 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Admin
         private static Mock<agpDBContext> Db(
             List<DiagnosisPlan>? plans = null,
             List<User>? users = null,
+            List<StarkAgroAPI.Models.Entities.Revenda>? revendas = null,
             int nextId = 1)
         {
             var plansCol = new Mock<IMongoCollection<DiagnosisPlan>>();
@@ -22,9 +23,15 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Admin
             var usersCol = new Mock<IMongoCollection<User>>();
             MongoMockHelper.SetupFindList(usersCol, users ?? []);
 
+            // O plano também é vendido a revendas: apagar um plano em uso lá deixaria a fatura
+            // do pool sem preço.
+            var revendasCol = new Mock<IMongoCollection<StarkAgroAPI.Models.Entities.Revenda>>();
+            MongoMockHelper.SetupFindList(revendasCol, revendas ?? []);
+
             var db = new Mock<agpDBContext>();
             db.Setup(d => d.DiagnosisPlans).Returns(plansCol.Object);
             db.Setup(d => d.Users).Returns(usersCol.Object);
+            db.Setup(d => d.Revendas).Returns(revendasCol.Object);
             db.Setup(d => d.GetNextIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(nextId);
             return db;
         }
@@ -130,6 +137,23 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Admin
             Assert.True(ok);
             plansCol.Verify(c => c.DeleteOneAsync(
                 It.IsAny<FilterDefinition<DiagnosisPlan>>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task Delete_bloqueia_plano_em_uso_por_revenda()
+        {
+            // Mesma razão do lado do produtor: o plano da revenda é a base da fatura do pool.
+            var db = Db(users: [], revendas: [new StarkAgroAPI.Models.Entities.Revenda { Id = 7, DiagnosisPlanId = 2 }]);
+            var plansCol = Mock.Get(db.Object.DiagnosisPlans);
+            var notifier = new Notificator();
+            var handler = new DeleteDiagnosisPlanHandler(db.Object, notifier);
+
+            var ok = await handler.Handle(new DeleteDiagnosisPlanRequest { Id = 2 }, CancellationToken.None);
+
+            Assert.False(ok);
+            Assert.True(notifier.HasNotification());
+            plansCol.Verify(c => c.DeleteOneAsync(
+                It.IsAny<FilterDefinition<DiagnosisPlan>>(), It.IsAny<CancellationToken>()), Times.Never);
         }
     }
 }

@@ -23,6 +23,16 @@ namespace StarkAgroAPI.Domain.Commands.Requests.Admin
         [Range(0, 100_000_000, ErrorMessage = "OveragePriceCents deve ser >= 0.")]
         public int OveragePriceCents { get; set; }
 
+        [Range(0, 1_000_000, ErrorMessage = "IncludedMembers deve ser >= 0.")]
+        public int IncludedMembers { get; set; }
+
+        [Range(0, 100_000_000, ErrorMessage = "MemberOveragePriceCents deve ser >= 0.")]
+        public int MemberOveragePriceCents { get; set; }
+
+        /// <summary>0 = ilimitado.</summary>
+        [Range(0, 1_000_000, ErrorMessage = "MaxMembers deve ser >= 0.")]
+        public int MaxMembers { get; set; }
+
         public bool Active { get; set; } = true;
     }
 
@@ -42,6 +52,16 @@ namespace StarkAgroAPI.Domain.Commands.Requests.Admin
 
         [Range(0, 100_000_000, ErrorMessage = "OveragePriceCents deve ser >= 0.")]
         public int OveragePriceCents { get; set; }
+
+        [Range(0, 1_000_000, ErrorMessage = "IncludedMembers deve ser >= 0.")]
+        public int IncludedMembers { get; set; }
+
+        [Range(0, 100_000_000, ErrorMessage = "MemberOveragePriceCents deve ser >= 0.")]
+        public int MemberOveragePriceCents { get; set; }
+
+        /// <summary>0 = ilimitado.</summary>
+        [Range(0, 1_000_000, ErrorMessage = "MaxMembers deve ser >= 0.")]
+        public int MaxMembers { get; set; }
 
         public bool Active { get; set; } = true;
     }

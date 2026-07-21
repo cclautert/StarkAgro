@@ -11,8 +11,11 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Revenda
 {
     public class RevendaBillingHandlersTests
     {
+        // mensalidade 9900 + 5 laudos excedentes × 500 + 0 assento excedente = 12400
         private static RevendaInvoice Sample(int revendaId = 7) => new(
-            revendaId, "AgroSul", 1, "Pro", 9900, 10, 15, 5, 500, 12400,
+            revendaId, "AgroSul", 1, "Pro", 9900, 10, 15, 5, 500,
+            SeatsUsed: 2, IncludedMembers: 2, SeatOverage: 0, SeatOveragePriceCents: 1500, SeatOverageCents: 0,
+            TotalCents: 12400,
             [new RevendaInvoiceClientLine(3, "Produtor A", "a@x.com", 8),
              new RevendaInvoiceClientLine(4, "Produtor B", "b@x.com", 7)],
             DateTime.UtcNow, DateTime.UtcNow.AddMonths(1));

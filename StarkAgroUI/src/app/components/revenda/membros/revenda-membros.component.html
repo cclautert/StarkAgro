@@ -11,6 +11,20 @@
       clientes são os produtores da revenda.
     </p>
 
+    <p class="card-hint seats" *ngIf="seats">
+      <strong>{{ seats.used }}</strong> produtor(es) ocupando assento
+      <ng-container *ngIf="!seats.isUnlimited">de <strong>{{ seats.max }}</strong> do plano</ng-container>
+      <ng-container *ngIf="seats.isUnlimited">— plano sem teto</ng-container>
+      · {{ seats.included }} incluso(s) na mensalidade<ng-container *ngIf="seats.overage > 0">,
+      {{ seats.overage }} cobrado(s) como excedente</ng-container>.
+      Convite pendente já reserva a vaga; agrônomo e gestor não ocupam assento.
+    </p>
+
+    <div class="error" *ngIf="seatsBlockClientInvite">
+      Limite de produtores do plano atingido. Encerre um vínculo ou peça upgrade do plano para
+      convidar outro produtor.
+    </div>
+
     <div class="invite-row">
       <input type="email" [(ngModel)]="email" placeholder="email@membro.com.br"
              (keyup.enter)="invite()" />
@@ -18,7 +32,7 @@
         <option value="Client">Cliente</option>
         <option value="Agronomist">Agrônomo</option>
       </select>
-      <button class="btn-primary" (click)="invite()" [disabled]="inviting || !email">
+      <button class="btn-primary" (click)="invite()" [disabled]="inviting || !email || seatsBlockClientInvite">
         {{ inviting ? 'Enviando...' : 'Convidar' }}
       </button>
     </div>

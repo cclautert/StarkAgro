@@ -38,6 +38,14 @@ namespace StarkAgroAPI.Controllers
             return CustomResponse(await mediator.Send(new ListRevendaMembersRequest(), cancellationToken));
         }
 
+        [HttpGet("seats")]
+        public async Task<ActionResult<RevendaSeatsResponse>> GetSeats(
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken)
+        {
+            return CustomResponse(await mediator.Send(new GetMyRevendaSeatsRequest(), cancellationToken));
+        }
+
         [HttpPost("members/invite")]
         public async Task<ActionResult<RevendaMemberResponse>> InviteMember(
             [FromServices] IMediator mediator,

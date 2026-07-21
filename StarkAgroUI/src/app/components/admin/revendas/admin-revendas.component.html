@@ -71,6 +71,13 @@
               {{ billing.usedReports }} laudo(s) · inclusos {{ billing.includedReports }} ·
               excedente {{ billing.overageReports }}
             </span>
+            <span class="billing-sub">
+              {{ billing.seatsUsed }} produtor(es) · inclusos {{ billing.includedMembers }} ·
+              excedente {{ billing.seatOverage }}
+              <ng-container *ngIf="billing.seatOverageCents > 0">
+                = {{ (billing.seatOverageCents / 100) | currency:'BRL':'symbol':'1.2-2' }}
+              </ng-container>
+            </span>
           </div>
         </div>
       </div>

@@ -18,6 +18,9 @@ namespace StarkAgroAPI.Domain.Handlers.Admin
             MonthlyPriceCents = p.MonthlyPriceCents,
             IncludedReportsPerMonth = p.IncludedReportsPerMonth,
             OveragePriceCents = p.OveragePriceCents,
+            IncludedMembers = p.IncludedMembers,
+            MemberOveragePriceCents = p.MemberOveragePriceCents,
+            MaxMembers = p.MaxMembers,
             Active = p.Active
         };
     }
@@ -50,6 +53,9 @@ namespace StarkAgroAPI.Domain.Handlers.Admin
                 MonthlyPriceCents = request.MonthlyPriceCents,
                 IncludedReportsPerMonth = request.IncludedReportsPerMonth,
                 OveragePriceCents = request.OveragePriceCents,
+                IncludedMembers = request.IncludedMembers,
+                MemberOveragePriceCents = request.MemberOveragePriceCents,
+                MaxMembers = request.MaxMembers,
                 Active = request.Active
             };
 
@@ -86,6 +92,9 @@ namespace StarkAgroAPI.Domain.Handlers.Admin
                 .Set(p => p.MonthlyPriceCents, request.MonthlyPriceCents)
                 .Set(p => p.IncludedReportsPerMonth, request.IncludedReportsPerMonth)
                 .Set(p => p.OveragePriceCents, request.OveragePriceCents)
+                .Set(p => p.IncludedMembers, request.IncludedMembers)
+                .Set(p => p.MemberOveragePriceCents, request.MemberOveragePriceCents)
+                .Set(p => p.MaxMembers, request.MaxMembers)
                 .Set(p => p.Active, request.Active);
 
             await _dbContext.DiagnosisPlans.UpdateOneAsync(p => p.Id == request.Id, update, null, cancellationToken);
@@ -94,6 +103,9 @@ namespace StarkAgroAPI.Domain.Handlers.Admin
             existing.MonthlyPriceCents = request.MonthlyPriceCents;
             existing.IncludedReportsPerMonth = request.IncludedReportsPerMonth;
             existing.OveragePriceCents = request.OveragePriceCents;
+            existing.IncludedMembers = request.IncludedMembers;
+            existing.MemberOveragePriceCents = request.MemberOveragePriceCents;
+            existing.MaxMembers = request.MaxMembers;
             existing.Active = request.Active;
             return DiagnosisPlanMapper.ToResponse(existing);
         }
@@ -122,6 +134,18 @@ namespace StarkAgroAPI.Domain.Handlers.Admin
             {
                 _notifier.Handle(new Notification(
                     "Este plano está atribuído a produtores. Desative-o em vez de apagar."));
+                return false;
+            }
+
+            // Mesma razão do lado da revenda: o plano da revenda é a base da fatura do pool.
+            var revendaInUse = await _dbContext.Revendas
+                .Find(r => r.DiagnosisPlanId == request.Id)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            if (revendaInUse is not null)
+            {
+                _notifier.Handle(new Notification(
+                    "Este plano está atribuído a revendas. Desative-o em vez de apagar."));
                 return false;
             }
 

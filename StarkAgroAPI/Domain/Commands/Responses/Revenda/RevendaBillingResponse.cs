@@ -21,6 +21,11 @@ namespace StarkAgroAPI.Domain.Commands.Responses.Revenda
         public int UsedReports { get; set; }
         public int OverageReports { get; set; }
         public int OveragePriceCents { get; set; }
+        public int SeatsUsed { get; set; }
+        public int IncludedMembers { get; set; }
+        public int SeatOverage { get; set; }
+        public int SeatOveragePriceCents { get; set; }
+        public int SeatOverageCents { get; set; }
         public int TotalCents { get; set; }
         public List<RevendaBillingClientLine> Clients { get; set; } = [];
         public DateTime PeriodStart { get; set; }
@@ -37,6 +42,11 @@ namespace StarkAgroAPI.Domain.Commands.Responses.Revenda
             UsedReports = inv.UsedReports,
             OverageReports = inv.OverageReports,
             OveragePriceCents = inv.OveragePriceCents,
+            SeatsUsed = inv.SeatsUsed,
+            IncludedMembers = inv.IncludedMembers,
+            SeatOverage = inv.SeatOverage,
+            SeatOveragePriceCents = inv.SeatOveragePriceCents,
+            SeatOverageCents = inv.SeatOverageCents,
             TotalCents = inv.TotalCents,
             Clients = inv.Clients.Select(c => new RevendaBillingClientLine
             {

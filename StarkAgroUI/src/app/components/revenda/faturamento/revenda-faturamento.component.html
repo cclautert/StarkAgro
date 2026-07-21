@@ -19,6 +19,14 @@
           × {{ (billing.overagePriceCents / 100) | currency:'BRL':'symbol':'1.2-2' }}
         </ng-container>
       </span>
+      <span class="total-sub">
+        {{ billing.seatsUsed }} produtor(es) · inclusos {{ billing.includedMembers }} ·
+        excedente {{ billing.seatOverage }}
+        <ng-container *ngIf="billing.seatOverage > 0">
+          × {{ (billing.seatOveragePriceCents / 100) | currency:'BRL':'symbol':'1.2-2' }}
+          = {{ (billing.seatOverageCents / 100) | currency:'BRL':'symbol':'1.2-2' }}
+        </ng-container>
+      </span>
     </div>
 
     <p *ngIf="!billing.clients.length" class="empty">

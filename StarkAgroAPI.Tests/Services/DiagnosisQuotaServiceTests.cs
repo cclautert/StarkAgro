@@ -18,7 +18,9 @@ namespace StarkAgroAPI.Tests.Services
         private static DiagnosisQuotaService Build(
             int? userQuota,
             int defaultQuota,
-            int usedThisMonth)
+            int usedThisMonth,
+            int? revendaQuota = null,
+            bool memberOfRevenda = false)
         {
             var users = new Mock<IMongoCollection<User>>();
             MongoMockHelper.SetupFindList(users, [
@@ -36,12 +38,64 @@ namespace StarkAgroAPI.Tests.Services
                     .Select(i => new PlantDiagnosis { Id = i, UserId = UserId, CreatedAt = DateTime.UtcNow })
                     .ToList());
 
+            // A revenda que paga pelo produtor também define cota — a busca passa pelo vínculo
+            // Client Active, não pelo cache User.RevendaId.
+            var memberships = new Mock<IMongoCollection<RevendaMembership>>();
+            MongoMockHelper.SetupFindList(memberships, memberOfRevenda
+                ? [new RevendaMembership
+                {
+                    Id = 1, RevendaId = 7, MemberUserId = UserId,
+                    MemberRole = RevendaMemberRole.Client, Status = RevendaMembershipStatus.Active
+                }]
+                : []);
+
+            var revendas = new Mock<IMongoCollection<StarkAgroAPI.Models.Entities.Revenda>>();
+            MongoMockHelper.SetupFindList(revendas, [
+                new StarkAgroAPI.Models.Entities.Revenda { Id = 7, Name = "AgroSul", DiagnosisQuotaPerMonth = revendaQuota }
+            ]);
+
             var db = new Mock<agpDBContext>();
             db.Setup(d => d.Users).Returns(users.Object);
             db.Setup(d => d.PlatformAiSettings).Returns(settings.Object);
             db.Setup(d => d.PlantDiagnoses).Returns(diagnoses.Object);
+            db.Setup(d => d.RevendaMemberships).Returns(memberships.Object);
+            db.Setup(d => d.Revendas).Returns(revendas.Object);
 
             return new DiagnosisQuotaService(db.Object);
+        }
+
+        [Fact]
+        public async Task Quota_HerdaDaRevendaQuandoUsuarioNaoTemPropria()
+        {
+            // Quem banca a conta limita o consumo: o produtor-membro cai na cota da revenda.
+            var service = Build(userQuota: null, defaultQuota: 5, usedThisMonth: 0,
+                revendaQuota: 30, memberOfRevenda: true);
+
+            var quota = await service.GetAsync(UserId, CancellationToken.None);
+
+            Assert.Equal(30, quota.Limit);
+        }
+
+        [Fact]
+        public async Task Quota_DoUsuarioGanhaDaRevenda()
+        {
+            var service = Build(userQuota: 12, defaultQuota: 5, usedThisMonth: 0,
+                revendaQuota: 30, memberOfRevenda: true);
+
+            var quota = await service.GetAsync(UserId, CancellationToken.None);
+
+            Assert.Equal(12, quota.Limit);
+        }
+
+        [Fact]
+        public async Task Quota_SemVinculoDeRevenda_CaiNoPadraoDaPlataforma()
+        {
+            var service = Build(userQuota: null, defaultQuota: 5, usedThisMonth: 0,
+                revendaQuota: 30, memberOfRevenda: false);
+
+            var quota = await service.GetAsync(UserId, CancellationToken.None);
+
+            Assert.Equal(5, quota.Limit);
         }
 
         [Fact]

@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Revenda, RevendaMember, RevendaInvite, RevendaBilling } from '../models/revenda.model';
+import { Revenda, RevendaMember, RevendaInvite, RevendaBilling, RevendaSeats } from '../models/revenda.model';
 
 @Injectable({ providedIn: 'root' })
 export class RevendaService {
@@ -15,6 +15,11 @@ export class RevendaService {
 
   getMembers(): Observable<RevendaMember[]> {
     return this.http.get<RevendaMember[]>(`${this.baseUrl}revenda/members`);
+  }
+
+  /** Ocupação de assentos — endpoint enxuto, separado do faturamento. */
+  getSeats(): Observable<RevendaSeats> {
+    return this.http.get<RevendaSeats>(`${this.baseUrl}revenda/seats`);
   }
 
   invite(email: string, role: string): Observable<RevendaMember> {

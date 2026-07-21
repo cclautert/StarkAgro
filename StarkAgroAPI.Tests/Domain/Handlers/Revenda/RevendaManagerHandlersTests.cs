@@ -60,6 +60,15 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Revenda
             return svc.Object;
         }
 
+        /// <summary>Assentos da revenda. Default: base vazia e teto ilimitado (<c>max = 0</c>).</summary>
+        private static IRevendaSeatService Seats(int used = 0, int included = 0, int max = 0)
+        {
+            var svc = new Mock<IRevendaSeatService>();
+            svc.Setup(s => s.GetAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new RevendaSeats(used, included, max));
+            return svc.Object;
+        }
+
         // ---- GetMyRevenda ----
 
         [Fact]
@@ -139,7 +148,7 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Revenda
         {
             var db = Db(users: [], nextId: 50);
             var membershipsCol = Mock.Get(db.Object.RevendaMemberships);
-            var handler = new InviteRevendaMemberHandler(db.Object, User(42), Membership(7), new Notificator());
+            var handler = new InviteRevendaMemberHandler(db.Object, User(42), Membership(7), Seats(), new Notificator());
 
             var result = await handler.Handle(new InviteRevendaMemberRequest
             {
@@ -159,7 +168,7 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Revenda
         {
             var db = Db();
             var notifier = new Notificator();
-            var handler = new InviteRevendaMemberHandler(db.Object, User(), Membership(null), notifier);
+            var handler = new InviteRevendaMemberHandler(db.Object, User(), Membership(null), Seats(), notifier);
 
             var result = await handler.Handle(new InviteRevendaMemberRequest { Email = "a@b.com", Role = RevendaMemberRole.Client }, CancellationToken.None);
 
@@ -172,7 +181,7 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Revenda
         {
             var db = Db();
             var notifier = new Notificator();
-            var handler = new InviteRevendaMemberHandler(db.Object, User(), Membership(7), notifier);
+            var handler = new InviteRevendaMemberHandler(db.Object, User(), Membership(7), Seats(), notifier);
 
             var result = await handler.Handle(new InviteRevendaMemberRequest { Email = "a@b.com", Role = RevendaMemberRole.Manager }, CancellationToken.None);
 
@@ -185,7 +194,7 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Revenda
         {
             var db = Db(users: [new User { Id = 42, Email = "eu@a.com" }]);
             var notifier = new Notificator();
-            var handler = new InviteRevendaMemberHandler(db.Object, User(42), Membership(7), notifier);
+            var handler = new InviteRevendaMemberHandler(db.Object, User(42), Membership(7), Seats(), notifier);
 
             var result = await handler.Handle(new InviteRevendaMemberRequest { Email = "eu@a.com", Role = RevendaMemberRole.Client }, CancellationToken.None);
 
@@ -201,12 +210,58 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Revenda
                 Id = 1, RevendaId = 7, MemberEmail = "dup@a.com", Status = RevendaMembershipStatus.Pending
             }]);
             var notifier = new Notificator();
-            var handler = new InviteRevendaMemberHandler(db.Object, User(42), Membership(7), notifier);
+            var handler = new InviteRevendaMemberHandler(db.Object, User(42), Membership(7), Seats(), notifier);
 
             var result = await handler.Handle(new InviteRevendaMemberRequest { Email = "dup@a.com", Role = RevendaMemberRole.Client }, CancellationToken.None);
 
             Assert.Null(result);
             Assert.True(notifier.HasNotification());
+        }
+
+        [Fact]
+        public async Task Invite_ProdutorComAssentosNoTeto_NotificaENull()
+        {
+            var db = Db(users: [], nextId: 50);
+            var notifier = new Notificator();
+            var handler = new InviteRevendaMemberHandler(db.Object, User(42), Membership(7), Seats(used: 3, included: 2, max: 3), notifier);
+
+            var result = await handler.Handle(
+                new InviteRevendaMemberRequest { Email = "novo@a.com", Role = RevendaMemberRole.Client },
+                CancellationToken.None);
+
+            Assert.Null(result);
+            Assert.True(notifier.HasNotification());
+            Mock.Get(db.Object.RevendaMemberships).Verify(c => c.InsertOneAsync(
+                It.IsAny<RevendaMembership>(), It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task Invite_ProdutorAbaixoDoTeto_Cria()
+        {
+            var db = Db(users: [], nextId: 50);
+            var handler = new InviteRevendaMemberHandler(db.Object, User(42), Membership(7), Seats(used: 2, included: 2, max: 3), new Notificator());
+
+            var result = await handler.Handle(
+                new InviteRevendaMemberRequest { Email = "novo@a.com", Role = RevendaMemberRole.Client },
+                CancellationToken.None);
+
+            Assert.NotNull(result);
+            Assert.Equal(RevendaMembershipStatus.Pending, result!.Status);
+        }
+
+        [Fact]
+        public async Task Invite_AgronomoComBaseCheia_NaoEBloqueado()
+        {
+            // Agrônomo é equipe da revenda: não ocupa assento, então o teto não vale para ele.
+            var db = Db(users: [], nextId: 50);
+            var handler = new InviteRevendaMemberHandler(db.Object, User(42), Membership(7), Seats(used: 3, included: 2, max: 3), new Notificator());
+
+            var result = await handler.Handle(
+                new InviteRevendaMemberRequest { Email = "agro@a.com", Role = RevendaMemberRole.Agronomist },
+                CancellationToken.None);
+
+            Assert.NotNull(result);
+            Assert.Equal(RevendaMemberRole.Agronomist, result!.MemberRole);
         }
 
         // ---- Revoke ----

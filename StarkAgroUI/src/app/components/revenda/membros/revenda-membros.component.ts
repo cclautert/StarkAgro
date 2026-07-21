@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { RevendaService } from '../../../services/revenda.service';
-import { RevendaMember } from '../../../models/revenda.model';
+import { RevendaMember, RevendaSeats } from '../../../models/revenda.model';
 
 @Component({
   selector: 'app-revenda-membros',
@@ -14,6 +14,7 @@ import { RevendaMember } from '../../../models/revenda.model';
 })
 export class RevendaMembrosComponent implements OnInit {
   members: RevendaMember[] = [];
+  seats?: RevendaSeats;
   loading = true;
   inviting = false;
   email = '';
@@ -32,6 +33,18 @@ export class RevendaMembrosComponent implements OnInit {
       next: members => { this.members = members; this.loading = false; },
       error: () => this.loading = false
     });
+
+    // Assento é do produtor: agrônomo e gestor não contam. O bloqueio de verdade é no backend —
+    // aqui é só para o gestor não bater na parede.
+    this.revendaService.getSeats().subscribe({
+      next: seats => this.seats = seats,
+      error: () => this.seats = undefined
+    });
+  }
+
+  /** Convite de produtor com a base cheia não vai passar no backend. */
+  get seatsBlockClientInvite(): boolean {
+    return this.role === 'Client' && !!this.seats?.isFull;
   }
 
   invite(): void {

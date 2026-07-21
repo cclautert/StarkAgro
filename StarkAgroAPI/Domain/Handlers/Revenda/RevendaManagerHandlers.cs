@@ -113,14 +113,16 @@ namespace StarkAgroAPI.Domain.Handlers.Revenda
         private readonly agpDBContext _dbContext;
         private readonly ICurrentUserContext _currentUser;
         private readonly IRevendaMembershipService _membership;
+        private readonly IRevendaSeatService _seats;
         private readonly INotifier _notifier;
 
         public InviteRevendaMemberHandler(agpDBContext dbContext, ICurrentUserContext currentUser,
-            IRevendaMembershipService membership, INotifier notifier)
+            IRevendaMembershipService membership, IRevendaSeatService seats, INotifier notifier)
         {
             _dbContext = dbContext;
             _currentUser = currentUser;
             _membership = membership;
+            _seats = seats;
             _notifier = notifier;
         }
 
@@ -140,6 +142,19 @@ namespace StarkAgroAPI.Domain.Handlers.Revenda
             {
                 _notifier.Handle(new Notification("Papel inválido. Use Agronomist ou Client."));
                 return null;
+            }
+
+            // Teto de assentos do plano. Só vale para produtor — agrônomo e gestor são equipe da
+            // revenda e não ocupam assento.
+            if (request.Role == RevendaMemberRole.Client)
+            {
+                var seats = await _seats.GetAsync(revendaId.Value, cancellationToken);
+                if (seats.IsFull)
+                {
+                    _notifier.Handle(new Notification(
+                        $"Limite de {seats.Max} produtores do plano atingido ({seats.Used} em uso, contando convites pendentes). Remova um produtor ou peça upgrade do plano."));
+                    return null;
+                }
             }
 
             var email = EmailNormalizer.Normalize(request.Email);

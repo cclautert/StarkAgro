@@ -33,6 +33,8 @@ h2 { margin: 0 0 4px; }
 }
 .plan-form h3 { margin: 0 0 14px; font-size: 1.05rem; }
 
+.seats-cell small { display: block; color: #94a3b8; font-size: 0.75rem; }
+
 .form-group { margin-bottom: 14px; display: flex; flex-direction: column; gap: 6px; }
 .form-row { display: flex; gap: 14px; flex-wrap: wrap; }
 .form-row .form-group { flex: 1; min-width: 140px; }

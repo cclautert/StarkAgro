@@ -48,8 +48,13 @@ namespace StarkAgroAPI.Services.Diagnosis
                 .Find(_ => true)
                 .FirstOrDefaultAsync(cancellationToken);
 
-            // Cota do usuário tem precedência; sem ela, vale o padrão da plataforma.
-            var limit = user?.DiagnosisQuotaPerMonth ?? settings?.DefaultDiagnosisQuotaPerMonth ?? 0;
+            // Precedência: cota do usuário → cota da revenda que o paga → padrão da plataforma.
+            // Quem banca a conta é quem tem direito de limitar o consumo.
+            var revendaQuota = user is null ? null : await GetRevendaQuotaAsync(user.Id, cancellationToken);
+            var limit = user?.DiagnosisQuotaPerMonth
+                        ?? revendaQuota
+                        ?? settings?.DefaultDiagnosisQuotaPerMonth
+                        ?? 0;
 
             var now = DateTime.UtcNow;
             var monthStart = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc);
@@ -67,6 +72,30 @@ namespace StarkAgroAPI.Services.Diagnosis
                 .ToListAsync(cancellationToken);
 
             return new DiagnosisQuota(limit, used.Count, nextMonth);
+        }
+
+        /// <summary>
+        /// Cota-padrão da revenda que paga por este produtor, ou null se ele não é membro de nenhuma.
+        /// <para>
+        /// A revenda vem do vínculo <c>Client</c> Active — fonte da verdade —, não de
+        /// <c>User.RevendaId</c>, que é só cache denormalizado e pode ficar para trás.
+        /// </para>
+        /// </summary>
+        private async Task<int?> GetRevendaQuotaAsync(int userId, CancellationToken cancellationToken)
+        {
+            var membership = await _dbContext.RevendaMemberships
+                .Find(m => m.MemberUserId == userId
+                           && m.MemberRole == RevendaMemberRole.Client
+                           && m.Status == RevendaMembershipStatus.Active)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            if (membership is null) return null;
+
+            var revenda = await _dbContext.Revendas
+                .Find(r => r.Id == membership.RevendaId)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            return revenda?.DiagnosisQuotaPerMonth;
         }
     }
 }
