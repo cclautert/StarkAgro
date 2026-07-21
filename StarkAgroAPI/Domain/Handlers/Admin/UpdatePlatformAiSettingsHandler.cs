@@ -30,7 +30,11 @@ namespace StarkAgroAPI.Domain.Handlers.Admin
                 CropHealthKey = request.CropHealthKey,
                 CropHealthEnabled = request.CropHealthEnabled,
                 DefaultDiagnosisQuotaPerMonth = request.DefaultDiagnosisQuotaPerMonth,
-                CropHealthCostCents = request.CropHealthCostCents
+                CropHealthCostCents = request.CropHealthCostCents,
+                CdseClientId = request.CdseClientId,
+                CdseClientSecret = request.CdseClientSecret,
+                Sentinel2Enabled = request.Sentinel2Enabled,
+                NdviCostCents = request.NdviCostCents
             };
 
             await _dbContext.PlatformAiSettings.ReplaceOneAsync(

@@ -23,5 +23,11 @@ namespace StarkAgroAPI.Domain.Commands.Responses.Admin
         /// visível onde o admin controla o botão de custo — sem tela nova.
         /// </summary>
         public int CurrentMonthAiCostCents { get; set; }
+
+        // ── NDVI Sentinel-2 (CDSE) ──
+        public string? CdseClientId { get; set; }
+        public string? CdseClientSecret { get; set; }
+        public bool Sentinel2Enabled { get; set; }
+        public int NdviCostCents { get; set; }
     }
 }

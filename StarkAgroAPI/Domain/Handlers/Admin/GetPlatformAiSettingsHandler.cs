@@ -40,7 +40,11 @@ namespace StarkAgroAPI.Domain.Handlers.Admin
                 CropHealthEnabled = settings.CropHealthEnabled,
                 DefaultDiagnosisQuotaPerMonth = settings.DefaultDiagnosisQuotaPerMonth,
                 CropHealthCostCents = settings.CropHealthCostCents,
-                CurrentMonthAiCostCents = monthCost
+                CurrentMonthAiCostCents = monthCost,
+                CdseClientId = settings.CdseClientId,
+                CdseClientSecret = settings.CdseClientSecret,
+                Sentinel2Enabled = settings.Sentinel2Enabled,
+                NdviCostCents = settings.NdviCostCents
             };
         }
     }

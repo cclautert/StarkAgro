@@ -1,0 +1,131 @@
+using StarkAgroAPI.Models;
+using StarkAgroAPI.Services.Ndvi;
+using Microsoft.Extensions.Logging.Abstractions;
+using Moq;
+using Moq.Protected;
+using System.Net;
+using System.Text.Json;
+
+namespace StarkAgroAPI.Tests.Services.Ndvi
+{
+    public class CdseStatisticalServiceTests
+    {
+        private static MongoDB.Driver.GeoJsonObjectModel.GeoJsonPolygon<MongoDB.Driver.GeoJsonObjectModel.GeoJson2DGeographicCoordinates> Geo()
+        {
+            MonitoredAreaGeometry.TryBuild(new List<GeoCoordinate>
+            {
+                new() { Lat = -23.0, Lng = -47.0 }, new() { Lat = -23.0, Lng = -46.99 }, new() { Lat = -22.99, Lng = -46.99 }
+            }, out var g, out _);
+            return g;
+        }
+
+        private static CdseStatisticalService Service(HttpStatusCode code, string body, Exception? throws = null)
+        {
+            var handler = new Mock<HttpMessageHandler>();
+            var setup = handler.Protected().Setup<Task<HttpResponseMessage>>(
+                "SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>());
+            if (throws is not null) setup.ThrowsAsync(throws);
+            else setup.ReturnsAsync(new HttpResponseMessage(code) { Content = new StringContent(body) });
+            var client = new HttpClient(handler.Object) { BaseAddress = new Uri("https://sh.dataspace.copernicus.eu/") };
+            return new CdseStatisticalService(client, NullLogger<CdseStatisticalService>.Instance);
+        }
+
+        [Fact]
+        public async Task GetStatistics_Success_ParsesSeries()
+        {
+            var svc = Service(HttpStatusCode.OK, SampleResponse);
+
+            var stats = await svc.GetStatisticsAsync("tok", Geo(), DateTime.UtcNow.AddDays(-30), DateTime.UtcNow, CancellationToken.None);
+
+            Assert.NotNull(stats);
+            Assert.Equal(2, stats!.Count);
+        }
+
+        [Fact]
+        public async Task GetStatistics_HttpError_ReturnsNull()
+        {
+            var svc = Service(HttpStatusCode.BadRequest, "bad");
+
+            Assert.Null(await svc.GetStatisticsAsync("tok", Geo(), DateTime.UtcNow.AddDays(-30), DateTime.UtcNow, CancellationToken.None));
+        }
+
+        [Fact]
+        public async Task GetStatistics_TransportThrows_ReturnsNull()
+        {
+            var svc = Service(HttpStatusCode.OK, "", throws: new HttpRequestException("down"));
+
+            Assert.Null(await svc.GetStatisticsAsync("tok", Geo(), DateTime.UtcNow.AddDays(-30), DateTime.UtcNow, CancellationToken.None));
+        }
+
+        private const string SampleResponse = """
+        {
+          "data": [
+            { "interval": { "from": "2026-06-03T00:00:00Z", "to": "2026-06-04T00:00:00Z" },
+              "outputs": { "ndvi": { "bands": { "B0": {
+                "stats": { "min": 0.2, "max": 0.9, "mean": 0.65, "stDev": 0.12, "sampleCount": 1000, "noDataCount": 100 } } } } } },
+            { "interval": { "from": "2026-06-08T00:00:00Z", "to": "2026-06-09T00:00:00Z" },
+              "outputs": { "ndvi": { "bands": { "B0": {
+                "stats": { "sampleCount": 0, "noDataCount": 0 } } } } } }
+          ],
+          "status": "OK"
+        }
+        """;
+
+        [Fact]
+        public void Parse_ValidInterval_ReadsStatsAndCloud()
+        {
+            using var doc = JsonDocument.Parse(SampleResponse);
+
+            var stats = CdseStatisticalService.Parse(doc.RootElement);
+
+            Assert.Equal(2, stats.Count);
+            var first = stats[0];
+            Assert.Equal(new DateTime(2026, 6, 3, 0, 0, 0, DateTimeKind.Utc), first.AcquisitionDate);
+            Assert.Equal(0.65, first.Mean, 6);
+            Assert.Equal(900, first.ValidSampleCount);        // 1000 - 100
+            Assert.Equal(10.0, first.CloudPct, 6);            // 100/1000
+        }
+
+        [Fact]
+        public void Parse_FullyCloudedInterval_IsZeroValidAndHundredCloud()
+        {
+            using var doc = JsonDocument.Parse(SampleResponse);
+
+            var stats = CdseStatisticalService.Parse(doc.RootElement);
+
+            var cloudy = stats[1];
+            Assert.Equal(0, cloudy.ValidSampleCount);
+            Assert.Equal(100.0, cloudy.CloudPct, 6);
+        }
+
+        [Fact]
+        public void Parse_NoDataArray_ReturnsEmpty()
+        {
+            using var doc = JsonDocument.Parse("""{ "status": "OK" }""");
+
+            Assert.Empty(CdseStatisticalService.Parse(doc.RootElement));
+        }
+
+        [Fact]
+        public void BuildRequestBody_ContainsGeometryFilterAndEvalscript()
+        {
+            MonitoredAreaGeometry.TryBuild(new List<GeoCoordinate>
+            {
+                new() { Lat = -23.0, Lng = -47.0 },
+                new() { Lat = -23.0, Lng = -46.99 },
+                new() { Lat = -22.99, Lng = -46.99 }
+            }, out var geo, out _);
+
+            var body = CdseStatisticalService.BuildRequestBody(
+                geo, new DateTime(2026, 6, 1, 0, 0, 0, DateTimeKind.Utc), new DateTime(2026, 7, 1, 0, 0, 0, DateTimeKind.Utc));
+
+            Assert.Contains("Polygon", body);
+            Assert.Contains("sentinel-2-l2a", body);
+            Assert.Contains("maxCloudCoverage", body);
+            Assert.Contains("P1D", body);
+            Assert.Contains("evaluatePixel", body);        // o evalscript foi embutido
+            Assert.Contains("2026-06-01T00:00:00Z", body);
+            Assert.Contains("-47", body);                   // longitude no ring (ordem [lng,lat])
+        }
+    }
+}

@@ -34,5 +34,22 @@ namespace StarkAgroAPI.Models.Entities
         /// </para>
         /// </summary>
         public int CropHealthCostCents { get; set; } = 3;
+
+        // ── NDVI Sentinel-2 (Copernicus Data Space Ecosystem) ──
+
+        /// <summary>Client id do OAuth2 client-credentials da CDSE.</summary>
+        public string? CdseClientId { get; set; }
+
+        /// <summary>Client secret do OAuth2 client-credentials da CDSE.</summary>
+        public string? CdseClientSecret { get; set; }
+
+        /// <summary>
+        /// Kill-switch do NDVI. Desligado, o worker não busca nada da CDSE — o admin corta o
+        /// custo de Processing Units sem redeploy.
+        /// </summary>
+        public bool Sentinel2Enabled { get; set; } = false;
+
+        /// <summary>Custo de uma busca NDVI (Processing Units), em <b>centavos</b> — congelado por reading.</summary>
+        public int NdviCostCents { get; set; } = 1;
     }
 }

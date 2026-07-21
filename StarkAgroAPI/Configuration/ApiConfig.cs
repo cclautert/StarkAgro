@@ -63,6 +63,23 @@ namespace StarkAgroAPI.Configuration
             services.AddScoped<ICropDiagnosisProvider>(sp =>
                 sp.GetRequiredService<KindwiseCropHealthService>());
 
+            // NDVI Sentinel-2 (Copernicus Data Space Ecosystem)
+            services.AddHttpClient<Services.Ndvi.CdseTokenProvider>(client =>
+            {
+                client.BaseAddress = new Uri("https://identity.dataspace.copernicus.eu/");
+                client.Timeout = TimeSpan.FromSeconds(15);
+            });
+            services.AddHttpClient<Services.Ndvi.CdseStatisticalService>(client =>
+            {
+                client.BaseAddress = new Uri("https://sh.dataspace.copernicus.eu/");
+                client.Timeout = TimeSpan.FromSeconds(60);
+            });
+            services.AddScoped<Services.Ndvi.ICdseTokenProvider>(sp =>
+                sp.GetRequiredService<Services.Ndvi.CdseTokenProvider>());
+            services.AddScoped<Services.Ndvi.ICdseStatisticalService>(sp =>
+                sp.GetRequiredService<Services.Ndvi.CdseStatisticalService>());
+            services.AddScoped<Services.Ndvi.INdviFetchService, Services.Ndvi.NdviFetchService>();
+
             services.AddSingleton<ILoRaWanDownlinkService, MqttDownlinkService>();
 
             services.AddHttpClient("expo_push", client =>
