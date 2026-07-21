@@ -4,7 +4,9 @@ using StarkAgroAPI.Models;
 using StarkAgroAPI.Models.Entities;
 using StarkAgroAPI.Models.Interfaces;
 using StarkAgroAPI.Notifications;
+using StarkAgroAPI.Services.Ndvi;
 using StarkAgroAPI.Tests.Helpers;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using Moq;
 
@@ -50,6 +52,34 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Ndvi
             Assert.Equal(5, result!.AreaId);
             Assert.Equal(2, result.Points.Count);
             Assert.True(result.Points[1].CloudRejected);
+        }
+
+        [Fact]
+        public async Task Trend_ComOverlay_ExpoeBboxEOverlayReadingId()
+        {
+            MonitoredAreaGeometry.TryBuild(new List<GeoCoordinate>
+            {
+                new() { Lat = -23.0, Lng = -47.0 }, new() { Lat = -23.0, Lng = -46.99 }, new() { Lat = -22.99, Lng = -46.99 }
+            }, out var geo, out _);
+
+            var db = Db(
+                areas: [new MonitoredArea { Id = 5, UserId = 42, Geometry = geo }],
+                readings:
+                [
+                    new NdviReading { Id = 1, AreaId = 5, UserId = 42, AcquisitionDate = new DateTime(2026, 6, 3) }, // sem overlay
+                    new NdviReading { Id = 2, AreaId = 5, UserId = 42, AcquisitionDate = new DateTime(2026, 6, 8), OverlayImageFileId = ObjectId.GenerateNewId() }
+                ]);
+            var handler = new GetNdviTrendHandler(db.Object, User(42), new Notificator());
+
+            var result = await handler.Handle(new GetNdviTrendRequest { AreaId = 5 }, CancellationToken.None);
+
+            Assert.NotNull(result);
+            Assert.Null(result!.Points[0].OverlayReadingId);
+            Assert.Null(result.Points[0].Bbox);
+            Assert.Equal(2, result.Points[1].OverlayReadingId);
+            Assert.NotNull(result.Points[1].Bbox);
+            Assert.Equal(4, result.Points[1].Bbox!.Length);
+            Assert.Equal(-47.0, result.Points[1].Bbox![0], 6); // minLng
         }
 
         [Fact]

@@ -74,10 +74,18 @@ namespace StarkAgroAPI.Configuration
                 client.BaseAddress = new Uri("https://sh.dataspace.copernicus.eu/");
                 client.Timeout = TimeSpan.FromSeconds(60);
             });
+            services.AddHttpClient<Services.Ndvi.CdseProcessService>(client =>
+            {
+                client.BaseAddress = new Uri("https://sh.dataspace.copernicus.eu/");
+                client.Timeout = TimeSpan.FromSeconds(60);
+            });
             services.AddScoped<Services.Ndvi.ICdseTokenProvider>(sp =>
                 sp.GetRequiredService<Services.Ndvi.CdseTokenProvider>());
             services.AddScoped<Services.Ndvi.ICdseStatisticalService>(sp =>
                 sp.GetRequiredService<Services.Ndvi.CdseStatisticalService>());
+            services.AddScoped<Services.Ndvi.ICdseProcessService>(sp =>
+                sp.GetRequiredService<Services.Ndvi.CdseProcessService>());
+            services.AddScoped<INdviOverlayStore, Services.Ndvi.GridFsNdviOverlayStore>();
             services.AddScoped<Services.Ndvi.INdviFetchService, Services.Ndvi.NdviFetchService>();
 
             services.AddSingleton<ILoRaWanDownlinkService, MqttDownlinkService>();

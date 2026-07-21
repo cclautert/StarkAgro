@@ -69,6 +69,12 @@ namespace StarkAgroAPI.Models
                 BucketName = "diagnosis_images"
             });
 
+            // Overlays NDVI: bucket separado do de laudos, para o caminho de diagnóstico ficar intocado.
+            NdviOverlays = new GridFSBucket(database, new GridFSBucketOptions
+            {
+                BucketName = "ndvi_overlays"
+            });
+
             _ = Task.Run(async () =>
             {
                 try
@@ -190,6 +196,7 @@ namespace StarkAgroAPI.Models
         public virtual IMongoCollection<MonitoredArea> MonitoredAreas { get; }
         public virtual IMongoCollection<NdviReading> NdviReadings { get; }
         public virtual IGridFSBucket DiagnosisImages { get; }
+        public virtual IGridFSBucket NdviOverlays { get; }
 
         public virtual async Task<int> GetNextIdAsync(string entityName, CancellationToken cancellationToken = default)
         {
