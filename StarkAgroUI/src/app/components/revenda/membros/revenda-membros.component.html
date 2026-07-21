@@ -1,0 +1,51 @@
+<div class="container">
+  <div class="page-header">
+    <h1 class="page-title">🏬 Membros da Revenda</h1>
+    <button class="btn-secondary" [routerLink]="['/revenda/faturamento']">Faturamento</button>
+  </div>
+
+  <div class="card invite-card">
+    <h2 class="card-title">Convidar membro</h2>
+    <p class="card-hint">
+      O convidado recebe o convite no StarkAgro e precisa aceitar. Agrônomos revisam laudos;
+      clientes são os produtores da revenda.
+    </p>
+
+    <div class="invite-row">
+      <input type="email" [(ngModel)]="email" placeholder="email@membro.com.br"
+             (keyup.enter)="invite()" />
+      <select [(ngModel)]="role" aria-label="Papel">
+        <option value="Client">Cliente</option>
+        <option value="Agronomist">Agrônomo</option>
+      </select>
+      <button class="btn-primary" (click)="invite()" [disabled]="inviting || !email">
+        {{ inviting ? 'Enviando...' : 'Convidar' }}
+      </button>
+    </div>
+
+    <div class="error" *ngIf="errorMessage">{{ errorMessage }}</div>
+  </div>
+
+  <p class="loading-text" *ngIf="loading">Carregando membros...</p>
+
+  <div class="members" *ngIf="!loading">
+    <div class="member-card" *ngFor="let m of members">
+      <div class="member-info">
+        <span class="member-name">{{ m.memberName || m.memberEmail }}</span>
+        <span class="member-email" *ngIf="m.memberName">{{ m.memberEmail }}</span>
+        <span class="badges">
+          <span class="role role-{{ m.memberRole }}">{{ roleLabel(m.memberRole) }}</span>
+          <span class="status status-{{ m.status }}">{{ statusLabel(m.status) }}</span>
+        </span>
+      </div>
+
+      <div class="member-meta">
+        <button class="btn-danger" (click)="revoke(m)" *ngIf="m.memberRole !== 'Manager'">Encerrar</button>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="members.length === 0">
+      Nenhum membro ainda. Convide um agrônomo ou cliente pelo e-mail acima.
+    </div>
+  </div>
+</div>

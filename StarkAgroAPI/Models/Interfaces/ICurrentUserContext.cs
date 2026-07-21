@@ -28,6 +28,16 @@ namespace StarkAgroAPI.Models.Interfaces
         /// for the producers linked to them).
         /// </summary>
         bool IsAgronomist { get; }
+
+        /// <summary>
+        /// Indicates whether the current user manages a revenda (reseller).
+        /// </summary>
+        bool IsResellerManager { get; }
+
+        /// <summary>
+        /// Returns true when the authenticated user carries the given role claim.
+        /// </summary>
+        bool HasRole(string role);
     }
 }
 

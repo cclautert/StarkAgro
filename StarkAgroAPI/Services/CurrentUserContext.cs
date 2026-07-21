@@ -1,4 +1,5 @@
 using StarkAgroAPI.Models.Interfaces;
+using System.Linq;
 using System.Security.Claims;
 
 namespace StarkAgroAPI.Services
@@ -15,6 +16,8 @@ namespace StarkAgroAPI.Services
         private bool _isAdmin;
         private bool _isAgronomistResolved;
         private bool _isAgronomist;
+        private bool _isResellerManagerResolved;
+        private bool _isResellerManager;
 
         public CurrentUserContext(IHttpContextAccessor httpContextAccessor)
         {
@@ -91,6 +94,41 @@ namespace StarkAgroAPI.Services
 
                 return _isAgronomist;
             }
+        }
+
+        public bool IsResellerManager
+        {
+            get
+            {
+                if (!_isResellerManagerResolved)
+                {
+                    var httpContext = _httpContextAccessor.HttpContext;
+                    var user = httpContext?.User;
+
+                    if (user?.Identity?.IsAuthenticated == true)
+                    {
+                        var claim = user.FindFirst("isResellerManager");
+                        _isResellerManager = claim?.Value == "true";
+                    }
+
+                    _isResellerManagerResolved = true;
+                }
+
+                return _isResellerManager;
+            }
+        }
+
+        public bool HasRole(string role)
+        {
+            var httpContext = _httpContextAccessor.HttpContext;
+            var user = httpContext?.User;
+
+            if (user?.Identity?.IsAuthenticated != true)
+            {
+                return false;
+            }
+
+            return user.FindAll("role").Any(c => c.Value == role);
         }
     }
 }

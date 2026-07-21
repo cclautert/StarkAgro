@@ -6,6 +6,7 @@ using StarkAgroAPI.Models.Interfaces;
 using StarkAgroAPI.Tests.Helpers;
 using MongoDB.Driver;
 using Moq;
+using RevendaEntity = StarkAgroAPI.Models.Entities.Revenda;
 
 namespace StarkAgroAPI.Tests.Domain.Handlers.Users
 {
@@ -19,7 +20,9 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Users
             List<Sensor>? sensors = null,
             int? userId = 1,
             List<AgronomistClient>? invites = null,
-            List<User>? agronomists = null)
+            List<User>? agronomists = null,
+            List<RevendaMembership>? revendaInvites = null,
+            List<RevendaEntity>? revendas = null)
         {
             var db = new Mock<agpDBContext>();
 
@@ -44,6 +47,14 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Users
             var invitesCol = new Mock<IMongoCollection<AgronomistClient>>();
             MongoMockHelper.SetupFindList(invitesCol, invites ?? new List<AgronomistClient>());
             db.Setup(d => d.AgronomistClients).Returns(invitesCol.Object);
+
+            var revendaInvitesCol = new Mock<IMongoCollection<RevendaMembership>>();
+            MongoMockHelper.SetupFindList(revendaInvitesCol, revendaInvites ?? new List<RevendaMembership>());
+            db.Setup(d => d.RevendaMemberships).Returns(revendaInvitesCol.Object);
+
+            var revendasCol = new Mock<IMongoCollection<RevendaEntity>>();
+            MongoMockHelper.SetupFindList(revendasCol, revendas ?? new List<RevendaEntity>());
+            db.Setup(d => d.Revendas).Returns(revendasCol.Object);
 
             var pivotsCol = new Mock<IMongoCollection<Pivot>>();
             MongoMockHelper.SetupFindList(pivotsCol, pivots ?? new List<Pivot>());
@@ -246,6 +257,65 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Users
             Assert.Contains("InviteExpiresAt", rendered);          // expirado não aparece
             Assert.Contains("produtor@fazenda.com", rendered);     // casa apesar do e-mail maiúsculo
             Assert.DoesNotContain("Produtor@Fazenda.com", rendered);
+        }
+
+        private static RevendaMembership PendingRevendaInvite(int id = 1, int revendaId = 7) => new()
+        {
+            Id = id,
+            RevendaId = revendaId,
+            MemberUserId = 1,
+            MemberEmail = "produtor@fazenda.com",
+            MemberRole = RevendaMemberRole.Client,
+            Status = RevendaMembershipStatus.Pending,
+            InvitedAt = DateTime.UtcNow.AddMinutes(-3),
+            InviteExpiresAt = DateTime.UtcNow.AddDays(7)
+        };
+
+        [Fact]
+        public async Task Handle_PendingRevendaInvite_SurfacesItInTheAlertBell()
+        {
+            var (db, currentUser) = BuildMocks(
+                user: new User { Id = 1, Email = "produtor@fazenda.com" },
+                revendaInvites: [PendingRevendaInvite(id: 4, revendaId: 7)],
+                revendas: [new RevendaEntity { Id = 7, Name = "AgroSul" }]);
+            var handler = new GetUserAlertsHandler(db.Object, currentUser.Object);
+
+            var result = await handler.Handle(new GetUserAlertsRequest(), CancellationToken.None);
+
+            var invite = Assert.Single(result);
+            Assert.Equal("revenda-invite-4", invite.Id);
+            Assert.Equal("RevendaInvite", invite.AlertType);
+            Assert.Contains("AgroSul", invite.Title);
+            Assert.False(invite.IsRead);
+            Assert.Equal("—", invite.PivotName);
+        }
+
+        [Fact]
+        public async Task Handle_PendingRevendaInvite_StaysUnreadEvenAfterTheBellIsOpened()
+        {
+            var (db, currentUser) = BuildMocks(
+                user: new User { Id = 1, Email = "produtor@fazenda.com", AlertsReadAt = DateTime.UtcNow },
+                revendaInvites: [PendingRevendaInvite()],
+                revendas: [new RevendaEntity { Id = 7, Name = "AgroSul" }]);
+            var handler = new GetUserAlertsHandler(db.Object, currentUser.Object);
+
+            var result = await handler.Handle(new GetUserAlertsRequest(), CancellationToken.None);
+
+            Assert.False(Assert.Single(result).IsRead);
+        }
+
+        [Fact]
+        public async Task Handle_RevendaInviteFromUnknownRevenda_FallsBackToAGenericName()
+        {
+            var (db, currentUser) = BuildMocks(
+                user: new User { Id = 1, Email = "produtor@fazenda.com" },
+                revendaInvites: [PendingRevendaInvite(revendaId: 404)],
+                revendas: []);
+            var handler = new GetUserAlertsHandler(db.Object, currentUser.Object);
+
+            var result = await handler.Handle(new GetUserAlertsRequest(), CancellationToken.None);
+
+            Assert.Contains("Uma revenda", Assert.Single(result).Title);
         }
 
         [Fact]

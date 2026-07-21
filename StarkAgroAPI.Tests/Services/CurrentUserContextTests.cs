@@ -153,5 +153,64 @@ namespace StarkAgroAPI.Tests.Services
             // Act & Assert
             Assert.Throws<ArgumentNullException>(() => new CurrentUserContext(null!));
         }
+
+        private static CurrentUserContext ContextWith(params Claim[] claims)
+        {
+            var identity = new ClaimsIdentity(claims, "TestAuth");
+            var httpContext = new DefaultHttpContext { User = new ClaimsPrincipal(identity) };
+            var accessor = new Mock<IHttpContextAccessor>();
+            accessor.Setup(a => a.HttpContext).Returns(httpContext);
+            return new CurrentUserContext(accessor.Object);
+        }
+
+        [Fact]
+        public void IsAdmin_ReadsClaim()
+        {
+            Assert.True(ContextWith(new Claim("id", "1"), new Claim("isAdmin", "true")).IsAdmin);
+            Assert.False(ContextWith(new Claim("id", "1")).IsAdmin);
+        }
+
+        [Fact]
+        public void IsAgronomist_ReadsClaim()
+        {
+            Assert.True(ContextWith(new Claim("id", "1"), new Claim("isAgronomist", "true")).IsAgronomist);
+            Assert.False(ContextWith(new Claim("id", "1")).IsAgronomist);
+        }
+
+        [Fact]
+        public void IsResellerManager_ReadsClaim()
+        {
+            Assert.True(ContextWith(new Claim("id", "1"), new Claim("isResellerManager", "true")).IsResellerManager);
+            Assert.False(ContextWith(new Claim("id", "1")).IsResellerManager);
+        }
+
+        [Fact]
+        public void IsResellerManager_NotAuthenticated_ReturnsFalse()
+        {
+            var accessor = new Mock<IHttpContextAccessor>();
+            accessor.Setup(a => a.HttpContext).Returns((HttpContext?)null);
+            Assert.False(new CurrentUserContext(accessor.Object).IsResellerManager);
+        }
+
+        [Fact]
+        public void HasRole_TrueWhenRoleClaimPresent()
+        {
+            var context = ContextWith(
+                new Claim("id", "1"),
+                new Claim("role", "Admin"),
+                new Claim("role", "ResellerManager"));
+
+            Assert.True(context.HasRole("Admin"));
+            Assert.True(context.HasRole("ResellerManager"));
+            Assert.False(context.HasRole("Agronomist"));
+        }
+
+        [Fact]
+        public void HasRole_NotAuthenticated_ReturnsFalse()
+        {
+            var accessor = new Mock<IHttpContextAccessor>();
+            accessor.Setup(a => a.HttpContext).Returns((HttpContext?)null);
+            Assert.False(new CurrentUserContext(accessor.Object).HasRole("Admin"));
+        }
     }
 }

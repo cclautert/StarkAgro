@@ -43,9 +43,9 @@ namespace StarkAgroAPI.Domain.Handlers.Admin
                     Name = request.Name,
                     Email = EmailNormalizer.Normalize(request.Email),
                     Password = _passwordHasher.HashPassword(request.Password),
-                    Active = request.Active,
-                    IsAdmin = request.IsAdmin
+                    Active = request.Active
                 };
+                user.SetRole(UserRole.Admin, request.IsAdmin);
 
                 await _dbContext.Users.InsertOneAsync(user, cancellationToken: cancellationToken);
                 _logger.LogInformation("Admin criou usuário: {Email}", request.Email);

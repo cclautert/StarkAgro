@@ -58,6 +58,8 @@ namespace StarkAgroAPI.Models
             PlantDiagnoses = database.GetCollection<PlantDiagnosis>("plant_diagnoses");
             AgronomistClients = database.GetCollection<AgronomistClient>("agronomist_clients");
             DiagnosisPlans = database.GetCollection<DiagnosisPlan>("diagnosis_plans");
+            Revendas = database.GetCollection<Revenda>("revendas");
+            RevendaMemberships = database.GetCollection<RevendaMembership>("revenda_memberships");
             MonitoredAreas = database.GetCollection<MonitoredArea>("monitored_areas");
             NdviReadings = database.GetCollection<NdviReading>("ndvi_readings");
             _counters = database.GetCollection<CounterDocument>("counters");
@@ -146,6 +148,33 @@ namespace StarkAgroAPI.Models
                                 c => c.Status, AgronomistClientStatus.Active)
                         }));
 
+                    await Revendas.Indexes.CreateOneAsync(new CreateIndexModel<Revenda>(
+                        Builders<Revenda>.IndexKeys.Ascending(r => r.Active)));
+
+                    await RevendaMemberships.Indexes.CreateOneAsync(new CreateIndexModel<RevendaMembership>(
+                        Builders<RevendaMembership>.IndexKeys
+                            .Ascending(m => m.RevendaId)
+                            .Ascending(m => m.Status)));
+                    await RevendaMemberships.Indexes.CreateOneAsync(new CreateIndexModel<RevendaMembership>(
+                        Builders<RevendaMembership>.IndexKeys
+                            .Ascending(m => m.MemberUserId)
+                            .Ascending(m => m.Status)));
+                    await RevendaMemberships.Indexes.CreateOneAsync(new CreateIndexModel<RevendaMembership>(
+                        Builders<RevendaMembership>.IndexKeys.Ascending(m => m.InviteToken),
+                        new CreateIndexOptions { Sparse = true }));
+
+                    // Único PARCIAL: um produtor ativo por revenda (só vínculos Client ativos).
+                    // Igual à garantia do agrônomo — checar só no handler deixaria corrida passar.
+                    await RevendaMemberships.Indexes.CreateOneAsync(new CreateIndexModel<RevendaMembership>(
+                        Builders<RevendaMembership>.IndexKeys.Ascending(m => m.MemberUserId),
+                        new CreateIndexOptions<RevendaMembership>
+                        {
+                            Unique = true,
+                            PartialFilterExpression = Builders<RevendaMembership>.Filter.And(
+                                Builders<RevendaMembership>.Filter.Eq(m => m.Status, RevendaMembershipStatus.Active),
+                                Builders<RevendaMembership>.Filter.Eq(m => m.MemberRole, RevendaMemberRole.Client))
+                        }));
+
                     await MonitoredAreas.Indexes.CreateOneAsync(new CreateIndexModel<MonitoredArea>(
                         Builders<MonitoredArea>.IndexKeys.Ascending(a => a.UserId)));
                     // Agendamento do worker (fase de fetch)
@@ -193,6 +222,8 @@ namespace StarkAgroAPI.Models
         public virtual IMongoCollection<PlantDiagnosis> PlantDiagnoses { get; }
         public virtual IMongoCollection<AgronomistClient> AgronomistClients { get; }
         public virtual IMongoCollection<DiagnosisPlan> DiagnosisPlans { get; }
+        public virtual IMongoCollection<Revenda> Revendas { get; }
+        public virtual IMongoCollection<RevendaMembership> RevendaMemberships { get; }
         public virtual IMongoCollection<MonitoredArea> MonitoredAreas { get; }
         public virtual IMongoCollection<NdviReading> NdviReadings { get; }
         public virtual IGridFSBucket DiagnosisImages { get; }

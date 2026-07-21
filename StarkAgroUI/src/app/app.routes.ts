@@ -28,6 +28,11 @@ import { AgronomistBillingComponent } from './components/agronomist/billing/agro
 import { AreaListComponent } from './components/area-list/area-list.component';
 import { AreaFormComponent } from './components/area-form/area-form.component';
 import { AreaDetailComponent } from './components/area-detail/area-detail.component';
+import { ResellerGuard } from './guards/reseller.guard';
+import { RevendaMembrosComponent } from './components/revenda/membros/revenda-membros.component';
+import { RevendaFaturamentoComponent } from './components/revenda/faturamento/revenda-faturamento.component';
+import { RevendaConvitesComponent } from './components/revenda/convites/revenda-convites.component';
+import { AdminRevendasComponent } from './components/admin/revendas/admin-revendas.component';
 
 export const routes: Routes = [
   // Login routes outside the main layout
@@ -68,12 +73,20 @@ export const routes: Routes = [
       { path: 'agronomo/clientes', component: AgronomistClientsComponent, canActivate: [AuthGuard, AgronomistGuard] },
       { path: 'agronomo/faturamento', component: AgronomistBillingComponent, canActivate: [AuthGuard, AgronomistGuard] },
 
+      // Convites de revenda (qualquer usuário autenticado pode ter um convite)
+      { path: 'revenda/convites', component: RevendaConvitesComponent, canActivate: [AuthGuard] },
+
+      // Portal do gestor de revenda (apenas quem tem o papel)
+      { path: 'revenda/membros', component: RevendaMembrosComponent, canActivate: [AuthGuard, ResellerGuard] },
+      { path: 'revenda/faturamento', component: RevendaFaturamentoComponent, canActivate: [AuthGuard, ResellerGuard] },
+
       // Rotas de administração (apenas super usuário)
       { path: 'admin/usuarios', component: AdminUserListComponent, canActivate: [AuthGuard, AdminGuard] },
       { path: 'admin/usuarios/novo', component: AdminUserFormComponent, canActivate: [AuthGuard, AdminGuard] },
       { path: 'admin/usuarios/editar/:id', component: AdminUserFormComponent, canActivate: [AuthGuard, AdminGuard] },
       { path: 'admin/ia', component: AdminAiSettingsComponent, canActivate: [AuthGuard, AdminGuard] },
       { path: 'admin/planos', component: AdminPlansComponent, canActivate: [AuthGuard, AdminGuard] },
+      { path: 'admin/revendas', component: AdminRevendasComponent, canActivate: [AuthGuard, AdminGuard] },
 
       // Default child route inside layout
       { path: '', redirectTo: 'home', pathMatch: 'full' }

@@ -1,0 +1,59 @@
+<div class="billing-container">
+  <h2>Faturamento da Revenda</h2>
+  <p class="subtitle" *ngIf="billing">
+    Consumo agregado de {{ billing.periodStart | date:'dd/MM' }} a {{ billing.periodEnd | date:'dd/MM' }}.
+    Um plano para toda a base — o excedente é cobrado sobre o total.
+  </p>
+
+  <div *ngIf="isLoading" class="state">Carregando…</div>
+  <div *ngIf="hasError && !isLoading" class="state error">Erro ao carregar o faturamento.</div>
+
+  <ng-container *ngIf="billing && !isLoading && !hasError">
+    <div class="total-panel">
+      <span class="total-label">Total do mês — {{ billing.planName }}</span>
+      <span class="total-value">{{ (billing.totalCents / 100) | currency:'BRL':'symbol':'1.2-2' }}</span>
+      <span class="total-sub">
+        {{ billing.usedReports }} laudo(s) · inclusos {{ billing.includedReports }} ·
+        excedente {{ billing.overageReports }}
+        <ng-container *ngIf="billing.overageReports > 0">
+          × {{ (billing.overagePriceCents / 100) | currency:'BRL':'symbol':'1.2-2' }}
+        </ng-container>
+      </span>
+    </div>
+
+    <p *ngIf="!billing.clients.length" class="empty">
+      Nenhum cliente ativo na revenda ainda. Convide produtores em “Membros”.
+    </p>
+
+    <div class="table-scroll" *ngIf="billing.clients.length">
+      <table class="billing-table">
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th class="num">Laudos no mês</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let c of billing.clients">
+            <td>
+              <div class="client-name">{{ c.clientName || c.clientEmail }}</div>
+              <div class="client-email" *ngIf="c.clientName">{{ c.clientEmail }}</div>
+            </td>
+            <td class="num">{{ c.usedReports }}</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td class="foot-label">Total da base</td>
+            <td class="num foot-total">{{ billing.usedReports }}</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <p class="disclaimer">
+      Este painel apenas <strong>calcula e mostra</strong> o que é devido. A cobrança em si
+      (cartão/boleto) ainda não é feita pelo sistema.
+    </p>
+  </ng-container>
+</div>

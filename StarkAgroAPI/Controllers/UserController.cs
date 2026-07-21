@@ -1,4 +1,5 @@
 using StarkAgroAPI.Domain.Commands.Requests.Agronomist;
+using StarkAgroAPI.Domain.Commands.Requests.Revenda;
 using StarkAgroAPI.Domain.Commands.Requests.Users;
 using StarkAgroAPI.Domain.Commands.Responses.Users;
 using StarkAgroAPI.Models.Interfaces;
@@ -160,6 +161,40 @@ namespace StarkAgroAPI.Controllers
         {
             var ok = await mediator.Send(new RevokeMyAgronomistRequest(), cancellationToken);
             return ok ? CustomResponse(null, HttpStatusCode.NoContent) : CustomResponse(null, HttpStatusCode.BadRequest);
+        }
+
+        // ── Convite de revenda (lado do membro) ───────────────────────────────
+
+        [Route("revenda-invites")]
+        [HttpGet]
+        public async Task<IActionResult> GetRevendaInvites(
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken)
+        {
+            var result = await mediator.Send(new GetMyRevendaInvitesRequest(), cancellationToken);
+            return CustomResponse(result);
+        }
+
+        [Route("revenda-invites/{id:int}/accept")]
+        [HttpPost]
+        public async Task<IActionResult> AcceptRevendaInvite(
+            [FromServices] IMediator mediator,
+            int id,
+            CancellationToken cancellationToken)
+        {
+            var ok = await mediator.Send(new AcceptRevendaInviteRequest { InviteId = id }, cancellationToken);
+            return ok ? CustomResponse() : CustomResponse(null, HttpStatusCode.BadRequest);
+        }
+
+        [Route("revenda-invites/{id:int}/decline")]
+        [HttpPost]
+        public async Task<IActionResult> DeclineRevendaInvite(
+            [FromServices] IMediator mediator,
+            int id,
+            CancellationToken cancellationToken)
+        {
+            var ok = await mediator.Send(new DeclineRevendaInviteRequest { InviteId = id }, cancellationToken);
+            return ok ? CustomResponse() : CustomResponse(null, HttpStatusCode.BadRequest);
         }
     }
 }

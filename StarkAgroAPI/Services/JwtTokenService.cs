@@ -25,9 +25,17 @@ namespace StarkAgroAPI.Services
                 new Claim("name", user.Name ?? string.Empty),
                 new Claim("email", user.Email ?? string.Empty),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                // Claims booleanas mantidas (derivadas de Roles) para não quebrar a UI/guards atuais.
                 new Claim("isAdmin", user.IsAdmin.ToString().ToLower()),
-                new Claim("isAgronomist", user.IsAgronomist.ToString().ToLower())
+                new Claim("isAgronomist", user.IsAgronomist.ToString().ToLower()),
+                new Claim("isResellerManager", user.IsResellerManager.ToString().ToLower())
             };
+
+            // Uma claim "role" por papel — habilita RequireRole/HasRole daqui pra frente.
+            foreach (var role in user.Roles)
+            {
+                claims.Add(new Claim("role", role));
+            }
 
             var secretKey = _configuration["JwtSettings:secretkey"] ?? throw new InvalidOperationException("JWT secret key must be configured.");
             var privateKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
