@@ -40,17 +40,25 @@ namespace StarkAgroAPI.Domain.Handlers.Ndvi
                 .SortBy(r => r.AcquisitionDate)
                 .ToListAsync(cancellationToken);
 
+            var bbox = area.Geometry is not null
+                ? Services.Ndvi.CdseProcessService.ComputeBbox(area.Geometry).ToArray()
+                : null;
+
             return new NdviTrendResponse
             {
                 AreaId = request.AreaId,
                 Points = readings.Select(r => new NdviTrendPoint
                 {
+                    ReadingId = r.Id,
                     AcquisitionDate = r.AcquisitionDate,
                     NdviMean = r.NdviMean,
                     NdviMin = r.NdviMin,
                     NdviMax = r.NdviMax,
                     CloudCoveragePct = r.CloudCoveragePct,
-                    CloudRejected = r.CloudRejected
+                    CloudRejected = r.CloudRejected,
+                    // Só aponta overlay quando o PNG realmente existe; o bbox é o da área.
+                    OverlayReadingId = r.OverlayImageFileId.HasValue ? r.Id : null,
+                    Bbox = r.OverlayImageFileId.HasValue ? bbox : null
                 }).ToList()
             };
         }

@@ -39,6 +39,37 @@ namespace StarkAgroAPI.Tests.Controllers
         }
 
         [Fact]
+        public async Task Overlay_Found_ReturnsFile()
+        {
+            var mediator = new Mock<IMediator>();
+            mediator.Setup(m => m.Send(It.IsAny<GetNdviOverlayImageRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new NdviOverlayImageResponse { Content = [1, 2, 3], ContentType = "image/png" });
+
+            var controller = CreateController();
+            controller.ControllerContext = new Microsoft.AspNetCore.Mvc.ControllerContext
+            {
+                HttpContext = new Microsoft.AspNetCore.Http.DefaultHttpContext()
+            };
+
+            var result = await controller.Overlay(mediator.Object, 5, 3, default);
+
+            var file = Assert.IsType<Microsoft.AspNetCore.Mvc.FileContentResult>(result);
+            Assert.Equal("image/png", file.ContentType);
+        }
+
+        [Fact]
+        public async Task Overlay_NotFound_Returns404()
+        {
+            var mediator = new Mock<IMediator>();
+            mediator.Setup(m => m.Send(It.IsAny<GetNdviOverlayImageRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync((NdviOverlayImageResponse?)null);
+
+            var result = await CreateController().Overlay(mediator.Object, 5, 3, default);
+
+            Assert.IsType<Microsoft.AspNetCore.Mvc.NotFoundResult>(result);
+        }
+
+        [Fact]
         public async Task Get_ReturnsOk()
         {
             var mediator = new Mock<IMediator>();

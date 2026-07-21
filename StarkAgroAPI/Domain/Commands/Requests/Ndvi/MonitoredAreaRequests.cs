@@ -19,6 +19,12 @@ namespace StarkAgroAPI.Domain.Commands.Requests.Ndvi
         public int AreaId { get; set; }
     }
 
+    public class GetNdviOverlayImageRequest : IRequest<NdviOverlayImageResponse?>
+    {
+        public int AreaId { get; set; }
+        public int ReadingId { get; set; }
+    }
+
     public class DeleteMonitoredAreaRequest : IRequest<bool>
     {
         public int Id { get; set; }
