@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, PLATFORM_ID, ViewChild, inject } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Inject, NgZone, OnDestroy, OnInit, PLATFORM_ID, ViewChild, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -26,11 +26,13 @@ export class AreaFormComponent implements OnInit, AfterViewInit, OnDestroy {
   private areaService = inject(AreaService);
   private snackBar = inject(MatSnackBar);
   private dialog = inject(MatDialog);
+  private zone = inject(NgZone);
 
   form: FormGroup;
   areaId: number | null = null;
   isEditMode = false;
   saving = false;
+  geolocating = false;
 
   /** Anel do polígono desenhado (ou carregado na edição). */
   polygonRing: GeoCoordinate[] = [];
@@ -39,7 +41,8 @@ export class AreaFormComponent implements OnInit, AfterViewInit, OnDestroy {
   private map: any | null = null;
   private leaflet: any | null = null;
   private drawnLayer: any | null = null;
-  private mapInited = false;
+  private gpsMarker: any | null = null;
+  private mapReady: Promise<void> | null = null;
   private viewReady = false;
 
   constructor(@Inject(PLATFORM_ID) private platformId: object) {
@@ -119,12 +122,51 @@ export class AreaFormComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  /** Inicia (ou revalida) o mapa de desenho de polígono. Idempotente. */
-  private async ensurePolygonMap(): Promise<void> {
-    if (!isPlatformBrowser(this.platformId) || !this.viewReady) return;
-    if (this.mapInited) { setTimeout(() => this.map?.invalidateSize(), 0); return; }
-    this.mapInited = true;
+  /**
+   * Centraliza o mapa de desenho onde o GPS do aparelho aponta — sem isto o
+   * produtor cai no centro default (RS) e precisa navegar até o talhão na mão.
+   */
+  async useMyLocation(): Promise<void> {
+    if (!isPlatformBrowser(this.platformId) || !navigator.geolocation) {
+      this.snackBar.open('Geolocalização não suportada neste navegador.', 'Fechar', { duration: 4000 });
+      return;
+    }
 
+    await this.ensurePolygonMap();
+    if (!this.map) return;
+
+    this.geolocating = true;
+    navigator.geolocation.getCurrentPosition(
+      pos => this.zone.run(() => {
+        this.geolocating = false;
+        const { latitude, longitude } = pos.coords;
+        this.map.setView([latitude, longitude], GPS_ZOOM);
+        if (this.gpsMarker) this.map.removeLayer(this.gpsMarker);
+        this.gpsMarker = this.leaflet
+          .circleMarker([latitude, longitude], { radius: 6, color: '#1565c0', fillColor: '#1565c0', fillOpacity: 0.9 })
+          .addTo(this.map)
+          .bindTooltip('Você está aqui');
+      }),
+      err => this.zone.run(() => {
+        this.geolocating = false;
+        this.snackBar.open(`Não foi possível obter sua localização: ${err.message}`, 'Fechar', { duration: 5000 });
+      }),
+      { enableHighAccuracy: true, timeout: 15000 }
+    );
+  }
+
+  /** Inicia (ou revalida) o mapa de desenho de polígono. Idempotente e aguardável. */
+  private ensurePolygonMap(): Promise<void> {
+    if (!isPlatformBrowser(this.platformId) || !this.viewReady) return Promise.resolve();
+    if (this.mapReady) {
+      setTimeout(() => this.map?.invalidateSize(), 0);
+      return this.mapReady;
+    }
+    this.mapReady = this.initPolygonMap();
+    return this.mapReady;
+  }
+
+  private async initPolygonMap(): Promise<void> {
     const leafletModule = await import('leaflet');
     const L: any = (leafletModule as any).default ?? leafletModule;
     // Geoman aumenta os protótipos do mesmo módulo Leaflet (draw/edit/remove de polígono).
@@ -254,8 +296,12 @@ export class AreaFormComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.map) { this.map.remove(); this.map = null; }
     this.leaflet = null;
     this.drawnLayer = null;
+    this.gpsMarker = null;
   }
 }
+
+/** Zoom ao centralizar pelo GPS — perto o bastante para o talhão caber na tela. */
+const GPS_ZOOM = 16;
 
 /**
  * Aproxima um círculo (centro + raio em metros) a um anel de N vértices, em lat/lng.

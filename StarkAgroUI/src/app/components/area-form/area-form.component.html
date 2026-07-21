@@ -26,6 +26,12 @@
     <!-- Polígono: desenho livre no mapa (leaflet-geoman). -->
     <div class="field" [hidden]="!isPolygon">
       <label>Desenhe o talhão</label>
+      <div class="location-row">
+        <button type="button" class="btn-map" (click)="useMyLocation()" [disabled]="geolocating">
+          📍 {{ geolocating ? 'Localizando...' : 'Minha localização atual' }}
+        </button>
+        <span class="coords coords-muted">Centraliza o mapa onde o GPS aponta.</span>
+      </div>
       <div #polygonMap class="draw-map"></div>
       <small class="hint">
         Use a ferramenta de polígono (canto superior esquerdo) para desenhar; arraste os vértices para ajustar.

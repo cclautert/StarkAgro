@@ -25,6 +25,13 @@
   gap: 0.35rem;
 }
 
+/* `.field { display: flex }` é regra de autor e venceria o `display:none` que o
+   navegador aplica ao atributo [hidden] — sem isto o mapa de polígono aparece
+   como uma caixa branca no modo círculo. */
+.field[hidden] {
+  display: none;
+}
+
 .field label {
   font-weight: 600;
   font-size: 0.9rem;
