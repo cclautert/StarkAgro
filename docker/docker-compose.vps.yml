@@ -22,7 +22,7 @@ services:
       - JwtSettings__audience=${JWT_AUDIENCE}
       - OAuth__Google__ClientId=${GOOGLE_CLIENT_ID}
       - OAuth__Google__ClientSecret=${GOOGLE_CLIENT_SECRET}
-      - OAuth__Google__AllowedRedirectUris=https://starkcompany.com.br/login/callback
+      - OAuth__Google__AllowedRedirectUris=https://starkcompany.com.br/login/callback,https://www.starkcompany.com.br/login/callback
       - AISettings__GeminiApiKey=${GEMINI_API_KEY}
       - MqttDownlink__Host=mqtt
       - MqttDownlink__Port=1883
