@@ -47,11 +47,13 @@
 .badge-on { background: #e8f5e9; color: #2e7d32; }
 .badge-off { background: #eceff1; color: #607d8b; }
 
+/* Cards claros dentro de app escuro: fixam o texto escuro em vez de herdar do container. */
 .latest-card {
   display: flex;
   align-items: center;
   gap: 1.25rem;
   background: #fff;
+  color: #1f2937;
   border: 1px solid #e0e0e0;
   border-radius: 10px;
   padding: 1.25rem;
@@ -89,6 +91,7 @@
 
 .panel {
   background: #fff;
+  color: #1f2937;
   border: 1px solid #e0e0e0;
   border-radius: 10px;
   padding: 1.25rem;
@@ -109,5 +112,5 @@
 
 .muted { color: #888; font-size: 0.9rem; }
 .map-hint { margin-top: 0.5rem; }
-.loading-text, .error-text { color: #666; }
+.loading-text, .error-text { color: var(--text-muted); }
 .error-text { color: #c62828; }

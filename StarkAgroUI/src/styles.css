@@ -42,6 +42,9 @@ html, body {
   border-right: 1px solid var(--border) !important;
 }
 
+/* O Material define --mat-sidenav-content-text-color: rgba(0,0,0,.87) no conteúdo do drawer.
+   Sem sobrescrever a cor aqui, todo texto sem `color` próprio nasce preto sobre o fundo escuro. */
 .mat-sidenav-content {
   background-color: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
 }

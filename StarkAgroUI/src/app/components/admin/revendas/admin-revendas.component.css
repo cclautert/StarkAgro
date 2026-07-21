@@ -1,6 +1,7 @@
 .container { max-width: 960px; margin: 0 auto; padding: 1rem; }
 .page-title { font-size: 1.4rem; margin: 0 0 1rem; }
-.card { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 1.25rem; }
+/* Cards claros dentro de app escuro: fixam o texto escuro em vez de herdar do container. */
+.card { background: #fff; color: #1f2937; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 1.25rem; }
 .card-title { font-size: 1.1rem; margin: 0 0 .75rem; }
 .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: .75rem; }
 .grid label { display: flex; flex-direction: column; gap: .25rem; font-size: .85rem; color: #555; }
@@ -11,8 +12,10 @@
 .btn-primary:disabled { opacity: .6; cursor: default; }
 .btn-secondary { background: #eef1f0; color: #2e7d32; border: 1px solid #cfe0d6; padding: .5rem .9rem; border-radius: 6px; cursor: pointer; }
 .btn-link { background: none; border: none; color: #2e7d32; cursor: pointer; padding: .2rem .4rem; font-size: .9rem; }
-.loading-text { color: #666; }
-.revenda-card { background: #fff; border: 1px solid #e6e6e6; border-radius: 8px; padding: .9rem 1rem; margin-bottom: .7rem; }
+.loading-text { color: var(--text-muted); }
+/* Este mesmo estilo aparece dentro do card branco (faturamento da revenda). */
+.revenda-card .loading-text { color: #6b7280; }
+.revenda-card { background: #fff; color: #1f2937; border: 1px solid #e6e6e6; border-radius: 8px; padding: .9rem 1rem; margin-bottom: .7rem; }
 .revenda-head { display: flex; align-items: center; justify-content: space-between; gap: .5rem; flex-wrap: wrap; }
 .revenda-name { font-weight: 600; margin-right: .5rem; }
 .status { font-size: .72rem; padding: .12rem .5rem; border-radius: 999px; background: #e8f5e9; color: #2e7d32; }
@@ -24,4 +27,4 @@
 .billing-box { margin-top: .6rem; border-top: 1px dashed #e0e0e0; padding-top: .6rem; }
 .billing-total { font-size: .95rem; }
 .billing-sub { display: block; color: #777; font-size: .8rem; margin-top: .2rem; }
-.empty-state { color: #888; padding: 1rem 0; }
+.empty-state { color: var(--text-muted); padding: 1rem 0; }

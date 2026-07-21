@@ -28,7 +28,7 @@
 
 .btn-add:hover { background: #1b5e20; }
 
-.loading-text, .error-text { color: #666; }
+.loading-text, .error-text { color: var(--text-muted); }
 .error-text { color: #c62828; }
 
 .area-grid {
@@ -37,8 +37,10 @@
   gap: 1rem;
 }
 
+/* Card claro dentro de app escuro: fixa o texto escuro em vez de herdar do container. */
 .area-card {
   background: #fff;
+  color: #1f2937;
   border: 1px solid #e0e0e0;
   border-radius: 10px;
   padding: 1rem;
@@ -103,6 +105,6 @@
 .empty-state {
   grid-column: 1 / -1;
   text-align: center;
-  color: #888;
+  color: var(--text-muted);
   padding: 2rem;
 }
