@@ -9,6 +9,7 @@ import { AreaService } from '../../services/area.service';
 import { AreaRequest, GeoCoordinate } from '../../models/monitored-area.model';
 import { PivotLocationMapComponent } from '../pivot-location-map/pivot-location-map.component';
 import { PivotLocation } from '../../models/pivot.model';
+import { addBaseLayers, applyDefaultMarkerIcon } from '../../utils/leaflet-basemaps';
 
 @Component({
   selector: 'app-area-form',
@@ -173,13 +174,7 @@ export class AreaFormComponent implements OnInit, AfterViewInit, OnDestroy {
     await import('@geoman-io/leaflet-geoman-free');
     this.leaflet = L;
 
-    const iconRetinaUrl = 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png';
-    const iconUrl = 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png';
-    const shadowUrl = 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png';
-    (L.Marker.prototype as any).options.icon = L.icon({
-      iconRetinaUrl, iconUrl, shadowUrl,
-      iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
-    });
+    applyDefaultMarkerIcon(L);
 
     const hasRing = this.polygonRing.length >= 3;
     const start: [number, number] = hasRing
@@ -187,10 +182,7 @@ export class AreaFormComponent implements OnInit, AfterViewInit, OnDestroy {
       : [-29.7, -53.7];
 
     this.map = L.map(this.polygonMap.nativeElement).setView(start, 13);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(this.map);
+    addBaseLayers(L, this.map);
 
     this.map.pm.addControls({
       position: 'topleft',

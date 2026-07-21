@@ -6,6 +6,7 @@ import { BaseChartDirective } from 'ng2-charts';
 import { firstValueFrom } from 'rxjs';
 import { AreaService } from '../../services/area.service';
 import { MonitoredArea, NdviTrendPoint } from '../../models/monitored-area.model';
+import { addBaseLayers, applyDefaultMarkerIcon } from '../../utils/leaflet-basemaps';
 
 @Component({
   selector: 'app-area-detail',
@@ -105,19 +106,10 @@ export class AreaDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     const L: any = (leafletModule as any).default ?? leafletModule;
     this.leaflet = L;
 
-    const iconRetinaUrl = 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png';
-    const iconUrl = 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png';
-    const shadowUrl = 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png';
-    (L.Marker.prototype as any).options.icon = L.icon({
-      iconRetinaUrl, iconUrl, shadowUrl,
-      iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
-    });
+    applyDefaultMarkerIcon(L);
 
     this.map = L.map(this.mapContainer.nativeElement).setView([-29.7, -53.7], 13);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(this.map);
+    addBaseLayers(L, this.map);
 
     this.mapReady = true;
     setTimeout(() => this.map?.invalidateSize(), 0);

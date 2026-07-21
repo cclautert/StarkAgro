@@ -15,6 +15,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { firstValueFrom } from 'rxjs';
 import { PivotLocation } from '../../models/pivot.model';
+import { addBaseLayers, applyDefaultMarkerIcon } from '../../utils/leaflet-basemaps';
 
 interface NominatimResult {
   lat: string;
@@ -79,23 +80,7 @@ export class PivotLocationMapComponent implements AfterViewInit, OnDestroy {
     const L: any = (leafletModule as any).default ?? leafletModule;
     this.leaflet = L;
 
-    // Default Leaflet marker icons reference relative paths that break under bundlers.
-    // Point them explicitly at the CDN-hosted images.
-    const iconRetinaUrl = 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png';
-    const iconUrl = 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png';
-    const shadowUrl = 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png';
-
-    const DefaultIcon = L.icon({
-      iconRetinaUrl,
-      iconUrl,
-      shadowUrl,
-      iconSize: [25, 41],
-      iconAnchor: [12, 41],
-      popupAnchor: [1, -34],
-      tooltipAnchor: [16, -28],
-      shadowSize: [41, 41]
-    });
-    (L.Marker.prototype as any).options.icon = DefaultIcon;
+    applyDefaultMarkerIcon(L);
 
     const initial = this.data?.initial ?? null;
     const startLat = initial?.latitude ?? DEFAULT_LAT;
@@ -103,11 +88,7 @@ export class PivotLocationMapComponent implements AfterViewInit, OnDestroy {
     const hasInitial = initial?.latitude != null && initial?.longitude != null;
 
     this.map = L.map(this.mapContainer.nativeElement).setView([startLat, startLon], DEFAULT_ZOOM);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(this.map);
+    addBaseLayers(L, this.map);
 
     if (hasInitial) {
       this.setMarker(startLat, startLon);
