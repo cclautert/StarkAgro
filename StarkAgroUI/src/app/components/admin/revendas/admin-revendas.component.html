@@ -1,38 +1,8 @@
 <div class="container">
-  <h1 class="page-title">🏬 Revendas</h1>
-
-  <form class="card form-card" [formGroup]="form" (ngSubmit)="onSubmit()">
-    <h2 class="card-title">{{ editingId ? 'Editar revenda' : 'Nova revenda' }}</h2>
-
-    <div class="grid">
-      <label>Nome
-        <input type="text" formControlName="name" maxlength="120" />
-      </label>
-      <label>CNPJ
-        <input type="text" formControlName="cnpj" />
-      </label>
-      <label>Email de contato
-        <input type="email" formControlName="contactEmail" />
-      </label>
-      <label>Plano
-        <select formControlName="diagnosisPlanId">
-          <option [ngValue]="null">Sem plano</option>
-          <option *ngFor="let p of plans" [ngValue]="p.id">{{ p.name }}</option>
-        </select>
-      </label>
-      <label>Cota/mês (opcional)
-        <input type="number" formControlName="diagnosisQuotaPerMonth" min="0" />
-      </label>
-      <label class="check">
-        <input type="checkbox" formControlName="active" /> Ativa
-      </label>
-    </div>
-
-    <div class="form-actions">
-      <button type="submit" class="btn-primary" [disabled]="isSaving">{{ editingId ? 'Salvar' : 'Criar' }}</button>
-      <button type="button" class="btn-secondary" *ngIf="editingId" (click)="cancelEdit()">Cancelar</button>
-    </div>
-  </form>
+  <div class="page-header">
+    <h1 class="page-title">🏬 Revendas</h1>
+    <button class="btn-add" [routerLink]="['/admin/revendas/nova']">+ Nova Revenda</button>
+  </div>
 
   <p class="loading-text" *ngIf="isLoading">Carregando revendas...</p>
 
@@ -44,7 +14,7 @@
           <span class="status" [class.inactive]="!r.active">{{ r.active ? 'Ativa' : 'Inativa' }}</span>
         </div>
         <div class="revenda-actions">
-          <button class="btn-link" (click)="startEdit(r)">Editar</button>
+          <button class="btn-link" (click)="edit(r)">Editar</button>
           <button class="btn-link" (click)="startAssign(r)">Atribuir gestor</button>
           <button class="btn-link" (click)="toggleBilling(r)">Faturamento</button>
         </div>
@@ -57,8 +27,12 @@
       </div>
 
       <div class="assign-row" *ngIf="assigningId === r.id">
-        <input type="number" [(ngModel)]="managerUserId" placeholder="ID do usuário gestor" min="1" />
-        <button class="btn-primary" (click)="assignManager(r)" [disabled]="!managerUserId">Confirmar</button>
+        <input type="email" [(ngModel)]="managerEmail" placeholder="e-mail do usuário gestor"
+               (keyup.enter)="assignManager(r)" />
+        <button class="btn-primary" (click)="assignManager(r)" [disabled]="!managerEmail.trim() || isAssigning">
+          {{ isAssigning ? 'Atribuindo...' : 'Confirmar' }}
+        </button>
+        <small class="assign-hint">O usuário já precisa ter conta no StarkAgro.</small>
       </div>
 
       <div class="billing-box" *ngIf="billingForId === r.id">
@@ -84,7 +58,7 @@
     </div>
 
     <div class="empty-state" *ngIf="revendas.length === 0">
-      Nenhuma revenda cadastrada. Crie uma no formulário acima.
+      Nenhuma revenda cadastrada. Use “+ Nova Revenda” para criar a primeira.
     </div>
   </div>
 </div>

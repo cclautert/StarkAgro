@@ -4,6 +4,7 @@ using StarkAgroAPI.Models;
 using StarkAgroAPI.Models.Entities;
 using StarkAgroAPI.Models.Interfaces;
 using StarkAgroAPI.Notifications;
+using StarkAgroAPI.Services;
 using MediatR;
 using MongoDB.Driver;
 
@@ -158,12 +159,13 @@ namespace StarkAgroAPI.Domain.Handlers.Admin
                 return null!;
             }
 
+            // Busca por e-mail sempre via EmailNormalizer: o Mongo é case-sensitive e o e-mail não.
             var user = await _dbContext.Users
-                .Find(u => u.Id == request.UserId)
+                .Find(EmailNormalizer.ByEmail(request.Email))
                 .FirstOrDefaultAsync(cancellationToken);
             if (user is null)
             {
-                _notifier.Handle(new Notification("Usuário não encontrado."));
+                _notifier.Handle(new Notification($"Nenhum usuário com o e-mail {request.Email}. Cadastre-o antes de atribuir a gestão."));
                 return null!;
             }
 

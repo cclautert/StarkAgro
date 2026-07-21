@@ -189,7 +189,7 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Admin
             var notifier = new Notificator();
             var handler = new AssignRevendaManagerHandler(db.Object, notifier);
 
-            var result = await handler.Handle(new AssignRevendaManagerRequest { RevendaId = 1, UserId = 3 }, CancellationToken.None);
+            var result = await handler.Handle(new AssignRevendaManagerRequest { RevendaId = 1, Email = "u@a.com" }, CancellationToken.None);
 
             Assert.Null(result);
             Assert.True(notifier.HasNotification());
@@ -202,7 +202,7 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Admin
             var notifier = new Notificator();
             var handler = new AssignRevendaManagerHandler(db.Object, notifier);
 
-            var result = await handler.Handle(new AssignRevendaManagerRequest { RevendaId = 1, UserId = 3 }, CancellationToken.None);
+            var result = await handler.Handle(new AssignRevendaManagerRequest { RevendaId = 1, Email = "u@a.com" }, CancellationToken.None);
 
             Assert.Null(result);
             Assert.True(notifier.HasNotification());
@@ -220,7 +220,7 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Admin
             var usersCol = Mock.Get(db.Object.Users);
             var handler = new AssignRevendaManagerHandler(db.Object, new Notificator());
 
-            var result = await handler.Handle(new AssignRevendaManagerRequest { RevendaId = 1, UserId = 3 }, CancellationToken.None);
+            var result = await handler.Handle(new AssignRevendaManagerRequest { RevendaId = 1, Email = "u@a.com" }, CancellationToken.None);
 
             Assert.NotNull(result);
             Assert.Equal(1, result!.Id);
@@ -249,7 +249,7 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Admin
             var usersCol = Mock.Get(db.Object.Users);
             var handler = new AssignRevendaManagerHandler(db.Object, new Notificator());
 
-            var result = await handler.Handle(new AssignRevendaManagerRequest { RevendaId = 1, UserId = 3 }, CancellationToken.None);
+            var result = await handler.Handle(new AssignRevendaManagerRequest { RevendaId = 1, Email = "u@a.com" }, CancellationToken.None);
 
             Assert.NotNull(result);
             membershipsCol.Verify(c => c.InsertOneAsync(

@@ -68,8 +68,9 @@ export class AdminService {
     return this.http.put<Revenda>(`${this.baseUrl}revendas/${id}`, data);
   }
 
-  assignRevendaManager(id: number, userId: number): Observable<Revenda> {
-    return this.http.post<Revenda>(`${this.baseUrl}revendas/${id}/manager`, { userId });
+  /** Gestor é identificado pelo e-mail — o admin não tem o id interno em mãos. */
+  assignRevendaManager(id: number, email: string): Observable<Revenda> {
+    return this.http.post<Revenda>(`${this.baseUrl}revendas/${id}/manager`, { email });
   }
 
   getRevendaBilling(id: number): Observable<RevendaBilling> {

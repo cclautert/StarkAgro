@@ -1,49 +1,43 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AdminService } from '../../../services/admin.service';
 import { Revenda, RevendaBilling } from '../../../models/revenda.model';
 import { DiagnosisPlan } from '../../../models/diagnosis-plan.model';
 
+/**
+ * Lista de revendas. O cadastro vive em página própria (/admin/revendas/nova),
+ * como em /admin/usuarios, /pivots e /sensores.
+ */
 @Component({
   selector: 'app-admin-revendas',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './admin-revendas.component.html',
   styleUrls: ['./admin-revendas.component.css']
 })
 export class AdminRevendasComponent implements OnInit {
-  private fb = inject(FormBuilder);
   private adminService = inject(AdminService);
   private snackBar = inject(MatSnackBar);
+  private router = inject(Router);
 
   revendas: Revenda[] = [];
   plans: DiagnosisPlan[] = [];
   isLoading = true;
-  isSaving = false;
-  editingId: number | null = null;
 
   assigningId: number | null = null;
-  managerUserId: number | null = null;
+  managerEmail = '';
+  isAssigning = false;
 
   billingForId: number | null = null;
   billing: RevendaBilling | null = null;
 
-  form!: FormGroup;
-
   ngOnInit(): void {
-    this.form = this.fb.group({
-      name: ['', [Validators.required, Validators.maxLength(120)]],
-      cnpj: [''],
-      contactEmail: [''],
-      diagnosisPlanId: [null],
-      diagnosisQuotaPerMonth: [null],
-      active: [true]
-    });
     this.adminService.getDiagnosisPlans().subscribe({
-      next: (plans) => this.plans = plans,
-      error: () => { /* sem planos: o seletor fica vazio */ }
+      next: plans => this.plans = plans,
+      error: () => { /* sem planos: a lista mostra só o id do plano */ }
     });
     this.load();
   }
@@ -51,7 +45,7 @@ export class AdminRevendasComponent implements OnInit {
   load(): void {
     this.isLoading = true;
     this.adminService.getRevendas().subscribe({
-      next: (revendas) => { this.revendas = revendas; this.isLoading = false; },
+      next: revendas => { this.revendas = revendas; this.isLoading = false; },
       error: () => {
         this.snackBar.open('Erro ao carregar revendas.', 'Fechar', { duration: 4000 });
         this.isLoading = false;
@@ -64,69 +58,33 @@ export class AdminRevendasComponent implements OnInit {
     return this.plans.find(p => p.id === id)?.name ?? `Plano #${id}`;
   }
 
-  startEdit(r: Revenda): void {
-    this.editingId = r.id;
-    this.form.setValue({
-      name: r.name,
-      cnpj: r.cnpj ?? '',
-      contactEmail: r.contactEmail ?? '',
-      diagnosisPlanId: r.diagnosisPlanId ?? null,
-      diagnosisQuotaPerMonth: r.diagnosisQuotaPerMonth ?? null,
-      active: r.active
-    });
-  }
-
-  cancelEdit(): void {
-    this.editingId = null;
-    this.form.reset({ name: '', cnpj: '', contactEmail: '', diagnosisPlanId: null, diagnosisQuotaPerMonth: null, active: true });
-  }
-
-  onSubmit(): void {
-    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
-    this.isSaving = true;
-
-    const v = this.form.value;
-    const payload: Partial<Revenda> = {
-      name: v.name,
-      cnpj: v.cnpj || null,
-      contactEmail: v.contactEmail || null,
-      diagnosisPlanId: v.diagnosisPlanId != null && v.diagnosisPlanId !== '' ? Number(v.diagnosisPlanId) : null,
-      diagnosisQuotaPerMonth: v.diagnosisQuotaPerMonth != null && v.diagnosisQuotaPerMonth !== '' ? Number(v.diagnosisQuotaPerMonth) : null,
-      active: !!v.active
-    };
-
-    const req = this.editingId
-      ? this.adminService.updateRevenda(this.editingId, payload)
-      : this.adminService.createRevenda(payload);
-
-    req.subscribe({
-      next: () => {
-        this.snackBar.open('Revenda salva.', 'OK', { duration: 3000 });
-        this.isSaving = false;
-        this.cancelEdit();
-        this.load();
-      },
-      error: (err) => {
-        this.snackBar.open(err?.error?.errors?.[0] ?? 'Erro ao salvar revenda.', 'Fechar', { duration: 4000 });
-        this.isSaving = false;
-      }
-    });
+  edit(r: Revenda): void {
+    this.router.navigate(['/admin/revendas/editar', r.id]);
   }
 
   startAssign(r: Revenda): void {
     this.assigningId = this.assigningId === r.id ? null : r.id;
-    this.managerUserId = null;
+    this.managerEmail = '';
   }
 
+  /** Gestor é identificado pelo e-mail — é o que o admin tem em mãos, não o id interno. */
   assignManager(r: Revenda): void {
-    if (!this.managerUserId) return;
-    this.adminService.assignRevendaManager(r.id, Number(this.managerUserId)).subscribe({
+    const email = this.managerEmail.trim();
+    if (!email) return;
+
+    this.isAssigning = true;
+    this.adminService.assignRevendaManager(r.id, email).subscribe({
       next: () => {
-        this.snackBar.open('Gestor atribuído.', 'OK', { duration: 3000 });
+        this.snackBar.open(`${email} agora é gestor de ${r.name}.`, 'OK', { duration: 4000 });
+        this.isAssigning = false;
         this.assigningId = null;
-        this.managerUserId = null;
+        this.managerEmail = '';
       },
-      error: (err) => this.snackBar.open(err?.error?.errors?.[0] ?? 'Erro ao atribuir gestor.', 'Fechar', { duration: 4000 })
+      error: err => {
+        this.isAssigning = false;
+        this.snackBar.open(
+          err?.error?.errors?.[0] ?? 'Erro ao atribuir gestor.', 'Fechar', { duration: 5000 });
+      }
     });
   }
 
@@ -135,7 +93,7 @@ export class AdminRevendasComponent implements OnInit {
     this.billingForId = r.id;
     this.billing = null;
     this.adminService.getRevendaBilling(r.id).subscribe({
-      next: (b) => this.billing = b,
+      next: b => this.billing = b,
       error: () => this.snackBar.open('Erro ao carregar faturamento.', 'Fechar', { duration: 4000 })
     });
   }

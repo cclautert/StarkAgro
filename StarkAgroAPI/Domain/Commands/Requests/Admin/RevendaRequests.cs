@@ -55,7 +55,12 @@ namespace StarkAgroAPI.Domain.Commands.Requests.Admin
         /// <summary>Preenchido pela rota; não vem do corpo.</summary>
         public int RevendaId { get; set; }
 
-        [Range(1, int.MaxValue, ErrorMessage = "UserId é obrigatório.")]
-        public int UserId { get; set; }
+        /// <summary>
+        /// E-mail do usuário que vira gestor. É o que o admin tem em mãos — pedir o Id interno
+        /// obrigava a garimpar a tela de usuários antes.
+        /// </summary>
+        [Required(ErrorMessage = "E-mail é obrigatório.")]
+        [EmailAddress(ErrorMessage = "E-mail inválido.")]
+        public string Email { get; set; } = string.Empty;
     }
 }

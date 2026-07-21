@@ -1,0 +1,59 @@
+<div class="form-container">
+  <h2>{{ isEditMode ? 'Editar Revenda' : 'Nova Revenda' }}</h2>
+
+  <div *ngIf="isLoading" class="loading-text">Carregando...</div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!isLoading">
+    <div class="form-group">
+      <label for="name">Nome</label>
+      <input id="name" type="text" formControlName="name" placeholder="Ex.: Mantiqueira Agronegócios" />
+      <div class="error" *ngIf="form.get('name')?.invalid && form.get('name')?.touched">
+        Informe o nome da revenda.
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="cnpj">CNPJ</label>
+        <input id="cnpj" type="text" formControlName="cnpj" placeholder="00.000.000/0000-00" />
+      </div>
+      <div class="form-group">
+        <label for="contactEmail">E-mail de contato</label>
+        <input id="contactEmail" type="email" formControlName="contactEmail" placeholder="contato@revenda.com.br" />
+        <div class="error" *ngIf="form.get('contactEmail')?.invalid && form.get('contactEmail')?.touched">
+          E-mail inválido.
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="diagnosisPlanId">Plano</label>
+        <select id="diagnosisPlanId" formControlName="diagnosisPlanId">
+          <option [ngValue]="null">Sem plano</option>
+          <option *ngFor="let p of plans" [ngValue]="p.id">{{ p.name }}</option>
+        </select>
+        <small class="hint">Define mensalidade, laudos inclusos e assentos de produtor.</small>
+      </div>
+      <div class="form-group">
+        <label for="diagnosisQuotaPerMonth">Cota de laudos/mês (opcional)</label>
+        <input id="diagnosisQuotaPerMonth" type="number" min="0" formControlName="diagnosisQuotaPerMonth" />
+        <small class="hint">Herdada pelos produtores da revenda. Vazio = padrão da plataforma; 0 = ilimitado.</small>
+      </div>
+    </div>
+
+    <div class="form-group checkbox-group">
+      <label class="checkbox-label">
+        <input type="checkbox" formControlName="active" />
+        Revenda ativa
+      </label>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary" [disabled]="isSaving">
+        {{ isSaving ? 'Salvando...' : (isEditMode ? 'Salvar alterações' : 'Criar revenda') }}
+      </button>
+      <button type="button" class="btn btn-secondary" (click)="cancel()">Cancelar</button>
+    </div>
+  </form>
+</div>

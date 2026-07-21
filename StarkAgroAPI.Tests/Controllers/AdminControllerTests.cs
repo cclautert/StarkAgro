@@ -325,7 +325,7 @@ namespace StarkAgroAPI.Tests.Controllers
             mediator.Setup(m => m.Send(It.IsAny<AssignRevendaManagerRequest>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new RevendaResponse { Id = 3, Name = "AgroSul" });
 
-            var command = new AssignRevendaManagerRequest { UserId = 9 };
+            var command = new AssignRevendaManagerRequest { Email = "gestor@a.com" };
             var result = await CreateController(true).AssignRevendaManager(mediator.Object, 3, command, default);
 
             AssertObjectResult(result.Result!, 200);
@@ -336,7 +336,7 @@ namespace StarkAgroAPI.Tests.Controllers
         public async Task AssignRevendaManager_NonAdmin_Returns403()
         {
             var result = await CreateController(false).AssignRevendaManager(new Mock<IMediator>().Object, 3,
-                new AssignRevendaManagerRequest { UserId = 9 }, default);
+                new AssignRevendaManagerRequest { Email = "gestor@a.com" }, default);
             AssertObjectResult(result.Result!, 403);
         }
 
