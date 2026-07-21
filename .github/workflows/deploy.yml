@@ -5,7 +5,7 @@
 # trigger a deploy job (avoids the red "missing server host" failures when the VPS
 # SSH secrets aren't configured). Manual deploy is always available via
 # `gh workflow run Deploy` (workflow_dispatch) or the manual script
-# `scripts/redeploy-starkcompany.sh`.
+# `scripts/redeploy-starkagro.sh`.
 #
 # To enable auto-deploy: set repo var AGRIPEWEB_AUTO_DEPLOY=true AND configure the
 # production secrets below for the chosen mode.
@@ -150,7 +150,7 @@ jobs:
       - name: Health check
         run: |
           sleep 15
-          curl -fsS https://agripeweb.com/api/v1/health
+          curl -fsS https://starkagro.com.br/api/v1/health
 
   deploy-ssh:
     name: Deploy to Hostinger VPS
@@ -219,4 +219,4 @@ jobs:
           script: |
             set -euo pipefail
             sleep 15
-            curl -fsS https://agripeweb.com/api/v1/health
+            curl -fsS https://starkagro.com.br/api/v1/health

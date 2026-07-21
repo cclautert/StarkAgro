@@ -35,7 +35,7 @@ resource "aws_ecs_task_definition" "api" {
         { name = "OAuth__Google__ClientId",            value = var.google_client_id },
         { name = "OAuth__Google__ClientSecret",        value = var.google_client_secret },
         # OAuth: Angular UI web callback + native app deep-link
-        { name = "OAuth__Google__AllowedRedirectUris", value = "https://agripeweb.com/login/callback,agripeweb://callback" }
+        { name = "OAuth__Google__AllowedRedirectUris", value = "https://starkagro.com.br/login/callback,agripeweb://callback" }
       ]
 
       logConfiguration = {

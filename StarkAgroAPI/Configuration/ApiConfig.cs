@@ -155,7 +155,7 @@ namespace StarkAgroAPI.Configuration
                 options.AddPolicy("Production",
                     builder =>
                         builder
-                            .WithOrigins("https://www.agripeweb.com", "https://agripeweb.com")
+                            .WithOrigins("https://www.starkagro.com.br", "https://starkagro.com.br")
                             .AllowAnyMethod()
                             .AllowAnyHeader()
                             .AllowCredentials());

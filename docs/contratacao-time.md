@@ -121,7 +121,7 @@ Se for preciso começar com o menor núcleo possível:
 
 1. **Backend .NET** — coração do produto e multi-tenant  
 2. **Frontend Angular** — experiência do produtor  
-3. **DevOps part-time** — produção estável (`agripeweb.com`)
+3. **DevOps part-time** — produção estável (`starkagro.com.br`)
 
 Depois: PO agro → QA → IoT conforme crescer a base de pivôs/sensores.
 
