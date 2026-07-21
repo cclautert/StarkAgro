@@ -137,6 +137,68 @@
       <span class="cost-sub">{{ currentMonthAiCostCents }} centavos em chamadas ao classificador</span>
     </div>
 
+    <!-- NDVI Sentinel-2 (Copernicus Data Space Ecosystem) -->
+    <hr class="section-divider" />
+    <p class="section-title">NDVI Sentinel-2 (Copernicus / CDSE)</p>
+    <p class="section-hint">
+      Índice de vegetação por satélite. Consome <strong>Processing Units (PU)</strong> da CDSE.
+      Desligue o kill-switch para cortar todo o custo sem redeploy.
+    </p>
+
+    <div class="form-group">
+      <label>Client ID (CDSE)</label>
+      <input formControlName="cdseClientId" placeholder="client id do OAuth2" />
+    </div>
+
+    <div class="form-group">
+      <label>Client Secret (CDSE)</label>
+      <div class="input-with-toggle">
+        <input formControlName="cdseClientSecret"
+               [type]="showCdseSecret ? 'text' : 'password'"
+               placeholder="client secret do OAuth2" />
+        <button type="button" class="btn-toggle-key" (click)="showCdseSecret = !showCdseSecret">
+          {{ showCdseSecret ? 'Ocultar' : 'Mostrar' }}
+        </button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="checkbox-label">
+        <input type="checkbox" formControlName="sentinel2Enabled" />
+        Habilitar a busca de NDVI (kill-switch)
+      </label>
+    </div>
+
+    <div class="form-group">
+      <label for="ndviCostCents">Custo por busca (centavos)</label>
+      <input id="ndviCostCents" type="number" min="0" formControlName="ndviCostCents" />
+      <p class="section-hint" style="margin-top:6px">
+        Proxy do custo de PU, congelado em cada leitura. Calibre pelo consumo real do painel da CDSE.
+      </p>
+    </div>
+
+    <div class="form-group">
+      <label for="ndviMonthlyBudgetCents">Teto mensal de custo NDVI (centavos)</label>
+      <input id="ndviMonthlyBudgetCents" type="number" min="0" formControlName="ndviMonthlyBudgetCents" />
+      <p class="section-hint" style="margin-top:6px">
+        Batido o teto, o worker <strong>para de buscar</strong> até o mês virar ou o teto subir. <strong>0 = ilimitado.</strong>
+      </p>
+    </div>
+
+    <div class="form-group">
+      <label for="ndviMaxAreasPerUser">Teto de áreas por usuário</label>
+      <input id="ndviMaxAreasPerUser" type="number" min="0" formControlName="ndviMaxAreasPerUser" />
+      <p class="section-hint" style="margin-top:6px">
+        Máximo de áreas monitoradas que cada produtor pode cadastrar. <strong>0 = ilimitado.</strong>
+      </p>
+    </div>
+
+    <div class="cost-panel">
+      <span class="cost-label">Gasto de NDVI neste mês</span>
+      <span class="cost-value">{{ (currentMonthNdviCostCents / 100) | currency:'EUR':'symbol':'1.2-2' }}</span>
+      <span class="cost-sub">{{ currentMonthNdviCostCents }} centavos em Processing Units</span>
+    </div>
+
     <div class="form-actions">
       <button type="submit" class="btn btn-primary" [disabled]="isSaving">
         {{ isSaving ? 'Salvando...' : 'Salvar Configurações' }}
