@@ -1,30 +1,30 @@
 .container { max-width: 960px; margin: 0 auto; padding: 1rem; }
-.page-title { font-size: 1.4rem; margin: 0 0 1rem; }
-/* Cards claros dentro de app escuro: fixam o texto escuro em vez de herdar do container. */
-.card { background: #fff; color: #1f2937; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 1.25rem; }
-.card-title { font-size: 1.1rem; margin: 0 0 .75rem; }
+.page-title { font-size: 1.4rem; font-weight: 700; color: #e2e8f0; margin: 0 0 1rem; }
+.card { background: #1a2540; border: 1px solid #2d3f5e; border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 1.25rem; }
+.card-title { font-size: 1.1rem; color: #e2e8f0; margin: 0 0 .75rem; }
 .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: .75rem; }
-.grid label { display: flex; flex-direction: column; gap: .25rem; font-size: .85rem; color: #555; }
-.grid input, .grid select { padding: .5rem .6rem; border: 1px solid #ccc; border-radius: 6px; }
+.grid label { display: flex; flex-direction: column; gap: .25rem; font-size: .85rem; color: #cbd5e1; }
+.grid input, .grid select { padding: .5rem .6rem; background: #0f1830; border: 1px solid #2d3f5e; border-radius: 6px; color: #e2e8f0; }
+.grid input:focus, .grid select:focus { outline: none; border-color: #2563eb; }
 .grid label.check { flex-direction: row; align-items: center; gap: .4rem; }
 .form-actions { display: flex; gap: .5rem; margin-top: 1rem; }
-.btn-primary { background: #2e7d32; color: #fff; border: none; padding: .55rem 1rem; border-radius: 6px; cursor: pointer; }
+.btn-primary { background: #2563eb; color: #fff; border: none; padding: .55rem 1rem; border-radius: 6px; cursor: pointer; }
+.btn-primary:hover { background: #1d4ed8; }
 .btn-primary:disabled { opacity: .6; cursor: default; }
-.btn-secondary { background: #eef1f0; color: #2e7d32; border: 1px solid #cfe0d6; padding: .5rem .9rem; border-radius: 6px; cursor: pointer; }
-.btn-link { background: none; border: none; color: #2e7d32; cursor: pointer; padding: .2rem .4rem; font-size: .9rem; }
+.btn-secondary { background: #253152; color: #93c5fd; border: 1px solid #3a4f75; padding: .5rem .9rem; border-radius: 6px; cursor: pointer; }
+.btn-link { background: none; border: none; color: #93c5fd; cursor: pointer; padding: .2rem .4rem; font-size: .9rem; }
 .loading-text { color: var(--text-muted); }
-/* Este mesmo estilo aparece dentro do card branco (faturamento da revenda). */
-.revenda-card .loading-text { color: #6b7280; }
-.revenda-card { background: #fff; color: #1f2937; border: 1px solid #e6e6e6; border-radius: 8px; padding: .9rem 1rem; margin-bottom: .7rem; }
+.revenda-card { background: #1a2540; border: 1px solid #2d3f5e; border-radius: 8px; padding: .9rem 1rem; margin-bottom: .7rem; transition: border-color .15s; }
+.revenda-card:hover { border-color: #3a4f75; }
 .revenda-head { display: flex; align-items: center; justify-content: space-between; gap: .5rem; flex-wrap: wrap; }
-.revenda-name { font-weight: 600; margin-right: .5rem; }
-.status { font-size: .72rem; padding: .12rem .5rem; border-radius: 999px; background: #e8f5e9; color: #2e7d32; }
-.status.inactive { background: #f1f1f1; color: #888; }
+.revenda-name { font-weight: 600; color: #e2e8f0; margin-right: .5rem; }
+.status { font-size: .72rem; padding: .12rem .5rem; border-radius: 999px; background: #14532d; color: #86efac; border: 1px solid #16a34a; }
+.status.inactive { background: #253152; color: #94a3b8; border-color: #3a4f75; }
 .revenda-actions { display: flex; gap: .3rem; }
-.revenda-meta { display: flex; gap: 1rem; flex-wrap: wrap; color: #777; font-size: .82rem; margin-top: .4rem; }
+.revenda-meta { display: flex; gap: 1rem; flex-wrap: wrap; color: var(--text-muted); font-size: .82rem; margin-top: .4rem; }
 .assign-row { display: flex; gap: .5rem; margin-top: .6rem; }
-.assign-row input { flex: 0 1 220px; padding: .5rem .6rem; border: 1px solid #ccc; border-radius: 6px; }
-.billing-box { margin-top: .6rem; border-top: 1px dashed #e0e0e0; padding-top: .6rem; }
-.billing-total { font-size: .95rem; }
-.billing-sub { display: block; color: #777; font-size: .8rem; margin-top: .2rem; }
+.assign-row input { flex: 0 1 220px; padding: .5rem .6rem; background: #0f1830; border: 1px solid #2d3f5e; border-radius: 6px; color: #e2e8f0; }
+.billing-box { margin-top: .6rem; border-top: 1px dashed #2d3f5e; padding-top: .6rem; }
+.billing-total { font-size: .95rem; color: #e2e8f0; }
+.billing-sub { display: block; color: var(--text-muted); font-size: .8rem; margin-top: .2rem; }
 .empty-state { color: var(--text-muted); padding: 1rem 0; }

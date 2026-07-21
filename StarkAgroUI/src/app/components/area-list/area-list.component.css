@@ -13,11 +13,13 @@
 
 .page-title {
   font-size: 1.5rem;
+  font-weight: 700;
+  color: #e2e8f0;
   margin: 0;
 }
 
 .btn-add {
-  background: #2e7d32;
+  background: #2563eb;
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -26,10 +28,10 @@
   cursor: pointer;
 }
 
-.btn-add:hover { background: #1b5e20; }
+.btn-add:hover { background: #1d4ed8; }
 
 .loading-text, .error-text { color: var(--text-muted); }
-.error-text { color: #c62828; }
+.error-text { color: #fca5a5; }
 
 .area-grid {
   display: grid;
@@ -37,18 +39,18 @@
   gap: 1rem;
 }
 
-/* Card claro dentro de app escuro: fixa o texto escuro em vez de herdar do container. */
 .area-card {
-  background: #fff;
-  color: #1f2937;
-  border: 1px solid #e0e0e0;
+  background: #1a2540;
+  border: 1px solid #2d3f5e;
   border-radius: 10px;
   padding: 1rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  transition: border-color 0.15s;
 }
+
+.area-card:hover { border-color: #3a4f75; }
 
 .area-card-head {
   display: flex;
@@ -57,7 +59,7 @@
   gap: 0.5rem;
 }
 
-.area-name { font-weight: 600; font-size: 1.05rem; }
+.area-name { font-weight: 600; font-size: 1.05rem; color: #e2e8f0; }
 
 .badge {
   font-size: 0.72rem;
@@ -65,10 +67,11 @@
   border-radius: 999px;
   padding: 0.15rem 0.6rem;
   white-space: nowrap;
+  border: 1px solid transparent;
 }
 
-.badge-on { background: #e8f5e9; color: #2e7d32; }
-.badge-off { background: #eceff1; color: #607d8b; }
+.badge-on { background: #14532d; color: #86efac; border-color: #16a34a; }
+.badge-off { background: #253152; color: #94a3b8; border-color: #3a4f75; }
 
 .area-card-body {
   display: flex;
@@ -76,8 +79,8 @@
   gap: 0.25rem;
 }
 
-.area-meta { font-size: 0.85rem; color: #444; }
-.area-meta-muted { color: #999; font-style: italic; }
+.area-meta { font-size: 0.85rem; color: #cbd5e1; }
+.area-meta-muted { color: var(--text-muted); font-style: italic; }
 
 .area-card-actions {
   display: flex;
@@ -87,20 +90,20 @@
 
 .btn-action {
   flex: 1;
-  border: none;
+  border: 1px solid transparent;
   border-radius: 6px;
   padding: 0.4rem 0.5rem;
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
+  transition: opacity 0.15s;
 }
 
-.btn-detail { background: #e3f2fd; color: #1565c0; }
-.btn-edit { background: #fff3e0; color: #ef6c00; }
-.btn-delete { background: #ffebee; color: #c62828; }
-.btn-detail:hover { background: #bbdefb; }
-.btn-edit:hover { background: #ffe0b2; }
-.btn-delete:hover { background: #ffcdd2; }
+.btn-action:hover { opacity: 0.85; }
+
+.btn-detail { background: #253152; color: #93c5fd; border-color: #3a4f75; }
+.btn-edit { background: #253152; color: #fbbf24; border-color: #a16207; }
+.btn-delete { background: #7f1d1d; color: #fca5a5; border-color: #dc2626; }
 
 .empty-state {
   grid-column: 1 / -1;

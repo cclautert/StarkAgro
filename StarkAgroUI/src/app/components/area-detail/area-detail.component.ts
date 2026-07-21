@@ -32,14 +32,24 @@ export class AreaDetailComponent implements OnInit, AfterViewInit, OnDestroy {
   private overlayUrl?: string;
 
   chartData: ChartConfiguration<'line'>['data'] = { labels: [], datasets: [] };
+  // O padrão do Chart.js é texto #666 e grade quase preta — some sobre o painel escuro (#1a2540).
   chartOptions: ChartConfiguration<'line'>['options'] = {
     responsive: true,
     maintainAspectRatio: false,
     scales: {
-      y: { min: 0, max: 1, title: { display: true, text: 'NDVI' } },
-      x: { ticks: { maxRotation: 0, autoSkip: true } }
+      y: {
+        min: 0,
+        max: 1,
+        title: { display: true, text: 'NDVI', color: '#a0aec0' },
+        ticks: { color: '#a0aec0' },
+        grid: { color: '#2d3f5e' }
+      },
+      x: {
+        ticks: { maxRotation: 0, autoSkip: true, color: '#a0aec0' },
+        grid: { color: '#2d3f5e' }
+      }
     },
-    plugins: { legend: { display: true } }
+    plugins: { legend: { display: true, labels: { color: '#e2e8f0' } } }
   };
 
   constructor(
@@ -88,8 +98,8 @@ export class AreaDetailComponent implements OnInit, AfterViewInit, OnDestroy {
         {
           data: mean,
           label: 'NDVI médio',
-          borderColor: '#2e7d32',
-          backgroundColor: 'rgba(46,125,50,0.15)',
+          borderColor: '#4ade80',
+          backgroundColor: 'rgba(74,222,128,0.15)',
           fill: true,
           tension: 0.35,
           spanGaps: true,

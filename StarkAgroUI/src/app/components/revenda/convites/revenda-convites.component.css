@@ -1,15 +1,14 @@
 .container { max-width: 720px; margin: 0 auto; padding: 1rem; }
-.page-title { font-size: 1.4rem; margin: 0 0 .25rem; }
+.page-title { font-size: 1.4rem; font-weight: 700; color: #e2e8f0; margin: 0 0 .25rem; }
 .subtitle { color: var(--text-muted); font-size: .9rem; margin: 0 0 1rem; }
 .loading-text { color: var(--text-muted); }
-/* Card claro dentro de app escuro: fixa o texto escuro em vez de herdar do container. */
-.invite-card { display: flex; align-items: center; justify-content: space-between; background: #fff; color: #1f2937; border: 1px solid #e6e6e6; border-radius: 8px; padding: .9rem 1rem; margin-bottom: .6rem; }
+.invite-card { display: flex; align-items: center; justify-content: space-between; background: #1a2540; border: 1px solid #a16207; border-left-width: 3px; border-radius: 8px; padding: .9rem 1rem; margin-bottom: .6rem; }
 .invite-info { display: flex; flex-direction: column; gap: .15rem; }
-.revenda-name { font-weight: 600; }
-.role { color: #2e7d32; font-size: .85rem; }
-.expires { color: #888; font-size: .78rem; }
+.revenda-name { font-weight: 600; color: #e2e8f0; }
+.role { color: #93c5fd; font-size: .85rem; }
+.expires { color: var(--text-muted); font-size: .78rem; }
 .invite-actions { display: flex; gap: .5rem; }
-.btn-primary { background: #2e7d32; color: #fff; border: none; padding: .5rem .9rem; border-radius: 6px; cursor: pointer; }
-.btn-secondary { background: #f1f1f1; color: #555; border: 1px solid #ddd; padding: .5rem .9rem; border-radius: 6px; cursor: pointer; }
+.btn-primary { background: #16a34a; color: #fff; border: none; padding: .5rem .9rem; border-radius: 6px; cursor: pointer; }
+.btn-secondary { background: #253152; color: #94a3b8; border: 1px solid #3a4f75; padding: .5rem .9rem; border-radius: 6px; cursor: pointer; }
 .btn-primary:disabled, .btn-secondary:disabled { opacity: .6; cursor: default; }
 .empty-state { color: var(--text-muted); padding: 1rem 0; }

@@ -12,28 +12,30 @@
 }
 
 .back-link {
-  color: #1565c0;
+  color: #93c5fd;
   text-decoration: none;
   font-weight: 600;
 }
 
 .btn-edit {
-  background: #fff3e0;
-  color: #ef6c00;
-  border: none;
+  background: #253152;
+  color: #fbbf24;
+  border: 1px solid #a16207;
   border-radius: 6px;
   padding: 0.4rem 0.9rem;
   font-weight: 600;
   cursor: pointer;
 }
 
-.area-title { font-size: 1.6rem; margin: 0.5rem 0 0.25rem; }
+.btn-edit:hover { opacity: 0.85; }
+
+.area-title { font-size: 1.6rem; color: #e2e8f0; margin: 0.5rem 0 0.25rem; }
 
 .area-sub {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  color: #555;
+  color: var(--text-muted);
   margin-bottom: 1.25rem;
 }
 
@@ -42,19 +44,18 @@
   font-weight: 600;
   border-radius: 999px;
   padding: 0.15rem 0.6rem;
+  border: 1px solid transparent;
 }
 
-.badge-on { background: #e8f5e9; color: #2e7d32; }
-.badge-off { background: #eceff1; color: #607d8b; }
+.badge-on { background: #14532d; color: #86efac; border-color: #16a34a; }
+.badge-off { background: #253152; color: #94a3b8; border-color: #3a4f75; }
 
-/* Cards claros dentro de app escuro: fixam o texto escuro em vez de herdar do container. */
 .latest-card {
   display: flex;
   align-items: center;
   gap: 1.25rem;
-  background: #fff;
-  color: #1f2937;
-  border: 1px solid #e0e0e0;
+  background: #1a2540;
+  border: 1px solid #2d3f5e;
   border-radius: 10px;
   padding: 1.25rem;
   margin-bottom: 1.25rem;
@@ -63,7 +64,7 @@
 .latest-value {
   font-size: 2.4rem;
   font-weight: 700;
-  color: #2e7d32;
+  color: #4ade80;
   line-height: 1;
 }
 
@@ -73,32 +74,32 @@
   gap: 0.2rem;
 }
 
-.latest-label { font-weight: 600; color: #333; }
-.latest-date { color: #666; font-size: 0.9rem; }
+.latest-label { font-weight: 600; color: #e2e8f0; }
+.latest-date { color: var(--text-muted); font-size: 0.9rem; }
 
 .cloud-badge {
   font-size: 0.78rem;
-  color: #607d8b;
-  background: #eceff1;
+  color: #94a3b8;
+  background: #253152;
+  border: 1px solid #3a4f75;
   border-radius: 999px;
   padding: 0.1rem 0.5rem;
   width: fit-content;
 }
 
-.cloud-ok { background: #fff8e1; color: #f9a825; }
+.cloud-ok { background: #422006; color: #fbbf24; border-color: #a16207; }
 
-.latest-empty { color: #888; justify-content: center; }
+.latest-empty { color: var(--text-muted); justify-content: center; }
 
 .panel {
-  background: #fff;
-  color: #1f2937;
-  border: 1px solid #e0e0e0;
+  background: #1a2540;
+  border: 1px solid #2d3f5e;
   border-radius: 10px;
   padding: 1.25rem;
   margin-bottom: 1.25rem;
 }
 
-.panel-title { font-size: 1.05rem; margin: 0 0 1rem; }
+.panel-title { font-size: 1.05rem; color: #e2e8f0; margin: 0 0 1rem; }
 
 .chart-box { position: relative; height: 300px; }
 
@@ -110,7 +111,7 @@
   z-index: 0;
 }
 
-.muted { color: #888; font-size: 0.9rem; }
+.muted { color: var(--text-muted); font-size: 0.9rem; }
 .map-hint { margin-top: 0.5rem; }
 .loading-text, .error-text { color: var(--text-muted); }
-.error-text { color: #c62828; }
+.error-text { color: #fca5a5; }

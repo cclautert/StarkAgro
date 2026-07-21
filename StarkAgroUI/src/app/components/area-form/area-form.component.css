@@ -6,17 +6,17 @@
 
 .page-title {
   font-size: 1.5rem;
+  font-weight: 700;
+  color: #e2e8f0;
   margin: 0 0 1.5rem;
 }
 
-/* Card claro dentro de app escuro: fixa o texto escuro em vez de herdar do container. */
 .area-form {
   display: flex;
   flex-direction: column;
   gap: 1.1rem;
-  background: #fff;
-  color: #1f2937;
-  border: 1px solid #e0e0e0;
+  background: #1a2540;
+  border: 1px solid #2d3f5e;
   border-radius: 10px;
   padding: 1.5rem;
 }
@@ -29,7 +29,7 @@
 
 /* `.field { display: flex }` é regra de autor e venceria o `display:none` que o
    navegador aplica ao atributo [hidden] — sem isto o mapa de polígono aparece
-   como uma caixa branca no modo círculo. */
+   como uma caixa vazia no modo círculo. */
 .field[hidden] {
   display: none;
 }
@@ -37,22 +37,26 @@
 .field label {
   font-weight: 600;
   font-size: 0.9rem;
-  color: #333;
+  color: #cbd5e1;
 }
 
 .field input[type="text"],
 .field input[type="number"],
 .field select {
   padding: 0.55rem 0.7rem;
-  border: 1px solid #ccc;
+  background: #0f1830;
+  border: 1px solid #2d3f5e;
   border-radius: 6px;
+  color: #e2e8f0;
   font-size: 0.95rem;
 }
+
+.field input::placeholder { color: #94a3b8; }
 
 .field input:focus,
 .field select:focus {
   outline: none;
-  border-color: #2e7d32;
+  border-color: #2563eb;
 }
 
 .location-row {
@@ -63,29 +67,30 @@
 }
 
 .btn-map {
-  background: #e3f2fd;
-  color: #1565c0;
-  border: none;
+  background: #253152;
+  color: #93c5fd;
+  border: 1px solid #3a4f75;
   border-radius: 6px;
   padding: 0.5rem 0.9rem;
   font-weight: 600;
   cursor: pointer;
 }
 
-.btn-map:hover { background: #bbdefb; }
+.btn-map:hover { opacity: 0.85; }
+.btn-map:disabled { opacity: 0.6; cursor: not-allowed; }
 
-.coords { font-size: 0.9rem; color: #444; }
-.coords-muted { color: #999; font-style: italic; }
+.coords { font-size: 0.9rem; color: #cbd5e1; }
+.coords-muted { color: var(--text-muted); font-style: italic; }
 
-.hint { color: #777; font-size: 0.8rem; }
-.err { color: #c62828; font-size: 0.8rem; }
-.hint .ok { color: #2e7d32; font-weight: 600; margin-left: 0.25rem; }
-.hint .warn { color: #ef6c00; margin-left: 0.25rem; }
+.hint { color: var(--text-muted); font-size: 0.8rem; }
+.err { color: #fca5a5; font-size: 0.8rem; }
+.hint .ok { color: #4ade80; font-weight: 600; margin-left: 0.25rem; }
+.hint .warn { color: #fbbf24; margin-left: 0.25rem; }
 
 .draw-map {
   height: 360px;
   width: 100%;
-  border: 1px solid #ccc;
+  border: 1px solid #2d3f5e;
   border-radius: 8px;
   overflow: hidden;
   z-index: 0;
@@ -96,6 +101,7 @@
   align-items: center;
   gap: 0.5rem;
   font-weight: 500;
+  color: #e2e8f0;
   cursor: pointer;
 }
 
@@ -107,14 +113,14 @@
 }
 
 .btn-cancel, .btn-save {
-  border: none;
+  border: 1px solid transparent;
   border-radius: 6px;
   padding: 0.55rem 1.2rem;
   font-weight: 600;
   cursor: pointer;
 }
 
-.btn-cancel { background: #eceff1; color: #546e7a; }
-.btn-save { background: #2e7d32; color: #fff; }
-.btn-save:disabled { background: #a5d6a7; cursor: not-allowed; }
-.btn-save:hover:not(:disabled) { background: #1b5e20; }
+.btn-cancel { background: #253152; color: #94a3b8; border-color: #3a4f75; }
+.btn-save { background: #2563eb; color: #fff; }
+.btn-save:disabled { background: #253152; color: #64748b; cursor: not-allowed; }
+.btn-save:hover:not(:disabled) { background: #1d4ed8; }
