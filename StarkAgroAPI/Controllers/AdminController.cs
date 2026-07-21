@@ -1,5 +1,6 @@
 using StarkAgroAPI.Domain.Commands.Requests.Admin;
 using StarkAgroAPI.Domain.Commands.Responses.Admin;
+using StarkAgroAPI.Domain.Commands.Responses.Revenda;
 using StarkAgroAPI.Models.Interfaces;
 using StarkAgroAPI.Notifications;
 using MediatR;
@@ -136,6 +137,62 @@ namespace StarkAgroAPI.Controllers
             if (!GetCurrentUserIsAdmin()) return StatusCode(403, new { errors = new[] { "Acesso negado." } });
             await mediator.Send(new DeleteDiagnosisPlanRequest { Id = id }, cancellationToken);
             return CustomResponse(null, HttpStatusCode.NoContent);
+        }
+
+        [HttpGet("revendas")]
+        public async Task<ActionResult<List<RevendaResponse>>> GetRevendas(
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken)
+        {
+            if (!GetCurrentUserIsAdmin()) return StatusCode(403, new { errors = new[] { "Acesso negado." } });
+            return CustomResponse(await mediator.Send(new GetRevendasRequest(), cancellationToken));
+        }
+
+        [HttpPost("revendas")]
+        public async Task<ActionResult<RevendaResponse>> CreateRevenda(
+            [FromServices] IMediator mediator,
+            [FromBody] CreateRevendaRequest command,
+            CancellationToken cancellationToken)
+        {
+            if (!GetCurrentUserIsAdmin()) return StatusCode(403, new { errors = new[] { "Acesso negado." } });
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
+            return CustomResponse(await mediator.Send(command, cancellationToken), HttpStatusCode.Created);
+        }
+
+        [HttpPut("revendas/{id}")]
+        public async Task<ActionResult<RevendaResponse>> UpdateRevenda(
+            [FromServices] IMediator mediator,
+            [FromRoute] int id,
+            [FromBody] UpdateRevendaRequest command,
+            CancellationToken cancellationToken)
+        {
+            if (!GetCurrentUserIsAdmin()) return StatusCode(403, new { errors = new[] { "Acesso negado." } });
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
+            command.Id = id;
+            return CustomResponse(await mediator.Send(command, cancellationToken));
+        }
+
+        [HttpPost("revendas/{id}/manager")]
+        public async Task<ActionResult<RevendaResponse>> AssignRevendaManager(
+            [FromServices] IMediator mediator,
+            [FromRoute] int id,
+            [FromBody] AssignRevendaManagerRequest command,
+            CancellationToken cancellationToken)
+        {
+            if (!GetCurrentUserIsAdmin()) return StatusCode(403, new { errors = new[] { "Acesso negado." } });
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
+            command.RevendaId = id;
+            return CustomResponse(await mediator.Send(command, cancellationToken));
+        }
+
+        [HttpGet("revendas/{id}/billing")]
+        public async Task<ActionResult<RevendaBillingResponse>> GetRevendaBilling(
+            [FromServices] IMediator mediator,
+            [FromRoute] int id,
+            CancellationToken cancellationToken)
+        {
+            if (!GetCurrentUserIsAdmin()) return StatusCode(403, new { errors = new[] { "Acesso negado." } });
+            return CustomResponse(await mediator.Send(new GetRevendaBillingRequest { RevendaId = id }, cancellationToken));
         }
     }
 }

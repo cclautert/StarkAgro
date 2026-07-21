@@ -2,6 +2,7 @@ using System.Security.Claims;
 using StarkAgroAPI.Controllers;
 using StarkAgroAPI.Domain.Commands.Requests.Admin;
 using StarkAgroAPI.Domain.Commands.Responses.Admin;
+using StarkAgroAPI.Domain.Commands.Responses.Revenda;
 using StarkAgroAPI.Tests.Mocks;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -238,6 +239,125 @@ namespace StarkAgroAPI.Tests.Controllers
                 new UpdatePlatformAiSettingsRequest(), default);
 
             AssertObjectResult(result, 400);
+        }
+
+        // ─── Revendas ───────────────────────────────────────────────────────────────
+
+        [Fact]
+        public async Task GetRevendas_AsAdmin_ReturnsOk()
+        {
+            var mediator = new Mock<IMediator>();
+            mediator.Setup(m => m.Send(It.IsAny<GetRevendasRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<RevendaResponse> { new RevendaResponse { Id = 1, Name = "AgroSul" } });
+
+            var result = await CreateController(true).GetRevendas(mediator.Object, default);
+
+            var obj = AssertObjectResult(result.Result!, 200);
+            Assert.Single(Assert.IsType<List<RevendaResponse>>(obj.Value));
+        }
+
+        [Fact]
+        public async Task GetRevendas_NonAdmin_Returns403()
+        {
+            var result = await CreateController(false).GetRevendas(new Mock<IMediator>().Object, default);
+            AssertObjectResult(result.Result!, 403);
+        }
+
+        [Fact]
+        public async Task CreateRevenda_AsAdmin_ReturnsCreated()
+        {
+            var mediator = new Mock<IMediator>();
+            mediator.Setup(m => m.Send(It.IsAny<CreateRevendaRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new RevendaResponse { Id = 5, Name = "AgroSul" });
+
+            var result = await CreateController(true).CreateRevenda(mediator.Object,
+                new CreateRevendaRequest { Name = "AgroSul" }, default);
+
+            AssertObjectResult(result.Result!, 201);
+        }
+
+        [Fact]
+        public async Task CreateRevenda_NonAdmin_Returns403()
+        {
+            var result = await CreateController(false).CreateRevenda(new Mock<IMediator>().Object,
+                new CreateRevendaRequest { Name = "AgroSul" }, default);
+            AssertObjectResult(result.Result!, 403);
+        }
+
+        [Fact]
+        public async Task CreateRevenda_InvalidModel_ReturnsBadRequest()
+        {
+            var controller = CreateController(true);
+            controller.ModelState.AddModelError("Name", "required");
+
+            var result = await controller.CreateRevenda(new Mock<IMediator>().Object,
+                new CreateRevendaRequest(), default);
+
+            AssertObjectResult(result.Result!, 400);
+        }
+
+        [Fact]
+        public async Task UpdateRevenda_AsAdmin_SetsIdAndReturnsOk()
+        {
+            var mediator = new Mock<IMediator>();
+            mediator.Setup(m => m.Send(It.IsAny<UpdateRevendaRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new RevendaResponse { Id = 7, Name = "AgroSul" });
+
+            var command = new UpdateRevendaRequest { Name = "AgroSul" };
+            var result = await CreateController(true).UpdateRevenda(mediator.Object, 7, command, default);
+
+            AssertObjectResult(result.Result!, 200);
+            Assert.Equal(7, command.Id);
+        }
+
+        [Fact]
+        public async Task UpdateRevenda_NonAdmin_Returns403()
+        {
+            var result = await CreateController(false).UpdateRevenda(new Mock<IMediator>().Object, 1,
+                new UpdateRevendaRequest { Name = "AgroSul" }, default);
+            AssertObjectResult(result.Result!, 403);
+        }
+
+        [Fact]
+        public async Task AssignRevendaManager_AsAdmin_SetsRevendaIdAndReturnsOk()
+        {
+            var mediator = new Mock<IMediator>();
+            mediator.Setup(m => m.Send(It.IsAny<AssignRevendaManagerRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new RevendaResponse { Id = 3, Name = "AgroSul" });
+
+            var command = new AssignRevendaManagerRequest { UserId = 9 };
+            var result = await CreateController(true).AssignRevendaManager(mediator.Object, 3, command, default);
+
+            AssertObjectResult(result.Result!, 200);
+            Assert.Equal(3, command.RevendaId);
+        }
+
+        [Fact]
+        public async Task AssignRevendaManager_NonAdmin_Returns403()
+        {
+            var result = await CreateController(false).AssignRevendaManager(new Mock<IMediator>().Object, 3,
+                new AssignRevendaManagerRequest { UserId = 9 }, default);
+            AssertObjectResult(result.Result!, 403);
+        }
+
+        [Fact]
+        public async Task GetRevendaBilling_AsAdmin_ReturnsOk()
+        {
+            var mediator = new Mock<IMediator>();
+            mediator.Setup(m => m.Send(It.IsAny<GetRevendaBillingRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new RevendaBillingResponse { RevendaId = 7, TotalCents = 12400 });
+
+            var result = await CreateController(true).GetRevendaBilling(mediator.Object, 7, default);
+
+            var obj = AssertObjectResult(result.Result!, 200);
+            Assert.Equal(12400, (obj.Value as RevendaBillingResponse)?.TotalCents);
+        }
+
+        [Fact]
+        public async Task GetRevendaBilling_NonAdmin_Returns403()
+        {
+            var result = await CreateController(false).GetRevendaBilling(new Mock<IMediator>().Object, 7, default);
+            AssertObjectResult(result.Result!, 403);
         }
     }
 }

@@ -2,7 +2,9 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using StarkAgroAPI.Controllers;
+using StarkAgroAPI.Domain.Commands.Requests.Revenda;
 using StarkAgroAPI.Domain.Commands.Requests.Users;
+using StarkAgroAPI.Domain.Commands.Responses.Revenda;
 using StarkAgroAPI.Domain.Commands.Responses.Users;
 using StarkAgroAPI.Tests.Mocks;
 using MediatR;
@@ -192,6 +194,63 @@ namespace StarkAgroAPI.Tests.Controllers
             // Assert
             var badRequest = Assert.IsType<ObjectResult>(result.Result);
             Assert.Equal(400, badRequest.StatusCode);
+        }
+
+        // ── Convites de revenda (lado do membro) ──────────────────────────────
+
+        [Fact]
+        public async Task GetRevendaInvites_ReturnsOk()
+        {
+            var mediator = new Mock<IMediator>();
+            mediator.Setup(m => m.Send(It.IsAny<GetMyRevendaInvitesRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<RevendaInviteResponse>
+                {
+                    new RevendaInviteResponse { Id = 1, RevendaId = 7 }
+                });
+
+            var result = await CreateController(new MockNotifier()).GetRevendaInvites(mediator.Object, CancellationToken.None);
+
+            var obj = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(200, obj.StatusCode);
+        }
+
+        [Fact]
+        public async Task AcceptRevendaInvite_Ok_ReturnsSuccess()
+        {
+            var mediator = new Mock<IMediator>();
+            mediator.Setup(m => m.Send(It.IsAny<AcceptRevendaInviteRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(true);
+
+            var result = await CreateController(new MockNotifier()).AcceptRevendaInvite(mediator.Object, 5, CancellationToken.None);
+
+            var sc = Assert.IsType<StatusCodeResult>(result);
+            Assert.Equal(200, sc.StatusCode);
+        }
+
+        [Fact]
+        public async Task AcceptRevendaInvite_False_ReturnsBadRequest()
+        {
+            var mediator = new Mock<IMediator>();
+            mediator.Setup(m => m.Send(It.IsAny<AcceptRevendaInviteRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(false);
+
+            var result = await CreateController(new MockNotifier()).AcceptRevendaInvite(mediator.Object, 5, CancellationToken.None);
+
+            var obj = Assert.IsType<StatusCodeResult>(result);
+            Assert.Equal(400, obj.StatusCode);
+        }
+
+        [Fact]
+        public async Task DeclineRevendaInvite_Ok_ReturnsSuccess()
+        {
+            var mediator = new Mock<IMediator>();
+            mediator.Setup(m => m.Send(It.IsAny<DeclineRevendaInviteRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(true);
+
+            var result = await CreateController(new MockNotifier()).DeclineRevendaInvite(mediator.Object, 5, CancellationToken.None);
+
+            var sc = Assert.IsType<StatusCodeResult>(result);
+            Assert.Equal(200, sc.StatusCode);
         }
     }
 }

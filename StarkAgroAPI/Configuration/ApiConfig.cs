@@ -80,6 +80,8 @@ namespace StarkAgroAPI.Configuration
             services.AddScoped<IDiagnosisQuotaService, DiagnosisQuotaService>();
             services.AddScoped<IDiagnosisCostService, DiagnosisCostService>();
             services.AddScoped<IDiagnosisBillingService, DiagnosisBillingService>();
+            services.AddScoped<Services.Revenda.IRevendaMembershipService, Services.Revenda.RevendaMembershipService>();
+            services.AddScoped<Services.Revenda.IRevendaBillingService, Services.Revenda.RevendaBillingService>();
 
             // E-mail: até agora o StarkAgro não enviava nenhum (o AlertEmailService era um NoOp).
             services.Configure<SmtpSettings>(configuration.GetSection(SmtpSettings.SectionName));

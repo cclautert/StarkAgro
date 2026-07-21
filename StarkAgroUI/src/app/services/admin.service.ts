@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { AdminUser } from '../models/admin-user.model';
 import { PlatformAiSettings } from '../models/platform-ai-settings.model';
 import { DiagnosisPlan } from '../models/diagnosis-plan.model';
+import { Revenda, RevendaBilling } from '../models/revenda.model';
 
 @Injectable({ providedIn: 'root' })
 export class AdminService {
@@ -52,5 +53,26 @@ export class AdminService {
 
   deleteDiagnosisPlan(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}diagnosis-plans/${id}`);
+  }
+
+  // ── Revendas ────────────────────────────────────────────────────────────
+  getRevendas(): Observable<Revenda[]> {
+    return this.http.get<Revenda[]>(`${this.baseUrl}revendas`);
+  }
+
+  createRevenda(data: Partial<Revenda>): Observable<Revenda> {
+    return this.http.post<Revenda>(`${this.baseUrl}revendas`, data);
+  }
+
+  updateRevenda(id: number, data: Partial<Revenda>): Observable<Revenda> {
+    return this.http.put<Revenda>(`${this.baseUrl}revendas/${id}`, data);
+  }
+
+  assignRevendaManager(id: number, userId: number): Observable<Revenda> {
+    return this.http.post<Revenda>(`${this.baseUrl}revendas/${id}/manager`, { userId });
+  }
+
+  getRevendaBilling(id: number): Observable<RevendaBilling> {
+    return this.http.get<RevendaBilling>(`${this.baseUrl}revendas/${id}/billing`);
   }
 }
