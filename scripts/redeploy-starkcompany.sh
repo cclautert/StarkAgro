@@ -26,7 +26,21 @@ git fetch origin --quiet
 git archive --format=tar "$REF" | "${SSH[@]}" 'mkdir -p /opt/starkagro && tar x -C /opt/starkagro'
 
 echo "==> rebuild + up (na VPS) ..."
-"${SSH[@]}" "cd /opt/starkagro && [ -f docker/mosquitto/passwd ] && chmod 644 docker/mosquitto/passwd; $COMPOSE up -d --build && docker image prune -f >/dev/null 2>&1; $COMPOSE ps"
+# O symlink docker/.env -> ../.env é o que faz um `docker compose -f docker/...yml up -d`
+# SEM --env-file continuar funcionando: o Compose procura o .env no diretório do arquivo
+# compose (docker/), não na raiz do projeto. Sem ele, TODA ${VAR} vira string vazia e o
+# stack sobe sem Mongo/JWT/MQTT — em silêncio, com health check passando.
+"${SSH[@]}" "cd /opt/starkagro && ln -sfn ../.env docker/.env; [ -f docker/mosquitto/passwd ] && chmod 644 docker/mosquitto/passwd; $COMPOSE up -d --build && docker image prune -f >/dev/null 2>&1; $COMPOSE ps"
+
+echo "==> conferindo segredos no container (só nomes e tamanhos) ..."
+"${SSH[@]}" 'docker inspect starkagro-api --format "{{range .Config.Env}}{{println .}}{{end}}" |
+  awk -F= "/^(JwtSettings__secretkey|MongoDb__(Username|Password)|MqttDownlink__(Username|Password))/ {
+      v = length(\$0) - length(\$1) - 1
+      printf \"    %-32s %s\n\", \$1, (v > 0 ? \"ok (len=\" v \")\" : \"VAZIO\")
+      if (v == 0) bad = 1
+    }
+    END { if (bad) { print \"\n!! Variaveis vazias: o compose subiu sem enxergar o .env.\"; exit 1 } }"' \
+  || { echo "==> ABORTANDO: stack subiu sem segredos."; exit 1; }
 
 echo "==> health check ..."
 "${SSH[@]}" 'curl -sS -m 25 -o /dev/null -w "https://starkcompany.com.br/api/v1/health -> %{http_code}\n" https://starkcompany.com.br/api/v1/health'
