@@ -1,0 +1,102 @@
+# StarkAgro na VPS srv1709973 — atrás do Traefik (host-mode), TLS Let's Encrypt.
+# Sem nginx-proxy/certbot (o Traefik já é dono de 80/443). Rodar de /opt/starkagro:
+#   docker compose -f docker/docker-compose.vps.yml --env-file .env up -d --build
+name: starkagro
+
+services:
+  agripewebapi:
+    container_name: starkagro-api
+    build:
+      context: ..
+      dockerfile: StarkAgroAPI/Dockerfile
+    restart: unless-stopped
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=8080
+      - MongoDb__ConnectionString=mongodb://db:27017/starkagro?authSource=admin
+      - MongoDb__DatabaseName=starkagro
+      - MongoDb__Username=${MONGO_USER}
+      - MongoDb__Password=${MONGO_PASSWORD}
+      - JwtSettings__secretkey=${JWT_SECRET_KEY}
+      - JwtSettings__issuer=${JWT_ISSUER}
+      - JwtSettings__audience=${JWT_AUDIENCE}
+      - OAuth__Google__ClientId=${GOOGLE_CLIENT_ID}
+      - OAuth__Google__ClientSecret=${GOOGLE_CLIENT_SECRET}
+      - OAuth__Google__AllowedRedirectUris=https://starkcompany.com.br/login/callback
+      - AISettings__GeminiApiKey=${GEMINI_API_KEY}
+      - MqttDownlink__Host=mqtt
+      - MqttDownlink__Port=1883
+      - MqttDownlink__Username=${MQTT_USERNAME}
+      - MqttDownlink__Password=${MQTT_PASSWORD}
+      - MqttDownlink__UseTls=false
+      - Vapid__Subject=${VAPID_SUBJECT}
+      - Vapid__PublicKey=${VAPID_PUBLIC_KEY}
+      - Vapid__PrivateKey=${VAPID_PRIVATE_KEY}
+    depends_on:
+      - db
+      - mqtt
+
+  agripewebui:
+    container_name: starkagro-ui
+    build:
+      context: ../StarkAgroUI
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      - API_BASE_URL=http://agripewebapi:8080
+    depends_on:
+      - agripewebapi
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=starkagro_default
+      - "traefik.http.routers.starkagro.rule=Host(`starkcompany.com.br`) || Host(`www.starkcompany.com.br`)"
+      - traefik.http.routers.starkagro.entrypoints=websecure
+      - traefik.http.routers.starkagro.tls.certresolver=letsencrypt
+      - traefik.http.services.starkagro.loadbalancer.server.port=80
+
+  db:
+    image: mongo:8
+    container_name: starkagro-db
+    restart: unless-stopped
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
+    volumes:
+      - mongo-data:/data/db
+
+  mqtt:
+    image: eclipse-mosquitto:2
+    container_name: starkagro-mqtt
+    restart: unless-stopped
+    volumes:
+      - mosquitto-data:/mosquitto/data
+      - ./mosquitto/mosquitto.vps.conf:/mosquitto/config/mosquitto.conf:ro
+      - ./mosquitto/passwd:/mosquitto/config/passwd:ro
+
+  agripwebworker:
+    container_name: starkagro-worker
+    build:
+      context: ..
+      dockerfile: StarkAgroWorker/Dockerfile
+    restart: unless-stopped
+    environment:
+      - MongoDb__ConnectionString=mongodb://db:27017/starkagro?authSource=admin
+      - MongoDb__DatabaseName=starkagro
+      - MongoDb__Username=${MONGO_USER}
+      - MongoDb__Password=${MONGO_PASSWORD}
+      - Mqtt__Host=mqtt
+      - Mqtt__Port=1883
+      - Mqtt__Username=${MQTT_USERNAME}
+      - Mqtt__Password=${MQTT_PASSWORD}
+      - Mqtt__UseTls=false
+      - Mqtt__AllowUntrustedCertificates=false
+      - Vapid__Subject=${VAPID_SUBJECT}
+      - Vapid__PublicKey=${VAPID_PUBLIC_KEY}
+      - Vapid__PrivateKey=${VAPID_PRIVATE_KEY}
+    depends_on:
+      - db
+      - mqtt
+
+volumes:
+  mongo-data:
+  mosquitto-data:
