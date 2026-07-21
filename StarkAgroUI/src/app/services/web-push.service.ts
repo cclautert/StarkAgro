@@ -2,7 +2,6 @@ import { Injectable, inject } from '@angular/core';
 import { SwPush } from '@angular/service-worker';
 import { HttpClient } from '@angular/common/http';
 import { catchError, firstValueFrom, of } from 'rxjs';
-import { environment } from '../../environments/environment';
 
 export type EnableNotificationsResult = 'granted' | 'denied' | 'unsupported' | 'error';
 
@@ -12,6 +11,9 @@ export class WebPushService {
   private http = inject(HttpClient);
   private readonly baseUrl = '/api/v1/';
 
+  /** undefined = ainda não buscada; null = servidor sem VAPID configurado. */
+  private vapidPublicKey?: string | null;
+
   /** Current browser permission, or 'unsupported' when the Notification API is absent (SSR, iOS Safari tab). */
   get permission(): NotificationPermission | 'unsupported' {
     if (typeof Notification === 'undefined') return 'unsupported';
@@ -19,12 +21,27 @@ export class WebPushService {
   }
 
   get isSupported(): boolean {
-    return (
-      this.swPush.isEnabled &&
-      typeof Notification !== 'undefined' &&
-      !!environment.vapidPublicKey &&
-      environment.vapidPublicKey !== 'CHANGE_ME'
+    return this.swPush.isEnabled && typeof Notification !== 'undefined';
+  }
+
+  /**
+   * A chave pública vem do servidor, não do bundle: ela é metade de um par que só
+   * existe no `.env` da VPS. Cravá-la no `environment` já deixou front e servidor
+   * com chaves de pares diferentes — inscrição feita com uma, assinatura com outra.
+   * Buscada uma vez e memorizada; null = servidor sem VAPID configurado.
+   */
+  private async getVapidPublicKey(): Promise<string | null> {
+    if (this.vapidPublicKey !== undefined) return this.vapidPublicKey;
+
+    const key = await firstValueFrom(
+      this.http
+        .get<string>(`${this.baseUrl}push/vapid-public-key`)
+        .pipe(catchError(() => of(null)))
     );
+
+    const trimmed = key?.trim();
+    this.vapidPublicKey = trimmed && trimmed !== 'CHANGE_ME' ? trimmed : null;
+    return this.vapidPublicKey;
   }
 
   /** iOS only exposes web push to apps installed on the home screen (iOS 16.4+). */
@@ -45,8 +62,11 @@ export class WebPushService {
     if (!this.isSupported) return 'unsupported';
     if (this.permission === 'denied') return 'denied';
 
+    const publicKey = await this.getVapidPublicKey();
+    if (!publicKey) return 'unsupported';
+
     try {
-      const subscribed = await this.subscribeAndRegister();
+      const subscribed = await this.subscribeAndRegister(publicKey);
       if (!subscribed) return this.deniedOrError();
       return 'granted';
     } catch {
@@ -61,8 +81,11 @@ export class WebPushService {
   async initialize(): Promise<void> {
     if (!this.isSupported || this.permission !== 'granted') return;
 
+    const publicKey = await this.getVapidPublicKey();
+    if (!publicKey) return;
+
     try {
-      await this.subscribeAndRegister();
+      await this.subscribeAndRegister(publicKey);
     } catch {
       // Subscription refresh failed — non-critical
     }
@@ -72,10 +95,8 @@ export class WebPushService {
     return this.permission === 'denied' ? 'denied' : 'error';
   }
 
-  private async subscribeAndRegister(): Promise<boolean> {
-    const subscription = await this.swPush.requestSubscription({
-      serverPublicKey: environment.vapidPublicKey
-    });
+  private async subscribeAndRegister(serverPublicKey: string): Promise<boolean> {
+    const subscription = await this.swPush.requestSubscription({ serverPublicKey });
     if (!subscription) return false;
 
     await firstValueFrom(
