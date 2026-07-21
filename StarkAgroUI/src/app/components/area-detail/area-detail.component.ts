@@ -1,0 +1,173 @@
+import { AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ChartConfiguration } from 'chart.js';
+import { BaseChartDirective } from 'ng2-charts';
+import { firstValueFrom } from 'rxjs';
+import { AreaService } from '../../services/area.service';
+import { MonitoredArea, NdviTrendPoint } from '../../models/monitored-area.model';
+
+@Component({
+  selector: 'app-area-detail',
+  templateUrl: './area-detail.component.html',
+  styleUrls: ['./area-detail.component.css'],
+  standalone: true,
+  imports: [CommonModule, RouterModule, BaseChartDirective]
+})
+export class AreaDetailComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('mapContainer', { static: false }) mapContainer!: ElementRef<HTMLDivElement>;
+
+  id!: number;
+  area?: MonitoredArea;
+  points: NdviTrendPoint[] = [];
+  latest?: NdviTrendPoint;
+  loading = true;
+  error = false;
+
+  // Leaflet (carregado sob demanda no browser).
+  private map: any | null = null;
+  private leaflet: any | null = null;
+  private mapReady = false;
+  private overlayUrl?: string;
+
+  chartData: ChartConfiguration<'line'>['data'] = { labels: [], datasets: [] };
+  chartOptions: ChartConfiguration<'line'>['options'] = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      y: { min: 0, max: 1, title: { display: true, text: 'NDVI' } },
+      x: { ticks: { maxRotation: 0, autoSkip: true } }
+    },
+    plugins: { legend: { display: true } }
+  };
+
+  constructor(
+    private route: ActivatedRoute,
+    private areaService: AreaService,
+    @Inject(PLATFORM_ID) private platformId: object
+  ) { }
+
+  ngOnInit(): void {
+    this.id = Number(this.route.snapshot.paramMap.get('id'));
+    this.load();
+  }
+
+  private load(): void {
+    this.loading = true;
+    this.error = false;
+
+    this.areaService.get(this.id).subscribe({
+      next: area => {
+        this.area = area;
+        this.renderGeometry();
+      },
+      error: () => { this.error = true; this.loading = false; }
+    });
+
+    this.areaService.trend(this.id).subscribe({
+      next: trend => {
+        this.points = trend.points ?? [];
+        this.latest = [...this.points].reverse().find(p => !p.cloudRejected) ?? this.points[this.points.length - 1];
+        this.buildChart();
+        this.renderOverlay();
+        this.loading = false;
+      },
+      error: () => { this.error = true; this.loading = false; }
+    });
+  }
+
+  private buildChart(): void {
+    const labels = this.points.map(p => this.shortDate(p.acquisitionDate));
+    // Passagem nublada vira buraco honesto na série (null) — não uma queda de NDVI falsa.
+    const mean = this.points.map(p => (p.cloudRejected ? null : round2(p.ndviMean)));
+
+    this.chartData = {
+      labels,
+      datasets: [
+        {
+          data: mean,
+          label: 'NDVI médio',
+          borderColor: '#2e7d32',
+          backgroundColor: 'rgba(46,125,50,0.15)',
+          fill: true,
+          tension: 0.35,
+          spanGaps: true,
+          pointRadius: 4
+        }
+      ]
+    };
+  }
+
+  async ngAfterViewInit(): Promise<void> {
+    if (!isPlatformBrowser(this.platformId)) return;
+
+    const leafletModule = await import('leaflet');
+    const L: any = (leafletModule as any).default ?? leafletModule;
+    this.leaflet = L;
+
+    const iconRetinaUrl = 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png';
+    const iconUrl = 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png';
+    const shadowUrl = 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png';
+    (L.Marker.prototype as any).options.icon = L.icon({
+      iconRetinaUrl, iconUrl, shadowUrl,
+      iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
+    });
+
+    this.map = L.map(this.mapContainer.nativeElement).setView([-29.7, -53.7], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(this.map);
+
+    this.mapReady = true;
+    setTimeout(() => this.map?.invalidateSize(), 0);
+    this.renderGeometry();
+    this.renderOverlay();
+  }
+
+  /** Desenha o contorno do talhão a partir do anel (lat/lng) e ajusta o zoom. */
+  private renderGeometry(): void {
+    if (!this.mapReady || !this.area || !this.leaflet) return;
+    const L = this.leaflet;
+    const ring = (this.area.ring ?? []).map(c => [c.lat, c.lng]) as [number, number][];
+    if (ring.length < 3) return;
+
+    L.polygon(ring, { color: '#2e7d32', weight: 2, fillOpacity: 0.05 }).addTo(this.map);
+    this.map.fitBounds(L.latLngBounds(ring), { padding: [20, 20] });
+  }
+
+  /** Sobrepõe o PNG NDVI da passagem mais nova que tem overlay, alinhado ao bbox. */
+  private async renderOverlay(): Promise<void> {
+    if (!this.mapReady || !this.leaflet || !this.points.length) return;
+    const L = this.leaflet;
+
+    const withOverlay = [...this.points].reverse().find(p => p.overlayReadingId != null && p.bbox && p.bbox.length === 4);
+    if (!withOverlay) return;
+
+    try {
+      const blob = await firstValueFrom(this.areaService.overlay(this.id, withOverlay.overlayReadingId!));
+      this.overlayUrl = URL.createObjectURL(blob);
+      // bbox = [minLng, minLat, maxLng, maxLat] → Leaflet quer [[minLat,minLng],[maxLat,maxLng]].
+      const [minLng, minLat, maxLng, maxLat] = withOverlay.bbox!;
+      const bounds = L.latLngBounds([[minLat, minLng], [maxLat, maxLng]]);
+      L.imageOverlay(this.overlayUrl, bounds, { opacity: 0.7 }).addTo(this.map);
+    } catch {
+      // Overlay é acessório — sem PNG, o mapa mostra só o contorno.
+    }
+  }
+
+  shortDate(iso: string): string {
+    const d = new Date(iso);
+    return isNaN(d.getTime()) ? iso : d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
+  }
+
+  ndvi(value: number): string { return round2(value).toFixed(2); }
+
+  ngOnDestroy(): void {
+    if (this.map) { this.map.remove(); this.map = null; }
+    this.leaflet = null;
+    if (this.overlayUrl) URL.revokeObjectURL(this.overlayUrl);
+  }
+}
+
+function round2(v: number): number { return Math.round(v * 100) / 100; }

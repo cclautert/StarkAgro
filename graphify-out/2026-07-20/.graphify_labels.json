@@ -1,0 +1,14 @@
+{
+  "0": "MonitoredAreaResponse",
+  "1": ".TryBuild",
+  "2": "StarkAgroAPI.Models",
+  "3": "CLAUDE.md",
+  "4": "MonitoredAreaHandlersTests",
+  "5": "agpDBContext",
+  "6": "NdviController",
+  "7": "NDVI F1 — MonitoredArea + CRUD + geometria (círculo e polígono)",
+  "8": "NdviControllerTests",
+  "9": "MonitoredArea",
+  "10": "Deploy — starkcompany.com.br (VPS 2.25.140.180)",
+  "11": "redeploy-starkcompany.sh"
+}

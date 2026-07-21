@@ -31,7 +31,9 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Ndvi
             };
         }
 
-        private static Mock<agpDBContext> Db(List<MonitoredArea>? areas = null, int nextId = 1, long deletedCount = 1)
+        private static Mock<agpDBContext> Db(
+            List<MonitoredArea>? areas = null, int nextId = 1, long deletedCount = 1,
+            int maxAreasPerUser = 0, long ownedCount = 0)
         {
             var col = new Mock<IMongoCollection<MonitoredArea>>();
             MongoMockHelper.SetupFindList(col, areas ?? []);
@@ -40,9 +42,16 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Ndvi
             col.Setup(c => c.ReplaceOneAsync(It.IsAny<FilterDefinition<MonitoredArea>>(), It.IsAny<MonitoredArea>(),
                     It.IsAny<ReplaceOptions>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new ReplaceOneResult.Acknowledged(1, 1, null));
+            col.Setup(c => c.CountDocumentsAsync(It.IsAny<FilterDefinition<MonitoredArea>>(),
+                    It.IsAny<CountOptions>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(ownedCount);
+
+            var settingsCol = new Mock<IMongoCollection<PlatformAiSettings>>();
+            MongoMockHelper.SetupFind(settingsCol, new PlatformAiSettings { Id = 1, NdviMaxAreasPerUser = maxAreasPerUser });
 
             var db = new Mock<agpDBContext>();
             db.Setup(d => d.MonitoredAreas).Returns(col.Object);
+            db.Setup(d => d.PlatformAiSettings).Returns(settingsCol.Object);
             db.Setup(d => d.GetNextIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(nextId);
             return db;
         }
@@ -75,6 +84,56 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Ndvi
             col.Verify(c => c.InsertOneAsync(
                 It.Is<MonitoredArea>(a => a.Id == 9 && a.UserId == 42 && a.Geometry != null),
                 It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task Create_TetoDeAreasAtingido_NotificaENull()
+        {
+            var db = Db(nextId: 9, maxAreasPerUser: 3, ownedCount: 3); // já tem 3, teto 3
+            var col = Mock.Get(db.Object.MonitoredAreas);
+            var notifier = new Notificator();
+            var handler = new CreateMonitoredAreaHandler(db.Object, User(42), notifier);
+
+            var result = await handler.Handle(new CreateMonitoredAreaRequest
+            {
+                Name = "Mais uma", AreaKind = MonitoredAreaKind.Polygon, Ring = ValidRing()
+            }, CancellationToken.None);
+
+            Assert.Null(result);
+            Assert.True(notifier.HasNotification());
+            col.Verify(c => c.InsertOneAsync(It.IsAny<MonitoredArea>(), It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task Create_AbaixoDoTeto_Cria()
+        {
+            var db = Db(nextId: 9, maxAreasPerUser: 5, ownedCount: 2); // 2 < 5
+            var col = Mock.Get(db.Object.MonitoredAreas);
+            var handler = new CreateMonitoredAreaHandler(db.Object, User(42), new Notificator());
+
+            var result = await handler.Handle(new CreateMonitoredAreaRequest
+            {
+                Name = "Talhão", AreaKind = MonitoredAreaKind.Polygon, Ring = ValidRing()
+            }, CancellationToken.None);
+
+            Assert.NotNull(result);
+            col.Verify(c => c.InsertOneAsync(It.IsAny<MonitoredArea>(), It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task Create_TetoZero_Ilimitado_Cria()
+        {
+            var db = Db(nextId: 9, maxAreasPerUser: 0, ownedCount: 999); // 0 = ilimitado
+            var col = Mock.Get(db.Object.MonitoredAreas);
+            var handler = new CreateMonitoredAreaHandler(db.Object, User(42), new Notificator());
+
+            var result = await handler.Handle(new CreateMonitoredAreaRequest
+            {
+                Name = "Talhão", AreaKind = MonitoredAreaKind.Polygon, Ring = ValidRing()
+            }, CancellationToken.None);
+
+            Assert.NotNull(result);
+            col.Verify(c => c.InsertOneAsync(It.IsAny<MonitoredArea>(), It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]

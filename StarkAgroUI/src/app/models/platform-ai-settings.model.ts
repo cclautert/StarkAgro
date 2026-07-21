@@ -19,4 +19,25 @@ export interface PlatformAiSettings {
 
   /** Custo de IA já gasto no mês corrente, em centavos (só leitura). */
   readonly currentMonthAiCostCents?: number;
+
+  // ── NDVI Sentinel-2 (Copernicus Data Space Ecosystem) ──
+
+  /** Credenciais OAuth2 client-credentials da CDSE. */
+  cdseClientId?: string | null;
+  cdseClientSecret?: string | null;
+
+  /** Kill-switch do NDVI: desligado, o worker não busca nada da CDSE. */
+  sentinel2Enabled?: boolean;
+
+  /** Custo de uma busca NDVI (Processing Units), em centavos — congelado por leitura. */
+  ndviCostCents?: number;
+
+  /** Teto mensal de custo NDVI (PU), em centavos. 0 = ilimitado. */
+  ndviMonthlyBudgetCents?: number;
+
+  /** Teto de áreas monitoradas por usuário. 0 = ilimitado. */
+  ndviMaxAreasPerUser?: number;
+
+  /** Custo NDVI já gasto no mês corrente, em centavos (só leitura). */
+  readonly currentMonthNdviCostCents?: number;
 }

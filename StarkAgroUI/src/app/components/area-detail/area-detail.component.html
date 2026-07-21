@@ -1,0 +1,49 @@
+<div class="container">
+  <div class="page-header">
+    <a class="back-link" [routerLink]="['/areas']">← Áreas</a>
+    <button class="btn-edit" *ngIf="area" [routerLink]="['/areas/editar', area.id]">Editar</button>
+  </div>
+
+  <p class="loading-text" *ngIf="loading">Carregando...</p>
+  <p class="error-text" *ngIf="error && !loading">Não foi possível carregar a área.</p>
+
+  <ng-container *ngIf="area && !error">
+    <h1 class="area-title">{{ area.name }}</h1>
+    <div class="area-sub">
+      <span *ngIf="area.crop">🌱 {{ area.crop }}</span>
+      <span class="badge" [class.badge-on]="area.monitoringEnabled" [class.badge-off]="!area.monitoringEnabled">
+        {{ area.monitoringEnabled ? 'Monitorando' : 'Pausada' }}
+      </span>
+    </div>
+
+    <!-- Valor mais recente -->
+    <div class="latest-card" *ngIf="latest">
+      <div class="latest-value">{{ ndvi(latest.ndviMean) }}</div>
+      <div class="latest-meta">
+        <span class="latest-label">NDVI médio</span>
+        <span class="latest-date">{{ shortDate(latest.acquisitionDate) }}</span>
+        <span class="cloud-badge" *ngIf="latest.cloudRejected">☁️ Nublada</span>
+        <span class="cloud-badge cloud-ok" *ngIf="!latest.cloudRejected">☀️ {{ latest.cloudCoveragePct.toFixed(0) }}% nuvem</span>
+      </div>
+    </div>
+    <div class="latest-card latest-empty" *ngIf="!latest && !loading">
+      Ainda sem passagem de satélite para esta área.
+    </div>
+
+    <!-- Gráfico de tendência -->
+    <div class="panel">
+      <h2 class="panel-title">Tendência NDVI</h2>
+      <div class="chart-box" *ngIf="points.length; else noSeries">
+        <canvas baseChart [data]="chartData" [options]="chartOptions" [type]="'line'"></canvas>
+      </div>
+      <ng-template #noSeries><p class="muted">Sem leituras ainda.</p></ng-template>
+    </div>
+
+    <!-- Mapa com overlay -->
+    <div class="panel">
+      <h2 class="panel-title">Mapa</h2>
+      <div #mapContainer class="map-box"></div>
+      <p class="muted map-hint">O overlay colorido mostra o NDVI da passagem mais recente sobre o talhão.</p>
+    </div>
+  </ng-container>
+</div>

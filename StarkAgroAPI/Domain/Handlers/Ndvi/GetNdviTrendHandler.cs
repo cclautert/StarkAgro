@@ -1,0 +1,66 @@
+using StarkAgroAPI.Domain.Commands.Requests.Ndvi;
+using StarkAgroAPI.Domain.Commands.Responses.Ndvi;
+using StarkAgroAPI.Models;
+using StarkAgroAPI.Models.Interfaces;
+using StarkAgroAPI.Notifications;
+using MediatR;
+using MongoDB.Driver;
+
+namespace StarkAgroAPI.Domain.Handlers.Ndvi
+{
+    public class GetNdviTrendHandler : IRequestHandler<GetNdviTrendRequest, NdviTrendResponse?>
+    {
+        private readonly agpDBContext _dbContext;
+        private readonly ICurrentUserContext _currentUser;
+        private readonly INotifier _notifier;
+
+        public GetNdviTrendHandler(agpDBContext dbContext, ICurrentUserContext currentUser, INotifier notifier)
+        {
+            _dbContext = dbContext;
+            _currentUser = currentUser;
+            _notifier = notifier;
+        }
+
+        public async Task<NdviTrendResponse?> Handle(GetNdviTrendRequest request, CancellationToken cancellationToken)
+        {
+            var userId = _currentUser.UserId ?? throw new InvalidOperationException("Authenticated user is required.");
+
+            // Ownership: a área precisa ser do chamador antes de devolver qualquer reading.
+            var area = await _dbContext.MonitoredAreas
+                .Find(a => a.Id == request.AreaId && a.UserId == userId)
+                .FirstOrDefaultAsync(cancellationToken);
+            if (area is null)
+            {
+                _notifier.Handle(new Notification("Área não encontrada."));
+                return null;
+            }
+
+            var readings = await _dbContext.NdviReadings
+                .Find(r => r.AreaId == request.AreaId && r.UserId == userId)
+                .SortBy(r => r.AcquisitionDate)
+                .ToListAsync(cancellationToken);
+
+            var bbox = area.Geometry is not null
+                ? Services.Ndvi.CdseProcessService.ComputeBbox(area.Geometry).ToArray()
+                : null;
+
+            return new NdviTrendResponse
+            {
+                AreaId = request.AreaId,
+                Points = readings.Select(r => new NdviTrendPoint
+                {
+                    ReadingId = r.Id,
+                    AcquisitionDate = r.AcquisitionDate,
+                    NdviMean = r.NdviMean,
+                    NdviMin = r.NdviMin,
+                    NdviMax = r.NdviMax,
+                    CloudCoveragePct = r.CloudCoveragePct,
+                    CloudRejected = r.CloudRejected,
+                    // Só aponta overlay quando o PNG realmente existe; o bbox é o da área.
+                    OverlayReadingId = r.OverlayImageFileId.HasValue ? r.Id : null,
+                    Bbox = r.OverlayImageFileId.HasValue ? bbox : null
+                }).ToList()
+            };
+        }
+    }
+}

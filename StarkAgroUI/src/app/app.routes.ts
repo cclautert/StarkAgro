@@ -25,6 +25,9 @@ import { AgronomistQueueComponent } from './components/agronomist-queue/agronomi
 import { AgronomistReviewComponent } from './components/agronomist-review/agronomist-review.component';
 import { AgronomistClientsComponent } from './components/agronomist-clients/agronomist-clients.component';
 import { AgronomistBillingComponent } from './components/agronomist/billing/agronomist-billing.component';
+import { AreaListComponent } from './components/area-list/area-list.component';
+import { AreaFormComponent } from './components/area-form/area-form.component';
+import { AreaDetailComponent } from './components/area-detail/area-detail.component';
 import { ResellerGuard } from './guards/reseller.guard';
 import { RevendaMembrosComponent } from './components/revenda/membros/revenda-membros.component';
 import { RevendaFaturamentoComponent } from './components/revenda/faturamento/revenda-faturamento.component';
@@ -57,6 +60,12 @@ export const routes: Routes = [
       { path: 'diagnosticos', component: DiagnosisListComponent, canActivate: [AuthGuard] },
       { path: 'diagnosticos/novo', component: DiagnosisNewComponent, canActivate: [AuthGuard] },
       { path: 'diagnosticos/:id', component: DiagnosisDetailComponent, canActivate: [AuthGuard] },
+
+      // Áreas NDVI (Sentinel-2)
+      { path: 'areas', component: AreaListComponent, canActivate: [AuthGuard] },
+      { path: 'areas/novo', component: AreaFormComponent, canActivate: [AuthGuard] },
+      { path: 'areas/editar/:id', component: AreaFormComponent, canActivate: [AuthGuard] },
+      { path: 'areas/:id', component: AreaDetailComponent, canActivate: [AuthGuard] },
 
       // Área do agrônomo (apenas quem tem o papel)
       { path: 'agronomo/fila', component: AgronomistQueueComponent, canActivate: [AuthGuard, AgronomistGuard] },

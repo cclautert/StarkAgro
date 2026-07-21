@@ -93,6 +93,35 @@ var builder = Host.CreateDefaultBuilder(args)
         services.AddScoped<ICropDiagnosisProvider>(sp =>
             sp.GetRequiredService<StarkAgroAPI.Services.CropHealth.KindwiseCropHealthService>());
 
+        // NDVI Sentinel-2 (CDSE) — busca periódica das áreas monitoradas
+        services.AddHttpClient<StarkAgroAPI.Services.Ndvi.CdseTokenProvider>(client =>
+        {
+            client.BaseAddress = new Uri("https://identity.dataspace.copernicus.eu/");
+            client.Timeout = TimeSpan.FromSeconds(15);
+        });
+        services.AddHttpClient<StarkAgroAPI.Services.Ndvi.CdseStatisticalService>(client =>
+        {
+            client.BaseAddress = new Uri("https://sh.dataspace.copernicus.eu/");
+            client.Timeout = TimeSpan.FromSeconds(60);
+        });
+        services.AddHttpClient<StarkAgroAPI.Services.Ndvi.CdseProcessService>(client =>
+        {
+            client.BaseAddress = new Uri("https://sh.dataspace.copernicus.eu/");
+            client.Timeout = TimeSpan.FromSeconds(60);
+        });
+        services.AddScoped<StarkAgroAPI.Services.Ndvi.ICdseTokenProvider>(sp =>
+            sp.GetRequiredService<StarkAgroAPI.Services.Ndvi.CdseTokenProvider>());
+        services.AddScoped<StarkAgroAPI.Services.Ndvi.ICdseStatisticalService>(sp =>
+            sp.GetRequiredService<StarkAgroAPI.Services.Ndvi.CdseStatisticalService>());
+        services.AddScoped<StarkAgroAPI.Services.Ndvi.ICdseProcessService>(sp =>
+            sp.GetRequiredService<StarkAgroAPI.Services.Ndvi.CdseProcessService>());
+        services.AddScoped<StarkAgroAPI.Models.Interfaces.INdviOverlayStore,
+            StarkAgroAPI.Services.Ndvi.GridFsNdviOverlayStore>();
+        services.AddScoped<StarkAgroAPI.Services.Ndvi.INdviCostService,
+            StarkAgroAPI.Services.Ndvi.NdviCostService>();
+        services.AddScoped<StarkAgroAPI.Services.Ndvi.INdviFetchService,
+            StarkAgroAPI.Services.Ndvi.NdviFetchService>();
+
         services.AddScoped<IDiagnosisImageStore, StarkAgroAPI.Services.Diagnosis.GridFsDiagnosisImageStore>();
         services.AddScoped<StarkAgroAPI.Services.Diagnosis.IDiagnosisAccessService,
             StarkAgroAPI.Services.Diagnosis.DiagnosisAccessService>();
@@ -110,6 +139,7 @@ var builder = Host.CreateDefaultBuilder(args)
         services.AddHostedService<MqttWorkerService>();
         services.AddHostedService<IrrigationAlertScheduler>();
         services.AddHostedService<PlantDiagnosisProcessor>();
+        services.AddHostedService<NdviProcessor>();
     });
 
 var host = builder.Build();

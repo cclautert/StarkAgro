@@ -26,5 +26,21 @@ namespace StarkAgroAPI.Domain.Commands.Requests.Admin
         [Required]
         [RegularExpression("^(openai|anthropic|gemini)$", ErrorMessage = "ActiveProvider deve ser 'openai', 'anthropic' ou 'gemini'.")]
         public string ActiveProvider { get; set; } = "gemini";
+
+        /// <summary>Credenciais CDSE (Copernicus) e o kill-switch do NDVI.</summary>
+        public string? CdseClientId { get; set; }
+        public string? CdseClientSecret { get; set; }
+        public bool Sentinel2Enabled { get; set; }
+
+        [Range(0, 100000, ErrorMessage = "NdviCostCents deve estar entre 0 e 100000.")]
+        public int NdviCostCents { get; set; } = 1;
+
+        /// <summary>Teto mensal de custo NDVI (PU), em centavos. 0 = ilimitado.</summary>
+        [Range(0, 100000000, ErrorMessage = "NdviMonthlyBudgetCents deve estar entre 0 e 100000000.")]
+        public int NdviMonthlyBudgetCents { get; set; } = 0;
+
+        /// <summary>Teto de áreas monitoradas por usuário. 0 = ilimitado.</summary>
+        [Range(0, 100000, ErrorMessage = "NdviMaxAreasPerUser deve estar entre 0 e 100000.")]
+        public int NdviMaxAreasPerUser { get; set; } = 0;
     }
 }

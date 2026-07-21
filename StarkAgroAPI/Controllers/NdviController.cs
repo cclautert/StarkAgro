@@ -34,6 +34,31 @@ namespace StarkAgroAPI.Controllers
             return CustomResponse(await mediator.Send(new GetMonitoredAreaRequest { Id = id }, cancellationToken));
         }
 
+        [HttpGet("{id:int}/trend")]
+        public async Task<ActionResult<NdviTrendResponse>> Trend(
+            [FromServices] IMediator mediator,
+            [FromRoute] int id,
+            CancellationToken cancellationToken)
+        {
+            return CustomResponse(await mediator.Send(new GetNdviTrendRequest { AreaId = id }, cancellationToken));
+        }
+
+        /// <summary>PNG de overlay NDVI de uma passagem — privado (só o dono), servido como blob.</summary>
+        [HttpGet("{id:int}/overlay/{readingId:int}")]
+        public async Task<IActionResult> Overlay(
+            [FromServices] IMediator mediator,
+            [FromRoute] int id,
+            [FromRoute] int readingId,
+            CancellationToken cancellationToken)
+        {
+            var result = await mediator.Send(
+                new GetNdviOverlayImageRequest { AreaId = id, ReadingId = readingId }, cancellationToken);
+            if (result is null) return NotFound();
+
+            Response.Headers.CacheControl = "private, max-age=3600";
+            return File(result.Content, result.ContentType);
+        }
+
         [HttpPost]
         public async Task<ActionResult<MonitoredAreaResponse>> Create(
             [FromServices] IMediator mediator,

@@ -1,0 +1,3517 @@
+{
+  ".claude/settings.local.json": {
+    "mtime": 1784597273.1669745,
+    "ast_hash": "d3e2deb2ca0aff85cfea1084054f41bb",
+    "semantic_hash": ""
+  },
+  "StarkAgro.sln": {
+    "mtime": 1784556435.2639136,
+    "ast_hash": "c3ba5b63c8c12e1ca680314ca347cccb",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Configuration/ApiConfigTests.cs": {
+    "mtime": 1784556435.3579984,
+    "ast_hash": "b8f8234201718e7c5e65bd060d1170cb",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Configuration/DependencyInjectionConfigTests.cs": {
+    "mtime": 1784556435.4375951,
+    "ast_hash": "c65ee74d150e9966f61dbdde0a664fcc",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Configuration/SwaggerConfigTests.cs": {
+    "mtime": 1784556435.5276606,
+    "ast_hash": "1958b055358625dfb26562ee09f7e261",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Controllers/AdminControllerTests.cs": {
+    "mtime": 1784597272.6527817,
+    "ast_hash": "ca0dd08cd3ce980d30c52878f57e2600",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Controllers/AuthControllerTests.cs": {
+    "mtime": 1784556435.7163465,
+    "ast_hash": "dee0c58691926d808e53f00d6bcaa61e",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Controllers/DiagnosisControllersTests.cs": {
+    "mtime": 1784556435.8240473,
+    "ast_hash": "197753ab5264f1f5af64e35d0f2280e2",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Controllers/HealthControllerTests.cs": {
+    "mtime": 1784556435.9090705,
+    "ast_hash": "a81b7b1dcd948563e1a7e4e4ea39877d",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Controllers/IrrigationControllerTests.cs": {
+    "mtime": 1784556436.004118,
+    "ast_hash": "a567a8f2c3ac81d257ed5f57d91ab87c",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Controllers/MainControllerTests.cs": {
+    "mtime": 1784556436.0959742,
+    "ast_hash": "33096f8bd528128d976f8a8fa2940dfd",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Controllers/NdviControllerTests.cs": {
+    "mtime": 1784597273.1709769,
+    "ast_hash": "7c21e72235da5ad91661bed8b51e6612",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Controllers/PivotAnalyticsControllerTests.cs": {
+    "mtime": 1784556436.2035353,
+    "ast_hash": "252fd5a6ddbe3878eb99d9b2213b123d",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Controllers/PivotControllerTests.cs": {
+    "mtime": 1784556436.3205805,
+    "ast_hash": "82934f7998dc56b38254a5ac5dee2d34",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Controllers/PushControllerTests.cs": {
+    "mtime": 1784556436.4486864,
+    "ast_hash": "c3590d8f708eb472516f1a5d010a65d6",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Controllers/ReadsControllerTests.cs": {
+    "mtime": 1784556436.5216484,
+    "ast_hash": "27e1914802a5cb92fe7b5443ec2593ef",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Controllers/RevendaControllerTests.cs": {
+    "mtime": 1784597272.6527817,
+    "ast_hash": "2cf39334122920ef0906cfbfc4598f04",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Controllers/SensorControllerTests.cs": {
+    "mtime": 1784556436.635275,
+    "ast_hash": "29db0d5475c146f443f6025c0b75e3a9",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Controllers/UserControllerTests.cs": {
+    "mtime": 1784597272.6537812,
+    "ast_hash": "6baf5b3ea4bd93e9ba8ecdf09af359b5",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Controllers/WaterSourceControllerTests.cs": {
+    "mtime": 1784556436.8004894,
+    "ast_hash": "e25a5534746c815b65d4e31e52496d52",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Commands/Requests/Pivots/CreatePivotRequestTests.cs": {
+    "mtime": 1784556436.9111443,
+    "ast_hash": "73f600ba93653df26ce525886fd63c23",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Commands/Requests/Pivots/DeletePivotRequestTests.cs": {
+    "mtime": 1784556436.9876897,
+    "ast_hash": "b97ca4eec1f03f4ad361320fb80152bd",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Commands/Requests/Pivots/EditPivotRequestTests.cs": {
+    "mtime": 1784556437.058282,
+    "ast_hash": "94a68b1efb15f7c5317c79e508248d2f",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Commands/Requests/Pivots/GetListPivotByUserIdRequestTests.cs": {
+    "mtime": 1784556437.128337,
+    "ast_hash": "1e3f3b48a63c6fbb6bb0b372b00b3cfc",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Commands/Requests/Pivots/GetListPivotRequestTests.cs": {
+    "mtime": 1784556437.2074547,
+    "ast_hash": "a9290cfffb1e25ab7e2ea48b1ef64406",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Commands/Requests/Pivots/GetPivotRequestTests.cs": {
+    "mtime": 1784556437.2664547,
+    "ast_hash": "fc1c04a5b2b63829a72251183fba8f89",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Commands/Requests/Reads/CreateReadRequestTests.cs": {
+    "mtime": 1784556437.3289711,
+    "ast_hash": "8ec4eb77d5f5c647c751647bbe1685e8",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Commands/Requests/Reads/GetAllListReadByPivotIdRequestTests.cs": {
+    "mtime": 1784556437.3920286,
+    "ast_hash": "e44e4c5c9df2fa02ebefc0c740988d99",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Commands/Requests/Reads/GetListReadByPivotIdRequestTests.cs": {
+    "mtime": 1784556437.5030873,
+    "ast_hash": "9f72dd1bf36b741d30ccd0a499e1f362",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Commands/Requests/Reads/GetListReadRequestTests.cs": {
+    "mtime": 1784556437.561085,
+    "ast_hash": "b6468cf9efa3732c33055bd6f02675e3",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Commands/Requests/Sensors/CreateSensorRequestTests.cs": {
+    "mtime": 1784556437.6217759,
+    "ast_hash": "f29ccac606d433917bcade60d153f73f",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Commands/Requests/Sensors/DeleteSensorRequestTests.cs": {
+    "mtime": 1784556437.7313495,
+    "ast_hash": "79d9a542d0a04f7083e720f4db32b8ba",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Commands/Requests/Sensors/EditSensorRequestTests.cs": {
+    "mtime": 1784556437.7945104,
+    "ast_hash": "6d55de289998a8c4b822fa639a29bad7",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Commands/Requests/Sensors/GetListSensorByUserIdRequestTests.cs": {
+    "mtime": 1784556437.8740191,
+    "ast_hash": "9af6123d5bf789e4d22d6f237c2d1add",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Commands/Requests/Sensors/GetListSensorRequestTests.cs": {
+    "mtime": 1784556437.9380882,
+    "ast_hash": "9d8e0ee769aa168177b4901c3998c238",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Commands/Requests/Sensors/GetSensorRequestTests.cs": {
+    "mtime": 1784556438.0277176,
+    "ast_hash": "3e1e8798eee08c5a6dbd0335e125acde",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Commands/Requests/Users/CreateUserRequestTests.cs": {
+    "mtime": 1784556438.1678889,
+    "ast_hash": "9da806ad82a2dbd40d7e692cb122f90b",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Commands/Requests/Users/DeleteUserRequestTests.cs": {
+    "mtime": 1784556438.2625663,
+    "ast_hash": "72997e8a16f919061a79877d346441e4",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Commands/Requests/Users/EditUserRequestTests.cs": {
+    "mtime": 1784556438.336167,
+    "ast_hash": "ce7ef5d4bea104db6e893e6856fee2d7",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Commands/Requests/Users/ExternalLoginRequestTests.cs": {
+    "mtime": 1784556438.403783,
+    "ast_hash": "4fb6e19091fc96c56c2ed641e67d6210",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Commands/Requests/Users/GetUserRequestTests.cs": {
+    "mtime": 1784556438.4915905,
+    "ast_hash": "983678a98fdec44a4c8f697473a50069",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Commands/Requests/Users/UserTokenRequestTests.cs": {
+    "mtime": 1784556438.5535915,
+    "ast_hash": "b4413e3d6a7a0516c0752914c34e83df",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Commands/Responses/Pivot/CreatePivotResponseTests.cs": {
+    "mtime": 1784556438.6803005,
+    "ast_hash": "231a6ee2f21663bda701abff6cecc2d6",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Commands/Responses/Pivot/DeletePivotResponseTests.cs": {
+    "mtime": 1784556438.7558165,
+    "ast_hash": "f426ef48621a22bec3b84f00e937af9e",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Commands/Responses/Pivot/EditPivotResponseTests.cs": {
+    "mtime": 1784556438.8339262,
+    "ast_hash": "67769841ab0b8a39a18f0604eb13db6f",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Commands/Responses/Pivot/GetListPivotResponseTests.cs": {
+    "mtime": 1784556438.8938167,
+    "ast_hash": "1f7a889cb02d9ac48286b1d1087565e3",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Commands/Responses/Pivot/GetPivotResponseTests.cs": {
+    "mtime": 1784556439.0234547,
+    "ast_hash": "a5af8ef3e329f2afadfa565cae10ae8f",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Commands/Responses/Read/CreateReadResponseTests.cs": {
+    "mtime": 1784556439.1139941,
+    "ast_hash": "fa7d131b0bb4e695ac0678b230130159",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Commands/Responses/Read/GetReadResponseTests.cs": {
+    "mtime": 1784556439.2051356,
+    "ast_hash": "149312a202efad9dc22a6f72c52dc313",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Commands/Responses/Reads/GetAllReadByPivotIdResponseTests.cs": {
+    "mtime": 1784556439.3447368,
+    "ast_hash": "e7de29fe458dda7549a36addbaed4ea0",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Commands/Responses/Reads/GetReadByPivotIdResponseTests.cs": {
+    "mtime": 1784556439.4108891,
+    "ast_hash": "a2e9a8e5324ec87681668612978a9eba",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Commands/Responses/Sensor/CreateSensorResponseTests.cs": {
+    "mtime": 1784556439.4704008,
+    "ast_hash": "765b266416bde9fd9deb9e81fa60c5b1",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Commands/Responses/Sensor/DeleteSensorResponseTests.cs": {
+    "mtime": 1784556439.5459795,
+    "ast_hash": "e54f032801f991d81a768e5e11c155de",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Commands/Responses/Sensor/EditSensorResponseTests.cs": {
+    "mtime": 1784556439.6101356,
+    "ast_hash": "9a06dd116b170bc84f5e20062493464c",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Commands/Responses/Sensor/GetSensorResponseTests.cs": {
+    "mtime": 1784556439.6706517,
+    "ast_hash": "7048f7b6b18ef11982fada3080708489",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Commands/Responses/User/CreateUserResponseTests.cs": {
+    "mtime": 1784556439.749307,
+    "ast_hash": "b790d8a1565655e4c49ae4820f197835",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Commands/Responses/User/DeleteUserResponseTests.cs": {
+    "mtime": 1784556439.8110507,
+    "ast_hash": "ffe9be325aa008ba92178ef4eb9a876c",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Commands/Responses/User/EditUserResponseTests.cs": {
+    "mtime": 1784556439.874531,
+    "ast_hash": "10b34ce8e0b84c6e7b7b364c2f0c1213",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Commands/Responses/User/GetUserResponseTests.cs": {
+    "mtime": 1784556439.9395905,
+    "ast_hash": "7a13fce1ff4f82fa1fe2f0eea614b7c8",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Commands/Responses/User/UserTokenResponseTests.cs": {
+    "mtime": 1784556440.0121956,
+    "ast_hash": "a9c8b27806b2956dff924577d9a837c8",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Admin/AdminCreateUserHandlerTests.cs": {
+    "mtime": 1784556440.0962236,
+    "ast_hash": "1591a7c49a062090e3ff399b9f8b9f19",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Admin/AdminDeleteUserHandlerTests.cs": {
+    "mtime": 1784556440.1672232,
+    "ast_hash": "f5487f9430c15356fe84f2fc4e9f264b",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Admin/AdminEditUserHandlerTests.cs": {
+    "mtime": 1784556440.230314,
+    "ast_hash": "0a9d98c6f400b281bd91c188c7029816",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Admin/AdminToggleUserActiveHandlerTests.cs": {
+    "mtime": 1784556440.3114092,
+    "ast_hash": "2ac2a36da8da96ac940addb0803f11cf",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Admin/DiagnosisPlanHandlersTests.cs": {
+    "mtime": 1784556440.4195664,
+    "ast_hash": "c2159d18aabdbbdd4b019a3f6777543c",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Admin/GetAllUsersHandlerTests.cs": {
+    "mtime": 1784597191.8845532,
+    "ast_hash": "1cd45ab9cfbeb24db30cee3717659a46",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Admin/GetPlatformAiSettingsHandlerTests.cs": {
+    "mtime": 1784597191.8855755,
+    "ast_hash": "7579d4bddedfa50c6ed191b41dfd1e43",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Admin/RevendaHandlersTests.cs": {
+    "mtime": 1784597272.6547809,
+    "ast_hash": "ebacb92108ca566a128336d977a9fe77",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Admin/UpdatePlatformAiSettingsHandlerTests.cs": {
+    "mtime": 1784556440.6647818,
+    "ast_hash": "cdf263e7f86b5b10ed2cb9c035582440",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Agronomist/GetAgronomistBillingHandlerTests.cs": {
+    "mtime": 1784556440.7763417,
+    "ast_hash": "27857870cd9e15df843cfa3088a827c4",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Anomalies/DetectSensorAnomalyHandlerTests.cs": {
+    "mtime": 1784556440.8715007,
+    "ast_hash": "e835bfd5bceea6536037792569e69174",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Anomalies/GetPivotAnomaliesHandlerTests.cs": {
+    "mtime": 1784556440.9475925,
+    "ast_hash": "b01a04d51b95a4b71417a218efc38a2e",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Irrigation/GreedyIrrigationSchedulerTests.cs": {
+    "mtime": 1784556441.022708,
+    "ast_hash": "48e046cd0626a92fef0a6bde9c3c17c6",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Irrigation/IrrigationHandlerTests.cs": {
+    "mtime": 1784556441.087258,
+    "ast_hash": "ee09ef77a45bf872773214ae8ebdb8eb",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Ndvi/MonitoredAreaHandlersTests.cs": {
+    "mtime": 1784597273.1719766,
+    "ast_hash": "89658817eba046f320ceca0bdc922e71",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Pivots/CreatePivotHandlerTests.cs": {
+    "mtime": 1784556441.163287,
+    "ast_hash": "419482ddc4ab7b6b21f970647bf87578",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Pivots/DeletePivotHandlerTests.cs": {
+    "mtime": 1784556441.2394476,
+    "ast_hash": "85dd6ea39af378b0cd79e284405d532f",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Pivots/EditPivotHandlerTests.cs": {
+    "mtime": 1784556441.3175173,
+    "ast_hash": "1a9fc93676eb232770d5c83a55f0ab43",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Pivots/EditPivotLimitsHandlerTests.cs": {
+    "mtime": 1784556441.3950682,
+    "ast_hash": "5c83b66a9e0f26e7594fc2455a5e42a7",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Pivots/GetIrrigationTrendHandlerTests.cs": {
+    "mtime": 1784556441.4795763,
+    "ast_hash": "278cf5e44d4a110039007bfe06bbca0a",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Pivots/GetListPivotHandlerTests.cs": {
+    "mtime": 1784556441.5650911,
+    "ast_hash": "0667bb64cb688e19eea8d8ca1b25ae00",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Pivots/GetMoisturePredictionHandlerTests.cs": {
+    "mtime": 1784556441.6592288,
+    "ast_hash": "73a5582da22d2ffc7b65c6adff9f5ba9",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Pivots/GetPivotAIInsightsHandlerTests.cs": {
+    "mtime": 1784556441.7213447,
+    "ast_hash": "e03029621803040afb1b1adc29f15c7f",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Pivots/GetPivotForecastHandlerTests.cs": {
+    "mtime": 1784556441.861219,
+    "ast_hash": "a418ce9561208000bbb8f7b49b89ddc7",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Pivots/GetPivotHandlerTests.cs": {
+    "mtime": 1784556441.97079,
+    "ast_hash": "46c763e11b70fe13de2d1c510a57d93b",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Pivots/MoisturePredictionAlgorithmTests.cs": {
+    "mtime": 1784556442.0684333,
+    "ast_hash": "d8f462449d7841c84377f139a13d2d3a",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Reads/CreateDeviceReadHandlerTests.cs": {
+    "mtime": 1784556442.14197,
+    "ast_hash": "bfc175eb88c8612b48d942e789aa9740",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Reads/CreateLoRaWanReadHandlerTests.cs": {
+    "mtime": 1784556442.2641087,
+    "ast_hash": "3749eaf4563193d8551e8af56a5f710c",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Reads/CreateReadHandlerTests.cs": {
+    "mtime": 1784556442.3426068,
+    "ast_hash": "a45594ac345f802a360ddb831badd85a",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Reads/GetListReadByPivotIdHandlerTests.cs": {
+    "mtime": 1784556442.5162776,
+    "ast_hash": "359b48ed677102adc917eb97851149bb",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Reads/GetListReadHandlerTests.cs": {
+    "mtime": 1784556442.625903,
+    "ast_hash": "157f6e6d5d17885861ee2541413e2995",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Reads/GetReadByPivotIdHandlerTests.cs": {
+    "mtime": 1784556442.7459297,
+    "ast_hash": "d9fa7a2951d838f49889c80c371e722b",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Revenda/RevendaBillingHandlersTests.cs": {
+    "mtime": 1784597272.65578,
+    "ast_hash": "3d7ea55988b7bbcbb44327bb69dbbe0b",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Revenda/RevendaInviteHandlersTests.cs": {
+    "mtime": 1784597272.65578,
+    "ast_hash": "71278f6f7c3b0aa0c671b4990c0479d8",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Revenda/RevendaManagerHandlersTests.cs": {
+    "mtime": 1784597272.675779,
+    "ast_hash": "1ee5ec436ef7176823fbbf6de28fb16f",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Sensors/CreateSensorHandlerTests.cs": {
+    "mtime": 1784556442.8536446,
+    "ast_hash": "adfd13ac66b02e36146413bbec27f033",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Sensors/DeleteSensorHandlerTests.cs": {
+    "mtime": 1784556442.9642248,
+    "ast_hash": "1b21cbaaff51097128effcd2312928f2",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Sensors/EditSensorHandlerTests.cs": {
+    "mtime": 1784556443.0413523,
+    "ast_hash": "f89819afa94ae1539f473105c44ffdc2",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Sensors/GetListSensorByUserIdHandlerTests.cs": {
+    "mtime": 1784556443.1654382,
+    "ast_hash": "751f53783e3959ccc1d72ecdab4323bd",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Sensors/GetListSensorHandlerTests.cs": {
+    "mtime": 1784556443.2569013,
+    "ast_hash": "684d7f2ef9f2a5aed3b153ac3db70c07",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Sensors/GetSensorHandlerTests.cs": {
+    "mtime": 1784556443.3880324,
+    "ast_hash": "bd269ac0218c1c5203d5d8158299ae21",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Sensors/GetSensorTelemetryHandlerTests.cs": {
+    "mtime": 1784556443.5207655,
+    "ast_hash": "81a1eea61d55223c71a12ac0cf36cc7b",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Users/CreateUserHandlerTests.cs": {
+    "mtime": 1784556443.647002,
+    "ast_hash": "889294306e1ee56201aaf40443c84ee3",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Users/DeleteUserHandlerTests.cs": {
+    "mtime": 1784556443.7676556,
+    "ast_hash": "d30e7dc2678f3bba58e888f332dadafd",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Users/EditUserHandlerTests.cs": {
+    "mtime": 1784556443.8313634,
+    "ast_hash": "28ceb9aa67f6b195d349834558d01664",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Users/EditUserLimitsHandlerTests.cs": {
+    "mtime": 1784556443.9578977,
+    "ast_hash": "0c18f9cc82edf7dd057d95b6042ea7fb",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Users/ExternalLoginHandlerTests.cs": {
+    "mtime": 1784556444.0395203,
+    "ast_hash": "ce573492b74bf6b8045ab59aab82674d",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Users/GetTokenHandlerTests.cs": {
+    "mtime": 1784556444.128081,
+    "ast_hash": "01f70b44c43c0b7a4c8297a80accbaf2",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Users/GetUserAlertsHandlerTests.cs": {
+    "mtime": 1784597272.6767826,
+    "ast_hash": "7c0a36028363ac8f33402722bd949f8d",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Users/GetUserHandlerTests.cs": {
+    "mtime": 1784556444.3287861,
+    "ast_hash": "ea9f01a65f1b82ff646d624c12b4d8c3",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Users/MarkAlertsReadHandlerTests.cs": {
+    "mtime": 1784556444.4108849,
+    "ast_hash": "05af028829d168df2fe9702013feb3db",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Users/RegisterExpoPushTokenHandlerTests.cs": {
+    "mtime": 1784556444.5610425,
+    "ast_hash": "ce21f39fbb33467f63bf815c9f3fcab3",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/Users/RegisterWebPushSubscriptionHandlerTests.cs": {
+    "mtime": 1784556444.6907687,
+    "ast_hash": "c8ee5739b9c1890d335a84f8abbab3d4",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Domain/Handlers/WaterSources/WaterSourceHandlerTests.cs": {
+    "mtime": 1784556444.8249407,
+    "ast_hash": "d3d1b705858a2796275977da76007ad2",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Handlers/Agronomist/AgronomistHandlersTests.cs": {
+    "mtime": 1784556444.946051,
+    "ast_hash": "3a0391ac4646f9acffa4eafe703389d9",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Handlers/Agronomist/SignDiagnosisHandlerTests.cs": {
+    "mtime": 1784556445.0121713,
+    "ast_hash": "5dec9742b833d97d245b7e3cda52460a",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Handlers/Diagnosis/CreatePlantDiagnosisHandlerTests.cs": {
+    "mtime": 1784556445.074229,
+    "ast_hash": "5aee7c194f48e481cbfd490f93c2fa83",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Handlers/Diagnosis/DiagnosisHistoryHandlerTests.cs": {
+    "mtime": 1784556445.2028575,
+    "ast_hash": "49e44b7773760f0a7c641d2b795f5e24",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Handlers/Diagnosis/GetPlantDiagnosisImageHandlerTests.cs": {
+    "mtime": 1784556445.339974,
+    "ast_hash": "a7459129db3855a4c97af57ea83a147d",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Handlers/Diagnosis/PlantDiagnosisReadHandlerTests.cs": {
+    "mtime": 1784556445.4015284,
+    "ast_hash": "10aab4c1818a2a5c43b873189d5d0348",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Helpers/MockHttpMessageHandler.cs": {
+    "mtime": 1784556445.478783,
+    "ast_hash": "b67ad8a0a86d49fa4ad1c2f7d90f26af",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Helpers/MongoMockHelper.cs": {
+    "mtime": 1784556445.5688257,
+    "ast_hash": "fd619ecb79f1ee57f337eeefcc72048e",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Mocks/MockNotifier.cs": {
+    "mtime": 1784556445.6639163,
+    "ast_hash": "3f3f28f87ed99f16ca199e75690f4dd8",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Models/AgpDBContextTests.cs": {
+    "mtime": 1784556445.7467752,
+    "ast_hash": "229213da4846fda3a6928e45c0fae789",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Models/Entities/EntityNavigationTests.cs": {
+    "mtime": 1784556445.8325317,
+    "ast_hash": "94784035fa661b298c9d21bc41eaa413",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Models/Entities/MonitoredAreaTests.cs": {
+    "mtime": 1784597273.1729743,
+    "ast_hash": "2228e4a4e925fe0d03fc9bd2451591ea",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Models/Entities/RevendaMembershipTests.cs": {
+    "mtime": 1784597272.67778,
+    "ast_hash": "dbacceb41e8d7a191726d6916d994ed5",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Models/Entities/UserRoleTests.cs": {
+    "mtime": 1784597191.887553,
+    "ast_hash": "9a51860f31880878b08e5100d72e2789",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Notifications/NotificationTests.cs": {
+    "mtime": 1784556445.9026053,
+    "ast_hash": "aee3ad730006077ec1874a99e97386a4",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Notifications/NotificatorTests.cs": {
+    "mtime": 1784556445.974106,
+    "ast_hash": "a3e6f71ffd7bd7eff0513418267f88f9",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Services/AIInsights/AnthropicInsightsServiceTests.cs": {
+    "mtime": 1784556446.1318257,
+    "ast_hash": "e4f33258846d297c113fb5975d3d799f",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Services/AIInsights/ClaudeInsightsServiceTests.cs": {
+    "mtime": 1784556446.207926,
+    "ast_hash": "16f6a04bac678de9b630f1b24de79ee7",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Services/CompositePushNotificationServiceTests.cs": {
+    "mtime": 1784556446.3320737,
+    "ast_hash": "0a65f3fc271155d06fe2348a1b51d1b0",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Services/CurrentUserContextTests.cs": {
+    "mtime": 1784597191.8885574,
+    "ast_hash": "52e42798a4e8994d0cabfa2f6ea7c0e5",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Services/DiagnosisAccessServiceTests.cs": {
+    "mtime": 1784556446.471226,
+    "ast_hash": "a60a6c126626aa5ddd09fe358a6a8365",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Services/DiagnosisBillingServiceTests.cs": {
+    "mtime": 1784556446.5483294,
+    "ast_hash": "71957533dd883117a1334f26257dc28e",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Services/DiagnosisCostServiceTests.cs": {
+    "mtime": 1784556446.6574895,
+    "ast_hash": "32afc9869fa63c3fc54e2baf0e5669bb",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Services/DiagnosisPdfServiceTests.cs": {
+    "mtime": 1784556446.736074,
+    "ast_hash": "724d74fc47488a5eea25efe7174955bd",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Services/DiagnosisQuotaServiceTests.cs": {
+    "mtime": 1784556446.8156343,
+    "ast_hash": "5d42e564f842efa8db1c8eec04273c5f",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Services/EmailNormalizerTests.cs": {
+    "mtime": 1784556446.907345,
+    "ast_hash": "e3a53aa183e47f22a5d5f3bca185b4bf",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Services/EmailServicesTests.cs": {
+    "mtime": 1784556446.9818962,
+    "ast_hash": "35137ff62d344f6c30511eb2ab93f814",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Services/Forecast/OpenMeteoForecastServiceTests.cs": {
+    "mtime": 1784556447.059654,
+    "ast_hash": "5a6463e196d192217b36c0bc429a85c0",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Services/Forecast/WeatherForecastOrchestratorTests.cs": {
+    "mtime": 1784556447.153672,
+    "ast_hash": "e7614e9cfaed3d834aea974d887d5da1",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Services/ImageContentValidatorTests.cs": {
+    "mtime": 1784556447.2464032,
+    "ast_hash": "1086433996a9445608afa0a3208592b6",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Services/JwtTokenServiceTests.cs": {
+    "mtime": 1784597191.889553,
+    "ast_hash": "00100e92059be9c49b576e5b8bbf28fc",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Services/KindwiseCropHealthServiceTests.cs": {
+    "mtime": 1784556447.4176042,
+    "ast_hash": "3432b258de85244da3606026de8f619d",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Services/LoginAttemptServiceTests.cs": {
+    "mtime": 1784556447.5128093,
+    "ast_hash": "3efd751ff700c9dcc3ccece5c2614560",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Services/Ndvi/MonitoredAreaGeometryTests.cs": {
+    "mtime": 1784597273.173975,
+    "ast_hash": "3cbd10ecbb55a3718aa8b22b183572fe",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Services/PasswordHasherServiceTests.cs": {
+    "mtime": 1784556447.6174042,
+    "ast_hash": "dd543a555537e0fbd030fffc18f4d023",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Services/PlantDiagnosisContextBuilderTests.cs": {
+    "mtime": 1784556447.7000175,
+    "ast_hash": "adcb861db13f74f1121e81ccfe7eaa77",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Services/PlantDiagnosisProcessingServiceTests.cs": {
+    "mtime": 1784556447.775674,
+    "ast_hash": "98d172b2679b2c5812d0f4d7c25e8eae",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Services/ProbabilityFormatterTests.cs": {
+    "mtime": 1784556447.8988235,
+    "ast_hash": "8050f678ec56fc9eda105a902aba8fc7",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Services/Revenda/RevendaBillingServiceTests.cs": {
+    "mtime": 1784597272.67878,
+    "ast_hash": "26a5ace4a0924a0ed461794ed9de024e",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Services/Revenda/RevendaMembershipServiceTests.cs": {
+    "mtime": 1784597272.67878,
+    "ast_hash": "a891fafd5d7d2e0a256e5c5e28cf2f3a",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Services/SensorAnomalyServiceTests.cs": {
+    "mtime": 1784556447.9959066,
+    "ast_hash": "573ae563f5912d87d87bbc86f010315e",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Services/UserRoleMigrationTests.cs": {
+    "mtime": 1784597191.889553,
+    "ast_hash": "64debbaec551b38ba4f5235c12a6f18d",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/StarkAgroAPI.Tests.csproj": {
+    "mtime": 1784556448.0851192,
+    "ast_hash": "69f709c036bc748713130bbbb5817ec7",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Validators/EmailAttributeTests.cs": {
+    "mtime": 1784556448.2023132,
+    "ast_hash": "f7e443dc905551c256f4b27a58088915",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI.Tests/Validators/PasswordStrengthAttributeTests.cs": {
+    "mtime": 1784556448.2762618,
+    "ast_hash": "73ef207dc6df847d7c070e38987ed341",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/.config/dotnet-tools.json": {
+    "mtime": 1780321533.4265513,
+    "ast_hash": "00ef37163bb62f8757b250b9161e2db0",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Configuration/AISettings.cs": {
+    "mtime": 1784556448.4580486,
+    "ast_hash": "fdd9f2860e939eaa3ad8e397b25a8a45",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Configuration/ApiConfig.cs": {
+    "mtime": 1784597272.6797805,
+    "ast_hash": "c0dac5ba8d4e35bf6fab69f2d0c71e2d",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Configuration/DependencyInjectionConfig.cs": {
+    "mtime": 1784556448.6137187,
+    "ast_hash": "9a4624156d2ce01360c8a7d84d2662c6",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Configuration/JwtSettings.cs": {
+    "mtime": 1784556448.7218647,
+    "ast_hash": "506813dea278bbcf24e32e62a633cbb1",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Configuration/MongoDbSettings.cs": {
+    "mtime": 1784556448.7843838,
+    "ast_hash": "10eacd359d668a9352c0df1ce60727ef",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Configuration/MqttDownlinkSettings.cs": {
+    "mtime": 1784556448.8455474,
+    "ast_hash": "3dedc83ca78e8e31bccf51370e87a239",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Configuration/OAuthSettings.cs": {
+    "mtime": 1784556448.9546106,
+    "ast_hash": "b7ef184cc82c78a7198e35e4c7e07e9d",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Configuration/SmtpSettings.cs": {
+    "mtime": 1784556449.0311863,
+    "ast_hash": "7fef0fdeb4bc78a00b7902740de9e6e0",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Configuration/SwaggerConfig.cs": {
+    "mtime": 1784556449.0937283,
+    "ast_hash": "83d9af778c996a913601c799c8bfc969",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Configuration/VapidSettings.cs": {
+    "mtime": 1784556449.1737719,
+    "ast_hash": "046a3d613e200a185d738c404510cf87",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Configuration/WeatherForecastSettings.cs": {
+    "mtime": 1784556449.2328584,
+    "ast_hash": "81a2c07d69fa0d666a8a159ace8b79af",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Controllers/AdminController.cs": {
+    "mtime": 1784597272.6807823,
+    "ast_hash": "a89d02c2798dfc25efe956ab7cb938df",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Controllers/AgronomistController.cs": {
+    "mtime": 1784556449.4505794,
+    "ast_hash": "40e572163d5952380999f648ae03917c",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Controllers/AuthController.cs": {
+    "mtime": 1784556449.5441482,
+    "ast_hash": "e1da80eb2741009de680ce33ed7ee366",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Controllers/HealthController.cs": {
+    "mtime": 1784556449.6361895,
+    "ast_hash": "c1aa6b473572a10c7dabea623447af19",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Controllers/IrrigationController.cs": {
+    "mtime": 1784556449.7002277,
+    "ast_hash": "9283b93abdb5964ca642f3283d5419a6",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Controllers/MainController.cs": {
+    "mtime": 1784556449.810809,
+    "ast_hash": "9e4251071152d7bc59108048cb7985b1",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Controllers/NdviController.cs": {
+    "mtime": 1784597273.1749763,
+    "ast_hash": "0b20e1ad361ed0efa30c1861c0bac7ed",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Controllers/PivotAnalyticsController.cs": {
+    "mtime": 1784556449.901508,
+    "ast_hash": "9b57f4d6e25e6370e8ac62e8f4553b7d",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Controllers/PivotController.cs": {
+    "mtime": 1784556449.9780421,
+    "ast_hash": "358da0e874e82f7cb62d81d7e0ada14c",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Controllers/PlantDiagnosisController.cs": {
+    "mtime": 1784556450.058716,
+    "ast_hash": "7f9a7d1fb439854d2304945a9b10958a",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Controllers/PushController.cs": {
+    "mtime": 1784556450.1182868,
+    "ast_hash": "9ef38f21d415bd4564d77bfecb0e23a3",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Controllers/ReadsController.cs": {
+    "mtime": 1784556450.2118206,
+    "ast_hash": "1d2cb42b5fb6e764660d55b9e7c95e62",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Controllers/RevendaController.cs": {
+    "mtime": 1784597272.6817808,
+    "ast_hash": "37fcc7937fa66d84b95bff62a4ae7dc8",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Controllers/SensorController.cs": {
+    "mtime": 1784556450.2929094,
+    "ast_hash": "78ff3b46498496c3fca359884eb0deb8",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Controllers/UserController.cs": {
+    "mtime": 1784597272.6817808,
+    "ast_hash": "57f27cbab42e42ce5154a52b276fc6a9",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Controllers/WaterSourceController.cs": {
+    "mtime": 1784556450.505259,
+    "ast_hash": "9ad06f03e624b319947f687ba1a434f9",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Admin/AdminCreateUserRequest.cs": {
+    "mtime": 1784556450.7253084,
+    "ast_hash": "c7ab96b0d348fe9941fd43c2e9f77eb1",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Admin/AdminDeleteUserRequest.cs": {
+    "mtime": 1784556450.8078122,
+    "ast_hash": "3af4fcdf18774ad026e1aa36103e16a8",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Admin/AdminEditUserRequest.cs": {
+    "mtime": 1784556450.8634481,
+    "ast_hash": "d11f480259e9cc723b10eb4087a93550",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Admin/AdminToggleUserActiveRequest.cs": {
+    "mtime": 1784556450.9440155,
+    "ast_hash": "7b62e2de423724495436ddf2c09f3c8e",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Admin/DiagnosisPlanRequests.cs": {
+    "mtime": 1784556451.003047,
+    "ast_hash": "383438dab3861a255b7bb1599497293b",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Admin/GetAllUsersRequest.cs": {
+    "mtime": 1784556451.080244,
+    "ast_hash": "7ad7a3b0909be50ec90e4855c4edc8fd",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Admin/GetPlatformAiSettingsRequest.cs": {
+    "mtime": 1784556451.1442847,
+    "ast_hash": "8d1605683264ff58957e24a5f66c42db",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Admin/GetRevendaBillingRequest.cs": {
+    "mtime": 1784597272.682781,
+    "ast_hash": "1f1ffbaefef24a2e22fbf3bd5877e1bc",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Admin/RevendaRequests.cs": {
+    "mtime": 1784597272.682781,
+    "ast_hash": "ad992009d2b9c2f6db6dce3fb0c1e13b",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Admin/UpdatePlatformAiSettingsRequest.cs": {
+    "mtime": 1784597191.8935575,
+    "ast_hash": "1bd50d05b99f442066d63eb2cd32cca3",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Agronomist/AgronomistRequests.cs": {
+    "mtime": 1784556451.2819834,
+    "ast_hash": "8a6465458002e4f2f898fd34e7742d2b",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Anomalies/DetectSensorAnomalyRequest.cs": {
+    "mtime": 1784556451.3865411,
+    "ast_hash": "5cd7abca4ea7b51450597e1bb775dfdb",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Anomalies/GetPivotAnomaliesRequest.cs": {
+    "mtime": 1784556451.4557753,
+    "ast_hash": "b103fccbd5c0750a61bcc0821441aa79",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Diagnosis/DiagnosisHistoryRequests.cs": {
+    "mtime": 1784556451.5569222,
+    "ast_hash": "bea8aa224b82ddcd7eee367a094ab81e",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Diagnosis/PlantDiagnosisRequests.cs": {
+    "mtime": 1784556451.6229742,
+    "ast_hash": "0cac3c383c8cb92f9c0e7add0239252b",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Irrigation/AcceptRejectProposalRequest.cs": {
+    "mtime": 1784556451.7752268,
+    "ast_hash": "0ceadcf92286e0e20e2f746687fe8b96",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Irrigation/ScheduleProposalRequest.cs": {
+    "mtime": 1784556451.8444176,
+    "ast_hash": "9e49d14bc75c7653e1bfbda6c1f6ed51",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Ndvi/MonitoredAreaRequests.cs": {
+    "mtime": 1784597273.1759763,
+    "ast_hash": "918f7555667d4b27a42b0aff1cf76d44",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Pivots/CreatePivotRequest.cs": {
+    "mtime": 1784556451.9220152,
+    "ast_hash": "4312eb0349f83a4de8bb8a8bc78e8cb3",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Pivots/DeletePivotRequest.cs": {
+    "mtime": 1784556451.9834793,
+    "ast_hash": "c0b5bf12129972c6269fa145fd28ab72",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Pivots/EditPivotLimitsRequest.cs": {
+    "mtime": 1784556452.0612104,
+    "ast_hash": "03d6009cb6df2ea09c6c1e8da2def8a0",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Pivots/EditPivotRequest.cs": {
+    "mtime": 1784556452.1418087,
+    "ast_hash": "1b5499972eab392c6cd79cd60ea165a7",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Pivots/GetIrrigationTrendRequest.cs": {
+    "mtime": 1784556452.2254012,
+    "ast_hash": "3ddd9050e42338bb6506e9648cd188f3",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Pivots/GetListPivotByUserIdRequest.cs": {
+    "mtime": 1784556452.2925253,
+    "ast_hash": "1a244e49ce2412292ef191c5fe07d41f",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Pivots/GetListPivotRequest.cs": {
+    "mtime": 1784556452.3540802,
+    "ast_hash": "6742f6fb68c1bd962bd97e694705904b",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Pivots/GetMoisturePredictionRequest.cs": {
+    "mtime": 1784556452.4171772,
+    "ast_hash": "2b38076585e3e6ee994a2dbfd32a6ce3",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Pivots/GetPivotAIInsightsRequest.cs": {
+    "mtime": 1784556452.4797592,
+    "ast_hash": "db1d4506b0d61fae43b0925beb9be99f",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Pivots/GetPivotForecastRequest.cs": {
+    "mtime": 1784556452.5403547,
+    "ast_hash": "1cd159172d750e7ac320b7f0917b1a77",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Pivots/GetPivotRequest.cs": {
+    "mtime": 1784556452.6033475,
+    "ast_hash": "28e7f2fe6cd3a1fc8e89a10582eac9b1",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Reads/CreateDeviceReadRequest.cs": {
+    "mtime": 1784556452.668024,
+    "ast_hash": "9047477dc3af9e4925e9c2d0dec20647",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Reads/CreateLoRaWanReadRequest.cs": {
+    "mtime": 1784556452.7430494,
+    "ast_hash": "8535d9df821fb358dd38d38086677f9e",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Reads/CreateReadRequest.cs": {
+    "mtime": 1784556452.80408,
+    "ast_hash": "219163b51891bb507b103a34741339cd",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Reads/GetAllListReadBySensorIdRequest.cs": {
+    "mtime": 1784556452.8692217,
+    "ast_hash": "113ee04c86a7cec8c00cbe028021fee3",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Reads/GetListReadByPivotIdRequest.cs": {
+    "mtime": 1784556452.927472,
+    "ast_hash": "4bd1cd56e9c3d944ffb10c989f9e90ae",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Reads/GetListReadRequest.cs": {
+    "mtime": 1784556452.9904716,
+    "ast_hash": "cc503dc0889f31f9c03fe5888140c5b6",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Revenda/GetMyRevendaBillingRequest.cs": {
+    "mtime": 1784597272.6837816,
+    "ast_hash": "3de81ce34c6eb524b2a89d21cfebe56c",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Revenda/RevendaInviteRequests.cs": {
+    "mtime": 1784597272.6837816,
+    "ast_hash": "0f9aa887ab7c251ae2af4be2d2c5bcd2",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Revenda/RevendaManagerRequests.cs": {
+    "mtime": 1784597272.6847808,
+    "ast_hash": "9f724b43434e2cb5df4fb6ab9e214336",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Sensors/CreateSensorRequest.cs": {
+    "mtime": 1784556453.0576339,
+    "ast_hash": "5fbf62f740100ccbac3edc0a5021020f",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Sensors/DeleteSensorRequest.cs": {
+    "mtime": 1784556453.1452103,
+    "ast_hash": "85210e7748b16b4b9a598224be619704",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Sensors/EditSensorRequest.cs": {
+    "mtime": 1784556453.2097523,
+    "ast_hash": "5f6eb55068c6653ac6703a3bab713239",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Sensors/GetListSensorByUserIdRequest.cs": {
+    "mtime": 1784556453.286821,
+    "ast_hash": "fc3436cd63aaf256e9471f43882ba5fd",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Sensors/GetListSensorRequest.cs": {
+    "mtime": 1784556453.3508594,
+    "ast_hash": "1d4cd17dc1c64ca16cb1848f8fc6bdf2",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Sensors/GetSensorRequest.cs": {
+    "mtime": 1784556453.4279509,
+    "ast_hash": "1dedff30c97935e25bff0140709acaf4",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Sensors/GetSensorTelemetryRequest.cs": {
+    "mtime": 1784556453.491544,
+    "ast_hash": "cbdcba28049cdd2995d69f5de16d407f",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Sensors/SendSensorDownlinkRequest.cs": {
+    "mtime": 1784556453.5501232,
+    "ast_hash": "fd884787d84e4de12e466803f69decd0",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Users/CreateUserRequest.cs": {
+    "mtime": 1784556453.6257088,
+    "ast_hash": "71e1fd11cd99cb3667ae9a7b0bf58d6e",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Users/DeleteUserRequest.cs": {
+    "mtime": 1784556453.7052612,
+    "ast_hash": "d45ec926bc6f724f5d878df3a9ba7bb4",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Users/EditUserLimitsRequest.cs": {
+    "mtime": 1784556453.7984228,
+    "ast_hash": "9b6223ab7f2b5bdf938b746ef0396ff7",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Users/EditUserRequest.cs": {
+    "mtime": 1784556453.878092,
+    "ast_hash": "5b1abaebbab16d8d5f5f5e8c22bc1e5b",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Users/ExternalLoginRequest.cs": {
+    "mtime": 1784556453.9551501,
+    "ast_hash": "15f63d963b970ca02fbf30e9be6e8f1b",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Users/GetUserAlertsRequest.cs": {
+    "mtime": 1784556454.014209,
+    "ast_hash": "4c7d60f500cf77cf128a2d94373fc124",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Users/GetUserRequest.cs": {
+    "mtime": 1784556454.0773678,
+    "ast_hash": "a0c9ac3fff7f2d5adbab48b8a7e131da",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Users/MarkAlertsReadRequest.cs": {
+    "mtime": 1784556454.1433032,
+    "ast_hash": "9a6d3db40a54be3b908dcab68d32a313",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Users/RegisterExpoPushTokenRequest.cs": {
+    "mtime": 1784556454.2173872,
+    "ast_hash": "4a25a38eb143dccbcf8231a1734edc1f",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Users/RegisterWebPushSubscriptionRequest.cs": {
+    "mtime": 1784556454.2852254,
+    "ast_hash": "859633024cd21f173609cdd841e2dcdd",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/Users/UserTokenRequest.cs": {
+    "mtime": 1784556454.3409889,
+    "ast_hash": "df4df8579ef44d7b6457094f41177da8",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/WaterSources/CreateWaterSourceRequest.cs": {
+    "mtime": 1784556454.434553,
+    "ast_hash": "1a906f7d699e5cef6c116dbd1920c0b9",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/WaterSources/DeleteWaterSourceRequest.cs": {
+    "mtime": 1784556454.4991739,
+    "ast_hash": "29d77fd2e710d0f7b925de00a0020291",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/WaterSources/EditWaterSourceRequest.cs": {
+    "mtime": 1784556454.5577378,
+    "ast_hash": "d93e9edff022649c6d9be4e8936c57fe",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/WaterSources/GetListWaterSourceRequest.cs": {
+    "mtime": 1784556454.619259,
+    "ast_hash": "4154862a9ec30076b8789167dffa1dfc",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Requests/WaterSources/GetWaterSourceRequest.cs": {
+    "mtime": 1784556454.70487,
+    "ast_hash": "a44a4da6d46779b3fd4ab887a0e89cec",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Responses/Admin/AdminAiSettingsResponse.cs": {
+    "mtime": 1784597191.894557,
+    "ast_hash": "29c90cc9709f9cb02cd14b2d65bf2c83",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Responses/Admin/AdminUserResponse.cs": {
+    "mtime": 1784556454.8380246,
+    "ast_hash": "2c88dd9dd4df97e6c3a29489d8748739",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Responses/Admin/DiagnosisPlanResponse.cs": {
+    "mtime": 1784556454.9337344,
+    "ast_hash": "72c2174e5e730faeda697e7998afc775",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Responses/Admin/RevendaResponse.cs": {
+    "mtime": 1784597272.6847808,
+    "ast_hash": "a672b13c291d09db7e204fc0394136a5",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Responses/Agronomist/AgronomistBillingResponse.cs": {
+    "mtime": 1784556455.0247767,
+    "ast_hash": "8c359905fdfe0ff6b3c27490eee09f16",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Responses/Agronomist/AgronomistResponses.cs": {
+    "mtime": 1784556455.1044247,
+    "ast_hash": "b079145b27323a51c1f48293229b4795",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Responses/Anomalies/SensorAnomalyResponse.cs": {
+    "mtime": 1784556455.1829798,
+    "ast_hash": "c4ee6b7074d3c64dbb37d8101de8c5d7",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Responses/Diagnosis/PlantDiagnosisResponses.cs": {
+    "mtime": 1784556455.2451262,
+    "ast_hash": "cc02c9436a27aeaadbfed184744f9d2c",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Responses/Irrigation/AcceptRejectProposalResponse.cs": {
+    "mtime": 1784556455.3343341,
+    "ast_hash": "460f43f3b57dbc0bd6a59269c099cdbc",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Responses/Irrigation/IrrigationWindowDto.cs": {
+    "mtime": 1784556455.396834,
+    "ast_hash": "d45b5537582d4219cc66a666e81eb309",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Responses/Irrigation/ScheduleProposalResponse.cs": {
+    "mtime": 1784556455.4594097,
+    "ast_hash": "c117306d7efb4132ff57d42437359553",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Responses/Ndvi/MonitoredAreaResponse.cs": {
+    "mtime": 1784597273.1769755,
+    "ast_hash": "9c21ca6c6167ea7fa21c0bd7a1adeda2",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Responses/Pivots/CreatePivotResponse.cs": {
+    "mtime": 1784556455.5209851,
+    "ast_hash": "524db7c99c76b5c7f09739e89329b897",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Responses/Pivots/DeletePivotResponse.cs": {
+    "mtime": 1784556455.5820012,
+    "ast_hash": "5d443600bc1733d92958261e18e6cd32",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Responses/Pivots/EditPivotResponse.cs": {
+    "mtime": 1784556455.645567,
+    "ast_hash": "1157e6d00ee8fc2d9a505be716456b39",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Responses/Pivots/GetListPivotResponse.cs": {
+    "mtime": 1784556455.7086377,
+    "ast_hash": "5cfcce5cd39f5ce6a42ee40c568842ba",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Responses/Pivots/GetPivotForecastResponse.cs": {
+    "mtime": 1784556455.7737868,
+    "ast_hash": "c65a2eb41cc85c9817dc16d1fae1cce7",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Responses/Pivots/GetPivotResponse.cs": {
+    "mtime": 1784556455.8453896,
+    "ast_hash": "3e2fffa16715cf9aa64d2dbf39716702",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Responses/Pivots/IrrigationTrendResponse.cs": {
+    "mtime": 1784556455.9090252,
+    "ast_hash": "34dd08bfc011bbf911dcaac9e6beb33d",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Responses/Pivots/MoisturePredictionResponse.cs": {
+    "mtime": 1784556455.9860919,
+    "ast_hash": "659cba0e76f20322c2cfe77aa1bc4d75",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Responses/Pivots/PivotAIInsightsResponse.cs": {
+    "mtime": 1784556456.0627112,
+    "ast_hash": "f0c26365c36998d5bfd9fc86a803ed68",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Responses/Reads/CreateReadResponse.cs": {
+    "mtime": 1784556456.1288307,
+    "ast_hash": "4a143278d51cbd96295e4808fe5c87c7",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Responses/Reads/GetAllReadBySensorIdResponse.cs": {
+    "mtime": 1784556456.2053616,
+    "ast_hash": "8dae565d683ada520a45f439505ac56c",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Responses/Reads/GetReadByPivotIdResponse.cs": {
+    "mtime": 1784556456.2664201,
+    "ast_hash": "a16a1642d0500f87bcef512bc37fede7",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Responses/Reads/GetReadResponse.cs": {
+    "mtime": 1784556456.3430831,
+    "ast_hash": "88c4805628a6898bc68597a6471ca559",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Responses/Revenda/RevendaBillingResponse.cs": {
+    "mtime": 1784597272.6867878,
+    "ast_hash": "8d65ac89a24572e80ab700c151d1bc6f",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Responses/Revenda/RevendaInviteResponse.cs": {
+    "mtime": 1784597272.6867878,
+    "ast_hash": "2de87bd60395744f3f77e6043107209d",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Responses/Revenda/RevendaMemberResponse.cs": {
+    "mtime": 1784597272.6887808,
+    "ast_hash": "c3720ae78e9a56eb00e6c9fd265c321d",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Responses/Sensors/CreateSensorResponse.cs": {
+    "mtime": 1784556456.4050937,
+    "ast_hash": "e9d759cf827f4d73345f55ce903b2dce",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Responses/Sensors/DeleteSensorResponse.cs": {
+    "mtime": 1784556456.4667864,
+    "ast_hash": "6c97112313f0d73430e9d93a4a3a46ec",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Responses/Sensors/EditSensorResponse.cs": {
+    "mtime": 1784556456.5308394,
+    "ast_hash": "1134aa5cc7c3cead06f3f814abf610cd",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Responses/Sensors/GetSensorResponse.cs": {
+    "mtime": 1784556456.5922608,
+    "ast_hash": "e2fdeb616cc848d8bb39d5091d0b7693",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Responses/Sensors/SendSensorDownlinkResponse.cs": {
+    "mtime": 1784556456.654807,
+    "ast_hash": "0c91eea6d518a74540f6f6fcfbcb1fa9",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Responses/Sensors/SensorTelemetryResponse.cs": {
+    "mtime": 1784556456.7334578,
+    "ast_hash": "4226c030ec16e1d022b2ab916acf60bf",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Responses/Users/CreateUserResponse.cs": {
+    "mtime": 1784556456.7989612,
+    "ast_hash": "2a060ded0d52c59836cb1546367c5437",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Responses/Users/DeleteUserResponse.cs": {
+    "mtime": 1784556456.8735647,
+    "ast_hash": "d11fe823cb9fe20b5f0bc072905678ec",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Responses/Users/EditUserResponse.cs": {
+    "mtime": 1784556456.9382029,
+    "ast_hash": "59f1c02b2bd98e9c7ac5a5aeb566c8eb",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Responses/Users/GetUserResponse.cs": {
+    "mtime": 1784556456.996888,
+    "ast_hash": "38f8c7423df4b9d1a5f3b8c9fdc7b7a9",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Responses/Users/UserAlertResponse.cs": {
+    "mtime": 1784556457.0584745,
+    "ast_hash": "8526a38c3581b4b38867d8e68026945f",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Responses/Users/UserTokenResponse.cs": {
+    "mtime": 1784556457.1142106,
+    "ast_hash": "3093672b7b5eda51ee136b8ca4b9cae6",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Commands/Responses/WaterSources/WaterSourceResponse.cs": {
+    "mtime": 1784556457.1812055,
+    "ast_hash": "97b47bce80525c5dd7ef090fcceb6f94",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Admin/AdminCreateUserHandler.cs": {
+    "mtime": 1784597191.895556,
+    "ast_hash": "3e54b5dd10e8c1252896e7ef9a6c162d",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Admin/AdminDeleteUserHandler.cs": {
+    "mtime": 1784556457.3064656,
+    "ast_hash": "f42623a715c94f7ed471dbb729e7c76f",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Admin/AdminEditUserHandler.cs": {
+    "mtime": 1784597191.896555,
+    "ast_hash": "bf6a23f7fe88cae01ab88af412045ebb",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Admin/AdminToggleUserActiveHandler.cs": {
+    "mtime": 1784556457.445561,
+    "ast_hash": "8e1f828b853890961e0648bd368f92fa",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Admin/DiagnosisPlanHandlers.cs": {
+    "mtime": 1784556457.5227013,
+    "ast_hash": "7620a1942f3010a0da46ea752dcf54ac",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Admin/GetAllUsersHandler.cs": {
+    "mtime": 1784556457.6467795,
+    "ast_hash": "580eed35959a9675892113749006eb8e",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Admin/GetPlatformAiSettingsHandler.cs": {
+    "mtime": 1784597191.8975558,
+    "ast_hash": "57d8741dca312af713f1d25df8a606f8",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Admin/GetRevendaBillingHandler.cs": {
+    "mtime": 1784597272.6897812,
+    "ast_hash": "28fb301e5ee8f0e588d889c4ac9fa6b6",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Admin/RevendaHandlers.cs": {
+    "mtime": 1784597272.6897812,
+    "ast_hash": "93d6bcbcb000e3df4329bd69e4a41d22",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Admin/UpdatePlatformAiSettingsHandler.cs": {
+    "mtime": 1784597191.8985555,
+    "ast_hash": "4075d6faf6cb69382f690d93adfcc615",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Agronomist/AgronomistClientHandlers.cs": {
+    "mtime": 1784556457.9142542,
+    "ast_hash": "17c7305af3b562e4fb6f409f399e95b6",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Agronomist/AgronomistQueueHandlers.cs": {
+    "mtime": 1784556458.006283,
+    "ast_hash": "4a5a06735079f37b48bc7e632bfd4ca3",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Agronomist/GetAgronomistBillingHandler.cs": {
+    "mtime": 1784556458.0974903,
+    "ast_hash": "463ab42b7ce088f30b791028993a7e52",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Agronomist/ProducerLinkHandlers.cs": {
+    "mtime": 1784556458.1770518,
+    "ast_hash": "58698b9c70ebff035ab8f3e3f27cae32",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Agronomist/ReviewDiagnosisHandlers.cs": {
+    "mtime": 1784556458.2686803,
+    "ast_hash": "071ba94da26072ec7fc4ac2c1cdb96d8",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Anomalies/DetectSensorAnomalyHandler.cs": {
+    "mtime": 1784556458.3932664,
+    "ast_hash": "5574331db8ce8d0120c866356349fa51",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Anomalies/GetPivotAnomaliesHandler.cs": {
+    "mtime": 1784556458.486446,
+    "ast_hash": "213b4b2a6f50fd0fc4c49a2f2d0974cb",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Diagnosis/CreatePlantDiagnosisHandler.cs": {
+    "mtime": 1784556458.579027,
+    "ast_hash": "865b516cf05f79ad75e43fba22f892bd",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Diagnosis/DiagnosisHistoryHandlers.cs": {
+    "mtime": 1784556458.6430538,
+    "ast_hash": "b1e82f8b0bf2fb207271cda839c8629d",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Diagnosis/GetPlantDiagnosisHandlers.cs": {
+    "mtime": 1784556458.7493458,
+    "ast_hash": "7323670c18bc7ab22e50883b6b321ca3",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Irrigation/AcceptRejectProposalHandler.cs": {
+    "mtime": 1784556458.8268838,
+    "ast_hash": "8e6fee05965006d97df21f146ec33ace",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Irrigation/GreedyIrrigationScheduler.cs": {
+    "mtime": 1784556458.9040163,
+    "ast_hash": "5115485a63d09de97db253da4211e55e",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Irrigation/ScheduleProposalHandler.cs": {
+    "mtime": 1784556458.9990644,
+    "ast_hash": "967dcf2478f074da8e6c1c729865d7e4",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Ndvi/MonitoredAreaHandlers.cs": {
+    "mtime": 1784597273.1769755,
+    "ast_hash": "468c09ce09d88cabf6940235b2f6c1a1",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Pivots/CreatePivotHandler.cs": {
+    "mtime": 1784556459.0942843,
+    "ast_hash": "3e9c682b63b037822db806482f58401c",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Pivots/DeletePivotHandler.cs": {
+    "mtime": 1784556459.184852,
+    "ast_hash": "4f92625dcb984c353194f4d30084a177",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Pivots/EditPivotHandler.cs": {
+    "mtime": 1784556459.2629087,
+    "ast_hash": "cf7932bab1c1a1b88d8978acd9ece13c",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Pivots/EditPivotLimitsHandler.cs": {
+    "mtime": 1784556459.3745766,
+    "ast_hash": "02a65d78d8310579d3659eed00b4a5d4",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Pivots/GetIrrigationTrendHandler.cs": {
+    "mtime": 1784556459.4486494,
+    "ast_hash": "1a4d73c1d0d9c496cb9f0bcd1d16bd46",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Pivots/GetListPivotHandler.cs": {
+    "mtime": 1784556459.523811,
+    "ast_hash": "3be3cb58e96ac49c3287d8b2835eeb71",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Pivots/GetMoisturePredictionHandler.cs": {
+    "mtime": 1784556459.605333,
+    "ast_hash": "4a6272288ae914905ee2994e02779fb8",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Pivots/GetPivotAIInsightsHandler.cs": {
+    "mtime": 1784556459.7134914,
+    "ast_hash": "e28f5dcabd2121125a696347adbe3605",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Pivots/GetPivotForecastHandler.cs": {
+    "mtime": 1784556459.8238316,
+    "ast_hash": "27ea1f94e6b7667a94caf49ce9cf6004",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Pivots/GetPivotHandler.cs": {
+    "mtime": 1784556459.8988872,
+    "ast_hash": "9eb70e6abbfc3d5c79844005b3076dd7",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Pivots/MoisturePredictionAlgorithm.cs": {
+    "mtime": 1784556459.9624257,
+    "ast_hash": "259b6479442a7012dcd8444a33051efd",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Pivots/PivotLocationValidator.cs": {
+    "mtime": 1784556460.0775647,
+    "ast_hash": "118b77e9e4e322c020c4df9bdf60ca8e",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Reads/CreateDeviceReadHandler.cs": {
+    "mtime": 1784556460.1627102,
+    "ast_hash": "dc4c36178a613f0707580c703236d33e",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Reads/CreateLoRaWanReadHandler.cs": {
+    "mtime": 1784556460.304426,
+    "ast_hash": "e0905aa62a875b1913ade2a0a0f9efeb",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Reads/CreateReadHandler.cs": {
+    "mtime": 1784556460.4115047,
+    "ast_hash": "434e916f93f833f8dd2acf3eb6331691",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Reads/GetListReadBySensorIdHandler.cs": {
+    "mtime": 1784556460.5037243,
+    "ast_hash": "253be6461aa24fd566a619193de2da16",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Reads/GetListReadHandler.cs": {
+    "mtime": 1784556460.5832536,
+    "ast_hash": "33ce4c63bd88024f0ed320c8b1e7e86f",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Reads/GetReadByPivotIdHandler.cs": {
+    "mtime": 1784556460.6753457,
+    "ast_hash": "8307dfde9a5be586c19402f9f639e7a7",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Revenda/GetMyRevendaBillingHandler.cs": {
+    "mtime": 1784597272.6907823,
+    "ast_hash": "29f108dec198cebc688a11dd0a5d2cd8",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Revenda/RevendaInviteHandlers.cs": {
+    "mtime": 1784597272.6907823,
+    "ast_hash": "80c04dd1927e4e9847b4be749b68e4ff",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Revenda/RevendaManagerHandlers.cs": {
+    "mtime": 1784597272.6917815,
+    "ast_hash": "94648bda3ef7663b6a7a6e75265a57f8",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Sensors/CreateSensorHandler.cs": {
+    "mtime": 1784556460.7399356,
+    "ast_hash": "d186b5f75e1021ae42c99b3077dc67b9",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Sensors/DeleteSensorHandler.cs": {
+    "mtime": 1784556460.819483,
+    "ast_hash": "eb6a89ec0a04072c8757b4b1514578a0",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Sensors/EditSensorHandler.cs": {
+    "mtime": 1784556460.8956504,
+    "ast_hash": "35c6b18f88a8b9e7aba5c714531e238c",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Sensors/GetListSensorHandler.cs": {
+    "mtime": 1784556460.9991996,
+    "ast_hash": "78330b2e1941ea4af171df1b641ba61a",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Sensors/GetListSensorHandlerByUserId.cs": {
+    "mtime": 1784556461.0632572,
+    "ast_hash": "ca8033839ef5438571ca80525971f6da",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Sensors/GetSensorHandler.cs": {
+    "mtime": 1784556461.2200024,
+    "ast_hash": "8388eedbf6b788799709047b0d2ce3cd",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Sensors/GetSensorTelemetryHandler.cs": {
+    "mtime": 1784556461.3597088,
+    "ast_hash": "f00bae8afaf76da8e29065f9da454256",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Sensors/SendSensorDownlinkHandler.cs": {
+    "mtime": 1784556461.4237125,
+    "ast_hash": "eeec82b4b34172dbbc90efd9f2ccef19",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Users/CreateUserHandler.cs": {
+    "mtime": 1784556461.5443337,
+    "ast_hash": "30f5e139a6cc18dd7b60543e5b79b2a3",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Users/DeleteUserHandler.cs": {
+    "mtime": 1784556461.621872,
+    "ast_hash": "1becaa614ba1c4f2ad4a4e8be6610731",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Users/EditUserHandler.cs": {
+    "mtime": 1784556461.7495875,
+    "ast_hash": "9e1e9770b3757db9872eecac2c9a9dd2",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Users/EditUserLimitsHandler.cs": {
+    "mtime": 1784556461.854813,
+    "ast_hash": "436d00e6ecd9a8cbc1003d3795eaf896",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Users/ExternalLoginHandler.cs": {
+    "mtime": 1784556461.9954407,
+    "ast_hash": "e3758b7bdbac7790d0619a2090148c8c",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Users/GetToken.cs": {
+    "mtime": 1784556462.1702392,
+    "ast_hash": "c0d4c3ad1aeb99a9ee9226bdd51be809",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Users/GetUserAlertsHandler.cs": {
+    "mtime": 1784597272.6947794,
+    "ast_hash": "794e8d259a8b71df5efbd44c0ab8edfd",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Users/GetUserHandler.cs": {
+    "mtime": 1784556462.3214912,
+    "ast_hash": "cb49f18a2ebdc4d875864cf052ab5343",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Users/MarkAlertsReadHandler.cs": {
+    "mtime": 1784556462.4610536,
+    "ast_hash": "c99251325cef7e997bc1c789ba9e3737",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Users/RegisterExpoPushTokenHandler.cs": {
+    "mtime": 1784556462.5551286,
+    "ast_hash": "51b804d8c3ec45a1fc9270edfb781caf",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/Users/RegisterWebPushSubscriptionHandler.cs": {
+    "mtime": 1784556462.6762002,
+    "ast_hash": "8071af337b18419150694f84c36d487d",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/WaterSources/CreateWaterSourceHandler.cs": {
+    "mtime": 1784556462.774323,
+    "ast_hash": "befd626244913011ccafd0c2ed964264",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/WaterSources/DeleteWaterSourceHandler.cs": {
+    "mtime": 1784556462.879366,
+    "ast_hash": "175172aec2c254702e4bdf011729d021",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/WaterSources/EditWaterSourceHandler.cs": {
+    "mtime": 1784556462.988066,
+    "ast_hash": "3f6d0528e2578ceabe23ea324b0c535c",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/WaterSources/GetListWaterSourceHandler.cs": {
+    "mtime": 1784556463.2529428,
+    "ast_hash": "86be1b19ad1be7dabd10b47925085d37",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Domain/Handlers/WaterSources/GetWaterSourceHandler.cs": {
+    "mtime": 1784556463.3771923,
+    "ast_hash": "c7ed24528170ae3a9367f189ce3c8f4e",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Models/Entities/AgronomistClient.cs": {
+    "mtime": 1784556463.4702368,
+    "ast_hash": "59b63f05d97fd34ffe4864c0362b79af",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Models/Entities/DiagnosisPlan.cs": {
+    "mtime": 1784556463.5484424,
+    "ast_hash": "342648cbce1154bd67884acf84c29968",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Models/Entities/Entity.cs": {
+    "mtime": 1784556463.6450338,
+    "ast_hash": "a4ff57ee4fadc221e4c021f49e43b286",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Models/Entities/IrrigationAlert.cs": {
+    "mtime": 1784556463.7201214,
+    "ast_hash": "a003a14e4f4f6706f2cdd3062dcf4ba6",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Models/Entities/IrrigationProposal.cs": {
+    "mtime": 1784556463.7953205,
+    "ast_hash": "5f39471bc6c6ca09fcb0d26a6cf8052b",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Models/Entities/MonitoredArea.cs": {
+    "mtime": 1784597273.177976,
+    "ast_hash": "3b556dfdef51423104f55a5e73df9c99",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Models/Entities/Pivot.cs": {
+    "mtime": 1784556463.8894548,
+    "ast_hash": "438af52a48bfa75a776be864c9c5d6aa",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Models/Entities/PlantDiagnosis.cs": {
+    "mtime": 1784556463.9830823,
+    "ast_hash": "161f98eacd4c14eed00c21af1406a045",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Models/Entities/PlatformAiSettings.cs": {
+    "mtime": 1784597191.900556,
+    "ast_hash": "b41781a1defa3c2e5f47427a8fc28c51",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Models/Entities/ReadSensor.cs": {
+    "mtime": 1784556464.1703289,
+    "ast_hash": "e9ea2341b4cc2e684cde43dc1fb981b5",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Models/Entities/Revenda.cs": {
+    "mtime": 1784597272.6947794,
+    "ast_hash": "0cf4a7a096f211d8b534379c5b8d55c4",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Models/Entities/RevendaMembership.cs": {
+    "mtime": 1784597272.695779,
+    "ast_hash": "9a6ec7ca7374d18c746ca4e3faa683de",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Models/Entities/Sensor.cs": {
+    "mtime": 1784556464.293964,
+    "ast_hash": "cf4e47f8428085877b305c8c5c630aa1",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Models/Entities/SensorAnomaly.cs": {
+    "mtime": 1784556464.3555896,
+    "ast_hash": "45099cd740157c93d3a0e1ef3f15d809",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Models/Entities/User.cs": {
+    "mtime": 1784597272.695779,
+    "ast_hash": "96d090b9807130ca45c9f3132631569e",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Models/Entities/UserRole.cs": {
+    "mtime": 1784597191.901553,
+    "ast_hash": "6d3785323e7ad3ffa2e7f383b3e8d070",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Models/Entities/WaterSource.cs": {
+    "mtime": 1784556464.494748,
+    "ast_hash": "d7fa09b37a5896b540ae1830b5f938ab",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Models/GeoCoordinate.cs": {
+    "mtime": 1784597273.1789756,
+    "ast_hash": "a97472872474dc80a4fae9f84afbf61e",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Models/Interfaces/IAIInsightsService.cs": {
+    "mtime": 1784556464.5603764,
+    "ast_hash": "f46375507ed7127290002ee476a57dbf",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Models/Interfaces/IAgricultureWeatherService.cs": {
+    "mtime": 1784556464.6970716,
+    "ast_hash": "7af574815a42687d8e900be470c08a7b",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Models/Interfaces/IAlertEmailService.cs": {
+    "mtime": 1784556464.7886155,
+    "ast_hash": "f1dc3a3d3d65e936a73a3e80f6b3a57c",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Models/Interfaces/ICropDiagnosisProvider.cs": {
+    "mtime": 1784556464.8506942,
+    "ast_hash": "0acb837ae9b8a17862a1bf6c207fbe03",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Models/Interfaces/ICurrentUserContext.cs": {
+    "mtime": 1784597191.9025717,
+    "ast_hash": "4d6867f1e21b2b2ef32aa739de6d8b41",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Models/Interfaces/IDiagnosisImageStore.cs": {
+    "mtime": 1784556464.9899087,
+    "ast_hash": "90c1ac094f678b2aa131043fd151d489",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Models/Interfaces/IJwtTokenService.cs": {
+    "mtime": 1784556465.0895236,
+    "ast_hash": "0d5b0b34f863c4fcbc86325fc8497a13",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Models/Interfaces/ILoRaWanDownlinkService.cs": {
+    "mtime": 1784556465.1606917,
+    "ast_hash": "ad2d71268ad84be2969174399cc63467",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Models/Interfaces/INotifier.cs": {
+    "mtime": 1784556465.2227335,
+    "ast_hash": "ea1d5eb9177e14594b3acab807515825",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Models/Interfaces/IPasswordHasher.cs": {
+    "mtime": 1784556465.2868178,
+    "ast_hash": "6005c7a0a158875687725d12b4018b16",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Models/Interfaces/IPushNotificationService.cs": {
+    "mtime": 1784556465.3499572,
+    "ast_hash": "70d047cc149946d2f3f52b3831d9e220",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Models/Interfaces/IWeatherForecastService.cs": {
+    "mtime": 1784556465.425475,
+    "ast_hash": "9442d033f35dc3a05bd3339a3677db67",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Models/WeatherForecast.cs": {
+    "mtime": 1784556465.4885702,
+    "ast_hash": "33225d2fa40d654e72451078363cd35f",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Models/agpDBContext.cs": {
+    "mtime": 1784597338.2342374,
+    "ast_hash": "ea7feed125148658285a384ebde40763",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Notifications/Notification.cs": {
+    "mtime": 1784556465.6427534,
+    "ast_hash": "2d5e64ba9ef8bc59a70932fc1f18a83f",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Notifications/Notificator.cs": {
+    "mtime": 1784556465.7226908,
+    "ast_hash": "3bb5377bbba22988a8f3d727d0aba2e6",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Program.cs": {
+    "mtime": 1784556465.8275373,
+    "ast_hash": "740960e08815400ecb121af56eba8e8c",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Properties/launchSettings.json": {
+    "mtime": 1780321533.4657135,
+    "ast_hash": "03b67097f9f7cbaee9538faf1198b04d",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Services/AIInsights/AIInsightsPromptBuilder.cs": {
+    "mtime": 1784556466.031783,
+    "ast_hash": "9016617bdada0d4d87bb41a8970edef5",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Services/AIInsights/AnthropicInsightsService.cs": {
+    "mtime": 1784556466.1249247,
+    "ast_hash": "a2a17f3c1cfa01d45a9ad3632a0882d8",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Services/AIInsights/GeminiInsightsService.cs": {
+    "mtime": 1784556466.218475,
+    "ast_hash": "82ec3d0579377e17e63a6d4cf43486c2",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Services/AIInsights/IAIInsightsServiceFactory.cs": {
+    "mtime": 1784556466.326174,
+    "ast_hash": "a77a309e17f6bc493028044981d62714",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Services/AIInsights/PivotAIContext.cs": {
+    "mtime": 1784556466.4367392,
+    "ast_hash": "df20288f48be1a4cf57a6debbc8245d0",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Services/CropHealth/CropDiagnosisResult.cs": {
+    "mtime": 1784556466.5794823,
+    "ast_hash": "be4c6e93b4107734f070415715a0f61b",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Services/CropHealth/KindwiseCropHealthService.cs": {
+    "mtime": 1784556466.6375797,
+    "ast_hash": "a2a6f121619c997daee8d2ce3f96f3cb",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Services/CurrentUserContext.cs": {
+    "mtime": 1784597191.9045553,
+    "ast_hash": "2c3108fba5feb18a9dd400871e981fd5",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Services/Diagnosis/DiagnosisAccessService.cs": {
+    "mtime": 1784556466.854263,
+    "ast_hash": "fdb5b51fea8777ff02159b57812c5443",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Services/Diagnosis/DiagnosisBillingService.cs": {
+    "mtime": 1784556466.9645011,
+    "ast_hash": "e882c8abd23162e7f7f6479a494b47d5",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Services/Diagnosis/DiagnosisCostService.cs": {
+    "mtime": 1784556467.0736022,
+    "ast_hash": "23b3dc74a028b408ca56c26291d4925f",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Services/Diagnosis/DiagnosisPdfService.cs": {
+    "mtime": 1784556467.1522713,
+    "ast_hash": "1e15a6e6282ef62bd9dcab516c86b244",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Services/Diagnosis/DiagnosisQuotaService.cs": {
+    "mtime": 1784556467.23387,
+    "ast_hash": "6498b94919266aab48959773cad8073d",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Services/Diagnosis/GridFsDiagnosisImageStore.cs": {
+    "mtime": 1784556467.3204978,
+    "ast_hash": "f4c5cecec4af731457d84962f064ac67",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Services/Diagnosis/ImageContentValidator.cs": {
+    "mtime": 1784556467.432108,
+    "ast_hash": "4961949c5b4a7589ab8196f3c8b4adf7",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Services/Diagnosis/PhytosanitaryReportPromptBuilder.cs": {
+    "mtime": 1784556467.5076618,
+    "ast_hash": "469c467967ee9f018fb8ac916e40e5e9",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Services/Diagnosis/PlantDiagnosisContextBuilder.cs": {
+    "mtime": 1784556467.5842636,
+    "ast_hash": "07c3ae5dfebb0127eb775bf0cdbefa19",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Services/Diagnosis/PlantDiagnosisProcessingService.cs": {
+    "mtime": 1784556467.723441,
+    "ast_hash": "dc1aa49a4c679115224023540465b868",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Services/Diagnosis/ProbabilityFormatter.cs": {
+    "mtime": 1784556467.8462372,
+    "ast_hash": "078fd396ed9a18c9dd78f849816bf7cb",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Services/EmailNormalizer.cs": {
+    "mtime": 1784556468.2997851,
+    "ast_hash": "b688412ede66054d8ccdfd50a6d0bd47",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Services/Email/AlertEmailService.cs": {
+    "mtime": 1784556467.9399335,
+    "ast_hash": "c7a5c58dc1b5759564da195e3763c2d0",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Services/Email/DiagnosisEmailService.cs": {
+    "mtime": 1784556468.0224602,
+    "ast_hash": "5537638717d5a625b75fe283e5c317c6",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Services/Email/EmailTemplates.cs": {
+    "mtime": 1784556468.1421838,
+    "ast_hash": "ef7951becfa442dfe20c0533c048d4b2",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Services/Email/SmtpEmailSender.cs": {
+    "mtime": 1784556468.2041857,
+    "ast_hash": "ad47f4cd9ab469bba306210639a7a715",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Services/Forecast/GoogleWeatherAIForecastService.cs": {
+    "mtime": 1784556468.4224894,
+    "ast_hash": "1db66f975684c71bb4424ae5719ef8a5",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Services/Forecast/OpenMeteoForecastService.cs": {
+    "mtime": 1784556468.5631745,
+    "ast_hash": "bde68d31a7c971bd5de5eae1c7ffb925",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Services/Forecast/WeatherForecastOrchestrator.cs": {
+    "mtime": 1784556468.6222093,
+    "ast_hash": "cff4891f04f5520f9d8e41c7201172b1",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Services/ISensorAnomalyService.cs": {
+    "mtime": 1784556468.737397,
+    "ast_hash": "a048d12a68f5b799cef8d9d1463ea781",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Services/JwtTokenService.cs": {
+    "mtime": 1784597191.9055748,
+    "ast_hash": "288ec437c969ca776a08bf7dd1e24629",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Services/LoRaWan/MqttDownlinkService.cs": {
+    "mtime": 1784556468.9210594,
+    "ast_hash": "f90a9fe746e8f293862c992226ce4d1c",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Services/LoginAttemptService.cs": {
+    "mtime": 1784556468.9946313,
+    "ast_hash": "5721148060f8f39f23c348eec88ebba6",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Services/Ndvi/MonitoredAreaGeometry.cs": {
+    "mtime": 1784597273.180977,
+    "ast_hash": "ce76ab18243f74373f1d92b2504cbea2",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Services/PasswordHasherService.cs": {
+    "mtime": 1784556469.1358507,
+    "ast_hash": "8f13e9123d3d8e0f8f1096d1172ae470",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Services/PushNotifications/CompositePushNotificationService.cs": {
+    "mtime": 1784556469.245426,
+    "ast_hash": "7fe338486a65f02bf64325c915f75fae",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Services/PushNotifications/ExpoPushNotificationService.cs": {
+    "mtime": 1784556469.3401084,
+    "ast_hash": "176ad3d41498afd0ca945f49835604b6",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Services/PushNotifications/WebPushNotificationService.cs": {
+    "mtime": 1784556469.4171112,
+    "ast_hash": "ba38487b06acd0a6f60007e4ff412a16",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Services/Revenda/RevendaBillingService.cs": {
+    "mtime": 1784597272.6977816,
+    "ast_hash": "24bc9f9c94038b4834a320af49a876a7",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Services/Revenda/RevendaMembershipService.cs": {
+    "mtime": 1784597272.6977816,
+    "ast_hash": "36307a7c29d8fcf5bcc1bd38eae8ce04",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Services/SensorAnomalyService.cs": {
+    "mtime": 1784556469.5130203,
+    "ast_hash": "9949ab90a5a4d793bafc11850f4e02b5",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Services/UserRoleMigration.cs": {
+    "mtime": 1784597191.9065557,
+    "ast_hash": "6506e1a0b783c564f082acf1f92c5e8f",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/StarkAgroAPI.csproj": {
+    "mtime": 1784057319.106403,
+    "ast_hash": "818465e551b5a1d54277733e8e3df203",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Validators/EmailAttribute.cs": {
+    "mtime": 1784556469.6536553,
+    "ast_hash": "4dafcb226a8da12133372ae46d7d93bf",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/Validators/PasswordStrengthAttribute.cs": {
+    "mtime": 1784556469.7106836,
+    "ast_hash": "c3128d660896579e03a3a607a441e936",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/appsettings.json": {
+    "mtime": 1784556469.8073478,
+    "ast_hash": "cccef6d9ba0a63ef3ffb8bf4a485e5ed",
+    "semantic_hash": ""
+  },
+  "StarkAgroAPI/appsettings.template.json": {
+    "mtime": 1784556469.8969443,
+    "ast_hash": "13e360d5a902bb7838a3a96cd5025483",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/angular.json": {
+    "mtime": 1784597191.907553,
+    "ast_hash": "558f47da48ee2a7dcac2cd17dc1f0ef4",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/entrypoint.sh": {
+    "mtime": 1784556472.3812864,
+    "ast_hash": "33ab9a91e5d488c564af0116f1644e6f",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/ngsw-config.json": {
+    "mtime": 1782437956.4004588,
+    "ast_hash": "e559511eae1a8956ece7502f99a1132e",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/package.json": {
+    "mtime": 1784597191.9145885,
+    "ast_hash": "13f14712124fb65b08df482685a68ae7",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/proxy.conf.json": {
+    "mtime": 1780321533.5511005,
+    "ast_hash": "fb1fdf9fef0c228d83f593c401839888",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/app-routing.module.ts": {
+    "mtime": 1780321533.5635269,
+    "ast_hash": "584135df2cc59f56d4effce40bbb5717",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/app.component.spec.ts": {
+    "mtime": 1784072515.5730543,
+    "ast_hash": "ca5ef7d88a31bb6f7b4d4023c5ea56db",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/app.component.ts": {
+    "mtime": 1780321533.565893,
+    "ast_hash": "69a3fff26959a97dcf36a5689e31973f",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/app.config.server.ts": {
+    "mtime": 1780321533.565893,
+    "ast_hash": "f2a9e5fc440f9243aff991141476955b",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/app.config.ts": {
+    "mtime": 1782437956.404459,
+    "ast_hash": "23d8133c71e33dad6724c3773ae89af7",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/app.module.ts": {
+    "mtime": 1781305161.7526255,
+    "ast_hash": "fded4423a3a86ef427fa0770b0a386bf",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/app.routes.server.ts": {
+    "mtime": 1780321533.5668993,
+    "ast_hash": "9a7abf4eba3b95d3360462703401eaf3",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/app.routes.ts": {
+    "mtime": 1784597272.6987803,
+    "ast_hash": "5b013d8918fd773f534e37c693b17411",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/admin/ai-settings/admin-ai-settings.component.ts": {
+    "mtime": 1784597191.9175858,
+    "ast_hash": "57c59948d8470b336010b3ec12678e32",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/admin/plans/admin-plans.component.ts": {
+    "mtime": 1784077381.9368622,
+    "ast_hash": "5bd0989eefb02d8ffee8949696194440",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/admin/revendas/admin-revendas.component.ts": {
+    "mtime": 1784597272.7007818,
+    "ast_hash": "62c0e03c3fd7b41dba19fc7a76a57ba8",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/admin/user-form/admin-user-form.component.ts": {
+    "mtime": 1784077495.2644975,
+    "ast_hash": "35f755168f31d3c321a7798eefe834eb",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/admin/user-list/admin-user-list.component.ts": {
+    "mtime": 1782830694.4276416,
+    "ast_hash": "fb1bcdb883782a60eb4bc0b6cece3231",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/agronomist-clients/agronomist-clients.component.ts": {
+    "mtime": 1784057319.4570856,
+    "ast_hash": "1ba8403c4ffce6efa5faebda03b3f0f5",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/agronomist-queue/agronomist-queue.component.ts": {
+    "mtime": 1784057319.4621534,
+    "ast_hash": "b2ba9669e4a70ed9a6ac8d6b3e657b0f",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/agronomist-review/agronomist-review.component.ts": {
+    "mtime": 1784057319.4658015,
+    "ast_hash": "60eec14d91c3e12bc7bfba4808406057",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/agronomist/billing/agronomist-billing.component.ts": {
+    "mtime": 1784078115.164214,
+    "ast_hash": "63629ff6964ac799114196564f038de7",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/dashboard/dashboard.component.ts": {
+    "mtime": 1784057319.4668236,
+    "ast_hash": "91bff3841039b5a6cde498f33f2d8286",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/diagnosis-detail/diagnosis-detail.component.ts": {
+    "mtime": 1784057319.4729059,
+    "ast_hash": "a359b8d4eb8ae4c944251fcf39d2f613",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/diagnosis-list/diagnosis-list.component.ts": {
+    "mtime": 1784057319.475423,
+    "ast_hash": "c63899f6e5447de7befdd979ac346d97",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/diagnosis-new/diagnosis-new.component.ts": {
+    "mtime": 1784057319.475947,
+    "ast_hash": "70e20d32c379d887607aadb44f82d14c",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/global-config/global-config.component.ts": {
+    "mtime": 1783008343.190896,
+    "ast_hash": "57d46e304983deaced5e55e3b1aeea65",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/home/home.component.ts": {
+    "mtime": 1780321533.5718164,
+    "ast_hash": "60acd70269bf8622241c6975cb6bee98",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/irrigation-dashboard/irrigation-dashboard.component.ts": {
+    "mtime": 1782437956.4434743,
+    "ast_hash": "267c2bdab91ed0fe12b9463bbddc76db",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/layout/layout.component.spec.ts": {
+    "mtime": 1784072515.5760534,
+    "ast_hash": "1090592a1e2dbec5ff5f58b59ffd9905",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/layout/layout.component.ts": {
+    "mtime": 1784597272.7027824,
+    "ast_hash": "c6cb4534389679f936e5543fae823a17",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/login/auth-callback.component.ts": {
+    "mtime": 1784597272.7037828,
+    "ast_hash": "54288d0ffcdfbb50df1ca61d89a0b1f6",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/login/login.component.ts": {
+    "mtime": 1784597272.70478,
+    "ast_hash": "3feffda5fdccd2f132ce0e23bcdabd65",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/pivot-config/pivot-config.component.ts": {
+    "mtime": 1780321533.577039,
+    "ast_hash": "acdaa479baefb1d532d5cffae3fdaffd",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/pivot-form/pivot-form.component.ts": {
+    "mtime": 1780321533.5780425,
+    "ast_hash": "75f9e0acd06f2030ca90f304f68321c8",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/pivot-list/pivot-list.component.ts": {
+    "mtime": 1780321533.5800383,
+    "ast_hash": "74c6c84b325fa516a952f9073a755031",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/pivot-location-map/pivot-location-map.component.ts": {
+    "mtime": 1780321533.5810387,
+    "ast_hash": "7ab014ae12156e7f35ad0cf8e5c4e3f5",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/revenda/convites/revenda-convites.component.ts": {
+    "mtime": 1784597272.706781,
+    "ast_hash": "33af6cae7ee9896646dd1706af48502b",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/revenda/faturamento/revenda-faturamento.component.ts": {
+    "mtime": 1784597272.7097802,
+    "ast_hash": "ceeb7b623b15c90e85e24a87678a559a",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/revenda/membros/revenda-membros.component.ts": {
+    "mtime": 1784597272.7117822,
+    "ast_hash": "b2e118e0ad5aa1166d5aa4331087e5fc",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/sensor-form/sensor-form.component.ts": {
+    "mtime": 1784057319.4845555,
+    "ast_hash": "9c2fb4b0b538dc3f55f481ec812b8331",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/sensor-list/sensor-list.component.ts": {
+    "mtime": 1781305161.759643,
+    "ast_hash": "f54b98e5419cfe74edf1bacf77763adb",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/user-form/user-form.component.ts": {
+    "mtime": 1780321533.584039,
+    "ast_hash": "a34cb5144af2d12c79b02dea1e8f894c",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/user-list/user-list.component.ts": {
+    "mtime": 1780321533.585039,
+    "ast_hash": "29ac6576e4b7195ceb0cca8502d59dea",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/guards/admin.guard.ts": {
+    "mtime": 1782830623.4457352,
+    "ast_hash": "3cb83688904fb141ad774c8bc668c541",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/guards/agronomist.guard.ts": {
+    "mtime": 1784057319.4860914,
+    "ast_hash": "e934e231d6866fece4be238885a3f362",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/guards/auth.guard.spec.ts": {
+    "mtime": 1780321533.585039,
+    "ast_hash": "cf236d61373cdfd9f68748f1e2922ee0",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/guards/auth.guard.ts": {
+    "mtime": 1780321533.5860393,
+    "ast_hash": "16660fa22fb258a00ecba44bb8f50707",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/guards/auth.interceptor.spec.ts": {
+    "mtime": 1784072515.5770535,
+    "ast_hash": "dcd15265adb817dfc8ce8b781dd95b1d",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/guards/auth.interceptor.ts": {
+    "mtime": 1780321533.5860393,
+    "ast_hash": "1b25b69273ee2e42fc33847d9288f822",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/guards/reseller.guard.spec.ts": {
+    "mtime": 1784597272.7117822,
+    "ast_hash": "c8d51d45ada3d63dce5c0c6ea4ab1f87",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/guards/reseller.guard.ts": {
+    "mtime": 1784597272.7127817,
+    "ast_hash": "03aac2b66bf174c50c68030340c34199",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/models/admin-user.model.ts": {
+    "mtime": 1784077466.0699599,
+    "ast_hash": "72f5d8bb03252f0be58e1cbb2f2a2f5b",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/models/agronomist-billing.model.ts": {
+    "mtime": 1784078095.6250434,
+    "ast_hash": "dcd8b8aad1d144f538bf958b43ab5e27",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/models/agronomist.model.ts": {
+    "mtime": 1784057319.4876244,
+    "ast_hash": "5af8c56f8cc3466da4425994f0d17fde",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/models/alert.model.ts": {
+    "mtime": 1784597272.7137794,
+    "ast_hash": "de86215f35925673761671467431d681",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/models/anomaly.model.ts": {
+    "mtime": 1781305161.7601428,
+    "ast_hash": "8cf4ea6f43991b947037711e1ff7afe9",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/models/diagnosis-plan.model.ts": {
+    "mtime": 1784077343.5021968,
+    "ast_hash": "e8850261b9368f6fafb04703a3e5470c",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/models/irrigation-trend.model.ts": {
+    "mtime": 1780321533.5870392,
+    "ast_hash": "465ea35633713e1f690d24c8dc53aba9",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/models/moisture-prediction.model.ts": {
+    "mtime": 1781305161.7601428,
+    "ast_hash": "66cc68bd1c8694f1b3cd029d218c475b",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/models/pivot-forecast.model.ts": {
+    "mtime": 1780321533.5870392,
+    "ast_hash": "6c091577c6328268c9c8d17f1a37e35d",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/models/pivot.model.ts": {
+    "mtime": 1780321533.5870392,
+    "ast_hash": "5ce74cd650605f61c7535fd4bd35c83d",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/models/plant-diagnosis.model.ts": {
+    "mtime": 1784057319.4881427,
+    "ast_hash": "dbe2952b42a30ca786b22d9ef6a70837",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/models/platform-ai-settings.model.ts": {
+    "mtime": 1784597191.918586,
+    "ast_hash": "1db7bf0d67d0823b280ac80a4ce455b4",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/models/quadrante.model.ts": {
+    "mtime": 1780321533.5880392,
+    "ast_hash": "17ae8ce995e77c86831910cc5af84501",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/models/read.model.ts": {
+    "mtime": 1781313349.7276816,
+    "ast_hash": "366d6dea757a1cd40cbe7ae33d490de2",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/models/revenda.model.ts": {
+    "mtime": 1784597272.7137794,
+    "ast_hash": "4ddff137f347c7428a5e98ede832d957",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/models/sensor-telemetry.model.ts": {
+    "mtime": 1781305161.7611482,
+    "ast_hash": "c5b01f43871fc9c489e7116ad24e5c85",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/models/sensor.model.ts": {
+    "mtime": 1781534043.3098137,
+    "ast_hash": "28644a499747a4e8e7a37613222e1784",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/models/user.model.ts": {
+    "mtime": 1782857112.0448258,
+    "ast_hash": "80e005ae9844531b2602f593b6379eb1",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/services/admin.service.ts": {
+    "mtime": 1784597272.714782,
+    "ast_hash": "39d80ac66240698dba336fa6c25ad40b",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/services/agronomist.service.ts": {
+    "mtime": 1784078108.1624634,
+    "ast_hash": "0dcb72f17549a1f3c69ddc207a53fbdc",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/services/alert.service.ts": {
+    "mtime": 1780321533.5890386,
+    "ast_hash": "f584fca4f94e04abe0c84bc191ffa797",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/services/api.service.ts": {
+    "mtime": 1781313361.0076437,
+    "ast_hash": "2fa5f9b88fde33112aedfcb591362272",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/services/diagnosis.service.ts": {
+    "mtime": 1784057319.491188,
+    "ast_hash": "f5808aa87e0cc6a296e6600e74a65ed2",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/services/idle-timeout.service.ts": {
+    "mtime": 1780321533.5890386,
+    "ast_hash": "02ae2598764c7ac2c9239fb86dfa38ed",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/services/pivot.service.ts": {
+    "mtime": 1781305161.7626548,
+    "ast_hash": "4fe6c8d07e5a16e052375196c477e71c",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/services/revenda.service.ts": {
+    "mtime": 1784597272.714782,
+    "ast_hash": "4c331537c40b282576be5f56e5307b99",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/services/sensor.service.ts": {
+    "mtime": 1781534043.3098137,
+    "ast_hash": "b840af9fe8607e998600fe8aeeaac931",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/services/trend-analysis.service.spec.ts": {
+    "mtime": 1780321533.5905898,
+    "ast_hash": "bbeeaba8a72e8e9890a419a0d987e87e",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/services/trend-analysis.service.ts": {
+    "mtime": 1780321533.5915956,
+    "ast_hash": "5cdc05c1b802dd1e198e457f59bb8f54",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/services/user.service.ts": {
+    "mtime": 1782857099.1517954,
+    "ast_hash": "842ff80cbf8c162e5cb04e5482a04f9d",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/services/web-push.service.ts": {
+    "mtime": 1783008397.8702722,
+    "ast_hash": "6c594e10b5cb0ab57a3e45641d0681ac",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/utils/markdown.ts": {
+    "mtime": 1784057319.4921935,
+    "ast_hash": "5351582cd5e98b38c9daed6834c0c439",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/environments/environment.prod.ts": {
+    "mtime": 1783003177.8889396,
+    "ast_hash": "d1c3bad9b57bb32bc6b217a20a3e890a",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/environments/environment.ts": {
+    "mtime": 1782437956.44646,
+    "ast_hash": "fc59adee197c7c93b593aa8e9bfb78fe",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/main.server.ts": {
+    "mtime": 1780321533.5960839,
+    "ast_hash": "399f3848a8c9d0b319739c1a4dd280ac",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/main.ts": {
+    "mtime": 1780321533.5960839,
+    "ast_hash": "b5c1d106e573fea21ef1ad9e4360e77a",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/server.ts": {
+    "mtime": 1780321533.5960839,
+    "ast_hash": "1c970d7b5c03fd8f2963486be99a1362",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/tsconfig.app.json": {
+    "mtime": 1780321533.5970898,
+    "ast_hash": "8730c9d418a705428f26475a6f37037c",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/tsconfig.json": {
+    "mtime": 1780321533.5970898,
+    "ast_hash": "dd3c8905847764e8a227c8bbb23ffab6",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/tsconfig.spec.json": {
+    "mtime": 1780321533.5970898,
+    "ast_hash": "fde196cef563197a78958ceaea284638",
+    "semantic_hash": ""
+  },
+  "StarkAgroWorker.Tests/Configuration/MqttSettingsTests.cs": {
+    "mtime": 1784556473.3290799,
+    "ast_hash": "0d08c6b23b338af4d861bd7a29d905de",
+    "semantic_hash": ""
+  },
+  "StarkAgroWorker.Tests/Handlers/CreateReadHandlerTests.cs": {
+    "mtime": 1784556473.405604,
+    "ast_hash": "ff14644e1bb288a7e8540c746c69d44e",
+    "semantic_hash": ""
+  },
+  "StarkAgroWorker.Tests/Helpers/MongoMockHelper.cs": {
+    "mtime": 1784556473.50068,
+    "ast_hash": "b9d54254c8ef9022d2c585bc784fe385",
+    "semantic_hash": ""
+  },
+  "StarkAgroWorker.Tests/Services/IrrigationAlertSchedulerTests.cs": {
+    "mtime": 1784556473.578832,
+    "ast_hash": "5514285ec9256e925f5031a78d6442d1",
+    "semantic_hash": ""
+  },
+  "StarkAgroWorker.Tests/Services/LoRaWanUplinkParserTests.cs": {
+    "mtime": 1784556473.6669097,
+    "ast_hash": "47aca4b29eac94a023c7d31760a103fe",
+    "semantic_hash": ""
+  },
+  "StarkAgroWorker.Tests/Services/MqttClientWrapperTests.cs": {
+    "mtime": 1784556473.7304523,
+    "ast_hash": "f946f757f888aa20ca3c8e7edd7f51dc",
+    "semantic_hash": ""
+  },
+  "StarkAgroWorker.Tests/Services/MqttWorkerServiceTests.cs": {
+    "mtime": 1784556473.8078754,
+    "ast_hash": "0190604f78a9cd7a2577b18e189ff296",
+    "semantic_hash": ""
+  },
+  "StarkAgroWorker.Tests/Services/PlantDiagnosisProcessorTests.cs": {
+    "mtime": 1784556473.8849733,
+    "ast_hash": "b548c353b67d74266a75e33d0d27f7f5",
+    "semantic_hash": ""
+  },
+  "StarkAgroWorker.Tests/Services/WorkerUserContextTests.cs": {
+    "mtime": 1784556473.9770832,
+    "ast_hash": "14de2334cf070c0bcb88ccf05c481f8d",
+    "semantic_hash": ""
+  },
+  "StarkAgroWorker.Tests/StarkAgroWorker.Tests.csproj": {
+    "mtime": 1784556474.0452673,
+    "ast_hash": "37af58e2cc7c9beb61cc67c942b1e737",
+    "semantic_hash": ""
+  },
+  "StarkAgroWorker/Configuration/MqttSettings.cs": {
+    "mtime": 1784556474.1634097,
+    "ast_hash": "e8a924b539d9d75032232a44cb0ef1f5",
+    "semantic_hash": ""
+  },
+  "StarkAgroWorker/Program.cs": {
+    "mtime": 1784597191.9195824,
+    "ast_hash": "99cd73289394242714415245ce744eda",
+    "semantic_hash": ""
+  },
+  "StarkAgroWorker/Services/IMqttClientWrapper.cs": {
+    "mtime": 1784556474.4747932,
+    "ast_hash": "300e0a4e30bbaed15e93fc66ccdc3e65",
+    "semantic_hash": ""
+  },
+  "StarkAgroWorker/Services/IrrigationAlertScheduler.cs": {
+    "mtime": 1784556474.5529244,
+    "ast_hash": "e2bf8ba04119a6a316890c5c11fdea38",
+    "semantic_hash": ""
+  },
+  "StarkAgroWorker/Services/LoRaWanUplinkParser.cs": {
+    "mtime": 1784556474.6344738,
+    "ast_hash": "5c167d1aee31cf731df2bf09ed433861",
+    "semantic_hash": ""
+  },
+  "StarkAgroWorker/Services/MqttClientWrapper.cs": {
+    "mtime": 1784556474.7074153,
+    "ast_hash": "daaff26041ebb758101e8c74ef942b8b",
+    "semantic_hash": ""
+  },
+  "StarkAgroWorker/Services/MqttWorkerService.cs": {
+    "mtime": 1784556474.784655,
+    "ast_hash": "922e306392e0a3ac5b81d1967a9bcce2",
+    "semantic_hash": ""
+  },
+  "StarkAgroWorker/Services/PlantDiagnosisProcessor.cs": {
+    "mtime": 1784556474.8786864,
+    "ast_hash": "a057336f9be8836b03793319bd7f6c21",
+    "semantic_hash": ""
+  },
+  "StarkAgroWorker/Services/WorkerUserContext.cs": {
+    "mtime": 1784597191.920583,
+    "ast_hash": "2540aecbcc2141f0931346dc3539682c",
+    "semantic_hash": ""
+  },
+  "StarkAgroWorker/StarkAgroWorker.csproj": {
+    "mtime": 1784556475.0198503,
+    "ast_hash": "ad98f3c7dbb2fc9e66bfc52c82e391c0",
+    "semantic_hash": ""
+  },
+  "StarkAgroWorker/appsettings.json": {
+    "mtime": 1784556475.1725776,
+    "ast_hash": "43c69daae800dcafbc3323847f9e806c",
+    "semantic_hash": ""
+  },
+  "infra/scripts/install-github-actions-runner.sh": {
+    "mtime": 1784556480.0392787,
+    "ast_hash": "67954a647b857f29e5800b5850ff0f1a",
+    "semantic_hash": ""
+  },
+  "infra/scripts/rotate-jwt-prod.sh": {
+    "mtime": 1784556480.1408534,
+    "ast_hash": "508d514201b73753d01616ae47f6ae4a",
+    "semantic_hash": ""
+  },
+  "infra/scripts/sync-github-actions-ufw-ssh.sh": {
+    "mtime": 1781305161.7806087,
+    "ast_hash": "dbefdc32e7a6839858302573a17a309c",
+    "semantic_hash": ""
+  },
+  "scripts/bootstrap-vps-env.sh": {
+    "mtime": 1784556480.3455226,
+    "ast_hash": "208d50583ed8ed3510d439983c34c5f6",
+    "semantic_hash": ""
+  },
+  "scripts/ci-enforce-line-coverage.sh": {
+    "mtime": 1781305161.7821243,
+    "ast_hash": "2c963eec85c803dfaa90f7734bab3681",
+    "semantic_hash": ""
+  },
+  "scripts/deploy-hostinger-remote.sh": {
+    "mtime": 1784556480.4363105,
+    "ast_hash": "e0ffdd6785d45a997474ab1856e2f7f2",
+    "semantic_hash": ""
+  },
+  "scripts/gen-favicon.js": {
+    "mtime": 1784556480.5364912,
+    "ast_hash": "dda3ca6a9ea89ac52157c6dd42ce80e0",
+    "semantic_hash": ""
+  },
+  "scripts/redeploy-starkcompany.sh": {
+    "mtime": 1784597273.1839762,
+    "ast_hash": "08258aa8e7ffa90dc7cd748b1d6440b8",
+    "semantic_hash": ""
+  },
+  "scripts/resolve-vps-repo-root.sh": {
+    "mtime": 1784556480.6117282,
+    "ast_hash": "23d9f45481cae28c4cfa84d6cf9525db",
+    "semantic_hash": ""
+  },
+  "scripts/vps-deploy-from-actions.sh": {
+    "mtime": 1780321533.63222,
+    "ast_hash": "977298f30dee42497b8bfe8fcd42e7de",
+    "semantic_hash": ""
+  },
+  "terraform/aws/alb.tf": {
+    "mtime": 1780321533.6381702,
+    "ast_hash": "3b5215ebb77cf9469cf05a4d6dee2840",
+    "semantic_hash": ""
+  },
+  "terraform/aws/ecr.tf": {
+    "mtime": 1780321533.639171,
+    "ast_hash": "a1e823f71692a6f5b80db43443f79b33",
+    "semantic_hash": ""
+  },
+  "terraform/aws/ecs.tf": {
+    "mtime": 1780321533.639171,
+    "ast_hash": "b93f3673db63b78e4fc2f1da3399a0e4",
+    "semantic_hash": ""
+  },
+  "terraform/aws/eks/alb-controller.tf": {
+    "mtime": 1780321533.6401713,
+    "ast_hash": "79fbd2bbae8d9b6ac64f365f86cb5214",
+    "semantic_hash": ""
+  },
+  "terraform/aws/eks/data.tf": {
+    "mtime": 1780321533.6401713,
+    "ast_hash": "d305cf1699a93c9a5bb4f40d2645212c",
+    "semantic_hash": ""
+  },
+  "terraform/aws/eks/eks.tf": {
+    "mtime": 1780321533.6411686,
+    "ast_hash": "ff843816f26ce1f8077ad3add1a01f59",
+    "semantic_hash": ""
+  },
+  "terraform/aws/eks/iam.tf": {
+    "mtime": 1780321533.6411686,
+    "ast_hash": "9f2f3a64d5fc61dc60b722c5cf06fbe1",
+    "semantic_hash": ""
+  },
+  "terraform/aws/eks/main.tf": {
+    "mtime": 1780321533.6411686,
+    "ast_hash": "02eddd27825c7673bada2ae668c235f6",
+    "semantic_hash": ""
+  },
+  "terraform/aws/eks/node-group.tf": {
+    "mtime": 1780321533.6421704,
+    "ast_hash": "516d3bdd334c00e35d1cb3223e333bde",
+    "semantic_hash": ""
+  },
+  "terraform/aws/eks/outputs.tf": {
+    "mtime": 1780321533.6421704,
+    "ast_hash": "5c7c0942b81f2d69b91a9dca322161f3",
+    "semantic_hash": ""
+  },
+  "terraform/aws/eks/variables.tf": {
+    "mtime": 1780321533.6421704,
+    "ast_hash": "602d30eb7bed97cfaa33fdd3056b013f",
+    "semantic_hash": ""
+  },
+  "terraform/aws/eks/versions.tf": {
+    "mtime": 1780321533.64317,
+    "ast_hash": "b5546da1250272cf1082c3e44b3d9375",
+    "semantic_hash": ""
+  },
+  "terraform/aws/eks/workloads.tf": {
+    "mtime": 1780321533.64317,
+    "ast_hash": "ecfb68a64cd2d0f2cbed60955d839f91",
+    "semantic_hash": ""
+  },
+  "terraform/aws/iam-policy-terraform.json": {
+    "mtime": 1780321533.64317,
+    "ast_hash": "425dcb177c1117331b782ce9646bf7f5",
+    "semantic_hash": ""
+  },
+  "terraform/aws/iam.tf": {
+    "mtime": 1780321533.6441703,
+    "ast_hash": "5d4d7f7c35721711216f8a0ff60d95c6",
+    "semantic_hash": ""
+  },
+  "terraform/aws/main.tf": {
+    "mtime": 1780321533.6441703,
+    "ast_hash": "7fc5eb45980d5f5544730d70a63f477d",
+    "semantic_hash": ""
+  },
+  "terraform/aws/network.tf": {
+    "mtime": 1780321533.6441703,
+    "ast_hash": "341e661e673dfbacbae7a87bd6fce2f1",
+    "semantic_hash": ""
+  },
+  "terraform/aws/outputs.tf": {
+    "mtime": 1780321533.6441703,
+    "ast_hash": "a2db88d56e597d096090d5662111ae7f",
+    "semantic_hash": ""
+  },
+  "terraform/aws/variables.tf": {
+    "mtime": 1780321533.6451702,
+    "ast_hash": "e484f18244e6227d3e7e050f06e7d062",
+    "semantic_hash": ""
+  },
+  "terraform/aws/versions.tf": {
+    "mtime": 1780321533.6451702,
+    "ast_hash": "d7830d074a0c13820b46d9ed60484df8",
+    "semantic_hash": ""
+  },
+  "terraform/azure/main.tf": {
+    "mtime": 1780321533.6461704,
+    "ast_hash": "8cba09cab8c751611827e955e1e47f32",
+    "semantic_hash": ""
+  },
+  "trend-analysis-mockup.jsx": {
+    "mtime": 1784556480.6847696,
+    "ast_hash": "56a2ac28d5123d51de6721531ec1a53b",
+    "semantic_hash": ""
+  },
+  ".claude/skills/senior-backend-engineer/SKILL.md": {
+    "mtime": 1781305161.6927786,
+    "ast_hash": "0d09265d03cb7b5e7009c874c0a022a5",
+    "semantic_hash": ""
+  },
+  ".claude/skills/senior-frontend-engineer/SKILL.md": {
+    "mtime": 1780321533.3874876,
+    "ast_hash": "e93528d3bbd024b25e0e0aa05518c17b",
+    "semantic_hash": ""
+  },
+  ".claude/skills/software-architect/SKILL.md": {
+    "mtime": 1780321533.3884847,
+    "ast_hash": "367729e187b52a29413df9ce90268ed6",
+    "semantic_hash": ""
+  },
+  ".claude/skills/starkagro-backend-expert/SKILL.md": {
+    "mtime": 1784556433.6477177,
+    "ast_hash": "90aed9631575cd6d1515069054f51053",
+    "semantic_hash": ""
+  },
+  ".claude/skills/starkagro-code-reviewer/SKILL.md": {
+    "mtime": 1784556433.762092,
+    "ast_hash": "4e2dc991b2a343b0e621b18172b52347",
+    "semantic_hash": ""
+  },
+  ".claude/skills/starkagro-feature-planner/SKILL.md": {
+    "mtime": 1784556433.840304,
+    "ast_hash": "41cec43e4ab95faa02a240402c5ea794",
+    "semantic_hash": ""
+  },
+  ".claude/skills/starkagro-implement/SKILL.md": {
+    "mtime": 1784556433.9148471,
+    "ast_hash": "8ba0a116f3a3e6227cd177e2bc0fffae",
+    "semantic_hash": ""
+  },
+  ".claude/skills/starkagro-mongo-setup/SKILL.md": {
+    "mtime": 1784556434.0094779,
+    "ast_hash": "470eab2dee75a91c9be408b07848469c",
+    "semantic_hash": ""
+  },
+  ".claude/skills/starkagro-review/SKILL.md": {
+    "mtime": 1784556434.1175578,
+    "ast_hash": "cab23d50244f678080e21c2f63aa50cf",
+    "semantic_hash": ""
+  },
+  ".claude/skills/starkagro-summarize/SKILL.md": {
+    "mtime": 1784556434.2130914,
+    "ast_hash": "bd50d53d94a333ec60b31cbd51037fd9",
+    "semantic_hash": ""
+  },
+  ".claude/skills/starkagro-test-writer/SKILL.md": {
+    "mtime": 1784556434.2736077,
+    "ast_hash": "ff67831633ad5d83f67effef886fbd1b",
+    "semantic_hash": ""
+  },
+  ".claude/skills/starkagro-test/SKILL.md": {
+    "mtime": 1784556434.349145,
+    "ast_hash": "65049444f934ae25099e3c2edaeb9931",
+    "semantic_hash": ""
+  },
+  ".github/workflows/bootstrap-vps-env.yml": {
+    "mtime": 1784556434.4112492,
+    "ast_hash": "dfb98193235c8b4b92f67cb705be27a8",
+    "semantic_hash": ""
+  },
+  ".github/workflows/bootstrap-vps-runner.yml": {
+    "mtime": 1784556434.4727702,
+    "ast_hash": "fe5302523cbd9928c8b56ef2f1c46ac5",
+    "semantic_hash": ""
+  },
+  ".github/workflows/ci.yml": {
+    "mtime": 1784557917.2410674,
+    "ast_hash": "1ef4e2bb5d58583110a81ded9183f942",
+    "semantic_hash": ""
+  },
+  ".github/workflows/deploy.yml": {
+    "mtime": 1784556434.6309123,
+    "ast_hash": "a560f7955023fb6814b93a5db6ef1e06",
+    "semantic_hash": ""
+  },
+  ".github/workflows/rotate-jwt-prod.yml": {
+    "mtime": 1784556434.73746,
+    "ast_hash": "594eb7b25c6c5c91b8298b60d2b334ac",
+    "semantic_hash": ""
+  },
+  ".github/workflows/worker-logs.yml": {
+    "mtime": 1784597273.1689756,
+    "ast_hash": "090ca2d06cd8a0e204dee89e8d4e032f",
+    "semantic_hash": ""
+  },
+  "CLAUDE.md": {
+    "mtime": 1784597351.5364902,
+    "ast_hash": "96ba29f5e188a5edefe122aeab48c8fb",
+    "semantic_hash": ""
+  },
+  "Commands.txt": {
+    "mtime": 1784556435.0607514,
+    "ast_hash": "597b40a3ea7647a35d0ce31db624e8f7",
+    "semantic_hash": ""
+  },
+  "Documentation.txt": {
+    "mtime": 1784556435.125327,
+    "ast_hash": "d1eebb89ca2a301e26dffc412527013e",
+    "semantic_hash": ""
+  },
+  "README.md": {
+    "mtime": 1784574895.585773,
+    "ast_hash": "7510846c5d16d208783ab88203e97879",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/app.component.html": {
+    "mtime": 1780321533.565893,
+    "ast_hash": "31729744a5a7cb0909b01bce2a386e41",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/admin/ai-settings/admin-ai-settings.component.html": {
+    "mtime": 1784597191.9165864,
+    "ast_hash": "bffb9305b7ae3ac9febce2a552b7c2e2",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/admin/plans/admin-plans.component.html": {
+    "mtime": 1784077396.994186,
+    "ast_hash": "4d61eac9b31aff5d73d815584b75342c",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/admin/revendas/admin-revendas.component.html": {
+    "mtime": 1784597272.7007818,
+    "ast_hash": "451b7a5f589c7da49b8ce06e748abc36",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/admin/user-form/admin-user-form.component.html": {
+    "mtime": 1784077514.5460627,
+    "ast_hash": "c2189d5d37e3afdd82575be6b60f0772",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/admin/user-list/admin-user-list.component.html": {
+    "mtime": 1782830699.7467377,
+    "ast_hash": "9038be35e9f385f663bf721db98d1317",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/agronomist-clients/agronomist-clients.component.html": {
+    "mtime": 1784556472.9111774,
+    "ast_hash": "ff18149c74396c198975846112aa2fbb",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/agronomist-queue/agronomist-queue.component.html": {
+    "mtime": 1784057319.460605,
+    "ast_hash": "03a407eeffbbf6daddda93023c675c94",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/agronomist-review/agronomist-review.component.html": {
+    "mtime": 1784057319.4647965,
+    "ast_hash": "ea211cd9780bc99cb8d3ce091460d491",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/agronomist/billing/agronomist-billing.component.html": {
+    "mtime": 1784078128.791853,
+    "ast_hash": "5167690e56f62c1e7064408eac2ff82c",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/dashboard/dashboard.component.html": {
+    "mtime": 1782942086.0547078,
+    "ast_hash": "756bae2d92a8a36f104cc00859d81ed3",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/diagnosis-detail/diagnosis-detail.component.html": {
+    "mtime": 1784057319.4698827,
+    "ast_hash": "6b5c1fec814b0b5e92858ab8fb8c9c0b",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/diagnosis-list/diagnosis-list.component.html": {
+    "mtime": 1784057319.4744196,
+    "ast_hash": "df50da90278b9f4f1db9898feba34b57",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/diagnosis-new/diagnosis-new.component.html": {
+    "mtime": 1784057319.475947,
+    "ast_hash": "c655373631df8146739000812ca6f007",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/global-config/global-config.component.html": {
+    "mtime": 1784556472.9859161,
+    "ast_hash": "0cced64493db39b3dc046799b0d5bc0f",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/home/home.component.html": {
+    "mtime": 1780321533.5706851,
+    "ast_hash": "f4024d390592c42f132493ec517d7cbf",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/irrigation-dashboard/irrigation-dashboard.component.html": {
+    "mtime": 1782437956.4374597,
+    "ast_hash": "30c4781a12fe8d8f01eae1293369b684",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/layout/layout.component.html": {
+    "mtime": 1784597272.7017817,
+    "ast_hash": "fbb8753d9df9e25b09ac2488ccb802ea",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/login/auth-callback.component.html": {
+    "mtime": 1780321533.575039,
+    "ast_hash": "615c7a90807a3b1e4375e5d4e6b19a93",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/login/login.component.html": {
+    "mtime": 1784556473.1085017,
+    "ast_hash": "ebf56302a7b744e42e409037856e7dbf",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/pivot-config/pivot-config.component.html": {
+    "mtime": 1780321533.576039,
+    "ast_hash": "dc1726b04f77c5f804ae580b5c4d94ff",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/pivot-form/pivot-form.component.html": {
+    "mtime": 1780321533.5780425,
+    "ast_hash": "a2a7104f79fa2607bf2c84b457e6be89",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/pivot-list/pivot-list.component.html": {
+    "mtime": 1780321533.5790386,
+    "ast_hash": "f99395d7b85c7cbe7095fc1a5583095a",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/pivot-location-map/pivot-location-map.component.html": {
+    "mtime": 1780321533.5800383,
+    "ast_hash": "ded03e1a8938fb2e6e52b42c21bb35aa",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/revenda/convites/revenda-convites.component.html": {
+    "mtime": 1784597272.706781,
+    "ast_hash": "9f47daf20b611f280cfa9817734f8613",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/revenda/faturamento/revenda-faturamento.component.html": {
+    "mtime": 1784597272.708783,
+    "ast_hash": "1880078e238421cad68b14b549de6de0",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/revenda/membros/revenda-membros.component.html": {
+    "mtime": 1784597272.710782,
+    "ast_hash": "3d6c8819db4156c435347ab43439cb21",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/sensor-form/sensor-form.component.html": {
+    "mtime": 1784057319.4835494,
+    "ast_hash": "cf79ee6df11b685d9eb9a910d267389b",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/sensor-list/sensor-list.component.html": {
+    "mtime": 1781305161.759143,
+    "ast_hash": "95b7d320644579d856248ddb722f5143",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/user-form/user-form.component.html": {
+    "mtime": 1780321533.584039,
+    "ast_hash": "0182f90ccd7a468c21478aa6f3e6a978",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/app/components/user-list/user-list.component.html": {
+    "mtime": 1780321533.585039,
+    "ast_hash": "b13c5609201024caa4d1b908ea21f666",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/index.html": {
+    "mtime": 1784556473.1709993,
+    "ast_hash": "3d8de11cd5264acfef7d4aea30dd07e8",
+    "semantic_hash": ""
+  },
+  "TestResults3/CoverageReport/Summary.txt": {
+    "mtime": 1784556476.1108644,
+    "ast_hash": "4184b914ac31d7c8001187701d7c9e70",
+    "semantic_hash": ""
+  },
+  "TestResults/CoverageReport/Summary.txt": {
+    "mtime": 1784556475.4844327,
+    "ast_hash": "4e780065991d3fdbb11368491656a9e4",
+    "semantic_hash": ""
+  },
+  "docker/Commands.txt": {
+    "mtime": 1784556476.4931698,
+    "ast_hash": "3cab29c7db28c60b96cdb978107393c4",
+    "semantic_hash": ""
+  },
+  "docker/docker-compose.dev.yml": {
+    "mtime": 1784557924.0847652,
+    "ast_hash": "320d1e98b21111ed048aa0dbfe9974ec",
+    "semantic_hash": ""
+  },
+  "docker/docker-compose.vps.yml": {
+    "mtime": 1784597273.180977,
+    "ast_hash": "f9598a90c5d57c4dc2d9d065bdba3986",
+    "semantic_hash": ""
+  },
+  "docker/docker-compose.yml": {
+    "mtime": 1784557923.2363896,
+    "ast_hash": "eae57b0381ba420cdffbc7d5a622c8f3",
+    "semantic_hash": ""
+  },
+  "docker/mosquitto/certs/README.md": {
+    "mtime": 1784556476.898745,
+    "ast_hash": "184d327c81c04abdc8ca0be387f88739",
+    "semantic_hash": ""
+  },
+  "docs/agent-behavior.md": {
+    "mtime": 1784558053.4688106,
+    "ast_hash": "3fa1dba659d4fb5ac34b86e55d644267",
+    "semantic_hash": ""
+  },
+  "docs/agents/README.md": {
+    "mtime": 1784574888.0703886,
+    "ast_hash": "b0d6aff932ab09b57094d025281be796",
+    "semantic_hash": ""
+  },
+  "docs/agents/ceo-stark/HEARTBEAT.md": {
+    "mtime": 1784574958.2011764,
+    "ast_hash": "e83cda01cdfbe27a696b89c6ea1ebf82",
+    "semantic_hash": ""
+  },
+  "docs/agents/ceo-stark/SOUL.md": {
+    "mtime": 1784574932.2752666,
+    "ast_hash": "852ff680197e2b1b2df13d5b8c3bcfc0",
+    "semantic_hash": ""
+  },
+  "docs/contratacao-time.md": {
+    "mtime": 1784597191.9245875,
+    "ast_hash": "1855ed2d4f9d119469721090ff9792c2",
+    "semantic_hash": ""
+  },
+  "docs/deploy-hostinger.md": {
+    "mtime": 1784558055.2087462,
+    "ast_hash": "602fea9a7fbfb9cc96f64fb61c1e60c5",
+    "semantic_hash": ""
+  },
+  "docs/deploy-starkcompany.md": {
+    "mtime": 1784597273.181976,
+    "ast_hash": "b303feea2c2ebdcddd16fdfd209df540",
+    "semantic_hash": ""
+  },
+  "docs/features/ai-irrigation-insights/plan.md": {
+    "mtime": 1784556478.061329,
+    "ast_hash": "3ce3cb9ee921f94423a4b0719ddbe264",
+    "semantic_hash": ""
+  },
+  "docs/features/anomaly-rain-suppression/plan.md": {
+    "mtime": 1784556478.1560867,
+    "ast_hash": "e0f12ae3b673839e4553d428973970b2",
+    "semantic_hash": ""
+  },
+  "docs/features/edge-anomaly-detection/mqtt-payload.md": {
+    "mtime": 1784556478.2467499,
+    "ast_hash": "2fafe7bd0aa82fe68ee810da432d2f68",
+    "semantic_hash": ""
+  },
+  "docs/features/implement-proxy-reverso/plan.md": {
+    "mtime": 1784556478.3277538,
+    "ast_hash": "a6e949ebefa2109395dfc54ed6cdab40",
+    "semantic_hash": ""
+  },
+  "docs/features/iot-device-read-no-jwt/plan.md": {
+    "mtime": 1784556478.4034922,
+    "ast_hash": "37ec0dda7df9a669d333ef48e3fae4ce",
+    "semantic_hash": ""
+  },
+  "docs/features/laudo-fitossanitario-ia/comercial.html": {
+    "mtime": 1784556478.4825487,
+    "ast_hash": "19c607551aaeb4519e7e5907e50c937e",
+    "semantic_hash": ""
+  },
+  "docs/features/laudo-fitossanitario-ia/plan.md": {
+    "mtime": 1784556478.6022408,
+    "ast_hash": "c1d6bfa254e31f5ec0815fbec92cd36f",
+    "semantic_hash": ""
+  },
+  "docs/features/laudo-fitossanitario-ia/precificacao.html": {
+    "mtime": 1784556478.6832733,
+    "ast_hash": "210a8a3b219209e9b92819b8b41b4dd0",
+    "semantic_hash": ""
+  },
+  "docs/features/lorawan-downlink/gateway-setup.md": {
+    "mtime": 1784556478.7488241,
+    "ast_hash": "235abbe94e4293ee932f5429ea630a7c",
+    "semantic_hash": ""
+  },
+  "docs/features/lorawan-uplink-parser/plan.md": {
+    "mtime": 1784556478.88648,
+    "ast_hash": "6ccdca7c64f152bd59ce997e6db1a7e7",
+    "semantic_hash": ""
+  },
+  "docs/features/mac-address-sensor-code/plan.md": {
+    "mtime": 1784556478.9974036,
+    "ast_hash": "89de8e7122f113f26647f7e0c35d40b4",
+    "semantic_hash": ""
+  },
+  "docs/features/multi-device-push/plan.md": {
+    "mtime": 1784556479.1174648,
+    "ast_hash": "9699b7a31ee56123214fdbffb5d0caaa",
+    "semantic_hash": ""
+  },
+  "docs/features/ndvi-monitored-area/plan.md": {
+    "mtime": 1784597273.1829755,
+    "ast_hash": "300a17e5d15d90aca60e5b326b5633d1",
+    "semantic_hash": ""
+  },
+  "docs/features/pivot-location-map/plan.md": {
+    "mtime": 1784556479.1921036,
+    "ast_hash": "73455098b95edfa563dc214849ff3c53",
+    "semantic_hash": ""
+  },
+  "docs/features/rain-forecast-irrigation/github-comment.md": {
+    "mtime": 1780321533.6283221,
+    "ast_hash": "c984b4e6cbf4ad590748083b35e87ad0",
+    "semantic_hash": ""
+  },
+  "docs/features/rain-forecast-irrigation/plan.md": {
+    "mtime": 1784556479.2581625,
+    "ast_hash": "40e0651885c836075c5da413476f0e0d",
+    "semantic_hash": ""
+  },
+  "docs/features/rain-threshold-configurable/plan.md": {
+    "mtime": 1784556479.3672547,
+    "ast_hash": "865440a992bbb69598f05f78db9cb8f4",
+    "semantic_hash": ""
+  },
+  "docs/features/revenda-billing/plan.md": {
+    "mtime": 1784597272.7157822,
+    "ast_hash": "58e73f1db4c058a38da79155ff60c4fa",
+    "semantic_hash": ""
+  },
+  "docs/features/revenda-entities-admin/plan.md": {
+    "mtime": 1784597272.7167816,
+    "ast_hash": "3f4b8a9150d58fa0962ce866da645514",
+    "semantic_hash": ""
+  },
+  "docs/features/revenda-manager-portal/plan.md": {
+    "mtime": 1784597272.7167816,
+    "ast_hash": "87952dde79dafbf99eef4c5cc7085938",
+    "semantic_hash": ""
+  },
+  "docs/features/revenda-roles-refactor/plan.md": {
+    "mtime": 1784597191.9256063,
+    "ast_hash": "94ce1faeaf4b605d746fb25c6eb5e8b8",
+    "semantic_hash": ""
+  },
+  "docs/features/revenda-ui/plan.md": {
+    "mtime": 1784597272.7177815,
+    "ast_hash": "3cee82a9ab55d5bd79dab5a678c86d4d",
+    "semantic_hash": ""
+  },
+  "docs/features/sensor-anomaly-detection/plan.md": {
+    "mtime": 1784556479.4578574,
+    "ast_hash": "a469b659ef4873aeb1366915539d2ccc",
+    "semantic_hash": ""
+  },
+  "docs/features/sensor-metric-type-telemetry/plan.md": {
+    "mtime": 1784556479.6165853,
+    "ast_hash": "7e357c14e7f9f491e90f559bfed1f1f9",
+    "semantic_hash": ""
+  },
+  "docs/features/trend-analysis-dashboard/plan.md": {
+    "mtime": 1784556479.7081697,
+    "ast_hash": "7a4f413fb1d82c8ac3572a91504738e6",
+    "semantic_hash": ""
+  },
+  "docs/features/user-alerts/plan.md": {
+    "mtime": 1784556479.8467307,
+    "ast_hash": "54f83dc94a0db38b42ae75652ef86658",
+    "semantic_hash": ""
+  },
+  "skills/AZURE-DOCKER-DEPLOY.md": {
+    "mtime": 1780321533.6332264,
+    "ast_hash": "3aefcdb661cf5278c7e5b80fefe9b544",
+    "semantic_hash": ""
+  },
+  "skills/CORS_FIX.md": {
+    "mtime": 1780321533.6332264,
+    "ast_hash": "8dbb1af8f49ac6a0b2b3c58daf09d17c",
+    "semantic_hash": ""
+  },
+  "skills/CORS_TROUBLESHOOTING.md": {
+    "mtime": 1780321533.6332264,
+    "ast_hash": "435f36960a3fcb25334efc8598d58592",
+    "semantic_hash": ""
+  },
+  "skills/DBHUB_SQLSERVER.md": {
+    "mtime": 1780321533.6341636,
+    "ast_hash": "3ff14f6b0ebe8f31c0dd70c284fc1483",
+    "semantic_hash": ""
+  },
+  "skills/IMPLEMENTATION_SUMMARY.md": {
+    "mtime": 1780321533.6341636,
+    "ast_hash": "38704b8fd024d52ced6e513b38c33d37",
+    "semantic_hash": ""
+  },
+  "skills/OAUTH_SETUP.md": {
+    "mtime": 1780321533.6341636,
+    "ast_hash": "82f60d331538ea3c5857b0bf037fa1f7",
+    "semantic_hash": ""
+  },
+  "skills/README.md": {
+    "mtime": 1780321533.6341636,
+    "ast_hash": "ade4862a5a415c7ecf2c47a7b54683f0",
+    "semantic_hash": ""
+  },
+  "skills/SECURITY_SETUP.md": {
+    "mtime": 1781305161.7836316,
+    "ast_hash": "b7d39f1e856c95dcdff696c95a6643d7",
+    "semantic_hash": ""
+  },
+  "skills/agents.md": {
+    "mtime": 1780321533.6351702,
+    "ast_hash": "0b7a68edbc9a5f78dbdefa19d3c4db08",
+    "semantic_hash": ""
+  },
+  "skills/senior-backend-engineer/SKILL.md": {
+    "mtime": 1781305161.7836316,
+    "ast_hash": "0d09265d03cb7b5e7009c874c0a022a5",
+    "semantic_hash": ""
+  },
+  "skills/senior-frontend-engineer/SKILL.md": {
+    "mtime": 1780321533.6361701,
+    "ast_hash": "e93528d3bbd024b25e0e0aa05518c17b",
+    "semantic_hash": ""
+  },
+  "skills/software-architect/SKILL.md": {
+    "mtime": 1780321533.6361701,
+    "ast_hash": "367729e187b52a29413df9ce90268ed6",
+    "semantic_hash": ""
+  },
+  "terraform/aws/README.md": {
+    "mtime": 1780321533.6381702,
+    "ast_hash": "822af4173ed443d3c0317eb072847924",
+    "semantic_hash": ""
+  },
+  "terraform/aws/eks/README.md": {
+    "mtime": 1780321533.6401713,
+    "ast_hash": "199e7d9efbbe994d6dddc2377fcd3b19",
+    "semantic_hash": ""
+  },
+  "test_write.txt": {
+    "mtime": 1780321533.6461704,
+    "ast_hash": "9f06243abcb89c70e0c331c61d871fa7",
+    "semantic_hash": ""
+  },
+  "docs/features/laudo-fitossanitario-ia/StarkAgro-Estudo-de-Precificacao.pdf": {
+    "mtime": 1784072515.5810523,
+    "ast_hash": "03f0b0026719dfa21dff8642142c20e8",
+    "semantic_hash": ""
+  },
+  "docs/features/laudo-fitossanitario-ia/StarkAgro-Laudo-Fitossanitario-IA.pdf": {
+    "mtime": 1784057319.502789,
+    "ast_hash": "e07b7fd48b1ae71f6cb34b4ea9b36add",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/public/avatar.jpg": {
+    "mtime": 1780321533.5541005,
+    "ast_hash": "671207a1b17c02fa56956bd1116282ed",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/public/favicon.svg": {
+    "mtime": 1781305161.7521255,
+    "ast_hash": "6d025f32bd1285471f8699eb0098f73d",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/assets/avatar.jpg": {
+    "mtime": 1780321533.594594,
+    "ast_hash": "671207a1b17c02fa56956bd1116282ed",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/assets/icons/apple-touch-icon.png": {
+    "mtime": 1782999298.9080248,
+    "ast_hash": "ca56c439e91bee78e8d02a25147a0de9",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/assets/icons/icon-192x192.png": {
+    "mtime": 1782999298.9105375,
+    "ast_hash": "da0e8acec4d30f952d17a3b6e1ef75eb",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/assets/icons/icon-512x512.png": {
+    "mtime": 1782999298.9165816,
+    "ast_hash": "57cd1ca8506f63d8e649f3f7d369c074",
+    "semantic_hash": ""
+  },
+  "StarkAgroUI/src/assets/icons/icon-72x72.png": {
+    "mtime": 1782999298.9040027,
+    "ast_hash": "c83db3566b6ac9f580be3777b817a3cf",
+    "semantic_hash": ""
+  }
+}

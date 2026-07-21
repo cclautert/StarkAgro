@@ -1,0 +1,35 @@
+<div class="container">
+  <div class="page-header">
+    <h1 class="page-title">🛰️ Áreas NDVI</h1>
+    <button class="btn-add" [routerLink]="['/areas/novo']">+ Nova Área</button>
+  </div>
+
+  <p class="loading-text" *ngIf="loading">Carregando áreas...</p>
+  <p class="error-text" *ngIf="error && !loading">Não foi possível carregar as áreas.</p>
+
+  <div class="area-grid" *ngIf="!loading && !error">
+    <div class="area-card" *ngFor="let area of areas">
+      <div class="area-card-head">
+        <span class="area-name">{{ area.name }}</span>
+        <span class="badge" [class.badge-on]="area.monitoringEnabled" [class.badge-off]="!area.monitoringEnabled">
+          {{ area.monitoringEnabled ? 'Monitorando' : 'Pausada' }}
+        </span>
+      </div>
+      <div class="area-card-body">
+        <span class="area-meta" *ngIf="area.crop">🌱 {{ area.crop }}</span>
+        <span class="area-meta">📐 {{ kindLabel(area.areaKind) }}</span>
+        <span class="area-meta" *ngIf="area.lastAcquisitionDate">📅 Última passagem: {{ area.lastAcquisitionDate }}</span>
+        <span class="area-meta area-meta-muted" *ngIf="!area.lastAcquisitionDate">Sem passagem ainda</span>
+      </div>
+      <div class="area-card-actions">
+        <button class="btn-action btn-detail" (click)="detail(area.id)">Detalhe</button>
+        <button class="btn-action btn-edit" (click)="edit(area.id)">Editar</button>
+        <button class="btn-action btn-delete" (click)="remove(area)">Excluir</button>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="areas.length === 0">
+      <span>Nenhuma área cadastrada. Crie a primeira para acompanhar o NDVI.</span>
+    </div>
+  </div>
+</div>
