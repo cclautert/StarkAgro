@@ -112,6 +112,19 @@ namespace StarkAgroAPI.Domain.Handlers.Ndvi
                 return null;
             }
 
+            // Teto de áreas por usuário (config admin; 0 = ilimitado). Guarda o custo de PU na origem.
+            var settings = await _dbContext.PlatformAiSettings.Find(x => x.Id == 1).FirstOrDefaultAsync(cancellationToken);
+            var cap = settings?.NdviMaxAreasPerUser ?? 0;
+            if (cap > 0)
+            {
+                var owned = await _dbContext.MonitoredAreas.CountDocumentsAsync(a => a.UserId == userId, cancellationToken: cancellationToken);
+                if (owned >= cap)
+                {
+                    _notifier.Handle(new Notification($"Limite de {cap} áreas monitoradas por usuário atingido."));
+                    return null;
+                }
+            }
+
             var now = DateTime.UtcNow;
             var area = new MonitoredArea
             {

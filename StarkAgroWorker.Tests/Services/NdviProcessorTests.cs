@@ -29,10 +29,13 @@ namespace StarkAgroWorker.Tests.Services
             bool enabled,
             List<MonitoredArea> claimed,
             NdviFetchOutcome? outcome = null,
-            List<MonitoredArea>? stuck = null)
+            List<MonitoredArea>? stuck = null,
+            int budgetCents = 0,
+            int monthCostCents = 0)
         {
             var settingsCol = new Mock<IMongoCollection<PlatformAiSettings>>();
-            MongoMockHelper.SetupFindList(settingsCol, [new PlatformAiSettings { Id = 1, Sentinel2Enabled = enabled }]);
+            MongoMockHelper.SetupFindList(settingsCol,
+                [new PlatformAiSettings { Id = 1, Sentinel2Enabled = enabled, NdviMonthlyBudgetCents = budgetCents }]);
 
             var areas = new Mock<IMongoCollection<MonitoredArea>>();
             var queue = new Queue<MonitoredArea>(claimed);
@@ -59,9 +62,14 @@ namespace StarkAgroWorker.Tests.Services
             fetch.Setup(f => f.FetchAsync(It.IsAny<MonitoredArea>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(outcome ?? new NdviFetchOutcome(NdviFetchStatus.Success, MaxAcquisitionDate: "2026-06-10"));
 
+            var costService = new Mock<INdviCostService>();
+            costService.Setup(c => c.GetCurrentMonthCostCentsAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(monthCostCents);
+
             var services = new ServiceCollection();
             services.AddScoped(_ => db.Object);
             services.AddScoped(_ => fetch.Object);
+            services.AddScoped(_ => costService.Object);
 
             return new Harness
             {
@@ -88,6 +96,29 @@ namespace StarkAgroWorker.Tests.Services
                 It.IsAny<FilterDefinition<MonitoredArea>>(), It.IsAny<UpdateDefinition<MonitoredArea>>(),
                 It.IsAny<FindOneAndUpdateOptions<MonitoredArea, MonitoredArea>>(), It.IsAny<CancellationToken>()), Times.Never);
             h.Fetch.Verify(f => f.FetchAsync(It.IsAny<MonitoredArea>(), It.IsAny<CancellationToken>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task RunAsync_BudgetHit_DoesNotClaim()
+        {
+            var h = Build(enabled: true, claimed: [Area(1)], budgetCents: 100, monthCostCents: 100); // custo >= teto
+
+            await h.Processor.RunAsync(CancellationToken.None);
+
+            h.Areas.Verify(c => c.FindOneAndUpdateAsync(
+                It.IsAny<FilterDefinition<MonitoredArea>>(), It.IsAny<UpdateDefinition<MonitoredArea>>(),
+                It.IsAny<FindOneAndUpdateOptions<MonitoredArea, MonitoredArea>>(), It.IsAny<CancellationToken>()), Times.Never);
+            h.Fetch.Verify(f => f.FetchAsync(It.IsAny<MonitoredArea>(), It.IsAny<CancellationToken>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task RunAsync_UnderBudget_ClaimsNormally()
+        {
+            var h = Build(enabled: true, claimed: [Area(1)], budgetCents: 100, monthCostCents: 50); // custo < teto
+
+            await h.Processor.RunAsync(CancellationToken.None);
+
+            h.Fetch.Verify(f => f.FetchAsync(It.IsAny<MonitoredArea>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]

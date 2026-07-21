@@ -117,6 +117,8 @@ var builder = Host.CreateDefaultBuilder(args)
             sp.GetRequiredService<StarkAgroAPI.Services.Ndvi.CdseProcessService>());
         services.AddScoped<StarkAgroAPI.Models.Interfaces.INdviOverlayStore,
             StarkAgroAPI.Services.Ndvi.GridFsNdviOverlayStore>();
+        services.AddScoped<StarkAgroAPI.Services.Ndvi.INdviCostService,
+            StarkAgroAPI.Services.Ndvi.NdviCostService>();
         services.AddScoped<StarkAgroAPI.Services.Ndvi.INdviFetchService,
             StarkAgroAPI.Services.Ndvi.NdviFetchService>();
 

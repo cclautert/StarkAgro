@@ -34,7 +34,9 @@ namespace StarkAgroAPI.Domain.Handlers.Admin
                 CdseClientId = request.CdseClientId,
                 CdseClientSecret = request.CdseClientSecret,
                 Sentinel2Enabled = request.Sentinel2Enabled,
-                NdviCostCents = request.NdviCostCents
+                NdviCostCents = request.NdviCostCents,
+                NdviMonthlyBudgetCents = request.NdviMonthlyBudgetCents,
+                NdviMaxAreasPerUser = request.NdviMaxAreasPerUser
             };
 
             await _dbContext.PlatformAiSettings.ReplaceOneAsync(
