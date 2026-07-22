@@ -40,8 +40,12 @@ namespace StarkAgroAPI.Services.Ndvi
         // de resolução nativa — teto controla o custo de Processing Units da renderização.
         private const int MaxDimension = 512;
 
-        // Evalscript v3: NDVI colorizado (vermelho→amarelo→verde) com alpha; nuvem/no-data → transparente.
-        public const string Evalscript = """
+        /// <summary>
+        /// Evalscript v3: NDVI colorizado com alpha; nuvem/no-data → transparente. O <c>ramp()</c>
+        /// é <b>gerado</b> a partir de <see cref="NdviClassification"/>, não escrito à mão: as cores
+        /// do PNG e as da legenda saem da mesma lista, então um corte novo move as duas juntas.
+        /// </summary>
+        public static readonly string Evalscript = $$"""
             //VERSION=3
             function setup() {
               return {
@@ -49,13 +53,7 @@ namespace StarkAgroAPI.Services.Ndvi
                 output: { bands: 4 }
               };
             }
-            function ramp(ndvi) {
-              if (ndvi < 0.0) return [0.65, 0.65, 0.65];
-              if (ndvi < 0.2) return [0.85, 0.30, 0.20];
-              if (ndvi < 0.4) return [0.95, 0.75, 0.30];
-              if (ndvi < 0.6) return [0.75, 0.90, 0.35];
-              return [0.15, 0.65, 0.20];
-            }
+            {{NdviClassification.BuildRampFunction()}}
             function evaluatePixel(s) {
               let cloud = (s.SCL === 3 || s.SCL === 8 || s.SCL === 9 || s.SCL === 10);
               if (s.dataMask === 0 || cloud) return [0, 0, 0, 0];

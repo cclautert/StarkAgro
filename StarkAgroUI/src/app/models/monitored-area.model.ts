@@ -40,6 +40,22 @@ export interface AreaRequest {
   ring: GeoCoordinate[];
 }
 
+/**
+ * Fatia da área num nível de biomassa. Rótulo, cor e faixa vêm do servidor de propósito: a
+ * tabela de cores mora só em NdviClassification.cs, que também colore o PNG do overlay —
+ * duplicá-la aqui faria a legenda divergir do mapa no primeiro ajuste de threshold.
+ */
+export interface NdviClassShare {
+  key: string;
+  label: string;
+  color: string;
+  minNdvi: number;
+  maxNdvi: number;
+  pixelCount: number;
+  /** Percentual da área válida da passagem (0-100). */
+  percent: number;
+}
+
 export interface NdviTrendPoint {
   readingId: number;
   acquisitionDate: string;
@@ -48,6 +64,8 @@ export interface NdviTrendPoint {
   ndviMax: number;
   cloudCoveragePct: number;
   cloudRejected: boolean;
+  /** Vazio em passagem nublada ou anterior à classificação — a tela esconde o painel. */
+  classes?: NdviClassShare[];
   /** ReadingId do overlay quando há PNG; null → não desenhar overlay. */
   overlayReadingId?: number | null;
   /** [minLng, minLat, maxLng, maxLat] para posicionar o L.imageOverlay. */

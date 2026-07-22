@@ -15,7 +15,15 @@ namespace StarkAgroAPI.Services.Ndvi
         double Max,
         double Stdev,
         long ValidSampleCount,
-        double CloudPct);
+        double CloudPct)
+    {
+        /// <summary>
+        /// Pixels por classe de <see cref="NdviClassification"/>, na ordem de
+        /// <see cref="NdviClassification.Classes"/>. Vem do histograma da <b>mesma</b> requisição
+        /// Statistical (sem Processing Unit extra). Vazio quando a resposta não trouxe histograma.
+        /// </summary>
+        public IReadOnlyList<long> ClassCounts { get; init; } = [];
+    }
 
     /// <summary>
     /// Statistical API da CDSE (Sentinel Hub): série de estatísticas de NDVI sobre o polígono da
@@ -128,6 +136,19 @@ namespace StarkAgroAPI.Services.Ndvi
                     evalscript = Evalscript,
                     resx = 10,
                     resy = 10
+                },
+                // Histograma por classe de biomassa na MESMA requisição: a contagem de pixels por
+                // faixa de NDVI sai sem Processing Unit extra. "ndvi" é o id do output do
+                // evalscript; "default" vale para todas as bandas dele (aqui só B0).
+                calculations = new
+                {
+                    ndvi = new
+                    {
+                        histograms = new
+                        {
+                            @default = new { bins = NdviClassification.HistogramBins }
+                        }
+                    }
                 }
             };
 
@@ -162,10 +183,43 @@ namespace StarkAgroAPI.Services.Ndvi
                 var (mean, min, max, stdev, sampleCount, noData) = stats.Value;
                 var valid = Math.Max(0, sampleCount - noData);
                 var cloudPct = sampleCount > 0 ? 100.0 * noData / sampleCount : 100.0;
-                result.Add(new NdviStat(date, mean, min, max, stdev, valid, cloudPct));
+                result.Add(new NdviStat(date, mean, min, max, stdev, valid, cloudPct)
+                {
+                    ClassCounts = ParseHistogram(interval)
+                });
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Contagem de pixels por classe a partir de <c>outputs.ndvi.bands.B0.histogram.bins</c>.
+        /// Defensivo como o resto do parser: histograma ausente — ou com número de bins diferente
+        /// do de <see cref="NdviClassification.Classes"/> — devolve lista vazia em vez de dado
+        /// desalinhado, e a tela cai no fallback de "sem classificação".
+        /// </summary>
+        public static IReadOnlyList<long> ParseHistogram(JsonElement interval)
+        {
+            if (!interval.TryGetProperty("outputs", out var outputs)
+                || !outputs.TryGetProperty("ndvi", out var ndvi)
+                || !ndvi.TryGetProperty("bands", out var bands)
+                || !bands.TryGetProperty("B0", out var b0)
+                || !b0.TryGetProperty("histogram", out var histogram)
+                || !histogram.TryGetProperty("bins", out var bins)
+                || bins.ValueKind != JsonValueKind.Array
+                || bins.GetArrayLength() != NdviClassification.Classes.Count)
+            {
+                return [];
+            }
+
+            var counts = new List<long>(NdviClassification.Classes.Count);
+            foreach (var bin in bins.EnumerateArray())
+            {
+                counts.Add(bin.TryGetProperty("count", out var c) && c.ValueKind == JsonValueKind.Number
+                    ? c.GetInt64()
+                    : 0);
+            }
+            return counts;
         }
 
         private static (double mean, double min, double max, double stdev, long sampleCount, long noData)? TryGetStats(JsonElement interval)
