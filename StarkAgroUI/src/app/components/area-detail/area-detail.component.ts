@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, OnDestroy, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { ChartConfiguration } from 'chart.js';
@@ -15,8 +15,19 @@ import { addBaseLayers, applyDefaultMarkerIcon } from '../../utils/leaflet-basem
   standalone: true,
   imports: [CommonModule, RouterModule, BaseChartDirective]
 })
-export class AreaDetailComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChild('mapContainer', { static: false }) mapContainer!: ElementRef<HTMLDivElement>;
+export class AreaDetailComponent implements OnInit, OnDestroy {
+  // O #mapContainer vive dentro do *ngIf="area && !error": quando o ngAfterViewInit roda, a
+  // área ainda está vindo por HTTP e o div não existe — o ViewChild vinha undefined e o
+  // L.map() estourava dentro de um método async, virando unhandled rejection silenciosa (mapa
+  // em branco, sem nem os controles de zoom). O setter dispara no instante em que o div entra
+  // no DOM. O #polygonMap do area-form não sofre disso porque usa [hidden], não *ngIf.
+  private mapContainer?: ElementRef<HTMLDivElement>;
+
+  @ViewChild('mapContainer')
+  set mapContainerRef(ref: ElementRef<HTMLDivElement> | undefined) {
+    this.mapContainer = ref;
+    if (ref) void this.ensureMap();
+  }
 
   id!: number;
   area?: MonitoredArea;
@@ -29,6 +40,7 @@ export class AreaDetailComponent implements OnInit, AfterViewInit, OnDestroy {
   private map: any | null = null;
   private leaflet: any | null = null;
   private mapReady = false;
+  private mapInit: Promise<void> | null = null;
   private overlayUrl?: string;
 
   chartData: ChartConfiguration<'line'>['data'] = { labels: [], datasets: [] };
@@ -109,20 +121,27 @@ export class AreaDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     };
   }
 
-  async ngAfterViewInit(): Promise<void> {
-    if (!isPlatformBrowser(this.platformId)) return;
+  /** Cria o mapa assim que o container existe no DOM. Idempotente. */
+  private ensureMap(): Promise<void> {
+    if (!isPlatformBrowser(this.platformId) || !this.mapContainer) return Promise.resolve();
+    if (!this.mapInit) this.mapInit = this.initMap();
+    return this.mapInit;
+  }
 
+  private async initMap(): Promise<void> {
     const leafletModule = await import('leaflet');
     const L: any = (leafletModule as any).default ?? leafletModule;
     this.leaflet = L;
 
     applyDefaultMarkerIcon(L);
 
-    this.map = L.map(this.mapContainer.nativeElement).setView([-29.7, -53.7], 13);
+    this.map = L.map(this.mapContainer!.nativeElement).setView([-29.7, -53.7], 13);
     addBaseLayers(L, this.map);
 
     this.mapReady = true;
     setTimeout(() => this.map?.invalidateSize(), 0);
+    // A área e a tendência podem ter chegado antes do mapa existir — nesse caso os dois
+    // renders abaixo bateram no guard de mapReady e não desenharam nada. Refaz agora.
     this.renderGeometry();
     this.renderOverlay();
   }
@@ -168,6 +187,8 @@ export class AreaDetailComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.map) { this.map.remove(); this.map = null; }
     this.leaflet = null;
+    this.mapInit = null;
+    this.mapReady = false;
     if (this.overlayUrl) URL.revokeObjectURL(this.overlayUrl);
   }
 }
