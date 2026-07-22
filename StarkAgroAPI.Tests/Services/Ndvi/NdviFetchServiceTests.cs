@@ -203,6 +203,28 @@ namespace StarkAgroAPI.Tests.Services.Ndvi
         }
 
         [Fact]
+        public async Task Fetch_PassagemNublada_NaoGravaClassCountsZerados()
+        {
+            // O histograma de uma passagem nublada volta com as seis classes em zero. Gravar isso
+            // faria o gráfico de composição despencar a 0% em todas as faixas — um vale que parece
+            // perda de vigor. Nublada tem que ser buraco na série, não distribuição vazia.
+            var stats = new List<NdviStat>
+            {
+                new(new DateTime(2026, 6, 8, 0, 0, 0, DateTimeKind.Utc), 0, 0, 0, 0, 0, 100)
+                {
+                    ClassCounts = [0, 0, 0, 0, 0, 0]
+                }
+            };
+            var d = Build(Enabled(), token: "t", stats: stats);
+
+            await d.Svc.FetchAsync(Area(), CancellationToken.None);
+
+            d.Readings.Verify(c => c.InsertOneAsync(
+                It.Is<NdviReading>(r => r.CloudRejected && r.ClassCounts.Count == 0),
+                It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
         public async Task Fetch_CloudyPass_GravaCloudRejected()
         {
             var stats = new List<NdviStat>

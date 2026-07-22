@@ -96,7 +96,10 @@ namespace StarkAgroAPI.Services.Ndvi
                     NdviStdev = s.Stdev,
                     CloudCoveragePct = s.CloudPct,
                     CloudRejected = cloudRejected,
-                    ClassCounts = ToClassCounts(s.ClassCounts),
+                    // Passagem nublada não tem distribuição: o histograma vem com as seis classes
+                    // zeradas. Gravar isso faria o gráfico despencar a 0% em vez de abrir um
+                    // buraco — o talhão pareceria ter virado solo exposto de um dia para o outro.
+                    ClassCounts = cloudRejected ? [] : ToClassCounts(s.ClassCounts),
                     NdviCostCents = settings.NdviCostCents,
                     CreatedAt = now
                 };

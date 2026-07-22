@@ -166,9 +166,10 @@ export class AreaDetailComponent implements OnInit, OnDestroy {
    * payload — nunca hardcoded aqui, senão divergem do PNG.
    */
   private buildClassChart(): void {
-    // A referência de classes é a passagem mais recente que tem classificação: passagens
-    // antigas (pré-feature) e nubladas vêm com a lista vazia.
-    const reference = [...this.points].reverse().find(p => p.classes?.length)?.classes;
+    // A referência de classes é a passagem mais recente que tem classificação COM pixel válido:
+    // passagens antigas (pré-feature) vêm sem lista, e nubladas podem vir com tudo zerado.
+    const reference = [...this.points].reverse().find(p =>
+      !p.cloudRejected && p.classes?.length && p.classes.some(c => c.pixelCount > 0))?.classes;
     this.hasClasses = !!reference;
     if (!reference) {
       this.classChartData = { labels: [], datasets: [] };
@@ -181,9 +182,13 @@ export class AreaDetailComponent implements OnInit, OnDestroy {
         label: cls.label,
         // Passagem sem classificação vira buraco honesto, igual ao gráfico de média — não
         // uma faixa que despenca a zero e sugere que o talhão virou solo exposto.
+        // Nublada conta como sem classificação mesmo que venha com as classes zeradas:
+        // 0% em todas as faixas desenha um vale que parece perda de vigor e não é.
         data: this.points.map(p => {
+          if (p.cloudRejected) return null;
           const share = p.classes?.find(c => c.key === cls.key);
-          return share ? round2(share.percent) : null;
+          const total = (p.classes ?? []).reduce((sum, c) => sum + c.pixelCount, 0);
+          return share && total > 0 ? round2(share.percent) : null;
         }),
         borderColor: cls.color,
         backgroundColor: cls.color,
