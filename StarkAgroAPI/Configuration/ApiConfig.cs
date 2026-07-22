@@ -90,6 +90,14 @@ namespace StarkAgroAPI.Configuration
             services.AddScoped<Services.Ndvi.INdviCostService, Services.Ndvi.NdviCostService>();
             services.AddScoped<Services.Ndvi.INdviFetchService, Services.Ndvi.NdviFetchService>();
 
+            // NASA FIRMS (focos de calor) — API gratuita, zero PU.
+            services.AddHttpClient<Services.Fire.FirmsHotspotService>(client =>
+            {
+                client.BaseAddress = new Uri("https://firms.modaps.eosdis.nasa.gov/");
+            });
+            services.AddScoped<Services.Fire.IFirmsHotspotService>(sp =>
+                sp.GetRequiredService<Services.Fire.FirmsHotspotService>());
+
             services.AddSingleton<ILoRaWanDownlinkService, MqttDownlinkService>();
 
             services.AddHttpClient("expo_push", client =>

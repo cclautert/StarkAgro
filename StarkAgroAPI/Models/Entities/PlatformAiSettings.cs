@@ -72,5 +72,22 @@ namespace StarkAgroAPI.Models.Entities
         /// configuração existir). O admin liga sem redeploy.
         /// </summary>
         public int NdviMaxAreasPerUser { get; set; } = 0;
+
+        // ── Fire Shield (NASA FIRMS) ──
+
+        /// <summary>MAP_KEY do FIRMS (gratuito). Sem ela o worker de fogo não busca nada.</summary>
+        public string? FirmsMapKey { get; set; }
+
+        /// <summary>
+        /// Kill-switch do alerta de foco de calor. Desligado, o <c>FireWatchProcessor</c> não faz
+        /// nenhuma chamada externa. Custo é <b>zero</b> (FIRMS é gratuito) — é um freio de ruído/
+        /// rate-limit, não de dinheiro.
+        /// </summary>
+        public bool FireAlertsEnabled { get; set; } = false;
+
+        /// <summary>
+        /// Raio (km) ao redor da área em que um foco vira alerta. Default 10; o deck oferece 0,5–20.
+        /// </summary>
+        public int FireAlertRadiusKm { get; set; } = 10;
     }
 }

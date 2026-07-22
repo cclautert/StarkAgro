@@ -32,6 +32,9 @@ namespace StarkAgroAPI.Domain.Commands.Requests.Admin
         public string? CdseClientSecret { get; set; }
         public bool Sentinel2Enabled { get; set; }
         public bool ExtraIndicesEnabled { get; set; }
+        public string? FirmsMapKey { get; set; }
+        public bool FireAlertsEnabled { get; set; }
+        public int FireAlertRadiusKm { get; set; }
 
         [Range(0, 100000, ErrorMessage = "NdviCostCents deve estar entre 0 e 100000.")]
         public int NdviCostCents { get; set; } = 1;

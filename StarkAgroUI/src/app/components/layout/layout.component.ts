@@ -112,7 +112,8 @@ export class LayoutComponent implements OnInit, OnDestroy {
       MoistureLow: 'Umidade baixa',
       AnomalyPersisted: 'Anomalia persistente',
       AgronomistInvite: 'Convite de agrônomo',
-      RevendaInvite: 'Convite de revenda'
+      RevendaInvite: 'Convite de revenda',
+      FireHotspot: 'Foco de calor'
     };
     return labels[type] ?? type;
   }
@@ -121,10 +122,22 @@ export class LayoutComponent implements OnInit, OnDestroy {
     return alert.alertType === 'AgronomistInvite' || alert.alertType === 'RevendaInvite';
   }
 
-  /** O convite é a única notificação que exige uma resposta — leva o membro até onde ele responde. */
+  /** Notificações "clicáveis": convites (levam à resposta) e foco de calor (leva à área). */
+  isClickable(alert: UserAlert): boolean {
+    return this.isInvite(alert) || alert.alertType === 'FireHotspot';
+  }
+
   openAlert(alert: UserAlert): void {
-    if (!this.isInvite(alert)) return;
+    if (!this.isClickable(alert)) return;
     this.closeAlertPanel();
+
+    if (alert.alertType === 'FireHotspot') {
+      // id = "fire-{areaId}-{yyyyMMdd}" → abre a área do foco.
+      const areaId = alert.id.split('-')[1];
+      this.router.navigate(areaId ? ['/areas', areaId] : ['/areas']);
+      return;
+    }
+
     const target = alert.alertType === 'RevendaInvite' ? '/revenda/convites' : '/diagnosticos';
     this.router.navigate([target]);
   }

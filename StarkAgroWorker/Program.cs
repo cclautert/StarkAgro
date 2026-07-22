@@ -119,6 +119,13 @@ var builder = Host.CreateDefaultBuilder(args)
             StarkAgroAPI.Services.Ndvi.GridFsNdviOverlayStore>();
         services.AddScoped<StarkAgroAPI.Services.Ndvi.INdviCostService,
             StarkAgroAPI.Services.Ndvi.NdviCostService>();
+        services.AddHttpClient<StarkAgroAPI.Services.Fire.FirmsHotspotService>(client =>
+        {
+            client.BaseAddress = new Uri("https://firms.modaps.eosdis.nasa.gov/");
+        });
+        services.AddScoped<StarkAgroAPI.Services.Fire.IFirmsHotspotService>(sp =>
+            sp.GetRequiredService<StarkAgroAPI.Services.Fire.FirmsHotspotService>());
+
         services.AddScoped<StarkAgroAPI.Services.Ndvi.INdviFetchService,
             StarkAgroAPI.Services.Ndvi.NdviFetchService>();
 
@@ -140,6 +147,7 @@ var builder = Host.CreateDefaultBuilder(args)
         services.AddHostedService<IrrigationAlertScheduler>();
         services.AddHostedService<PlantDiagnosisProcessor>();
         services.AddHostedService<NdviProcessor>();
+        services.AddHostedService<FireWatchProcessor>();
     });
 
 var host = builder.Build();

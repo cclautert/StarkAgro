@@ -157,7 +157,7 @@
             *ngIf="!(loading$ | async) && (alerts$ | async) as alerts">
             <li class="alert-item" *ngFor="let alert of alerts"
               [class.unread]="!alert.isRead"
-              [class.actionable]="isInvite(alert)"
+              [class.actionable]="isClickable(alert)"
               (click)="openAlert(alert)">
               <div class="alert-type-badge" [class]="'type-' + alert.alertType">
                 {{ alertTypeLabel(alert.alertType) }}

@@ -62,6 +62,7 @@ namespace StarkAgroAPI.Models
             RevendaMemberships = database.GetCollection<RevendaMembership>("revenda_memberships");
             MonitoredAreas = database.GetCollection<MonitoredArea>("monitored_areas");
             NdviReadings = database.GetCollection<NdviReading>("ndvi_readings");
+            FireHotspots = database.GetCollection<FireHotspot>("fire_hotspots");
             _counters = database.GetCollection<CounterDocument>("counters");
 
             // Fotos dos laudos ficam no GridFS: o driver já traz o suporte (nenhum pacote novo),
@@ -202,6 +203,22 @@ namespace StarkAgroAPI.Models
                             .Ascending(r => r.AreaId)
                             .Ascending(r => r.AcquisitionDate),
                         new CreateIndexOptions { Unique = true }));
+
+                    // Sino: focos do tenant na janela recente.
+                    await FireHotspots.Indexes.CreateOneAsync(new CreateIndexModel<FireHotspot>(
+                        Builders<FireHotspot>.IndexKeys
+                            .Ascending(f => f.UserId)
+                            .Descending(f => f.AcquiredAt)));
+                    // Único: um foco por (área, coordenada, passagem, satélite) — a reentrega do
+                    // FIRMS (NRT reprocessa a mesma passagem) vira no-op, nunca alerta duplicado.
+                    await FireHotspots.Indexes.CreateOneAsync(new CreateIndexModel<FireHotspot>(
+                        Builders<FireHotspot>.IndexKeys
+                            .Ascending(f => f.AreaId)
+                            .Ascending(f => f.Latitude)
+                            .Ascending(f => f.Longitude)
+                            .Ascending(f => f.AcquiredAt)
+                            .Ascending(f => f.Satellite),
+                        new CreateIndexOptions { Unique = true }));
                 }
                 catch
                 {
@@ -226,6 +243,7 @@ namespace StarkAgroAPI.Models
         public virtual IMongoCollection<RevendaMembership> RevendaMemberships { get; }
         public virtual IMongoCollection<MonitoredArea> MonitoredAreas { get; }
         public virtual IMongoCollection<NdviReading> NdviReadings { get; }
+        public virtual IMongoCollection<FireHotspot> FireHotspots { get; }
         public virtual IGridFSBucket DiagnosisImages { get; }
         public virtual IGridFSBucket NdviOverlays { get; }
 

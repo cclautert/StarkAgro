@@ -35,6 +35,9 @@ namespace StarkAgroAPI.Domain.Handlers.Admin
                 CdseClientSecret = request.CdseClientSecret,
                 Sentinel2Enabled = request.Sentinel2Enabled,
                 ExtraIndicesEnabled = request.ExtraIndicesEnabled,
+                FirmsMapKey = request.FirmsMapKey,
+                FireAlertsEnabled = request.FireAlertsEnabled,
+                FireAlertRadiusKm = request.FireAlertRadiusKm,
                 NdviCostCents = request.NdviCostCents,
                 NdviMonthlyBudgetCents = request.NdviMonthlyBudgetCents,
                 NdviMaxAreasPerUser = request.NdviMaxAreasPerUser
