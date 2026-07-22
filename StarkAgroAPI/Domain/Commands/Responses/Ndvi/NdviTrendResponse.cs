@@ -25,6 +25,12 @@ namespace StarkAgroAPI.Domain.Commands.Responses.Ndvi
         public double NdviMean { get; set; }
         public double NdviMin { get; set; }
         public double NdviMax { get; set; }
+
+        /// <summary>Média de NDRE/NDMI da passagem. Zero em leitura buscada sem índices extras — o
+        /// front esconde essas séries quando nenhum ponto tem valor, para não desenhar linha reta.</summary>
+        public double NdreMean { get; set; }
+        public double NdmiMean { get; set; }
+
         public double CloudCoveragePct { get; set; }
         public bool CloudRejected { get; set; }
 

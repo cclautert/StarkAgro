@@ -56,6 +56,8 @@ namespace StarkAgroAPI.Domain.Handlers.Ndvi
                     NdviMean = r.NdviMean,
                     NdviMin = r.NdviMin,
                     NdviMax = r.NdviMax,
+                    NdreMean = r.NdreMean,
+                    NdmiMean = r.NdmiMean,
                     CloudCoveragePct = r.CloudCoveragePct,
                     CloudRejected = r.CloudRejected,
                     Classes = BuildClasses(r.ClassCounts),

@@ -28,6 +28,7 @@ export interface PlatformAiSettings {
 
   /** Kill-switch do NDVI: desligado, o worker não busca nada da CDSE. */
   sentinel2Enabled?: boolean;
+  extraIndicesEnabled?: boolean;
 
   /** Custo de uma busca NDVI (Processing Units), em centavos — congelado por leitura. */
   ndviCostCents?: number;

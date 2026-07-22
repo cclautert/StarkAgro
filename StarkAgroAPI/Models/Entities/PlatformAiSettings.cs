@@ -49,6 +49,15 @@ namespace StarkAgroAPI.Models.Entities
         /// </summary>
         public bool Sentinel2Enabled { get; set; } = false;
 
+        /// <summary>
+        /// Liga NDRE + NDMI na mesma passagem do NDVI (6 bandas de entrada → fator PU <b>2,0</b>
+        /// contra 1,33). Desligado, a requisição volta a pedir só as 4 bandas do NDVI. É um eixo
+        /// de custo à parte do <see cref="Sentinel2Enabled"/> (que corta tudo): índices extras
+        /// custam mais por passagem, então o admin deve subir o <see cref="NdviCostCents"/> ao
+        /// ligar — o custo é proxy e não escala sozinho.
+        /// </summary>
+        public bool ExtraIndicesEnabled { get; set; } = false;
+
         /// <summary>Custo de uma busca NDVI (Processing Units), em <b>centavos</b> — congelado por reading.</summary>
         public int NdviCostCents { get; set; } = 1;
 

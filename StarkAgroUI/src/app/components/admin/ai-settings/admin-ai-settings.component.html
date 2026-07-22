@@ -170,6 +170,17 @@
     </div>
 
     <div class="form-group">
+      <label class="checkbox-label">
+        <input type="checkbox" formControlName="extraIndicesEnabled" />
+        Habilitar NDRE + NDMI na mesma passagem
+      </label>
+      <p class="section-hint" style="margin-top:6px">
+        Red-edge (clorofila/N) e umidade do dossel, além do NDVI. Custa mais por passagem
+        (6 bandas → fator PU 2,0 contra 1,33) — suba o custo por busca abaixo ao ligar.
+      </p>
+    </div>
+
+    <div class="form-group">
       <label for="ndviCostCents">Custo por busca (centavos)</label>
       <input id="ndviCostCents" type="number" min="0" formControlName="ndviCostCents" />
       <p class="section-hint" style="margin-top:6px">

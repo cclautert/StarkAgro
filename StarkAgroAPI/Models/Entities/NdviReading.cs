@@ -33,6 +33,22 @@ namespace StarkAgroAPI.Models.Entities
         public double NdviMax { get; set; }
         public double NdviStdev { get; set; }
 
+        // ── Índices extras (F1) ──
+        // NDRE (red-edge) não satura em dossel denso; NDMI (SWIR) pega umidade do dossel.
+        // Presentes só em passagens buscadas com ExtraIndicesEnabled; documento legado (e passagem
+        // buscada com a flag off) desserializa com zero. O consumidor distingue "sem dado" por
+        // data/nuvem, NUNCA pelo valor — NDRE de vegetação real pode ser ~0. Sem migração, mesma
+        // disciplina de ClassCounts. A coleção continua `ndvi_readings` guardando os três índices
+        // (dívida de nome assumida: renomear custaria migração por ganho cosmético).
+        public double NdreMean { get; set; }
+        public double NdreMin { get; set; }
+        public double NdreMax { get; set; }
+        public double NdreStdev { get; set; }
+        public double NdmiMean { get; set; }
+        public double NdmiMin { get; set; }
+        public double NdmiMax { get; set; }
+        public double NdmiStdev { get; set; }
+
         /// <summary>Cobertura de nuvem da passagem, em %.</summary>
         public double CloudCoveragePct { get; set; }
 

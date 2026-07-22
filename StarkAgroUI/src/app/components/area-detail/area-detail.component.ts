@@ -41,6 +41,15 @@ export class AreaDetailComponent implements OnInit, OnDestroy {
   /** true quando alguma passagem já veio classificada; senão o painel de composição some. */
   hasClasses = false;
 
+  // Índice exibido no gráfico de tendência. NDVI sempre existe; NDRE/NDMI só aparecem no seletor
+  // quando alguma passagem foi buscada com índices extras (senão seriam uma linha reta em zero).
+  readonly indices = [
+    { key: 'ndvi' as const, label: 'NDVI', hint: 'Vigor geral da vegetação. Satura em dossel denso.' },
+    { key: 'ndre' as const, label: 'NDRE', hint: 'Red-edge: clorofila e nitrogênio. Não satura onde o NDVI para.' },
+    { key: 'ndmi' as const, label: 'NDMI', hint: 'Umidade do dossel: estresse hídrico antes do sintoma visível.' }
+  ];
+  selectedIndex: 'ndvi' | 'ndre' | 'ndmi' = 'ndvi';
+
   // Leaflet (carregado sob demanda no browser).
   private map: any | null = null;
   private leaflet: any | null = null;
@@ -138,17 +147,46 @@ export class AreaDetailComponent implements OnInit, OnDestroy {
     });
   }
 
+  get currentIndexHint(): string {
+    return this.indices.find(i => i.key === this.selectedIndex)?.hint ?? '';
+  }
+
+  /** Troca do índice no seletor: só reconstrói a série de tendência (composição/mapa não mudam). */
+  selectIndex(key: 'ndvi' | 'ndre' | 'ndmi'): void {
+    this.selectedIndex = key;
+    this.buildChart();
+  }
+
+  /** true se algum ponto tem NDRE/NDMI não-zero — senão a série é toda zero (legado) e o
+   *  seletor esconde a opção, em vez de oferecer uma linha reta que finge ser dado. */
+  hasIndex(key: 'ndre' | 'ndmi'): boolean {
+    const pick = key === 'ndre' ? (p: NdviTrendPoint) => p.ndreMean : (p: NdviTrendPoint) => p.ndmiMean;
+    return this.points.some(p => !p.cloudRejected && pick(p) !== 0);
+  }
+
   private buildChart(): void {
     const labels = this.points.map(p => this.shortDate(p.acquisitionDate));
-    // Passagem nublada vira buraco honesto na série (null) — não uma queda de NDVI falsa.
-    const mean = this.points.map(p => (p.cloudRejected ? null : round2(p.ndviMean)));
+    const meta = this.indices.find(i => i.key === this.selectedIndex)!;
+    const value = (p: NdviTrendPoint) =>
+      this.selectedIndex === 'ndre' ? p.ndreMean : this.selectedIndex === 'ndmi' ? p.ndmiMean : p.ndviMean;
+    // Passagem nublada vira buraco honesto na série (null) — não uma queda falsa.
+    const series = this.points.map(p => (p.cloudRejected ? null : round2(value(p))));
+
+    // NDVI vive em [0,1]; NDMI pode ser negativo. Fixar o eixo só faz sentido no NDVI —
+    // nos outros, deixar o Chart.js auto-escalar para o range real da série.
+    if (this.chartOptions?.scales?.['y']) {
+      const y = this.chartOptions.scales['y'] as Record<string, unknown>;
+      y['min'] = this.selectedIndex === 'ndvi' ? 0 : undefined;
+      y['max'] = this.selectedIndex === 'ndvi' ? 1 : undefined;
+      (y['title'] as { text: string }).text = meta.label;
+    }
 
     this.chartData = {
       labels,
       datasets: [
         {
-          data: mean,
-          label: 'NDVI médio',
+          data: series,
+          label: `${meta.label} médio`,
           borderColor: '#4ade80',
           backgroundColor: 'rgba(74,222,128,0.15)',
           fill: true,

@@ -101,6 +101,31 @@
 
 .panel-title { font-size: 1.05rem; color: #e2e8f0; margin: 0 0 1rem; }
 
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+.panel-head .panel-title { margin: 0; }
+
+.index-tabs { display: flex; gap: 0.35rem; }
+.index-tab {
+  background: #253152;
+  color: #94a3b8;
+  border: 1px solid #3a4f75;
+  border-radius: 6px;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.index-tab:hover { color: #e2e8f0; }
+.index-tab.active { background: #14532d; color: #86efac; border-color: #16a34a; }
+.index-hint { margin: 0 0 0.75rem; }
+
 .chart-box { position: relative; height: 300px; }
 
 .map-box {

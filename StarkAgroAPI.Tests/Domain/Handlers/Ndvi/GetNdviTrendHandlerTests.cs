@@ -162,6 +162,40 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Ndvi
         }
 
         [Fact]
+        public async Task Trend_ProjetaNdreENdmiMean()
+        {
+            var db = Db(
+                areas: [new MonitoredArea { Id = 5, UserId = 42 }],
+                readings:
+                [
+                    new NdviReading { Id = 1, AreaId = 5, UserId = 42, AcquisitionDate = new DateTime(2026, 6, 3),
+                        NdviMean = 0.62, NdreMean = 0.28, NdmiMean = 0.15 }
+                ]);
+            var handler = new GetNdviTrendHandler(db.Object, User(42), new Notificator());
+
+            var result = await handler.Handle(new GetNdviTrendRequest { AreaId = 5 }, CancellationToken.None);
+
+            var point = Assert.Single(result!.Points);
+            Assert.Equal(0.28, point.NdreMean, 6);
+            Assert.Equal(0.15, point.NdmiMean, 6);
+        }
+
+        [Fact]
+        public async Task Trend_LeituraLegadaSemIndicesExtras_NdreNdmiZero()
+        {
+            var db = Db(
+                areas: [new MonitoredArea { Id = 5, UserId = 42 }],
+                readings: [new NdviReading { Id = 1, AreaId = 5, UserId = 42, AcquisitionDate = new DateTime(2026, 6, 3), NdviMean = 0.5 }]);
+            var handler = new GetNdviTrendHandler(db.Object, User(42), new Notificator());
+
+            var result = await handler.Handle(new GetNdviTrendRequest { AreaId = 5 }, CancellationToken.None);
+
+            var point = Assert.Single(result!.Points);
+            Assert.Equal(0, point.NdreMean);
+            Assert.Equal(0, point.NdmiMean);
+        }
+
+        [Fact]
         public async Task Trend_AreaInexistenteOuDeOutro_NotificaENull()
         {
             var db = Db(areas: []); // área não é do tenant / não existe
