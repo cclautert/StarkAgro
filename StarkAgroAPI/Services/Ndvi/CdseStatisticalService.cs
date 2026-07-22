@@ -137,16 +137,25 @@ namespace StarkAgroAPI.Services.Ndvi
                     resx = 10,
                     resy = 10
                 },
-                // Histograma por classe de biomassa na MESMA requisição: a contagem de pixels por
-                // faixa de NDVI sai sem Processing Unit extra. "ndvi" é o id do output do
-                // evalscript; "default" vale para todas as bandas dele (aqui só B0).
+                // Histograma na MESMA requisição: a contagem de pixels por faixa de NDVI sai sem
+                // Processing Unit extra. "ndvi" é o id do output do evalscript; "default" vale
+                // para todas as bandas dele (aqui só B0).
+                //
+                // Histograma UNIFORME (nBins/lowEdge/highEdge), não um array de arestas: a CDSE
+                // responde 400 COMMON_BAD_PAYLOAD a `bins` explícito. As classes de biomassa são
+                // agregadas depois, em ParseHistogram.
                 calculations = new
                 {
                     ndvi = new
                     {
                         histograms = new
                         {
-                            @default = new { bins = NdviClassification.HistogramBins }
+                            @default = new
+                            {
+                                nBins = NdviClassification.HistogramBinCount,
+                                lowEdge = NdviClassification.HistogramLowEdge,
+                                highEdge = NdviClassification.HistogramHighEdge
+                            }
                         }
                     }
                 }
@@ -193,10 +202,15 @@ namespace StarkAgroAPI.Services.Ndvi
         }
 
         /// <summary>
-        /// Contagem de pixels por classe a partir de <c>outputs.ndvi.bands.B0.histogram.bins</c>.
-        /// Defensivo como o resto do parser: histograma ausente — ou com número de bins diferente
-        /// do de <see cref="NdviClassification.Classes"/> — devolve lista vazia em vez de dado
-        /// desalinhado, e a tela cai no fallback de "sem classificação".
+        /// Contagem de pixels por classe de biomassa, agregada do histograma uniforme em
+        /// <c>outputs.ndvi.bands.B0.histogram.bins</c>.
+        /// <para>
+        /// Cada bin fino é atribuído a uma classe pelo seu <b>ponto médio</b>, nunca por
+        /// igualdade de aresta: <c>lowEdge</c> vem da CDSE como double e uma comparação exata
+        /// com 0,35 quebraria por ruído de ponto flutuante, jogando pixels na classe vizinha.
+        /// </para>
+        /// Defensivo como o resto do parser: histograma ausente devolve lista vazia e a tela cai
+        /// no fallback de "sem classificação", em vez de mostrar distribuição inventada.
         /// </summary>
         public static IReadOnlyList<long> ParseHistogram(JsonElement interval)
         {
@@ -207,20 +221,40 @@ namespace StarkAgroAPI.Services.Ndvi
                 || !b0.TryGetProperty("histogram", out var histogram)
                 || !histogram.TryGetProperty("bins", out var bins)
                 || bins.ValueKind != JsonValueKind.Array
-                || bins.GetArrayLength() != NdviClassification.Classes.Count)
+                || bins.GetArrayLength() == 0)
             {
                 return [];
             }
 
-            var counts = new List<long>(NdviClassification.Classes.Count);
+            var counts = new long[NdviClassification.Classes.Count];
+            var sawAny = false;
+
             foreach (var bin in bins.EnumerateArray())
             {
-                counts.Add(bin.TryGetProperty("count", out var c) && c.ValueKind == JsonValueKind.Number
-                    ? c.GetInt64()
-                    : 0);
+                if (!bin.TryGetProperty("lowEdge", out var lo) || lo.ValueKind != JsonValueKind.Number)
+                    continue;
+                if (!bin.TryGetProperty("count", out var c) || c.ValueKind != JsonValueKind.Number)
+                    continue;
+
+                // highEdge pode faltar no último bin de algumas respostas: cai para a largura nominal.
+                var low = lo.GetDouble();
+                var high = bin.TryGetProperty("highEdge", out var hi) && hi.ValueKind == JsonValueKind.Number
+                    ? hi.GetDouble()
+                    : low + BinWidth;
+
+                var index = NdviClassification.ClassIndexFor((low + high) / 2.0);
+                if (index < 0) continue;   // bin fora do domínio do NDVI — ignorado, não somado errado
+
+                counts[index] += c.GetInt64();
+                sawAny = true;
             }
-            return counts;
+
+            return sawAny ? counts : [];
         }
+
+        private static double BinWidth =>
+            (double)(NdviClassification.HistogramHighEdge - NdviClassification.HistogramLowEdge)
+            / NdviClassification.HistogramBinCount;
 
         private static (double mean, double min, double max, double stdev, long sampleCount, long noData)? TryGetStats(JsonElement interval)
         {

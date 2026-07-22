@@ -32,12 +32,40 @@ namespace StarkAgroAPI.Tests.Services.Ndvi
         }
 
         [Fact]
-        public void HistogramBins_HasOneEdgeMoreThanClasses_AndIsSorted()
+        public void Histograma_TemLarguraQueCaiExatamenteNasFronteirasDasClasses()
         {
-            var bins = NdviClassification.HistogramBins;
+            var low = (double)NdviClassification.HistogramLowEdge;
+            var width = ((double)NdviClassification.HistogramHighEdge - low)
+                        / NdviClassification.HistogramBinCount;
 
-            Assert.Equal(NdviClassification.Classes.Count + 1, bins.Length);
-            Assert.Equal(bins.OrderBy(b => b), bins);
+            // Se um corte de classe não caísse numa fronteira de bin, aquele bin ficaria a cavalo
+            // entre duas classes e a agregação erraria uma fatia de pixels sem ninguém perceber.
+            foreach (var c in NdviClassification.Classes)
+            {
+                var steps = (c.HighEdge - low) / width;
+                Assert.Equal(Math.Round(steps), steps, 6);
+            }
+        }
+
+        [Theory]
+        [InlineData(-0.5, 0)]   // Solo Exposto
+        [InlineData(0.19, 0)]
+        [InlineData(0.20, 1)]   // fronteira: pertence à classe de cima
+        [InlineData(0.34, 1)]
+        [InlineData(0.55, 3)]   // Média
+        [InlineData(0.85, 5)]   // Alta
+        [InlineData(1.00, 5)]   // topo inclusivo — não pode ficar órfão
+        public void ClassIndexFor_MapeiaValorNaClasseCerta(double ndvi, int esperado)
+        {
+            Assert.Equal(esperado, NdviClassification.ClassIndexFor(ndvi));
+        }
+
+        [Theory]
+        [InlineData(-1.5)]
+        [InlineData(1.5)]
+        public void ClassIndexFor_ForaDoDominio_DevolveMenosUm(double ndvi)
+        {
+            Assert.Equal(-1, NdviClassification.ClassIndexFor(ndvi));
         }
 
         [Fact]

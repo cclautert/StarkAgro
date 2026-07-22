@@ -32,13 +32,53 @@ namespace StarkAgroAPI.Services.Ndvi
             new("High",       "Alta",          0.80, 1.00, "#1a9641")
         ];
 
+        // ── Histograma de largura fixa ──
+        //
+        // A Statistical API da CDSE **rejeita** (400 COMMON_BAD_PAYLOAD) um array explícito de
+        // arestas em `histograms.bins`. Em vez de brigar com o formato, pedimos um histograma
+        // fino e uniforme — `nBins`/`lowEdge`/`highEdge` são aceitos em toda versão da API — e
+        // agregamos as classes aqui.
+        //
+        // Isso é melhor que o array por três razões: usa só campos universalmente suportados;
+        // é imune a ruído de ponto flutuante nas bordas (a agregação é por ponto médio do bin,
+        // nunca por igualdade); e desacopla a requisição da definição de classes — mudar um
+        // corte depois é aritmética local, não um formato de request novo.
+
+        // ⚠️ `decimal`, não `double`, e com o `.0` explícito — isto é serialização, não matemática.
+        // A CDSE infere o TIPO do histograma pelo literal JSON: `-1` (inteiro) faz o servidor
+        // responder 400 "sampleType AUTO mis-matched with corresponding histogram of type integer",
+        // porque a banda NDVI é float. `System.Text.Json` escreve `double -1.0` como `-1` (forma
+        // mais curta que faz round-trip), mas escreve `decimal -1.0m` como `-1.0`, preservando a
+        // escala. Trocar estes dois para `double` reintroduz a falha — e ela só aparece em
+        // produção, contra a API real.
+
+        /// <summary>Aresta inferior do histograma pedido: o mínimo teórico do NDVI.</summary>
+        public const decimal HistogramLowEdge = -1.0m;
+
+        /// <summary>Aresta superior do histograma pedido: o máximo teórico do NDVI.</summary>
+        public const decimal HistogramHighEdge = 1.0m;
+
         /// <summary>
-        /// Arestas dos bins para <c>calculations.histograms.bins</c> da Statistical API:
-        /// N+1 valores para N classes. Cobre todo o domínio do NDVI ([-1, 1]), então
-        /// <c>underflowCount</c>/<c>overflowCount</c> da resposta são sempre zero.
+        /// Número de bins. 200 sobre [-1, 1] dá largura 0,01 — fino o bastante para que todo
+        /// corte de <see cref="Classes"/> caia numa fronteira de bin, sem inventar precisão.
         /// </summary>
-        public static readonly double[] HistogramBins =
-            [.. Classes.Select(c => c.LowEdge), Classes[^1].HighEdge];
+        public const int HistogramBinCount = 200;
+
+        /// <summary>
+        /// Índice da classe que contém <paramref name="ndvi"/>, ou <c>-1</c> se estiver fora do
+        /// domínio. Comparação <c>[LowEdge, HighEdge)</c>, com a última classe inclusiva no topo
+        /// para que NDVI exatamente 1,0 não fique órfão.
+        /// </summary>
+        public static int ClassIndexFor(double ndvi)
+        {
+            for (var i = 0; i < Classes.Count; i++)
+            {
+                var c = Classes[i];
+                if (ndvi >= c.LowEdge && (ndvi < c.HighEdge || (i == Classes.Count - 1 && ndvi <= c.HighEdge)))
+                    return i;
+            }
+            return -1;
+        }
 
         /// <summary>
         /// Corpo JS da função <c>ramp()</c> do evalscript, derivado de <see cref="Classes"/>.
