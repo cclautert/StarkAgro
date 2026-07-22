@@ -53,6 +53,7 @@ export class AdminAiSettingsComponent implements OnInit {
       cdseClientId: [''],
       cdseClientSecret: [''],
       sentinel2Enabled: [false],
+      extraIndicesEnabled: [false],
       ndviCostCents: [1, [Validators.min(0)]],
       ndviMonthlyBudgetCents: [0, [Validators.min(0)]],
       ndviMaxAreasPerUser: [0, [Validators.min(0)]]
@@ -75,6 +76,7 @@ export class AdminAiSettingsComponent implements OnInit {
           cdseClientId: settings.cdseClientId ?? '',
           cdseClientSecret: settings.cdseClientSecret ?? '',
           sentinel2Enabled: settings.sentinel2Enabled ?? false,
+          extraIndicesEnabled: settings.extraIndicesEnabled ?? false,
           ndviCostCents: settings.ndviCostCents ?? 1,
           ndviMonthlyBudgetCents: settings.ndviMonthlyBudgetCents ?? 0,
           ndviMaxAreasPerUser: settings.ndviMaxAreasPerUser ?? 0
@@ -109,6 +111,7 @@ export class AdminAiSettingsComponent implements OnInit {
       cdseClientId: this.form.value.cdseClientId || null,
       cdseClientSecret: this.form.value.cdseClientSecret || null,
       sentinel2Enabled: !!this.form.value.sentinel2Enabled,
+      extraIndicesEnabled: !!this.form.value.extraIndicesEnabled,
       ndviCostCents: Number(this.form.value.ndviCostCents) || 0,
       ndviMonthlyBudgetCents: Number(this.form.value.ndviMonthlyBudgetCents) || 0,
       ndviMaxAreasPerUser: Number(this.form.value.ndviMaxAreasPerUser) || 0

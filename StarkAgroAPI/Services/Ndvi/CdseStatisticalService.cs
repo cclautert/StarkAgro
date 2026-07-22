@@ -8,6 +8,7 @@ using System.Text.Json;
 namespace StarkAgroAPI.Services.Ndvi
 {
     /// <param name="ValidSampleCount">Pixels válidos (não-nuvem/no-data). Zero = passagem toda nublada.</param>
+    /// <param name="Mean">NDVI médio — o índice primário (existe em toda passagem, incl. legado).</param>
     public record NdviStat(
         DateTime AcquisitionDate,
         double Mean,
@@ -23,6 +24,18 @@ namespace StarkAgroAPI.Services.Ndvi
         /// Statistical (sem Processing Unit extra). Vazio quando a resposta não trouxe histograma.
         /// </summary>
         public IReadOnlyList<long> ClassCounts { get; init; } = [];
+
+        // Índices extras (F1). Zero quando a passagem foi buscada sem ExtraIndicesEnabled — o
+        // consumidor distingue "sem dado" por data/nuvem, nunca pelo valor zero (vegetação real
+        // pode ter NDRE ~0). Ctor posicional deixa só o NDVI para os call-sites de antes desta fase.
+        public double NdreMean { get; init; }
+        public double NdreMin { get; init; }
+        public double NdreMax { get; init; }
+        public double NdreStdev { get; init; }
+        public double NdmiMean { get; init; }
+        public double NdmiMin { get; init; }
+        public double NdmiMax { get; init; }
+        public double NdmiStdev { get; init; }
     }
 
     /// <summary>
@@ -31,11 +44,16 @@ namespace StarkAgroAPI.Services.Ndvi
     /// </summary>
     public interface ICdseStatisticalService
     {
+        /// <param name="extraIndices">
+        /// <c>true</c> pede NDRE (B05) e NDMI (B11) além do NDVI, numa única requisição (6 bandas
+        /// de entrada → fator PU 2,0). <c>false</c> mantém o request de sempre (4 bandas, só NDVI).
+        /// </param>
         Task<IReadOnlyList<NdviStat>?> GetStatisticsAsync(
             string token,
             GeoJsonPolygon<GeoJson2DGeographicCoordinates> geometry,
             DateTime from,
             DateTime to,
+            bool extraIndices,
             CancellationToken cancellationToken);
     }
 
@@ -43,8 +61,9 @@ namespace StarkAgroAPI.Services.Ndvi
     {
         private const string Endpoint = "api/v1/statistics";
 
-        // Evalscript: NDVI = (B08-B04)/(B08+B04); dataMask exclui nuvem (SCL 3/8/9/10) e no-data.
-        private const string Evalscript = """
+        // Só NDVI (4 bandas). Comportamento de antes da F1 — o request quando ExtraIndicesEnabled=off.
+        // NDVI = (B08-B04)/(B08+B04); dataMask exclui nuvem (SCL 3/8/9/10) e no-data.
+        private const string EvalscriptNdvi = """
             //VERSION=3
             function setup() {
               return {
@@ -57,6 +76,31 @@ namespace StarkAgroAPI.Services.Ndvi
               let cloud = (s.SCL === 3 || s.SCL === 8 || s.SCL === 9 || s.SCL === 10);
               let valid = (s.dataMask === 1 && !cloud) ? 1 : 0;
               return { ndvi: [ndvi], dataMask: [valid] };
+            }
+            """;
+
+        // NDVI + NDRE (B05, red-edge, não satura em dossel denso) + NDMI (B11, SWIR, umidade do
+        // dossel). 6 bandas de entrada → fator PU 2,0. As três saídas compartilham a MESMA máscara
+        // de nuvem/no-data, então uma passagem nublada zera as três de forma consistente.
+        //   NDVI = (B08-B04)/(B08+B04)   NDRE = (B08-B05)/(B08+B05)   NDMI = (B08-B11)/(B08+B11)
+        private const string EvalscriptExtra = """
+            //VERSION=3
+            function setup() {
+              return {
+                input: [{ bands: ["B04", "B05", "B08", "B11", "SCL", "dataMask"] }],
+                output: [
+                  { id: "ndvi", bands: 1 }, { id: "ndre", bands: 1 },
+                  { id: "ndmi", bands: 1 }, { id: "dataMask", bands: 1 }
+                ]
+              };
+            }
+            function evaluatePixel(s) {
+              let ndvi = (s.B08 - s.B04) / (s.B08 + s.B04);
+              let ndre = (s.B08 - s.B05) / (s.B08 + s.B05);
+              let ndmi = (s.B08 - s.B11) / (s.B08 + s.B11);
+              let cloud = (s.SCL === 3 || s.SCL === 8 || s.SCL === 9 || s.SCL === 10);
+              let valid = (s.dataMask === 1 && !cloud) ? 1 : 0;
+              return { ndvi: [ndvi], ndre: [ndre], ndmi: [ndmi], dataMask: [valid] };
             }
             """;
 
@@ -74,11 +118,12 @@ namespace StarkAgroAPI.Services.Ndvi
             GeoJsonPolygon<GeoJson2DGeographicCoordinates> geometry,
             DateTime from,
             DateTime to,
+            bool extraIndices,
             CancellationToken cancellationToken)
         {
             try
             {
-                var body = BuildRequestBody(geometry, from, to);
+                var body = BuildRequestBody(geometry, from, to, extraIndices);
                 using var request = new HttpRequestMessage(HttpMethod.Post, Endpoint)
                 {
                     Content = new StringContent(body, Encoding.UTF8, "application/json")
@@ -105,7 +150,7 @@ namespace StarkAgroAPI.Services.Ndvi
         }
 
         public static string BuildRequestBody(
-            GeoJsonPolygon<GeoJson2DGeographicCoordinates> geometry, DateTime from, DateTime to)
+            GeoJsonPolygon<GeoJson2DGeographicCoordinates> geometry, DateTime from, DateTime to, bool extraIndices)
         {
             var ring = geometry.Coordinates.Exterior.Positions
                 .Select(p => new[] { p.Longitude, p.Latitude })
@@ -133,35 +178,44 @@ namespace StarkAgroAPI.Services.Ndvi
                         to = to.ToUniversalTime().ToString("yyyy-MM-dd'T'HH:mm:ss'Z'", CultureInfo.InvariantCulture)
                     },
                     aggregationInterval = new { of = "P1D" },
-                    evalscript = Evalscript,
+                    evalscript = extraIndices ? EvalscriptExtra : EvalscriptNdvi,
                     resx = 10,
                     resy = 10
                 },
-                // Histograma na MESMA requisição: a contagem de pixels por faixa de NDVI sai sem
-                // Processing Unit extra. "ndvi" é o id do output do evalscript; "default" vale
-                // para todas as bandas dele (aqui só B0).
-                //
-                // Histograma UNIFORME (nBins/lowEdge/highEdge), não um array de arestas: a CDSE
-                // responde 400 COMMON_BAD_PAYLOAD a `bins` explícito. As classes de biomassa são
-                // agregadas depois, em ParseHistogram.
-                calculations = new
+                // Histograma na MESMA requisição — a contagem por faixa sai sem Processing Unit extra.
+                // Histograma UNIFORME (nBins/lowEdge/highEdge), nunca array de arestas: a CDSE
+                // responde 400 COMMON_BAD_PAYLOAD a `bins` explícito. Só o de NDVI é agregado em
+                // classes (ParseHistogram); os de NDRE/NDMI vêm na resposta e ficam guardados para
+                // quando essas faixas forem definidas.
+                calculations = BuildCalculations(extraIndices)
+            };
+
+            return JsonSerializer.Serialize(payload);
+        }
+
+        // Um bloco de histograma por saída. `default` cobre todas as bandas do output (aqui só B0).
+        private static Dictionary<string, object> BuildCalculations(bool extraIndices)
+        {
+            var hist = new
+            {
+                histograms = new
                 {
-                    ndvi = new
+                    @default = new
                     {
-                        histograms = new
-                        {
-                            @default = new
-                            {
-                                nBins = NdviClassification.HistogramBinCount,
-                                lowEdge = NdviClassification.HistogramLowEdge,
-                                highEdge = NdviClassification.HistogramHighEdge
-                            }
-                        }
+                        nBins = NdviClassification.HistogramBinCount,
+                        lowEdge = NdviClassification.HistogramLowEdge,
+                        highEdge = NdviClassification.HistogramHighEdge
                     }
                 }
             };
 
-            return JsonSerializer.Serialize(payload);
+            var calc = new Dictionary<string, object> { ["ndvi"] = hist };
+            if (extraIndices)
+            {
+                calc["ndre"] = hist;
+                calc["ndmi"] = hist;
+            }
+            return calc;
         }
 
         public static IReadOnlyList<NdviStat> Parse(JsonElement root)
@@ -181,7 +235,7 @@ namespace StarkAgroAPI.Services.Ndvi
                     continue;
                 }
 
-                var stats = TryGetStats(interval);
+                var stats = TryGetStats(interval, "ndvi");
                 if (stats is null)
                 {
                     // Intervalo sem dado válido (ex.: totalmente nublado) — buraco honesto na série.
@@ -192,9 +246,17 @@ namespace StarkAgroAPI.Services.Ndvi
                 var (mean, min, max, stdev, sampleCount, noData) = stats.Value;
                 var valid = Math.Max(0, sampleCount - noData);
                 var cloudPct = sampleCount > 0 ? 100.0 * noData / sampleCount : 100.0;
+
+                // NDRE/NDMI: presentes só quando a passagem foi buscada com ExtraIndicesEnabled.
+                // Output ausente → default zero (o `?? default` do value tuple), nunca exceção.
+                var ndre = TryGetStats(interval, "ndre") ?? default;
+                var ndmi = TryGetStats(interval, "ndmi") ?? default;
+
                 result.Add(new NdviStat(date, mean, min, max, stdev, valid, cloudPct)
                 {
-                    ClassCounts = ParseHistogram(interval)
+                    ClassCounts = ParseHistogram(interval),
+                    NdreMean = ndre.mean, NdreMin = ndre.min, NdreMax = ndre.max, NdreStdev = ndre.stdev,
+                    NdmiMean = ndmi.mean, NdmiMin = ndmi.min, NdmiMax = ndmi.max, NdmiStdev = ndmi.stdev
                 });
             }
 
@@ -256,11 +318,12 @@ namespace StarkAgroAPI.Services.Ndvi
             (double)(NdviClassification.HistogramHighEdge - NdviClassification.HistogramLowEdge)
             / NdviClassification.HistogramBinCount;
 
-        private static (double mean, double min, double max, double stdev, long sampleCount, long noData)? TryGetStats(JsonElement interval)
+        private static (double mean, double min, double max, double stdev, long sampleCount, long noData)? TryGetStats(
+            JsonElement interval, string outputId)
         {
             if (!interval.TryGetProperty("outputs", out var outputs)
-                || !outputs.TryGetProperty("ndvi", out var ndvi)
-                || !ndvi.TryGetProperty("bands", out var bands)
+                || !outputs.TryGetProperty(outputId, out var output)
+                || !output.TryGetProperty("bands", out var bands)
                 || !bands.TryGetProperty("B0", out var b0)
                 || !b0.TryGetProperty("stats", out var s))
             {

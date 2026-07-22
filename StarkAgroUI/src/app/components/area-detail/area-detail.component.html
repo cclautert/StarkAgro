@@ -36,7 +36,23 @@
 
     <!-- Gráfico de tendência -->
     <div class="panel">
-      <h2 class="panel-title">Tendência NDVI</h2>
+      <div class="panel-head">
+        <h2 class="panel-title">Tendência</h2>
+        <!-- Seletor de índice. NDRE/NDMI só aparecem quando há leitura com esses valores. -->
+        <div class="index-tabs" *ngIf="points.length">
+          <ng-container *ngFor="let ix of indices">
+            <button
+              *ngIf="ix.key === 'ndvi' || hasIndex(ix.key)"
+              class="index-tab"
+              [class.active]="selectedIndex === ix.key"
+              (click)="selectIndex(ix.key)"
+              [title]="ix.hint">
+              {{ ix.label }}
+            </button>
+          </ng-container>
+        </div>
+      </div>
+      <p class="muted index-hint" *ngIf="points.length">{{ currentIndexHint }}</p>
       <div class="chart-box" *ngIf="points.length; else noSeries">
         <canvas baseChart [data]="chartData" [options]="chartOptions" [type]="'line'"></canvas>
       </div>

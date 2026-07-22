@@ -64,7 +64,8 @@ namespace StarkAgroAPI.Services.Ndvi
             var to = DateTime.UtcNow;
             var from = ResolveFrom(area.LastAcquisitionDate, to);
 
-            var stats = await _statisticalService.GetStatisticsAsync(token, area.Geometry, from, to, cancellationToken);
+            var stats = await _statisticalService.GetStatisticsAsync(
+                token, area.Geometry, from, to, settings.ExtraIndicesEnabled, cancellationToken);
             if (stats is null)
                 return new NdviFetchOutcome(NdviFetchStatus.Failed, "Falha na Statistical API da CDSE.");
 
@@ -94,6 +95,16 @@ namespace StarkAgroAPI.Services.Ndvi
                     NdviMin = s.Min,
                     NdviMax = s.Max,
                     NdviStdev = s.Stdev,
+                    // Zero quando a passagem foi buscada sem ExtraIndicesEnabled — não é "sem vigor",
+                    // é "não medido". Nublada zera as três junto com o NDVI (máscara compartilhada).
+                    NdreMean = s.NdreMean,
+                    NdreMin = s.NdreMin,
+                    NdreMax = s.NdreMax,
+                    NdreStdev = s.NdreStdev,
+                    NdmiMean = s.NdmiMean,
+                    NdmiMin = s.NdmiMin,
+                    NdmiMax = s.NdmiMax,
+                    NdmiStdev = s.NdmiStdev,
                     CloudCoveragePct = s.CloudPct,
                     CloudRejected = cloudRejected,
                     // Passagem nublada não tem distribuição: o histograma vem com as seis classes

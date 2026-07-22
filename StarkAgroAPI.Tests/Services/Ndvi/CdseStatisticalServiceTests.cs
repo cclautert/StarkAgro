@@ -35,7 +35,7 @@ namespace StarkAgroAPI.Tests.Services.Ndvi
         {
             var svc = Service(HttpStatusCode.OK, SampleResponse);
 
-            var stats = await svc.GetStatisticsAsync("tok", Geo(), DateTime.UtcNow.AddDays(-30), DateTime.UtcNow, CancellationToken.None);
+            var stats = await svc.GetStatisticsAsync("tok", Geo(), DateTime.UtcNow.AddDays(-30), DateTime.UtcNow, false, CancellationToken.None);
 
             Assert.NotNull(stats);
             Assert.Equal(2, stats!.Count);
@@ -46,7 +46,7 @@ namespace StarkAgroAPI.Tests.Services.Ndvi
         {
             var svc = Service(HttpStatusCode.BadRequest, "bad");
 
-            Assert.Null(await svc.GetStatisticsAsync("tok", Geo(), DateTime.UtcNow.AddDays(-30), DateTime.UtcNow, CancellationToken.None));
+            Assert.Null(await svc.GetStatisticsAsync("tok", Geo(), DateTime.UtcNow.AddDays(-30), DateTime.UtcNow, false, CancellationToken.None));
         }
 
         [Fact]
@@ -54,7 +54,7 @@ namespace StarkAgroAPI.Tests.Services.Ndvi
         {
             var svc = Service(HttpStatusCode.OK, "", throws: new HttpRequestException("down"));
 
-            Assert.Null(await svc.GetStatisticsAsync("tok", Geo(), DateTime.UtcNow.AddDays(-30), DateTime.UtcNow, CancellationToken.None));
+            Assert.Null(await svc.GetStatisticsAsync("tok", Geo(), DateTime.UtcNow.AddDays(-30), DateTime.UtcNow, false, CancellationToken.None));
         }
 
         private const string SampleResponse = """
@@ -117,7 +117,7 @@ namespace StarkAgroAPI.Tests.Services.Ndvi
             }, out var geo, out _);
 
             var body = CdseStatisticalService.BuildRequestBody(
-                geo, new DateTime(2026, 6, 1, 0, 0, 0, DateTimeKind.Utc), new DateTime(2026, 7, 1, 0, 0, 0, DateTimeKind.Utc));
+                geo, new DateTime(2026, 6, 1, 0, 0, 0, DateTimeKind.Utc), new DateTime(2026, 7, 1, 0, 0, 0, DateTimeKind.Utc), false);
 
             Assert.Contains("Polygon", body);
             Assert.Contains("sentinel-2-l2a", body);
@@ -127,6 +127,92 @@ namespace StarkAgroAPI.Tests.Services.Ndvi
             Assert.Contains("2026-06-01T00:00:00Z", body);
             Assert.Contains("-47", body);                   // longitude no ring (ordem [lng,lat])
         }
+
+        [Fact]
+        public void BuildRequestBody_ExtraIndicesOff_PedeSo4BandasESoNdvi()
+        {
+            var body = CdseStatisticalService.BuildRequestBody(Geo(),
+                new DateTime(2026, 6, 1, 0, 0, 0, DateTimeKind.Utc),
+                new DateTime(2026, 7, 1, 0, 0, 0, DateTimeKind.Utc), false);
+
+            using var doc = JsonDocument.Parse(body);
+            // O evalscript é um valor string do JSON — decodificar pelo parser, não casar texto cru.
+            var evalscript = doc.RootElement.GetProperty("aggregation").GetProperty("evalscript").GetString()!;
+
+            // Kill-switch off = request de antes da F1: 4 bandas, uma saída, um bloco de histograma.
+            Assert.Contains("\"B04\", \"B08\", \"SCL\", \"dataMask\"", evalscript);
+            Assert.DoesNotContain("B05", evalscript);
+            Assert.DoesNotContain("B11", evalscript);
+            Assert.DoesNotContain("ndre", evalscript);
+
+            var calc = doc.RootElement.GetProperty("calculations");
+            Assert.True(calc.TryGetProperty("ndvi", out _));
+            Assert.False(calc.TryGetProperty("ndre", out _));
+        }
+
+        [Fact]
+        public void BuildRequestBody_ExtraIndicesOn_Declara3SaidasEHistogramas6Bandas()
+        {
+            var body = CdseStatisticalService.BuildRequestBody(Geo(),
+                new DateTime(2026, 6, 1, 0, 0, 0, DateTimeKind.Utc),
+                new DateTime(2026, 7, 1, 0, 0, 0, DateTimeKind.Utc), true);
+
+            using var doc = JsonDocument.Parse(body);
+            var evalscript = doc.RootElement.GetProperty("aggregation").GetProperty("evalscript").GetString()!;
+
+            // 6 bandas de entrada (fator PU 2,0) e as três saídas de índice.
+            Assert.Contains("\"B04\", \"B05\", \"B08\", \"B11\", \"SCL\", \"dataMask\"", evalscript);
+            Assert.Contains("ndre = (s.B08 - s.B05)", evalscript);
+            Assert.Contains("ndmi = (s.B08 - s.B11)", evalscript);
+
+            var calc = doc.RootElement.GetProperty("calculations");
+            // Um bloco de histograma por saída — a escolha travada no plano.
+            foreach (var id in new[] { "ndvi", "ndre", "ndmi" })
+            {
+                Assert.True(calc.TryGetProperty(id, out var block), $"falta histograma de {id}");
+                Assert.Equal(NdviClassification.HistogramBinCount,
+                    block.GetProperty("histograms").GetProperty("default").GetProperty("nBins").GetInt32());
+            }
+        }
+
+        [Fact]
+        public void Parse_ComTresSaidas_LeNdviNdreNdmi()
+        {
+            using var doc = JsonDocument.Parse(ThreeIndexResponse);
+
+            var stat = Assert.Single(CdseStatisticalService.Parse(doc.RootElement));
+
+            Assert.Equal(0.62, stat.Mean, 6);
+            Assert.Equal(0.28, stat.NdreMean, 6);
+            Assert.Equal(0.15, stat.NdmiMean, 6);
+        }
+
+        [Fact]
+        public void Parse_RespostaLegadaSoNdvi_NaoQuebra_NdreNdmiZero()
+        {
+            // Compat: passagem buscada antes da F1 (ou com a flag off) não tem ndre/ndmi no JSON.
+            using var doc = JsonDocument.Parse(SampleResponse);
+
+            var stats = CdseStatisticalService.Parse(doc.RootElement);
+
+            Assert.Equal(2, stats.Count);
+            Assert.All(stats, s => Assert.Equal(0, s.NdreMean));
+            Assert.All(stats, s => Assert.Equal(0, s.NdmiMean));
+        }
+
+        private const string ThreeIndexResponse = """
+        {
+          "data": [
+            { "interval": { "from": "2026-06-03T00:00:00Z", "to": "2026-06-04T00:00:00Z" },
+              "outputs": {
+                "ndvi": { "bands": { "B0": { "stats": { "mean": 0.62, "min": 0.1, "max": 0.9, "stDev": 0.2, "sampleCount": 100, "noDataCount": 0 } } } },
+                "ndre": { "bands": { "B0": { "stats": { "mean": 0.28, "min": 0.05, "max": 0.5, "stDev": 0.1, "sampleCount": 100, "noDataCount": 0 } } } },
+                "ndmi": { "bands": { "B0": { "stats": { "mean": 0.15, "min": -0.1, "max": 0.4, "stDev": 0.12, "sampleCount": 100, "noDataCount": 0 } } } }
+              } }
+          ],
+          "status": "OK"
+        }
+        """;
 
         [Fact]
         public void BuildRequestBody_AsksForTheClassHistogram_OnTheSameRequest()
@@ -139,7 +225,7 @@ namespace StarkAgroAPI.Tests.Services.Ndvi
             }, out var geo, out _);
 
             var body = CdseStatisticalService.BuildRequestBody(
-                geo, new DateTime(2026, 6, 1, 0, 0, 0, DateTimeKind.Utc), new DateTime(2026, 7, 1, 0, 0, 0, DateTimeKind.Utc));
+                geo, new DateTime(2026, 6, 1, 0, 0, 0, DateTimeKind.Utc), new DateTime(2026, 7, 1, 0, 0, 0, DateTimeKind.Utc), false);
 
             // O histograma viaja junto da estatística — é o que faz a classificação sair sem PU extra.
             Assert.Contains("\"calculations\"", body);
@@ -170,7 +256,7 @@ namespace StarkAgroAPI.Tests.Services.Ndvi
             }, out var geo, out _);
 
             var body = CdseStatisticalService.BuildRequestBody(
-                geo, new DateTime(2026, 6, 1, 0, 0, 0, DateTimeKind.Utc), new DateTime(2026, 7, 1, 0, 0, 0, DateTimeKind.Utc));
+                geo, new DateTime(2026, 6, 1, 0, 0, 0, DateTimeKind.Utc), new DateTime(2026, 7, 1, 0, 0, 0, DateTimeKind.Utc), false);
 
             // Asserção sobre o TEXTO, não sobre o valor: a CDSE infere o tipo do histograma pelo
             // literal JSON. `-1` (inteiro) → 400 "sampleType AUTO mis-matched with corresponding

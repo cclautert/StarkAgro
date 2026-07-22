@@ -62,6 +62,10 @@ export interface NdviTrendPoint {
   ndviMean: number;
   ndviMin: number;
   ndviMax: number;
+  /** Média de NDRE/NDMI. 0 em passagem buscada sem índices extras — o front esconde a série
+   *  quando NENHUM ponto tem valor, para não desenhar uma linha reta em zero como se fosse dado. */
+  ndreMean: number;
+  ndmiMean: number;
   cloudCoveragePct: number;
   cloudRejected: boolean;
   /** Vazio em passagem nublada ou anterior à classificação — a tela esconde o painel. */

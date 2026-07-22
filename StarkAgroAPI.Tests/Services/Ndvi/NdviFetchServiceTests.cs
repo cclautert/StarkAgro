@@ -34,6 +34,7 @@ namespace StarkAgroAPI.Tests.Services.Ndvi
             public required Mock<IMongoCollection<NdviReading>> Readings { get; init; }
             public required Mock<ICdseProcessService> Process { get; init; }
             public required Mock<INdviOverlayStore> Overlay { get; init; }
+            public required Mock<ICdseStatisticalService> StatService { get; init; }
         }
 
         private static Deps Build(
@@ -65,7 +66,7 @@ namespace StarkAgroAPI.Tests.Services.Ndvi
             var statService = new Mock<ICdseStatisticalService>();
             statService.Setup(s => s.GetStatisticsAsync(It.IsAny<string>(),
                     It.IsAny<MongoDB.Driver.GeoJsonObjectModel.GeoJsonPolygon<MongoDB.Driver.GeoJsonObjectModel.GeoJson2DGeographicCoordinates>>(),
-                    It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
+                    It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(stats);
 
             var processService = new Mock<ICdseProcessService>();
@@ -80,7 +81,7 @@ namespace StarkAgroAPI.Tests.Services.Ndvi
 
             var svc = new NdviFetchService(db.Object, tokenProvider.Object, statService.Object,
                 processService.Object, overlayStore.Object, NullLogger<NdviFetchService>.Instance);
-            return new Deps { Svc = svc, Readings = readingsCol, Process = processService, Overlay = overlayStore };
+            return new Deps { Svc = svc, Readings = readingsCol, Process = processService, Overlay = overlayStore, StatService = statService };
         }
 
         [Fact]
@@ -200,6 +201,43 @@ namespace StarkAgroAPI.Tests.Services.Ndvi
             d.Readings.Verify(c => c.InsertOneAsync(
                 It.Is<NdviReading>(r => r.ClassCounts.Count == 0),
                 It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task Fetch_ComIndicesExtras_GravaNdreENdmi()
+        {
+            var stats = new List<NdviStat>
+            {
+                new(new DateTime(2026, 6, 8, 0, 0, 0, DateTimeKind.Utc), 0.62, 0.2, 0.9, 0.1, 900, 0)
+                {
+                    NdreMean = 0.28, NdreMin = 0.05, NdreMax = 0.5, NdreStdev = 0.1,
+                    NdmiMean = 0.15, NdmiMin = -0.1, NdmiMax = 0.4, NdmiStdev = 0.12
+                }
+            };
+            var d = Build(Enabled(), token: "t", stats: stats);
+
+            await d.Svc.FetchAsync(Area(), CancellationToken.None);
+
+            d.Readings.Verify(c => c.InsertOneAsync(
+                It.Is<NdviReading>(r => r.NdreMean == 0.28 && r.NdmiMean == 0.15
+                                        && r.NdreMax == 0.5 && r.NdmiMin == -0.1),
+                It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task Fetch_PassaFlagExtraIndicesDoSettingsAoServico()
+        {
+            var settings = Enabled();
+            settings.ExtraIndicesEnabled = true;
+            var stats = new List<NdviStat> { new(new DateTime(2026, 6, 8, 0, 0, 0, DateTimeKind.Utc), 0.6, 0.2, 0.9, 0.1, 900, 0) };
+            var d = Build(settings, token: "t", stats: stats);
+
+            await d.Svc.FetchAsync(Area(), CancellationToken.None);
+
+            // A flag do settings tem que chegar ao serviço — senão o evalscript estendido nunca roda.
+            d.StatService.Verify(s => s.GetStatisticsAsync(It.IsAny<string>(),
+                It.IsAny<MongoDB.Driver.GeoJsonObjectModel.GeoJsonPolygon<MongoDB.Driver.GeoJsonObjectModel.GeoJson2DGeographicCoordinates>>(),
+                It.IsAny<DateTime>(), It.IsAny<DateTime>(), true, It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
