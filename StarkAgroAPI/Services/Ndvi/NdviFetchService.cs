@@ -130,16 +130,31 @@ namespace StarkAgroAPI.Services.Ndvi
         {
             try
             {
-                // Janela de 1 dia em torno da passagem — o mosaico do PNG usa aquela aquisição.
-                var day = reading.AcquisitionDate.Date;
+                // Janela = o bucket EXATO que a Statistical API agregou para esta leitura, para o
+                // PNG mostrar a mesma passagem que os números descrevem.
+                //
+                // ⚠️ Não truncar com `.Date`. Os buckets da Statistical API são de 1 dia contados a
+                // partir do `timeRange.from` da requisição — que é a hora em que o worker rodou,
+                // não a meia-noite. Com um fetch às 23:24, o bucket é [D 23:24, D+1 23:24) e a
+                // passagem do Sentinel-2 cai em D+1 de manhã. `.Date` pedia [D 00:00, D+1 00:00),
+                // que não contém a aquisição — e a CDSE devolvia 200 com um PNG **inteiramente
+                // transparente** (~1 KB), sem erro nenhum. O mapa ficava sem cor enquanto a
+                // legenda e o gráfico mostravam dados, porque esses vêm da Statistical API.
+                var from = reading.AcquisitionDate;
                 var png = await _processService.GetNdviOverlayPngAsync(
-                    token, area.Geometry, day, day.AddDays(1), cancellationToken);
+                    token, area.Geometry, from, from.AddDays(1), cancellationToken);
                 if (png is null || png.Length == 0)
                 {
                     _logger.LogWarning("NDVI overlay: PNG vazio para a área {AreaId} (passagem {Date}).",
                         area.Id, reading.AcquisitionDate);
                     return;
                 }
+
+                // Tamanho no log: um PNG totalmente transparente comprime para ~1 KB e é
+                // indistinguível de sucesso sem isto. Foi o que escondeu o bug da janela.
+                _logger.LogInformation(
+                    "NDVI overlay: área {AreaId}, passagem {Date:O}, {Bytes} bytes.",
+                    area.Id, reading.AcquisitionDate, png.Length);
 
                 var fileId = await _overlayStore.UploadAsync(
                     png, $"ndvi-{area.Id}-{reading.Id}.png", "image/png", cancellationToken);
