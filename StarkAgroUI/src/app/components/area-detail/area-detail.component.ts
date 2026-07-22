@@ -5,7 +5,7 @@ import { ChartConfiguration } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { firstValueFrom } from 'rxjs';
 import { AreaService } from '../../services/area.service';
-import { MonitoredArea, NdviTrendPoint } from '../../models/monitored-area.model';
+import { MonitoredArea, NdviClassShare, NdviTrendPoint } from '../../models/monitored-area.model';
 import { addBaseLayers, applyDefaultMarkerIcon } from '../../utils/leaflet-basemaps';
 
 @Component({
@@ -36,6 +36,11 @@ export class AreaDetailComponent implements OnInit, OnDestroy {
   loading = true;
   error = false;
 
+  /** Classes do PNG que está no mapa — é a legenda. Ver renderOverlay() para o porquê. */
+  legendClasses: NdviClassShare[] = [];
+  /** true quando alguma passagem já veio classificada; senão o painel de composição some. */
+  hasClasses = false;
+
   // Leaflet (carregado sob demanda no browser).
   private map: any | null = null;
   private leaflet: any | null = null;
@@ -62,6 +67,39 @@ export class AreaDetailComponent implements OnInit, OnDestroy {
       }
     },
     plugins: { legend: { display: true, labels: { color: '#e2e8f0' } } }
+  };
+
+  // Composição por nível: área empilhada 100%. A média sozinha esconde o que importa — um
+  // talhão metade ótimo e metade solo exposto tem a mesma média de um talhão todo medíocre.
+  classChartData: ChartConfiguration<'line'>['data'] = { labels: [], datasets: [] };
+  classChartOptions: ChartConfiguration<'line'>['options'] = {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: { mode: 'index', intersect: false },
+    scales: {
+      y: {
+        stacked: true,
+        min: 0,
+        max: 100,
+        title: { display: true, text: '% da área', color: '#a0aec0' },
+        ticks: { color: '#a0aec0', callback: v => `${v}%` },
+        grid: { color: '#2d3f5e' }
+      },
+      x: {
+        ticks: { maxRotation: 0, autoSkip: true, color: '#a0aec0' },
+        grid: { color: '#2d3f5e' }
+      }
+    },
+    plugins: {
+      // reverse: a legenda lista Alta primeiro, na mesma ordem em que as faixas aparecem
+      // empilhadas no gráfico (Alta no topo).
+      legend: { display: true, reverse: true, labels: { color: '#e2e8f0', boxWidth: 12 } },
+      tooltip: {
+        callbacks: {
+          label: ctx => `${ctx.dataset.label}: ${(ctx.parsed.y ?? 0).toFixed(1)}%`
+        }
+      }
+    }
   };
 
   constructor(
@@ -92,6 +130,7 @@ export class AreaDetailComponent implements OnInit, OnDestroy {
         this.points = trend.points ?? [];
         this.latest = [...this.points].reverse().find(p => !p.cloudRejected) ?? this.points[this.points.length - 1];
         this.buildChart();
+        this.buildClassChart();
         this.renderOverlay();
         this.loading = false;
       },
@@ -118,6 +157,43 @@ export class AreaDetailComponent implements OnInit, OnDestroy {
           pointRadius: 4
         }
       ]
+    };
+  }
+
+  /**
+   * Área empilhada 100%: um dataset por classe, na ordem em que o servidor manda (menor
+   * biomassa primeiro), então Solo Exposto fica na base e Alta no topo. As cores vêm do
+   * payload — nunca hardcoded aqui, senão divergem do PNG.
+   */
+  private buildClassChart(): void {
+    // A referência de classes é a passagem mais recente que tem classificação: passagens
+    // antigas (pré-feature) e nubladas vêm com a lista vazia.
+    const reference = [...this.points].reverse().find(p => p.classes?.length)?.classes;
+    this.hasClasses = !!reference;
+    if (!reference) {
+      this.classChartData = { labels: [], datasets: [] };
+      return;
+    }
+
+    this.classChartData = {
+      labels: this.points.map(p => this.shortDate(p.acquisitionDate)),
+      datasets: reference.map((cls, i) => ({
+        label: cls.label,
+        // Passagem sem classificação vira buraco honesto, igual ao gráfico de média — não
+        // uma faixa que despenca a zero e sugere que o talhão virou solo exposto.
+        data: this.points.map(p => {
+          const share = p.classes?.find(c => c.key === cls.key);
+          return share ? round2(share.percent) : null;
+        }),
+        borderColor: cls.color,
+        backgroundColor: cls.color,
+        // Empilhado: a primeira faixa preenche até a base, as demais até a faixa de baixo.
+        fill: i === 0 ? 'origin' : '-1',
+        borderWidth: 1,
+        tension: 0.25,
+        spanGaps: true,
+        pointRadius: 2
+      }))
     };
   }
 
@@ -172,9 +248,21 @@ export class AreaDetailComponent implements OnInit, OnDestroy {
       const [minLng, minLat, maxLng, maxLat] = withOverlay.bbox!;
       const bounds = L.latLngBounds([[minLat, minLng], [maxLat, maxLng]]);
       L.imageOverlay(this.overlayUrl, bounds, { opacity: 0.7 }).addTo(this.map);
+
+      // A legenda descreve ESTE PNG, então sai das classes desta passagem. PNG gravado antes
+      // da classificação foi colorido com o ramp antigo e vem sem `classes` — nesse caso a
+      // legenda não aparece, em vez de anunciar cortes que a imagem não usou.
+      this.legendClasses = [...(withOverlay.classes ?? [])].reverse();
     } catch {
       // Overlay é acessório — sem PNG, o mapa mostra só o contorno.
     }
+  }
+
+  /** Nível que ocupa a maior fatia da passagem exibida — a leitura rápida do card. */
+  get dominantClass(): NdviClassShare | undefined {
+    const classes = this.latest?.classes;
+    if (!classes?.length) return undefined;
+    return classes.reduce((a, b) => (b.percent > a.percent ? b : a));
   }
 
   shortDate(iso: string): string {

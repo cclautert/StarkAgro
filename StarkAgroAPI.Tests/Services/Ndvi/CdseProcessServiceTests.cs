@@ -111,5 +111,28 @@ namespace StarkAgroAPI.Tests.Services.Ndvi
             Assert.Contains("2026-06-08T00:00:00Z", body);
             Assert.Contains("-47", body); // longitude no ring (ordem [lng,lat])
         }
+
+        [Fact]
+        public void Evalscript_RampComesFromTheClassification_NotHardcoded()
+        {
+            var script = CdseProcessService.Evalscript;
+
+            // O PNG tem que usar exatamente os cortes que a legenda anuncia; um ramp escrito à
+            // mão aqui faria o mapa mentir sem nenhum teste reclamar.
+            Assert.Contains(NdviClassification.BuildRampFunction(), script);
+            Assert.Contains("function setup()", script);
+            Assert.Contains("evaluatePixel", script);
+            Assert.Contains("s.SCL === 3", script);   // máscara de nuvem preservada
+            Assert.Contains("dataMask === 0", script);
+        }
+
+        [Fact]
+        public void Evalscript_CallsRampExactlyOnceAndDefinesIt()
+        {
+            var script = CdseProcessService.Evalscript;
+
+            Assert.Contains("function ramp(ndvi)", script);
+            Assert.Contains("let c = ramp(ndvi);", script);
+        }
     }
 }

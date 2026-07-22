@@ -21,6 +21,10 @@
       <div class="latest-value">{{ ndvi(latest.ndviMean) }}</div>
       <div class="latest-meta">
         <span class="latest-label">NDVI médio</span>
+        <span class="dominant" *ngIf="dominantClass as dom">
+          <i class="swatch" [style.background]="dom.color"></i>
+          {{ dom.label }} em {{ dom.percent.toFixed(0) }}% da área
+        </span>
         <span class="latest-date">{{ shortDate(latest.acquisitionDate) }}</span>
         <span class="cloud-badge" *ngIf="latest.cloudRejected">☁️ Nublada</span>
         <span class="cloud-badge cloud-ok" *ngIf="!latest.cloudRejected">☀️ {{ latest.cloudCoveragePct.toFixed(0) }}% nuvem</span>
@@ -39,10 +43,43 @@
       <ng-template #noSeries><p class="muted">Sem leituras ainda.</p></ng-template>
     </div>
 
+    <!-- Composição por nível de biomassa -->
+    <div class="panel" *ngIf="points.length">
+      <h2 class="panel-title">Composição por nível</h2>
+      <div class="chart-box" *ngIf="hasClasses; else noClasses">
+        <canvas baseChart [data]="classChartData" [options]="classChartOptions" [type]="'line'"></canvas>
+      </div>
+      <p class="muted chart-hint" *ngIf="hasClasses">
+        Quanto da área está em cada nível, passagem a passagem. A mancha vermelha crescendo é o alerta —
+        o NDVI médio sozinho esconde isso.
+      </p>
+      <ng-template #noClasses>
+        <p class="muted">
+          Os níveis aparecem a partir da próxima passagem do satélite — as leituras já gravadas
+          têm só o índice médio.
+        </p>
+      </ng-template>
+    </div>
+
     <!-- Mapa com overlay -->
     <div class="panel">
       <h2 class="panel-title">Mapa</h2>
       <div #mapContainer class="map-box"></div>
+
+      <!-- Legenda: sai das classes da MESMA passagem que gerou o PNG, então cor e faixa
+           anunciadas são exatamente as que a imagem usou. -->
+      <div class="legend" *ngIf="legendClasses.length">
+        <span class="legend-title">Índice NDVI · classificação de biomassa</span>
+        <ul class="legend-items">
+          <li *ngFor="let c of legendClasses">
+            <i class="swatch" [style.background]="c.color"></i>
+            <span class="legend-label">{{ c.label }}</span>
+            <span class="legend-range">{{ c.minNdvi.toFixed(2) }} – {{ c.maxNdvi.toFixed(2) }}</span>
+            <span class="legend-pct">{{ c.percent.toFixed(1) }}%</span>
+          </li>
+        </ul>
+      </div>
+
       <p class="muted map-hint">O overlay colorido mostra o NDVI da passagem mais recente sobre o talhão.</p>
     </div>
   </ng-container>

@@ -83,6 +83,85 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Ndvi
         }
 
         [Fact]
+        public async Task Trend_ComClassCounts_ProjetaClassesComRotuloCorEPercentual()
+        {
+            var classes = NdviClassification.Classes;
+            var db = Db(
+                areas: [new MonitoredArea { Id = 5, UserId = 42 }],
+                readings:
+                [
+                    new NdviReading
+                    {
+                        Id = 1, AreaId = 5, UserId = 42, AcquisitionDate = new DateTime(2026, 6, 3), NdviMean = 0.6,
+                        // 100 pixels no total: 25 na primeira classe, 75 na última.
+                        ClassCounts =
+                        [
+                            new NdviClassCount { Key = classes[0].Key, PixelCount = 25 },
+                            new NdviClassCount { Key = classes[^1].Key, PixelCount = 75 }
+                        ]
+                    }
+                ]);
+            var handler = new GetNdviTrendHandler(db.Object, User(42), new Notificator());
+
+            var result = await handler.Handle(new GetNdviTrendRequest { AreaId = 5 }, CancellationToken.None);
+
+            var point = Assert.Single(result!.Points);
+            // Sai sempre com as 6 classes na ordem da classificação, mesmo as ausentes (zeradas).
+            Assert.Equal(classes.Count, point.Classes.Count);
+            Assert.Equal(classes.Select(c => c.Key), point.Classes.Select(c => c.Key));
+            Assert.Equal(25.0, point.Classes[0].Percent, 2);
+            Assert.Equal(75.0, point.Classes[^1].Percent, 2);
+            Assert.Equal(0.0, point.Classes[1].Percent, 2);
+            Assert.Equal(100.0, point.Classes.Sum(c => c.Percent), 2);
+            // Rótulo e cor vêm do servidor para o front não duplicar a tabela de cores do PNG.
+            Assert.Equal(classes[0].Label, point.Classes[0].Label);
+            Assert.Equal(classes[0].HexColor, point.Classes[0].Color);
+            Assert.Equal(classes[0].HighEdge, point.Classes[0].MaxNdvi, 6);
+        }
+
+        [Fact]
+        public async Task Trend_LeituraLegadaSemClassCounts_DevolveListaVazia()
+        {
+            // Documento gravado antes da classificação: não há migração, a tela cai no fallback.
+            var db = Db(
+                areas: [new MonitoredArea { Id = 5, UserId = 42 }],
+                readings: [new NdviReading { Id = 1, AreaId = 5, UserId = 42, AcquisitionDate = new DateTime(2026, 6, 3) }]);
+            var handler = new GetNdviTrendHandler(db.Object, User(42), new Notificator());
+
+            var result = await handler.Handle(new GetNdviTrendRequest { AreaId = 5 }, CancellationToken.None);
+
+            Assert.Empty(Assert.Single(result!.Points).Classes);
+        }
+
+        [Fact]
+        public async Task Trend_ClasseDesconhecidaNoDocumento_EIgnoradaSemVirarOutraClasse()
+        {
+            var db = Db(
+                areas: [new MonitoredArea { Id = 5, UserId = 42 }],
+                readings:
+                [
+                    new NdviReading
+                    {
+                        Id = 1, AreaId = 5, UserId = 42, AcquisitionDate = new DateTime(2026, 6, 3),
+                        ClassCounts =
+                        [
+                            new NdviClassCount { Key = "ClasseQueNaoExisteMais", PixelCount = 999 },
+                            new NdviClassCount { Key = NdviClassification.Classes[2].Key, PixelCount = 10 }
+                        ]
+                    }
+                ]);
+            var handler = new GetNdviTrendHandler(db.Object, User(42), new Notificator());
+
+            var result = await handler.Handle(new GetNdviTrendRequest { AreaId = 5 }, CancellationToken.None);
+
+            var point = Assert.Single(result!.Points);
+            Assert.Equal(NdviClassification.Classes.Count, point.Classes.Count);
+            Assert.Equal(10, point.Classes[2].PixelCount);
+            Assert.Equal(100.0, point.Classes[2].Percent, 2); // 999 órfão não entra no denominador
+            Assert.DoesNotContain(point.Classes, c => c.PixelCount == 999);
+        }
+
+        [Fact]
         public async Task Trend_AreaInexistenteOuDeOutro_NotificaENull()
         {
             var db = Db(areas: []); // área não é do tenant / não existe

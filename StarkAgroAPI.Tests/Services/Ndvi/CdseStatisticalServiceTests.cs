@@ -127,5 +127,100 @@ namespace StarkAgroAPI.Tests.Services.Ndvi
             Assert.Contains("2026-06-01T00:00:00Z", body);
             Assert.Contains("-47", body);                   // longitude no ring (ordem [lng,lat])
         }
+
+        [Fact]
+        public void BuildRequestBody_AsksForTheClassHistogram_OnTheSameRequest()
+        {
+            MonitoredAreaGeometry.TryBuild(new List<GeoCoordinate>
+            {
+                new() { Lat = -23.0, Lng = -47.0 },
+                new() { Lat = -23.0, Lng = -46.99 },
+                new() { Lat = -22.99, Lng = -46.99 }
+            }, out var geo, out _);
+
+            var body = CdseStatisticalService.BuildRequestBody(
+                geo, new DateTime(2026, 6, 1, 0, 0, 0, DateTimeKind.Utc), new DateTime(2026, 7, 1, 0, 0, 0, DateTimeKind.Utc));
+
+            // O histograma viaja junto da estatística — é o que faz a classificação sair sem PU extra.
+            Assert.Contains("\"calculations\"", body);
+            Assert.Contains("\"histograms\"", body);
+            Assert.Contains("\"default\"", body);           // `@default` em C# vira a chave "default"
+            using var doc = JsonDocument.Parse(body);
+            var bins = doc.RootElement
+                .GetProperty("calculations").GetProperty("ndvi")
+                .GetProperty("histograms").GetProperty("default")
+                .GetProperty("bins");
+            Assert.Equal(NdviClassification.HistogramBins.Length, bins.GetArrayLength());
+        }
+
+        [Fact]
+        public void Parse_WithHistogram_ReadsOneCountPerClass()
+        {
+            using var doc = JsonDocument.Parse(HistogramResponse);
+
+            var stats = CdseStatisticalService.Parse(doc.RootElement);
+
+            var counts = Assert.Single(stats).ClassCounts;
+            Assert.Equal(NdviClassification.Classes.Count, counts.Count);
+            Assert.Equal(new long[] { 10, 20, 30, 40, 50, 60 }, counts);
+        }
+
+        [Fact]
+        public void Parse_WithoutHistogram_KeepsParsingAndLeavesClassesEmpty()
+        {
+            // Compat: resposta antiga (ou sem o bloco calculations) não pode quebrar a série.
+            using var doc = JsonDocument.Parse(SampleResponse);
+
+            var stats = CdseStatisticalService.Parse(doc.RootElement);
+
+            Assert.Equal(2, stats.Count);
+            Assert.All(stats, s => Assert.Empty(s.ClassCounts));
+        }
+
+        [Fact]
+        public void ParseHistogram_BinCountMismatch_ReturnsEmpty()
+        {
+            // Meia distribuição é pior que nenhuma: alinharia contagem com a classe errada.
+            using var doc = JsonDocument.Parse("""
+            { "outputs": { "ndvi": { "bands": { "B0": { "histogram": { "bins": [
+                { "lowEdge": -1.0, "highEdge": 0.2, "count": 10 },
+                { "lowEdge": 0.2, "highEdge": 0.35, "count": 20 } ] } } } } } }
+            """);
+
+            Assert.Empty(CdseStatisticalService.ParseHistogram(doc.RootElement));
+        }
+
+        [Fact]
+        public void ParseHistogram_BinWithoutCount_CountsAsZero()
+        {
+            var bins = string.Join(",", NdviClassification.Classes.Select(c =>
+                $"{{ \"lowEdge\": {c.LowEdge.ToString(System.Globalization.CultureInfo.InvariantCulture)} }}"));
+            using var doc = JsonDocument.Parse(
+                $$"""{ "outputs": { "ndvi": { "bands": { "B0": { "histogram": { "bins": [{{bins}}] } } } } } }""");
+
+            var counts = CdseStatisticalService.ParseHistogram(doc.RootElement);
+
+            Assert.Equal(NdviClassification.Classes.Count, counts.Count);
+            Assert.All(counts, c => Assert.Equal(0, c));
+        }
+
+        private const string HistogramResponse = """
+        {
+          "data": [
+            { "interval": { "from": "2026-06-03T00:00:00Z", "to": "2026-06-04T00:00:00Z" },
+              "outputs": { "ndvi": { "bands": { "B0": {
+                "stats": { "min": 0.1, "max": 0.95, "mean": 0.6, "stDev": 0.2, "sampleCount": 210, "noDataCount": 0 },
+                "histogram": { "bins": [
+                  { "lowEdge": -1.0, "highEdge": 0.20, "count": 10 },
+                  { "lowEdge": 0.20, "highEdge": 0.35, "count": 20 },
+                  { "lowEdge": 0.35, "highEdge": 0.50, "count": 30 },
+                  { "lowEdge": 0.50, "highEdge": 0.65, "count": 40 },
+                  { "lowEdge": 0.65, "highEdge": 0.80, "count": 50 },
+                  { "lowEdge": 0.80, "highEdge": 1.00, "count": 60 } ],
+                  "overflowCount": 0, "underflowCount": 0 } } } } } }
+          ],
+          "status": "OK"
+        }
+        """;
     }
 }

@@ -96,6 +96,7 @@ namespace StarkAgroAPI.Services.Ndvi
                     NdviStdev = s.Stdev,
                     CloudCoveragePct = s.CloudPct,
                     CloudRejected = cloudRejected,
+                    ClassCounts = ToClassCounts(s.ClassCounts),
                     NdviCostCents = settings.NdviCostCents,
                     CreatedAt = now
                 };
@@ -152,6 +153,19 @@ namespace StarkAgroAPI.Services.Ndvi
             {
                 _logger.LogError(ex, "NDVI overlay: falha ao gerar/gravar o PNG da área {AreaId}.", area.Id);
             }
+        }
+
+        /// <summary>
+        /// Histograma (posicional, na ordem das classes) → contagens com chave estável. Tamanho
+        /// diferente do esperado é descartado inteiro: gravar meia distribuição seria pior que
+        /// nenhuma. O <c>ParseHistogram</c> já filtra isso; aqui é o cinto de segurança.
+        /// </summary>
+        private static List<NdviClassCount> ToClassCounts(IReadOnlyList<long> counts)
+        {
+            var classes = NdviClassification.Classes;
+            if (counts.Count != classes.Count) return [];
+
+            return [.. classes.Select((c, i) => new NdviClassCount { Key = c.Key, PixelCount = counts[i] })];
         }
 
         private static DateTime ResolveFrom(string? lastAcquisitionDate, DateTime to)

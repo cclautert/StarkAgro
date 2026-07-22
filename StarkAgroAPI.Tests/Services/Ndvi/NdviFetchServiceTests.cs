@@ -143,6 +143,66 @@ namespace StarkAgroAPI.Tests.Services.Ndvi
         }
 
         [Fact]
+        public async Task Fetch_ComHistograma_GravaClassCountsComChaveEstavel()
+        {
+            var classes = NdviClassification.Classes;
+            var stats = new List<NdviStat>
+            {
+                new(new DateTime(2026, 6, 8, 0, 0, 0, DateTimeKind.Utc), 0.65, 0.2, 0.9, 0.1, 900, 10)
+                {
+                    ClassCounts = [10, 20, 30, 40, 50, 60]
+                }
+            };
+            var d = Build(Enabled(), token: "t", stats: stats);
+
+            await d.Svc.FetchAsync(Area(), CancellationToken.None);
+
+            d.Readings.Verify(c => c.InsertOneAsync(
+                It.Is<NdviReading>(r =>
+                    r.ClassCounts.Count == classes.Count
+                    && r.ClassCounts[0].Key == classes[0].Key && r.ClassCounts[0].PixelCount == 10
+                    && r.ClassCounts[5].Key == classes[5].Key && r.ClassCounts[5].PixelCount == 60),
+                It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task Fetch_SemHistograma_GravaClassCountsVazio()
+        {
+            // Resposta sem o bloco de histograma não pode inventar distribuição nem quebrar o fetch.
+            var stats = new List<NdviStat>
+            {
+                new(new DateTime(2026, 6, 8, 0, 0, 0, DateTimeKind.Utc), 0.65, 0.2, 0.9, 0.1, 900, 10)
+            };
+            var d = Build(Enabled(), token: "t", stats: stats);
+
+            await d.Svc.FetchAsync(Area(), CancellationToken.None);
+
+            d.Readings.Verify(c => c.InsertOneAsync(
+                It.Is<NdviReading>(r => r.ClassCounts.Count == 0),
+                It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task Fetch_HistogramaComTamanhoErrado_EhDescartadoInteiro()
+        {
+            // Meia distribuição alinharia contagem com a classe errada — pior que nenhuma.
+            var stats = new List<NdviStat>
+            {
+                new(new DateTime(2026, 6, 8, 0, 0, 0, DateTimeKind.Utc), 0.65, 0.2, 0.9, 0.1, 900, 10)
+                {
+                    ClassCounts = [10, 20]
+                }
+            };
+            var d = Build(Enabled(), token: "t", stats: stats);
+
+            await d.Svc.FetchAsync(Area(), CancellationToken.None);
+
+            d.Readings.Verify(c => c.InsertOneAsync(
+                It.Is<NdviReading>(r => r.ClassCounts.Count == 0),
+                It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
         public async Task Fetch_CloudyPass_GravaCloudRejected()
         {
             var stats = new List<NdviStat>
