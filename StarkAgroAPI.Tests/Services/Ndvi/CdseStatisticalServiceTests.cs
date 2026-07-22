@@ -145,16 +145,45 @@ namespace StarkAgroAPI.Tests.Services.Ndvi
             Assert.Contains("\"calculations\"", body);
             Assert.Contains("\"histograms\"", body);
             Assert.Contains("\"default\"", body);           // `@default` em C# vira a chave "default"
+
             using var doc = JsonDocument.Parse(body);
-            var bins = doc.RootElement
+            var h = doc.RootElement
                 .GetProperty("calculations").GetProperty("ndvi")
-                .GetProperty("histograms").GetProperty("default")
-                .GetProperty("bins");
-            Assert.Equal(NdviClassification.HistogramBins.Length, bins.GetArrayLength());
+                .GetProperty("histograms").GetProperty("default");
+
+            // Histograma UNIFORME. A CDSE devolve 400 COMMON_BAD_PAYLOAD para um array explícito
+            // de arestas em `bins` — foi assim que a busca de NDVI quebrou em produção.
+            Assert.Equal(NdviClassification.HistogramBinCount, h.GetProperty("nBins").GetInt32());
+            Assert.Equal(NdviClassification.HistogramLowEdge, h.GetProperty("lowEdge").GetDecimal());
+            Assert.Equal(NdviClassification.HistogramHighEdge, h.GetProperty("highEdge").GetDecimal());
+            Assert.False(h.TryGetProperty("bins", out _), "não enviar array de arestas — a CDSE rejeita");
         }
 
         [Fact]
-        public void Parse_WithHistogram_ReadsOneCountPerClass()
+        public void BuildRequestBody_ArestasDoHistogramaSaoFloatNoJson_NaoInteiro()
+        {
+            MonitoredAreaGeometry.TryBuild(new List<GeoCoordinate>
+            {
+                new() { Lat = -23.0, Lng = -47.0 },
+                new() { Lat = -23.0, Lng = -46.99 },
+                new() { Lat = -22.99, Lng = -46.99 }
+            }, out var geo, out _);
+
+            var body = CdseStatisticalService.BuildRequestBody(
+                geo, new DateTime(2026, 6, 1, 0, 0, 0, DateTimeKind.Utc), new DateTime(2026, 7, 1, 0, 0, 0, DateTimeKind.Utc));
+
+            // Asserção sobre o TEXTO, não sobre o valor: a CDSE infere o tipo do histograma pelo
+            // literal JSON. `-1` (inteiro) → 400 "sampleType AUTO mis-matched with corresponding
+            // histogram of type integer". `-1.0` (float) → 200. `double` em System.Text.Json
+            // escreve `-1`; só `decimal` preserva o `.0`. Verificado contra a API real.
+            Assert.Contains("\"lowEdge\":-1.0", body);
+            Assert.Contains("\"highEdge\":1.0", body);
+            Assert.DoesNotContain("\"lowEdge\":-1,", body);
+            Assert.DoesNotContain("\"highEdge\":1,", body);
+        }
+
+        [Fact]
+        public void Parse_ComHistogramaFino_AgregaBinsNasClasses()
         {
             using var doc = JsonDocument.Parse(HistogramResponse);
 
@@ -162,7 +191,8 @@ namespace StarkAgroAPI.Tests.Services.Ndvi
 
             var counts = Assert.Single(stats).ClassCounts;
             Assert.Equal(NdviClassification.Classes.Count, counts.Count);
-            Assert.Equal(new long[] { 10, 20, 30, 40, 50, 60 }, counts);
+            // Solo Exposto junta os dois bins abaixo de 0,20 (10 + 20); os demais caem sozinhos.
+            Assert.Equal(new long[] { 30, 5, 0, 40, 0, 60 }, counts);
         }
 
         [Fact]
@@ -178,32 +208,53 @@ namespace StarkAgroAPI.Tests.Services.Ndvi
         }
 
         [Fact]
-        public void ParseHistogram_BinCountMismatch_ReturnsEmpty()
+        public void ParseHistogram_BinNaFronteiraDaClasse_VaiParaAClasseCerta()
         {
-            // Meia distribuição é pior que nenhuma: alinharia contagem com a classe errada.
+            // [0.34,0.35) é Baixa; [0.35,0.36) é Média-Baixa. A agregação é por ponto médio
+            // justamente para que ruído de ponto flutuante no lowEdge não troque a classe.
             using var doc = JsonDocument.Parse("""
             { "outputs": { "ndvi": { "bands": { "B0": { "histogram": { "bins": [
-                { "lowEdge": -1.0, "highEdge": 0.2, "count": 10 },
-                { "lowEdge": 0.2, "highEdge": 0.35, "count": 20 } ] } } } } } }
+                { "lowEdge": 0.34, "highEdge": 0.35, "count": 7 },
+                { "lowEdge": 0.35, "highEdge": 0.36, "count": 9 } ] } } } } } }
             """);
 
-            Assert.Empty(CdseStatisticalService.ParseHistogram(doc.RootElement));
+            var counts = CdseStatisticalService.ParseHistogram(doc.RootElement);
+
+            Assert.Equal(7, counts[1]);   // Baixa
+            Assert.Equal(9, counts[2]);   // Média-Baixa
         }
 
         [Fact]
-        public void ParseHistogram_BinWithoutCount_CountsAsZero()
+        public void ParseHistogram_BinSemCount_EhIgnoradoSemQuebrar()
         {
-            var bins = string.Join(",", NdviClassification.Classes.Select(c =>
-                $"{{ \"lowEdge\": {c.LowEdge.ToString(System.Globalization.CultureInfo.InvariantCulture)} }}"));
-            using var doc = JsonDocument.Parse(
-                $$"""{ "outputs": { "ndvi": { "bands": { "B0": { "histogram": { "bins": [{{bins}}] } } } } } }""");
+            using var doc = JsonDocument.Parse("""
+            { "outputs": { "ndvi": { "bands": { "B0": { "histogram": { "bins": [
+                { "lowEdge": 0.10, "highEdge": 0.11 },
+                { "lowEdge": 0.55, "highEdge": 0.56, "count": 12 } ] } } } } } }
+            """);
 
             var counts = CdseStatisticalService.ParseHistogram(doc.RootElement);
 
             Assert.Equal(NdviClassification.Classes.Count, counts.Count);
-            Assert.All(counts, c => Assert.Equal(0, c));
+            Assert.Equal(0, counts[0]);
+            Assert.Equal(12, counts[3]);
         }
 
+        [Fact]
+        public void ParseHistogram_BinForaDoDominio_NaoEntraEmClasseNenhuma()
+        {
+            using var doc = JsonDocument.Parse("""
+            { "outputs": { "ndvi": { "bands": { "B0": { "histogram": { "bins": [
+                { "lowEdge": 5.0, "highEdge": 6.0, "count": 999 },
+                { "lowEdge": 0.90, "highEdge": 0.91, "count": 4 } ] } } } } } }
+            """);
+
+            var counts = CdseStatisticalService.ParseHistogram(doc.RootElement);
+
+            Assert.Equal(4, counts.Sum());   // o 999 fora de [-1,1] não é somado em lugar nenhum
+        }
+
+        // Histograma fino e uniforme, como a CDSE devolve com nBins/lowEdge/highEdge.
         private const string HistogramResponse = """
         {
           "data": [
@@ -211,12 +262,11 @@ namespace StarkAgroAPI.Tests.Services.Ndvi
               "outputs": { "ndvi": { "bands": { "B0": {
                 "stats": { "min": 0.1, "max": 0.95, "mean": 0.6, "stDev": 0.2, "sampleCount": 210, "noDataCount": 0 },
                 "histogram": { "bins": [
-                  { "lowEdge": -1.0, "highEdge": 0.20, "count": 10 },
-                  { "lowEdge": 0.20, "highEdge": 0.35, "count": 20 },
-                  { "lowEdge": 0.35, "highEdge": 0.50, "count": 30 },
-                  { "lowEdge": 0.50, "highEdge": 0.65, "count": 40 },
-                  { "lowEdge": 0.65, "highEdge": 0.80, "count": 50 },
-                  { "lowEdge": 0.80, "highEdge": 1.00, "count": 60 } ],
+                  { "lowEdge": -1.00, "highEdge": -0.99, "count": 10 },
+                  { "lowEdge": 0.10, "highEdge": 0.11, "count": 20 },
+                  { "lowEdge": 0.20, "highEdge": 0.21, "count": 5 },
+                  { "lowEdge": 0.55, "highEdge": 0.56, "count": 40 },
+                  { "lowEdge": 0.99, "highEdge": 1.00, "count": 60 } ],
                   "overflowCount": 0, "underflowCount": 0 } } } } } }
           ],
           "status": "OK"

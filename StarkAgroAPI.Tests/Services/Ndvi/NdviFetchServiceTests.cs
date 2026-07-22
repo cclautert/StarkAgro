@@ -203,6 +203,28 @@ namespace StarkAgroAPI.Tests.Services.Ndvi
         }
 
         [Fact]
+        public async Task Fetch_PassagemNublada_NaoGravaClassCountsZerados()
+        {
+            // O histograma de uma passagem nublada volta com as seis classes em zero. Gravar isso
+            // faria o gráfico de composição despencar a 0% em todas as faixas — um vale que parece
+            // perda de vigor. Nublada tem que ser buraco na série, não distribuição vazia.
+            var stats = new List<NdviStat>
+            {
+                new(new DateTime(2026, 6, 8, 0, 0, 0, DateTimeKind.Utc), 0, 0, 0, 0, 0, 100)
+                {
+                    ClassCounts = [0, 0, 0, 0, 0, 0]
+                }
+            };
+            var d = Build(Enabled(), token: "t", stats: stats);
+
+            await d.Svc.FetchAsync(Area(), CancellationToken.None);
+
+            d.Readings.Verify(c => c.InsertOneAsync(
+                It.Is<NdviReading>(r => r.CloudRejected && r.ClassCounts.Count == 0),
+                It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
         public async Task Fetch_CloudyPass_GravaCloudRejected()
         {
             var stats = new List<NdviStat>
@@ -253,6 +275,27 @@ namespace StarkAgroAPI.Tests.Services.Ndvi
             d.Readings.Verify(c => c.UpdateOneAsync(
                 It.IsAny<FilterDefinition<NdviReading>>(), It.IsAny<UpdateDefinition<NdviReading>>(),
                 It.IsAny<UpdateOptions>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task Fetch_Overlay_PedeExatamenteOBucketDaStatisticalApi_SemTruncarParaMeiaNoite()
+        {
+            // Buckets da Statistical API são de 1 dia a partir do `timeRange.from`, que é a hora em
+            // que o worker rodou — 23:24, não meia-noite. Truncar com `.Date` pedia
+            // [18T00:00, 19T00:00), que NÃO contém a passagem real (19T de manhã): a CDSE devolvia
+            // 200 com um PNG inteiramente transparente e o mapa ficava sem cor, sem erro nenhum.
+            var acq = new DateTime(2026, 7, 18, 23, 24, 12, DateTimeKind.Utc);
+            var stats = new List<NdviStat> { new(acq, 0.55, 0.2, 0.9, 0.1, 900, 0) };
+            var d = Build(Enabled(), token: "t", stats: stats, overlayPng: [1, 2, 3, 4]);
+
+            await d.Svc.FetchAsync(Area(), CancellationToken.None);
+
+            d.Process.Verify(p => p.GetNdviOverlayPngAsync(
+                It.IsAny<string>(),
+                It.IsAny<MongoDB.Driver.GeoJsonObjectModel.GeoJsonPolygon<MongoDB.Driver.GeoJsonObjectModel.GeoJson2DGeographicCoordinates>>(),
+                acq,                 // início do bucket, com hora preservada
+                acq.AddDays(1),      // fim do bucket
+                It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
