@@ -5,8 +5,10 @@
 # e reconstrói/reinicia. NÃO precisa de auth do GitHub na VPS.
 #
 # Preserva os arquivos que vivem SÓ na VPS (não versionados / com segredos):
-#   /opt/starkagro/.env, /opt/starkagro/docker/mosquitto/passwd
-# `git archive` só extrai arquivos versionados, então esses ficam intactos.
+#   $VPS_DEPLOY_PATH/.env, $VPS_DEPLOY_PATH/docker/mosquitto/passwd
+# `git archive` só extrai arquivos versionados, então esses ficam intactos. É por isso que
+# este script é o caminho de deploy também no CI: o .env de produção é a fonte da verdade
+# dos segredos e nunca é reescrito a partir do GitHub.
 #
 # A VPS também hospeda o Mnemósine e o Traefik — este script só mexe no stack `starkagro`.
 #
@@ -18,19 +20,20 @@ set -euo pipefail
 REF="${1:-origin/main}"
 VPS="${STARKAGRO_VPS:-root@2.25.140.180}"
 KEY="${SSH_KEY:-$HOME/.ssh/id_ed25519}"
+DIR="${VPS_DEPLOY_PATH:-/opt/starkagro}"
 COMPOSE="docker compose -f docker/docker-compose.vps.yml --env-file .env"
 SSH=(ssh -i "$KEY" -o StrictHostKeyChecking=no -o BatchMode=yes "$VPS")
 
-echo "==> git fetch + enviando '$REF' para /opt/starkagro ..."
+echo "==> git fetch + enviando '$REF' para $DIR ..."
 git fetch origin --quiet
-git archive --format=tar "$REF" | "${SSH[@]}" 'mkdir -p /opt/starkagro && tar x -C /opt/starkagro'
+git archive --format=tar "$REF" | "${SSH[@]}" "mkdir -p '$DIR' && tar x -C '$DIR'"
 
 echo "==> rebuild + up (na VPS) ..."
 # O symlink docker/.env -> ../.env é o que faz um `docker compose -f docker/...yml up -d`
 # SEM --env-file continuar funcionando: o Compose procura o .env no diretório do arquivo
 # compose (docker/), não na raiz do projeto. Sem ele, TODA ${VAR} vira string vazia e o
 # stack sobe sem Mongo/JWT/MQTT — em silêncio, com health check passando.
-"${SSH[@]}" "cd /opt/starkagro && ln -sfn ../.env docker/.env; [ -f docker/mosquitto/passwd ] && chmod 644 docker/mosquitto/passwd; $COMPOSE up -d --build && docker image prune -f >/dev/null 2>&1; $COMPOSE ps"
+"${SSH[@]}" "cd '$DIR' && ln -sfn ../.env docker/.env; [ -f docker/mosquitto/passwd ] && chmod 644 docker/mosquitto/passwd; $COMPOSE up -d --build && docker image prune -f >/dev/null 2>&1; $COMPOSE ps"
 
 echo "==> conferindo segredos no container (só nomes e tamanhos) ..."
 "${SSH[@]}" 'docker inspect starkagro-api --format "{{range .Config.Env}}{{println .}}{{end}}" |

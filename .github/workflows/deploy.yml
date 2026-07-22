@@ -126,25 +126,16 @@ jobs:
         run: |
           sudo chown -R "$(id -un):$(id -gn)" .git || true
 
+      # Mesma regra do job SSH: o .env da VPS é a fonte da verdade e nunca é reescrito a partir
+      # dos secrets do GitHub. `git reset --hard` não remove arquivo não-versionado, então o
+      # .env e o docker/mosquitto/passwd sobrevivem ao pull.
       - name: Pull main and deploy
-        env:
-          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          MQTT_USERNAME: ${{ secrets.MQTT_USERNAME }}
-          MQTT_PASSWORD: ${{ secrets.MQTT_PASSWORD }}
-          MONGO_USER: ${{ secrets.MONGO_USER }}
-          MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
-          VAPID_PUBLIC_KEY: ${{ secrets.VAPID_PUBLIC_KEY }}
-          VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
         working-directory: ${{ steps.paths.outputs.dir }}
         run: |
           set -euo pipefail
           git fetch origin main
           git reset --hard origin/main
-          chmod +x scripts/bootstrap-vps-env-from-secrets.sh scripts/deploy-hostinger-remote.sh
-          if [[ -d .env ]]; then rm -rf .env; fi
-          ./scripts/bootstrap-vps-env-from-secrets.sh . --force
+          chmod +x scripts/deploy-hostinger-remote.sh
           ./scripts/deploy-hostinger-remote.sh .
 
       - name: Health check
@@ -168,55 +159,38 @@ jobs:
     timeout-minutes: 90
     environment: production
     steps:
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.2.5
-        env:
-          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          MQTT_USERNAME: ${{ secrets.MQTT_USERNAME }}
-          MQTT_PASSWORD: ${{ secrets.MQTT_PASSWORD }}
-          MONGO_USER: ${{ secrets.MONGO_USER }}
-          MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
-          VAPID_PUBLIC_KEY: ${{ secrets.VAPID_PUBLIC_KEY }}
-          VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
+      # O deploy usa exatamente o mesmo script do deploy manual (`scripts/redeploy-starkagro.sh`),
+      # que envia o código por `git archive` e NÃO toca no .env da VPS.
+      #
+      # O caminho anterior fazia `git reset --hard` num checkout git na VPS (que não existe — o
+      # diretório é criado por `git archive`, sem `.git`) e reescrevia o `.env` a partir dos
+      # secrets do GitHub com `--force`. Esse rewrite era um alçapão: `MONGO_PASSWORD` está
+      # gravado no volume do Mongo desde a inicialização, então regravá-lo vazio (secret ausente)
+      # não troca a senha do banco — só derruba o acesso da API, com o /health ainda em 200.
+      # O `.env` de produção é a fonte da verdade dos segredos; o GitHub só guarda o acesso SSH.
+      - uses: actions/checkout@v5
         with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_SSH_KEY }}
-          timeout: 60s
-          command_timeout: 60m
-          envs: JWT_SECRET_KEY,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET,MQTT_USERNAME,MQTT_PASSWORD,MONGO_USER,MONGO_PASSWORD,VAPID_PUBLIC_KEY,VAPID_PRIVATE_KEY
-          script: |
-            set -euo pipefail
-            export VPS_DEPLOY_PATH="${{ secrets.VPS_DEPLOY_PATH }}"
-            cd "$VPS_DEPLOY_PATH"
-            git fetch origin main
-            git reset --hard origin/main
-            chmod +x scripts/bootstrap-vps-env.sh scripts/bootstrap-vps-env-from-secrets.sh scripts/resolve-vps-repo-root.sh scripts/vps-deploy-from-actions.sh scripts/deploy-hostinger-remote.sh
-            REPO_ROOT="$(scripts/resolve-vps-repo-root.sh . | tr -d '\r')"
-            if [[ -z "$REPO_ROOT" || ! -d "$REPO_ROOT/.git" ]]; then
-              echo "ERROR: resolve-vps-repo-root did not return a git checkout" >&2
-              exit 1
-            fi
-            cd "$REPO_ROOT"
-            git fetch origin main
-            git reset --hard origin/main
-            git sparse-checkout disable >/dev/null 2>&1 || true
-            git checkout -f HEAD -- StarkAgroUI StarkAgroAPI StarkAgroWorker docker scripts infra
-            chmod +x scripts/bootstrap-vps-env.sh scripts/bootstrap-vps-env-from-secrets.sh scripts/resolve-vps-repo-root.sh scripts/vps-deploy-from-actions.sh scripts/deploy-hostinger-remote.sh
-            if [[ -d .env ]]; then rm -rf .env; fi
-            scripts/bootstrap-vps-env-from-secrets.sh "$REPO_ROOT" --force
-            scripts/vps-deploy-from-actions.sh "$REPO_ROOT"
+          fetch-depth: 0
 
-      - name: Health check
-        uses: appleboy/ssh-action@v1.2.5
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_SSH_KEY }}
-          timeout: 60s
-          script: |
-            set -euo pipefail
-            sleep 15
-            curl -fsS https://starkagro.com.br/api/v1/health
+      - name: Configurar chave SSH
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          printf '%s\n' "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+
+      - name: Deploy (git archive + rebuild, preserva o .env)
+        env:
+          STARKAGRO_VPS: ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}
+          SSH_KEY: /home/runner/.ssh/deploy_key
+          VPS_DEPLOY_PATH: ${{ secrets.VPS_DEPLOY_PATH }}
+        run: |
+          set -euo pipefail
+          chmod +x scripts/redeploy-starkagro.sh
+          # O próprio script confere que nenhum segredo chegou vazio no container e faz o
+          # health check em https://starkagro.com.br/api/v1/health — abortando se falhar.
+          bash scripts/redeploy-starkagro.sh origin/main
+
+      - name: Limpar chave SSH
+        if: always()
+        run: rm -f ~/.ssh/deploy_key
