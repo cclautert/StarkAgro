@@ -22,7 +22,7 @@ services:
       - JwtSettings__audience=${JWT_AUDIENCE}
       - OAuth__Google__ClientId=${GOOGLE_CLIENT_ID}
       - OAuth__Google__ClientSecret=${GOOGLE_CLIENT_SECRET}
-      - OAuth__Google__AllowedRedirectUris=https://starkcompany.com.br/login/callback,https://www.starkcompany.com.br/login/callback
+      - OAuth__Google__AllowedRedirectUris=https://starkagro.com.br/login/callback,https://www.starkagro.com.br/login/callback
       - AISettings__GeminiApiKey=${GEMINI_API_KEY}
       - MqttDownlink__Host=mqtt
       - MqttDownlink__Port=1883
@@ -49,7 +49,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=starkagro_default
-      - "traefik.http.routers.starkagro.rule=Host(`starkcompany.com.br`) || Host(`www.starkcompany.com.br`)"
+      - "traefik.http.routers.starkagro.rule=Host(`starkagro.com.br`) || Host(`www.starkagro.com.br`)"
       - traefik.http.routers.starkagro.entrypoints=websecure
       - traefik.http.routers.starkagro.tls.certresolver=letsencrypt
       - traefik.http.services.starkagro.loadbalancer.server.port=80

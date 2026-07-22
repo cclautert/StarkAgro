@@ -36,8 +36,8 @@ fi
 umask 077
 {
   printf 'JWT_SECRET_KEY=%q\n' "$JWT_SECRET_KEY"
-  printf 'JWT_ISSUER=%q\n' "agripeweb.com"
-  printf 'JWT_AUDIENCE=%q\n' "https://agripeweb.com"
+  printf 'JWT_ISSUER=%q\n' "starkagro.com.br"
+  printf 'JWT_AUDIENCE=%q\n' "https://starkagro.com.br"
   printf 'GOOGLE_CLIENT_ID=%q\n' "$GOOGLE_CLIENT_ID"
   printf 'GOOGLE_CLIENT_SECRET=%q\n' "$GOOGLE_CLIENT_SECRET"
   printf 'MQTT_USERNAME=%q\n' "$MQTT_USERNAME"
@@ -46,7 +46,7 @@ umask 077
   printf 'MONGO_USER=%s\n' "${MONGO_USER:-}"
   printf 'MONGO_PASSWORD=%s\n' "${MONGO_PASSWORD:-}"
   # VAPID keys are optional; empty = web push disabled server-side
-  printf 'VAPID_SUBJECT=%s\n' "${VAPID_SUBJECT:-mailto:admin@agripeweb.com}"
+  printf 'VAPID_SUBJECT=%s\n' "${VAPID_SUBJECT:-mailto:admin@starkagro.com.br}"
   printf 'VAPID_PUBLIC_KEY=%s\n' "${VAPID_PUBLIC_KEY:-}"
   printf 'VAPID_PRIVATE_KEY=%s\n' "${VAPID_PRIVATE_KEY:-}"
 } > .env

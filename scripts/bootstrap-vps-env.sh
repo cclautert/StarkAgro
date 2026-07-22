@@ -61,8 +61,8 @@ fi
 umask 077
 {
   printf 'JWT_SECRET_KEY=%q\n' "$JWT_SECRET_KEY"
-  printf 'JWT_ISSUER=%q\n' "${JWT_ISSUER:-agripeweb.com}"
-  printf 'JWT_AUDIENCE=%q\n' "${JWT_AUDIENCE:-https://agripeweb.com}"
+  printf 'JWT_ISSUER=%q\n' "${JWT_ISSUER:-starkagro.com.br}"
+  printf 'JWT_AUDIENCE=%q\n' "${JWT_AUDIENCE:-https://starkagro.com.br}"
   printf 'GOOGLE_CLIENT_ID=%q\n' "$GOOGLE_CLIENT_ID"
   printf 'GOOGLE_CLIENT_SECRET=%q\n' "$GOOGLE_CLIENT_SECRET"
   printf 'MQTT_USERNAME=%q\n' "$MQTT_USERNAME"

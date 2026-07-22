@@ -17,7 +17,7 @@ O deploy atualiza **API**, **UI** e **Worker** via SSH; não reinicia `nginx-pro
 - Docker Engine + plugin Compose v2
 - Git
 - Portas **80** e **443** abertas no firewall (`ufw allow 80`, `ufw allow 443`)
-- DNS apontando o domínio (ex.: `agripeweb.com`) para o IP da VPS
+- DNS apontando o domínio (ex.: `starkagro.com.br`) para o IP da VPS
 - **Não** expor a API na porta 8080 publicamente em produção
 
 ### Instalar Docker (exemplo Ubuntu)
@@ -55,13 +55,13 @@ Crie um arquivo `.env` na **raiz do clone** (`/opt/agripeweb/.env`). O deploy us
 
 ```env
 JWT_SECRET_KEY=<min 32 chars>
-JWT_ISSUER=agripeweb.com
-JWT_AUDIENCE=https://agripeweb.com
+JWT_ISSUER=starkagro.com.br
+JWT_AUDIENCE=https://starkagro.com.br
 GOOGLE_CLIENT_ID=seu_client_id
 GOOGLE_CLIENT_SECRET=seu_client_secret
 MQTT_USERNAME=iot_device
 MQTT_PASSWORD=<senha forte>
-VAPID_SUBJECT=mailto:admin@agripeweb.com
+VAPID_SUBJECT=mailto:admin@starkagro.com.br
 VAPID_PUBLIC_KEY=<gerado com npx web-push generate-vapid-keys>
 VAPID_PRIVATE_KEY=<gerado com npx web-push generate-vapid-keys>
 ```
@@ -150,7 +150,7 @@ Em cada `push` bem-sucedido em `main`, após o CI passar:
 1. `git fetch` + `git reset --hard origin/main`
 2. `scripts/deploy-hostinger-remote.sh` — valida `.env`, garante `docker/mosquitto/passwd`, `docker compose --project-directory .` build/up
 3. `docker image prune -f`
-4. Health check: `curl https://agripeweb.com/api/v1/health`
+4. Health check: `curl https://starkagro.com.br/api/v1/health`
 
 Serviços **não** atualizados automaticamente neste pipeline: `nginx-proxy`, `certbot`.
 
@@ -173,7 +173,7 @@ Isso impede merge com CI vermelho. O workflow **Deploy** só roda após merge em
 cd /opt/agripeweb
 git pull origin main
 ./scripts/deploy-hostinger-remote.sh .
-curl -fsS https://agripeweb.com/api/v1/health
+curl -fsS https://starkagro.com.br/api/v1/health
 ```
 
 ## Troubleshooting
@@ -198,7 +198,7 @@ cd /opt/agripeweb
 git fetch origin main
 git reset --hard <sha-anterior-estavel>   # ex.: último deploy verde em Actions
 ./scripts/deploy-hostinger-remote.sh .
-curl -fsS https://agripeweb.com/api/v1/health
+curl -fsS https://starkagro.com.br/api/v1/health
 ```
 
 Mantenha o `.env` e `docker/mosquitto/passwd` intactos no rollback — não são versionados no Git.

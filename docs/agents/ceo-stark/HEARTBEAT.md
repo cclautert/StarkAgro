@@ -79,7 +79,7 @@ Issue `[Alert]` de campo (sensor offline, sem leitura) é triada como **Backend*
 
 Criar comentário `[Escalation]` quando:
 
-- Incidente em produção (`agripeweb.com`) sem mitigação em 1 ciclo de heartbeat
+- Incidente em produção (`starkagro.com.br`) sem mitigação em 1 ciclo de heartbeat
 - Pedido de secret/credencial em issue pública
 - Decisão de contratação/budget fora do RACI documentado
 - Conflito de prioridade entre áreas (produto vs infra)

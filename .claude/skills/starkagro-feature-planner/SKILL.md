@@ -118,4 +118,4 @@ After saving, output the file path and present the plan to the user for confirma
 - New entities use `GetNextIdAsync()` — never Guid or ObjectId
 - No EF Core — all DB access through `agpDBContext` and `IMongoCollection<T>`
 - New endpoints carry `[Authorize]` unless explicitly public
-- CORS: dev → `localhost:4200`; prod → `agripeweb.com`
+- CORS: dev → `localhost:4200`; prod → `starkagro.com.br`

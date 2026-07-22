@@ -125,10 +125,10 @@ jobs:
         run: |
           set -euo pipefail
           sleep 15
-          curl -fsS https://agripeweb.com/api/v1/health
+          curl -fsS https://starkagro.com.br/api/v1/health
           code="$(curl -fsS -o /dev/null -w '%{http_code}' -X POST \
             -H 'Content-Type: application/json' \
             -d '{"email":"invalid@example.com","password":"wrong"}' \
-            https://agripeweb.com/api/v1/Auth/LogIn || echo 000)"
+            https://starkagro.com.br/api/v1/Auth/LogIn || echo 000)"
           echo "POST /api/v1/Auth/LogIn HTTP $code"
           [[ "$code" == "401" || "$code" == "400" || "$code" == "429" ]]

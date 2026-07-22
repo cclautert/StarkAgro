@@ -1,4 +1,4 @@
-# Deploy — starkcompany.com.br (VPS 2.25.140.180)
+# Deploy — starkagro.com.br (VPS 2.25.140.180)
 
 Produção do StarkAgro na VPS `2.25.140.180` (hostname `srv1709973`, Ubuntu), **atrás do Traefik**.
 
@@ -7,7 +7,7 @@ Produção do StarkAgro na VPS `2.25.140.180` (hostname `srv1709973`, Ubuntu), *
 ## Arquitetura na VPS
 
 - **Traefik** (já existente) termina TLS (Let's Encrypt, certresolver `letsencrypt`), entrypoints `web`/`websecure`, redirect http→https global. Descobre containers pelo provider Docker e alcança-os pelo IP de bridge (por isso a label `traefik.docker.network`).
-- **StarkAgro** roda com [`docker/docker-compose.vps.yml`](../docker/docker-compose.vps.yml): **sem** nginx-proxy/certbot (o Traefik já cuida do 80/443). Só a **UI** é exposta ao Traefik (`Host(starkcompany.com.br)||Host(www...)`, `websecure`, cert `letsencrypt`, porta 80). A UI (nginx) faz proxy de `/api` → `agripewebapi:8080`. API, MongoDB (`db`), worker e `mqtt` ficam internos na rede `starkagro_default`.
+- **StarkAgro** roda com [`docker/docker-compose.vps.yml`](../docker/docker-compose.vps.yml): **sem** nginx-proxy/certbot (o Traefik já cuida do 80/443). Só a **UI** é exposta ao Traefik (`Host(starkagro.com.br)||Host(www...)`, `websecure`, cert `letsencrypt`, porta 80). A UI (nginx) faz proxy de `/api` → `agripewebapi:8080`. API, MongoDB (`db`), worker e `mqtt` ficam internos na rede `starkagro_default`.
 
 ## Segredos — `/opt/starkagro/.env` (não versionado, `chmod 600`)
 
@@ -19,8 +19,8 @@ Admin semeado no boot: `lautertdev@gmail.com` / `Admin@2024!` — **troque a sen
 ## Redeploy (um comando, da sua máquina com o repo)
 
 ```bash
-scripts/redeploy-starkcompany.sh            # envia origin/main e reconstrói
-scripts/redeploy-starkcompany.sh <ref>      # outro ref/branch
+scripts/redeploy-starkagro.sh            # envia origin/main e reconstrói
+scripts/redeploy-starkagro.sh <ref>      # outro ref/branch
 ```
 
 Envia o código por `git archive` (não precisa de auth do GitHub na VPS) e preserva `.env` e `docker/mosquitto/passwd` (não versionados). Requer a chave SSH em `~/.ssh/id_ed25519` (ou `SSH_KEY=...`).

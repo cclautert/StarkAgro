@@ -21,7 +21,7 @@ openssl req -new -x509 -days 3650 -key ca.key -out ca.crt \
 # Server key and CSR
 openssl genrsa -out server.key 2048
 openssl req -new -key server.key -out server.csr \
-  -subj "/CN=mqtt.agripeweb.com"
+  -subj "/CN=mqtt.starkagro.com.br"
 
 # Sign the server certificate with the CA
 openssl x509 -req -days 730 -in server.csr -CA ca.crt -CAkey ca.key \

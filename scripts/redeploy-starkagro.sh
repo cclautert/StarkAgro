@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Redeploy do StarkAgro em produção — starkcompany.com.br (VPS 2.25.140.180).
+# Redeploy do StarkAgro em produção — starkagro.com.br (VPS 2.25.140.180).
 #
 # Envia o código de um ref (default: origin/main) para /opt/starkagro via `git archive`
 # e reconstrói/reinicia. NÃO precisa de auth do GitHub na VPS.
@@ -11,8 +11,8 @@
 # A VPS também hospeda o Mnemósine e o Traefik — este script só mexe no stack `starkagro`.
 #
 # Uso:
-#   scripts/redeploy-starkcompany.sh [ref]
-#   SSH_KEY=~/.ssh/outra_chave scripts/redeploy-starkcompany.sh origin/main
+#   scripts/redeploy-starkagro.sh [ref]
+#   SSH_KEY=~/.ssh/outra_chave scripts/redeploy-starkagro.sh origin/main
 set -euo pipefail
 
 REF="${1:-origin/main}"
@@ -43,6 +43,6 @@ echo "==> conferindo segredos no container (só nomes e tamanhos) ..."
   || { echo "==> ABORTANDO: stack subiu sem segredos."; exit 1; }
 
 echo "==> health check ..."
-"${SSH[@]}" 'curl -sS -m 25 -o /dev/null -w "https://starkcompany.com.br/api/v1/health -> %{http_code}\n" https://starkcompany.com.br/api/v1/health'
+"${SSH[@]}" 'curl -sS -m 25 -o /dev/null -w "https://starkagro.com.br/api/v1/health -> %{http_code}\n" https://starkagro.com.br/api/v1/health'
 
 echo "==> pronto."
