@@ -166,19 +166,20 @@ namespace StarkAgroAPI.Tests.Services.Ndvi
             var evalscript = doc.RootElement.GetProperty("evalscript").GetString()!;
 
             Assert.Equal("image/tiff", fmt);
-            Assert.Contains("sampleType: \"UINT8\"", evalscript);
-            Assert.Contains("classIndex(ndvi)", evalscript);
-            Assert.Contains("return [255]", evalscript); // nodata
+            // GeoTIFF COLORIDO (RGB) — legível em qualquer visualizador, não um índice cinza.
+            Assert.Contains("output: { bands: 3 }", evalscript);
+            Assert.Contains("ramp(ndvi)", evalscript);
+            Assert.Contains("return [1, 1, 1]", evalscript); // fora/nuvem → branco
         }
 
         [Fact]
-        public void ZonesEvalscript_UsaOClassIndexDaClassificacao()
+        public void ZonesEvalscript_UsaAsCoresDaClassificacao()
         {
             var script = CdseProcessService.ZonesEvalscript;
 
-            // As zonas do TIFF têm de sair dos MESMOS cortes do PNG/legenda.
-            Assert.Contains(NdviClassification.BuildClassIndexFunction(), script);
-            Assert.Contains("output: { bands: 1, sampleType: \"UINT8\" }", script);
+            // As cores do TIFF têm de sair dos MESMOS cortes do PNG/legenda.
+            Assert.Contains(NdviClassification.BuildRampFunction(), script);
+            Assert.Contains("output: { bands: 3 }", script);
         }
 
         [Fact]

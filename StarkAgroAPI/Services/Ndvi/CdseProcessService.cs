@@ -72,25 +72,25 @@ namespace StarkAgroAPI.Services.Ndvi
             """;
 
         /// <summary>
-        /// Evalscript v3 de <b>zonas</b>: cada pixel vira o índice inteiro da classe (0..N-1) num
-        /// GeoTIFF de 8 bits, 1 banda — mapa de prescrição que trator/pulverizador lê. Nuvem/no-data
-        /// viram <b>255</b> (nodata). O <c>classIndex()</c> é gerado de <see cref="NdviClassification"/>,
-        /// então as zonas do TIFF são exatamente as classes do PNG e da legenda.
+        /// Evalscript v3 de <b>zonas</b>: GeoTIFF <b>colorido</b> (RGB) com as cores das classes de
+        /// biomassa — abre legível em qualquer visualizador E no QGIS, mantendo o georreferenciamento.
+        /// Reusa o <c>ramp()</c> de <see cref="NdviClassification"/> (as mesmas cores do overlay e da
+        /// legenda). Fora do talhão / nuvem → branco, para o arquivo ficar limpo sobre fundo claro.
         /// </summary>
         public static readonly string ZonesEvalscript = $$"""
             //VERSION=3
             function setup() {
               return {
                 input: [{ bands: ["B04", "B08", "SCL", "dataMask"] }],
-                output: { bands: 1, sampleType: "UINT8" }
+                output: { bands: 3 }
               };
             }
-            {{NdviClassification.BuildClassIndexFunction()}}
+            {{NdviClassification.BuildRampFunction()}}
             function evaluatePixel(s) {
               let cloud = (s.SCL === 3 || s.SCL === 8 || s.SCL === 9 || s.SCL === 10);
-              if (s.dataMask === 0 || cloud) return [255];
+              if (s.dataMask === 0 || cloud) return [1, 1, 1];
               let ndvi = (s.B08 - s.B04) / (s.B08 + s.B04);
-              return [classIndex(ndvi)];
+              return ramp(ndvi);
             }
             """;
 
