@@ -42,6 +42,11 @@ namespace StarkAgroAPI.Domain.Handlers.Users
                 .Find(x => x.UserId == userId && x.AcquiredAt >= since)
                 .ToListAsync(cancellationToken);
 
+            // Alertas climáticos (geada / calor extremo) do tenant na janela.
+            var climateAlerts = await _dbContext.ClimateAlerts
+                .Find(x => x.UserId == userId && x.CreatedAt >= since)
+                .ToListAsync(cancellationToken);
+
             var user = await _dbContext.Users
                 .Find(u => u.Id == userId)
                 .FirstOrDefaultAsync(cancellationToken);
@@ -98,6 +103,7 @@ namespace StarkAgroAPI.Domain.Handlers.Users
                 .Concat(invites)
                 .Concat(revendaInvites)
                 .Concat(await BuildFireAlertsAsync(fireHotspots, readAt, cancellationToken))
+                .Concat(await BuildClimateAlertsAsync(climateAlerts, readAt, cancellationToken))
                 .OrderByDescending(x => x.CreatedAt)
                 .Take(MaxAlerts)
                 .ToList();
@@ -140,6 +146,38 @@ namespace StarkAgroAPI.Domain.Handlers.Users
                     };
                 })
                 .ToList();
+        }
+
+        /// <summary>
+        /// Alertas climáticos → itens do sino. Um por (área, tipo, dia), já deduplicado no worker
+        /// pelo índice único; aqui é projeção direta. Tenant já filtrado na query.
+        /// </summary>
+        private async Task<List<UserAlertResponse>> BuildClimateAlertsAsync(
+            List<ClimateAlert> alerts, DateTime? readAt, CancellationToken cancellationToken)
+        {
+            if (alerts.Count == 0) return [];
+
+            var areaIds = alerts.Select(a => a.AreaId).Distinct().ToList();
+            var areas = await _dbContext.MonitoredAreas
+                .Find(a => areaIds.Contains(a.Id))
+                .ToListAsync(cancellationToken);
+            var areaNameById = areas.ToDictionary(a => a.Id, a => a.Name);
+
+            string AreaName(int id) =>
+                areaNameById.TryGetValue(id, out var n) && !string.IsNullOrWhiteSpace(n) ? n : $"Área {id}";
+
+            return alerts.Select(a => new UserAlertResponse
+            {
+                // areaId no id para o clique no sino abrir a área (como o alerta de fogo).
+                Id = $"climate-{a.AreaId}-{a.Id}",
+                Title = a.AlertType == ClimateAlertType.Frost
+                    ? $"❄️ Risco de geada em {AreaName(a.AreaId)}: mín {a.TemperatureC:0.#} °C em {a.ForecastDate:dd/MM}"
+                    : $"🌡️ Calor extremo em {AreaName(a.AreaId)}: máx {a.TemperatureC:0.#} °C em {a.ForecastDate:dd/MM}",
+                PivotName = AreaName(a.AreaId),
+                AlertType = a.AlertType,
+                CreatedAt = a.CreatedAt,
+                IsRead = readAt.HasValue && a.CreatedAt <= readAt.Value
+            }).ToList();
         }
 
         /// <summary>

@@ -113,7 +113,9 @@ export class LayoutComponent implements OnInit, OnDestroy {
       AnomalyPersisted: 'Anomalia persistente',
       AgronomistInvite: 'Convite de agrônomo',
       RevendaInvite: 'Convite de revenda',
-      FireHotspot: 'Foco de calor'
+      FireHotspot: 'Foco de calor',
+      FrostRisk: 'Risco de geada',
+      HeatRisk: 'Calor extremo'
     };
     return labels[type] ?? type;
   }
@@ -122,17 +124,22 @@ export class LayoutComponent implements OnInit, OnDestroy {
     return alert.alertType === 'AgronomistInvite' || alert.alertType === 'RevendaInvite';
   }
 
-  /** Notificações "clicáveis": convites (levam à resposta) e foco de calor (leva à área). */
+  /** Alertas ligados a uma área: foco de calor e risco climático. Levam à área. */
+  private isAreaAlert(alert: UserAlert): boolean {
+    return alert.alertType === 'FireHotspot' || alert.alertType === 'FrostRisk' || alert.alertType === 'HeatRisk';
+  }
+
+  /** Notificações "clicáveis": convites (levam à resposta) e alertas de área (levam à área). */
   isClickable(alert: UserAlert): boolean {
-    return this.isInvite(alert) || alert.alertType === 'FireHotspot';
+    return this.isInvite(alert) || this.isAreaAlert(alert);
   }
 
   openAlert(alert: UserAlert): void {
     if (!this.isClickable(alert)) return;
     this.closeAlertPanel();
 
-    if (alert.alertType === 'FireHotspot') {
-      // id = "fire-{areaId}-{yyyyMMdd}" → abre a área do foco.
+    if (this.isAreaAlert(alert)) {
+      // ids: "fire-{areaId}-{yyyyMMdd}" e "climate-{areaId}-{alertId}" → abre a área.
       const areaId = alert.id.split('-')[1];
       this.router.navigate(areaId ? ['/areas', areaId] : ['/areas']);
       return;

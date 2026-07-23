@@ -32,6 +32,9 @@ namespace StarkAgroAPI.Domain.Commands.Responses.Admin
         public string? FirmsMapKey { get; set; }
         public bool FireAlertsEnabled { get; set; }
         public int FireAlertRadiusKm { get; set; }
+        public bool ClimateAlertsEnabled { get; set; }
+        public int FrostAlertTempC { get; set; }
+        public int HeatAlertTempC { get; set; }
         public int NdviCostCents { get; set; }
 
         /// <summary>Teto mensal de custo NDVI (PU), em centavos. 0 = ilimitado.</summary>
