@@ -91,6 +91,16 @@ namespace StarkAgroAPI.Configuration
             services.AddScoped<Services.Ndvi.INdviFetchService, Services.Ndvi.NdviFetchService>();
             services.AddScoped<Services.Ndvi.INdviZoneService, Services.Ndvi.NdviZoneService>();
 
+            // Sentinel-1 (radar) — mesma Sentinel Hub API do NDVI, host e OAuth compartilhados.
+            services.AddHttpClient<Services.Sentinel1.CdseSentinel1Service>(client =>
+            {
+                client.BaseAddress = new Uri("https://sh.dataspace.copernicus.eu/");
+            });
+            services.AddScoped<Services.Sentinel1.ICdseSentinel1Service>(sp =>
+                sp.GetRequiredService<Services.Sentinel1.CdseSentinel1Service>());
+            services.AddScoped<Services.Sentinel1.ISentinel1FetchService, Services.Sentinel1.Sentinel1FetchService>();
+            services.AddScoped<Services.Sentinel1.ISentinel1CostService, Services.Sentinel1.Sentinel1CostService>();
+
             // NASA FIRMS (focos de calor) — API gratuita, zero PU.
             services.AddHttpClient<Services.Fire.FirmsHotspotService>(client =>
             {

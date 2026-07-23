@@ -47,10 +47,25 @@ namespace StarkAgroAPI.Domain.Commands.Responses.Ndvi
         public double[]? Bbox { get; set; }
     }
 
+    /// <summary>
+    /// Ponto da série de radar (Sentinel-1). Datas próprias — o S1 tem cadência e passagens
+    /// diferentes do S2, então NÃO casa com os pontos do NDVI; é uma série à parte.
+    /// </summary>
+    public class Sentinel1TrendPoint
+    {
+        public DateTime AcquisitionDate { get; set; }
+        public double RviMean { get; set; }
+        public double VvMean { get; set; }
+        public double VhMean { get; set; }
+    }
+
     public class NdviTrendResponse
     {
         public int AreaId { get; set; }
         public List<NdviTrendPoint> Points { get; set; } = [];
+
+        /// <summary>Série de radar (RVI). Vazia se o S1 nunca rodou para a área.</summary>
+        public List<Sentinel1TrendPoint> Radar { get; set; } = [];
     }
 
     public class NdviOverlayImageResponse

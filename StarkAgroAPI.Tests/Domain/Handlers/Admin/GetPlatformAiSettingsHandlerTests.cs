@@ -28,6 +28,14 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Admin
             return cost;
         }
 
+        private static Mock<StarkAgroAPI.Services.Sentinel1.ISentinel1CostService> S1CostService(int monthCost = 0)
+        {
+            var cost = new Mock<StarkAgroAPI.Services.Sentinel1.ISentinel1CostService>();
+            cost.Setup(c => c.GetCurrentMonthCostCentsAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(monthCost);
+            return cost;
+        }
+
         [Fact]
         public async Task Handle_Returns_Existing_Settings()
         {
@@ -49,7 +57,7 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Admin
             mockDbContext.Setup(c => c.PlatformAiSettings).Returns(mockSettings.Object);
 
             var handler = new GetPlatformAiSettingsHandler(
-                mockDbContext.Object, CostService(monthCost: 42).Object, NdviCostService(monthCost: 123).Object);
+                mockDbContext.Object, CostService(monthCost: 42).Object, NdviCostService(monthCost: 123).Object, S1CostService().Object);
             var result = await handler.Handle(new GetPlatformAiSettingsRequest(), default);
 
             Assert.NotNull(result);
@@ -72,7 +80,7 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Admin
             mockDbContext.Setup(c => c.PlatformAiSettings).Returns(mockSettings.Object);
 
             var handler = new GetPlatformAiSettingsHandler(
-                mockDbContext.Object, CostService(monthCost: 7).Object, NdviCostService(monthCost: 9).Object);
+                mockDbContext.Object, CostService(monthCost: 7).Object, NdviCostService(monthCost: 9).Object, S1CostService().Object);
             var result = await handler.Handle(new GetPlatformAiSettingsRequest(), default);
 
             Assert.NotNull(result);

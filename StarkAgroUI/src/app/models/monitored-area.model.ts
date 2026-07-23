@@ -76,7 +76,17 @@ export interface NdviTrendPoint {
   bbox?: number[] | null;
 }
 
+/** Ponto da série de radar (Sentinel-1). Datas próprias — cadência diferente do NDVI. */
+export interface Sentinel1TrendPoint {
+  acquisitionDate: string;
+  rviMean: number;
+  vvMean: number;
+  vhMean: number;
+}
+
 export interface NdviTrendResponse {
   areaId: number;
   points: NdviTrendPoint[];
+  /** Série de radar (RVI). Vazia se o S1 nunca rodou para a área. */
+  radar?: Sentinel1TrendPoint[];
 }

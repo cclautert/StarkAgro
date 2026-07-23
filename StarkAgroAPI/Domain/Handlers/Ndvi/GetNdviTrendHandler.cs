@@ -42,6 +42,12 @@ namespace StarkAgroAPI.Domain.Handlers.Ndvi
                 .SortBy(r => r.AcquisitionDate)
                 .ToListAsync(cancellationToken);
 
+            // Série de radar (S1): datas próprias, filtrada pelo mesmo tenant.
+            var radar = await _dbContext.Sentinel1Readings
+                .Find(r => r.AreaId == request.AreaId && r.UserId == userId)
+                .SortBy(r => r.AcquisitionDate)
+                .ToListAsync(cancellationToken);
+
             var bbox = area.Geometry is not null
                 ? Services.Ndvi.CdseProcessService.ComputeBbox(area.Geometry).ToArray()
                 : null;
@@ -49,6 +55,13 @@ namespace StarkAgroAPI.Domain.Handlers.Ndvi
             return new NdviTrendResponse
             {
                 AreaId = request.AreaId,
+                Radar = radar.Select(r => new Sentinel1TrendPoint
+                {
+                    AcquisitionDate = r.AcquisitionDate,
+                    RviMean = r.RviMean,
+                    VvMean = r.VvMean,
+                    VhMean = r.VhMean
+                }).ToList(),
                 Points = readings.Select(r => new NdviTrendPoint
                 {
                     ReadingId = r.Id,

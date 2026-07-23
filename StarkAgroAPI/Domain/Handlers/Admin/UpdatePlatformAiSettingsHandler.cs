@@ -41,6 +41,8 @@ namespace StarkAgroAPI.Domain.Handlers.Admin
                 ClimateAlertsEnabled = request.ClimateAlertsEnabled,
                 FrostAlertTempC = request.FrostAlertTempC,
                 HeatAlertTempC = request.HeatAlertTempC,
+                Sentinel1Enabled = request.Sentinel1Enabled,
+                Sentinel1CostCents = request.Sentinel1CostCents,
                 NdviCostCents = request.NdviCostCents,
                 NdviMonthlyBudgetCents = request.NdviMonthlyBudgetCents,
                 NdviMaxAreasPerUser = request.NdviMaxAreasPerUser

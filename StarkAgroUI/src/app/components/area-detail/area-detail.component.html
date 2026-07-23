@@ -42,7 +42,7 @@
         <div class="index-tabs" *ngIf="points.length">
           <ng-container *ngFor="let ix of indices">
             <button
-              *ngIf="ix.key === 'ndvi' || hasIndex(ix.key)"
+              *ngIf="hasIndex(ix.key)"
               class="index-tab"
               [class.active]="selectedIndex === ix.key"
               (click)="selectIndex(ix.key)"
