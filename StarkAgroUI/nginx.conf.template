@@ -5,6 +5,30 @@ server {
   root /usr/share/nginx/html;
   index index.csr.html;
 
+  # Fotos de celular chegam com 2–8 MB. O default do nginx é 1 MB e rejeitaria o
+  # upload do laudo com 413 antes de a API ver o request.
+  client_max_body_size 12m;
+
+  # ── Cache do PWA ──
+  # O service worker e o app shell TÊM de revalidar a cada carga. Sem `no-cache`, o
+  # navegador serve o `ngsw-worker.js`/index VELHO, o SW nunca aprende a versão nova, e
+  # todo deploy (que troca os hashes dos bundles) quebra quem já tem o app: o index velho
+  # pede bundles que sumiram → 404 → "app não abre". Bundles com hash no nome nunca mudam
+  # de conteúdo sem mudar de nome, então são imutáveis (cache longo).
+  location = /ngsw-worker.js       { add_header Cache-Control "no-cache"; }
+  location = /ngsw.json            { add_header Cache-Control "no-cache"; }
+  location = /safety-worker.js     { add_header Cache-Control "no-cache"; }
+  location = /manifest.webmanifest { add_header Cache-Control "no-cache"; }
+  location = /index.html           { add_header Cache-Control "no-cache"; }
+  location = /index.csr.html       { add_header Cache-Control "no-cache"; }
+
+  # Assets com hash no nome (main-XXXX.js, styles-XXXX.css, fontes): imutáveis.
+  # O `ngsw-worker.js` já pegou no-cache acima (match exato vence o regex no nginx).
+  location ~* \.(?:js|css|woff2?|ttf|eot|otf)$ {
+    add_header Cache-Control "public, max-age=31536000, immutable";
+    try_files $uri =404;
+  }
+
   location / {
     try_files $uri /index.csr.html;
   }
