@@ -37,6 +37,11 @@ namespace StarkAgroAPI.Domain.Handlers.Users
                 .Find(x => x.UserId == userId && x.Date >= since)
                 .ToListAsync(cancellationToken);
 
+            // Focos de calor do tenant na janela (síntese agrupada mais abaixo, com readAt).
+            var fireHotspots = await _dbContext.FireHotspots
+                .Find(x => x.UserId == userId && x.AcquiredAt >= since)
+                .ToListAsync(cancellationToken);
+
             var user = await _dbContext.Users
                 .Find(u => u.Id == userId)
                 .FirstOrDefaultAsync(cancellationToken);
@@ -92,11 +97,49 @@ namespace StarkAgroAPI.Domain.Handlers.Users
                 }))
                 .Concat(invites)
                 .Concat(revendaInvites)
+                .Concat(await BuildFireAlertsAsync(fireHotspots, readAt, cancellationToken))
                 .OrderByDescending(x => x.CreatedAt)
                 .Take(MaxAlerts)
                 .ToList();
 
             return alerts;
+        }
+
+        /// <summary>
+        /// Focos de calor → alertas, <b>agrupados por (área, dia)</b>: um incêndio com dezenas de
+        /// focos vira uma linha só ("N foco(s)…"), não dezenas. Tenant já filtrado na query.
+        /// </summary>
+        private async Task<List<UserAlertResponse>> BuildFireAlertsAsync(
+            List<FireHotspot> hotspots, DateTime? readAt, CancellationToken cancellationToken)
+        {
+            if (hotspots.Count == 0) return [];
+
+            var areaIds = hotspots.Select(h => h.AreaId).Distinct().ToList();
+            var areas = await _dbContext.MonitoredAreas
+                .Find(a => areaIds.Contains(a.Id))
+                .ToListAsync(cancellationToken);
+            var areaNameById = areas.ToDictionary(a => a.Id, a => a.Name);
+
+            string AreaName(int id) =>
+                areaNameById.TryGetValue(id, out var n) && !string.IsNullOrWhiteSpace(n) ? n : $"Área {id}";
+
+            return hotspots
+                .GroupBy(h => (h.AreaId, Day: h.AcquiredAt.Date))
+                .Select(g =>
+                {
+                    var latest = g.Max(h => h.AcquiredAt);
+                    var count = g.Count();
+                    return new UserAlertResponse
+                    {
+                        Id = $"fire-{g.Key.AreaId}-{g.Key.Day:yyyyMMdd}",
+                        Title = $"🔥 {count} foco(s) de calor perto de {AreaName(g.Key.AreaId)} (satélite, ~1h)",
+                        PivotName = AreaName(g.Key.AreaId),
+                        AlertType = "FireHotspot",
+                        CreatedAt = latest,
+                        IsRead = readAt.HasValue && latest <= readAt.Value
+                    };
+                })
+                .ToList();
         }
 
         /// <summary>

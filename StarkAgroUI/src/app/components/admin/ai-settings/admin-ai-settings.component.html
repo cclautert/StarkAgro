@@ -210,6 +210,35 @@
       <span class="cost-sub">{{ currentMonthNdviCostCents }} centavos em Processing Units</span>
     </div>
 
+    <!-- Fire Shield (NASA FIRMS) -->
+    <hr class="section-divider" />
+    <p class="section-title">Fire Shield (focos de calor · NASA FIRMS)</p>
+    <p class="section-hint">
+      Alerta de foco de calor perto das áreas monitoradas. API <strong>gratuita</strong> (zero PU).
+      Registre uma MAP_KEY em <em>firms.modaps.eosdis.nasa.gov/api/map_key</em>.
+      ⚠️ Latência típica no Brasil <strong>~1&nbsp;h</strong> (não é vigilância em tempo real).
+    </p>
+
+    <div class="form-group">
+      <label for="firmsMapKey">MAP_KEY (FIRMS)</label>
+      <input id="firmsMapKey" formControlName="firmsMapKey" placeholder="chave gratuita do FIRMS" />
+    </div>
+
+    <div class="form-group">
+      <label class="checkbox-label">
+        <input type="checkbox" formControlName="fireAlertsEnabled" />
+        Habilitar alerta de foco de calor (kill-switch)
+      </label>
+    </div>
+
+    <div class="form-group">
+      <label for="fireAlertRadiusKm">Raio de alerta (km)</label>
+      <input id="fireAlertRadiusKm" type="number" min="1" formControlName="fireAlertRadiusKm" />
+      <p class="section-hint" style="margin-top:6px">
+        Distância ao redor da área em que um foco vira alerta. Recomendado 5–20 km.
+      </p>
+    </div>
+
     <div class="form-actions">
       <button type="submit" class="btn btn-primary" [disabled]="isSaving">
         {{ isSaving ? 'Salvando...' : 'Salvar Configurações' }}

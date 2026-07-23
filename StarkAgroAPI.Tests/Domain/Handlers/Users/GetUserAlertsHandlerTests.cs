@@ -22,7 +22,9 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Users
             List<AgronomistClient>? invites = null,
             List<User>? agronomists = null,
             List<RevendaMembership>? revendaInvites = null,
-            List<RevendaEntity>? revendas = null)
+            List<RevendaEntity>? revendas = null,
+            List<FireHotspot>? fireHotspots = null,
+            List<MonitoredArea>? monitoredAreas = null)
         {
             var db = new Mock<agpDBContext>();
 
@@ -64,6 +66,14 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Users
             MongoMockHelper.SetupFindList(sensorsCol, sensors ?? new List<Sensor>());
             db.Setup(d => d.Sensors).Returns(sensorsCol.Object);
 
+            var fireCol = new Mock<IMongoCollection<FireHotspot>>();
+            MongoMockHelper.SetupFindList(fireCol, fireHotspots ?? new List<FireHotspot>());
+            db.Setup(d => d.FireHotspots).Returns(fireCol.Object);
+
+            var areasCol = new Mock<IMongoCollection<MonitoredArea>>();
+            MongoMockHelper.SetupFindList(areasCol, monitoredAreas ?? new List<MonitoredArea>());
+            db.Setup(d => d.MonitoredAreas).Returns(areasCol.Object);
+
             var currentUser = new Mock<ICurrentUserContext>();
             currentUser.Setup(c => c.UserId).Returns(userId);
 
@@ -80,6 +90,35 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Users
             InvitedAt = DateTime.UtcNow.AddMinutes(-5),
             InviteExpiresAt = DateTime.UtcNow.AddDays(7)
         };
+
+        [Fact]
+        public async Task Handle_AgrupaFocosDeCalorPorAreaEDia_NumAlertaSo()
+        {
+            var day = new DateTime(2026, 7, 22, 0, 0, 0, DateTimeKind.Utc);
+            // 3 focos na mesma área/dia → 1 alerta; 1 foco em outra área → +1 alerta.
+            var fires = new List<FireHotspot>
+            {
+                new() { Id = 1, UserId = 1, AreaId = 5, AcquiredAt = day.AddHours(7), Satellite = "N" },
+                new() { Id = 2, UserId = 1, AreaId = 5, AcquiredAt = day.AddHours(8), Satellite = "N" },
+                new() { Id = 3, UserId = 1, AreaId = 5, AcquiredAt = day.AddHours(9), Satellite = "1" },
+                new() { Id = 4, UserId = 1, AreaId = 6, AcquiredAt = day.AddHours(10), Satellite = "N" }
+            };
+            var areas = new List<MonitoredArea>
+            {
+                new() { Id = 5, UserId = 1, Name = "Talhão Norte" },
+                new() { Id = 6, UserId = 1, Name = "Talhão Sul" }
+            };
+            var (db, currentUser) = BuildMocks(user: new User { Id = 1 }, fireHotspots: fires, monitoredAreas: areas);
+            var handler = new GetUserAlertsHandler(db.Object, currentUser.Object);
+
+            var result = await handler.Handle(new GetUserAlertsRequest(), CancellationToken.None);
+
+            var fireAlerts = result.Where(a => a.AlertType == "FireHotspot").ToList();
+            Assert.Equal(2, fireAlerts.Count); // agrupado: (5, dia) e (6, dia)
+            var north = fireAlerts.Single(a => a.Id == "fire-5-20260722");
+            Assert.Contains("3 foco(s)", north.Title);
+            Assert.Contains("Talhão Norte", north.Title);
+        }
 
         [Fact]
         public async Task Handle_MergesIrrigationAndAnomalyAlerts_OrderedByDateDesc()
