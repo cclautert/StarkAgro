@@ -70,20 +70,25 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Ndvi
                 areas: [new MonitoredArea { Id = 5, UserId = 42, Geometry = geo }],
                 readings:
                 [
-                    new NdviReading { Id = 1, AreaId = 5, UserId = 42, AcquisitionDate = new DateTime(2026, 6, 3) }, // sem overlay
-                    new NdviReading { Id = 2, AreaId = 5, UserId = 42, AcquisitionDate = new DateTime(2026, 6, 8), OverlayImageFileId = ObjectId.GenerateNewId() }
+                    new NdviReading { Id = 1, AreaId = 5, UserId = 42, AcquisitionDate = new DateTime(2026, 6, 3) }, // sem PNG, céu limpo
+                    new NdviReading { Id = 2, AreaId = 5, UserId = 42, AcquisitionDate = new DateTime(2026, 6, 8), OverlayImageFileId = ObjectId.GenerateNewId() },
+                    new NdviReading { Id = 3, AreaId = 5, UserId = 42, AcquisitionDate = new DateTime(2026, 6, 13), CloudRejected = true } // nublada
                 ]);
             var handler = new GetNdviTrendHandler(db.Object, User(42), new Notificator());
 
             var result = await handler.Handle(new GetNdviTrendRequest { AreaId = 5 }, CancellationToken.None);
 
             Assert.NotNull(result);
+            // OverlayReadingId só aponta quando o PNG JÁ existe (cacheado).
             Assert.Null(result!.Points[0].OverlayReadingId);
-            Assert.Null(result.Points[0].Bbox);
             Assert.Equal(2, result.Points[1].OverlayReadingId);
+            // Bbox agora vai em TODA passagem de céu limpo (o overlay é gerado sob demanda), mas
+            // NÃO na nublada (não rende imagem).
+            Assert.NotNull(result.Points[0].Bbox);
+            Assert.Equal(-47.0, result.Points[0].Bbox![0], 6); // minLng
             Assert.NotNull(result.Points[1].Bbox);
             Assert.Equal(4, result.Points[1].Bbox!.Length);
-            Assert.Equal(-47.0, result.Points[1].Bbox![0], 6); // minLng
+            Assert.Null(result.Points[2].Bbox); // nublada → sem bbox
         }
 
         [Fact]

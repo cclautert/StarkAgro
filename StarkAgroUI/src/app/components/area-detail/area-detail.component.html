@@ -124,11 +124,17 @@
         </ul>
       </div>
 
-      <p class="muted map-hint" *ngIf="selectedHasImage">
+      <p class="muted map-hint" *ngIf="overlayLoading">
+        Gerando o mapa desta passagem… (primeira vez pode levar alguns segundos)
+      </p>
+      <p class="muted map-hint" *ngIf="!overlayLoading && selectedRendersImage && !overlayUnavailable">
         O overlay colorido mostra o NDVI da passagem de {{ selected ? shortDate(selected.acquisitionDate) : '' }} sobre o talhão.
       </p>
-      <p class="muted map-hint" *ngIf="selected && !selectedHasImage">
-        Esta passagem não tem imagem{{ selected.cloudRejected ? ' (nublada)' : '' }} — os números acima vêm da estatística, mas não há mapa colorido para ela.
+      <p class="muted map-hint" *ngIf="!overlayLoading && selected && selected.cloudRejected">
+        Esta passagem veio nublada — os números acima vêm da estatística, mas não há mapa colorido para ela.
+      </p>
+      <p class="muted map-hint" *ngIf="!overlayLoading && selectedRendersImage && overlayUnavailable">
+        Não foi possível gerar o mapa desta passagem agora (sensoriamento desligado ou indisponível). Os números acima vêm da estatística.
       </p>
 
       <!-- Download do mapa de zonas (GeoTIFF) para o maquinário. -->
