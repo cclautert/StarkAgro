@@ -102,22 +102,6 @@ namespace StarkAgroAPI.Services.Ndvi
         }
 
         /// <summary>
-        /// Corpo JS da função <c>classIndex(ndvi)</c> do evalscript de <b>zonas</b> (GeoTIFF):
-        /// devolve o índice inteiro da classe (0..N-1) em vez da cor. Gerada dos mesmos cortes que
-        /// o <c>ramp()</c> e a legenda — zona ≡ classe ≡ cor, tudo da mesma lista.
-        /// </summary>
-        public static string BuildClassIndexFunction()
-        {
-            var sb = new StringBuilder();
-            sb.AppendLine("function classIndex(ndvi) {");
-            for (var i = 0; i < Classes.Count - 1; i++)
-                sb.AppendLine($"  if (ndvi < {F(Classes[i].HighEdge)}) return {i}; // {Classes[i].Label}");
-            sb.AppendLine($"  return {Classes.Count - 1}; // {Classes[^1].Label}");
-            sb.Append('}');
-            return sb.ToString();
-        }
-
-        /// <summary>
         /// Percentual da área por classe. Denominador é a soma das contagens — passagem sem
         /// pixel válido (nublada) devolve tudo zero em vez de dividir por zero.
         /// </summary>
