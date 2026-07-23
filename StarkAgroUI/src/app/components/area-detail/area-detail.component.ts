@@ -284,6 +284,9 @@ export class AreaDetailComponent implements OnInit, OnDestroy {
     const withOverlay = [...this.points].reverse().find(p => p.overlayReadingId != null && p.bbox && p.bbox.length === 4);
     if (!withOverlay) return;
 
+    // A passagem com overlay é a que tem GeoTIFF de zonas disponível para download.
+    this.zoneReadingId = withOverlay.overlayReadingId ?? undefined;
+
     try {
       const blob = await firstValueFrom(this.areaService.overlay(this.id, withOverlay.overlayReadingId!));
       this.overlayUrl = URL.createObjectURL(blob);
@@ -298,6 +301,31 @@ export class AreaDetailComponent implements OnInit, OnDestroy {
       this.legendClasses = [...(withOverlay.classes ?? [])].reverse();
     } catch {
       // Overlay é acessório — sem PNG, o mapa mostra só o contorno.
+    }
+  }
+
+  // Reading do overlay mais recente — o mesmo que tem GeoTIFF de zonas disponível.
+  zoneReadingId?: number;
+  downloadingZones = false;
+  zonesError = false;
+
+  /** Baixa o GeoTIFF de zonas (gerado sob demanda no servidor) como arquivo. */
+  async downloadZones(): Promise<void> {
+    if (!this.zoneReadingId || this.downloadingZones) return;
+    this.downloadingZones = true;
+    this.zonesError = false;
+    try {
+      const blob = await firstValueFrom(this.areaService.zones(this.id, this.zoneReadingId));
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `zonas-${this.id}-${this.zoneReadingId}.tiff`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      this.zonesError = true; // servidor pode devolver 404 se a geração falhar (kill-switch, etc.)
+    } finally {
+      this.downloadingZones = false;
     }
   }
 

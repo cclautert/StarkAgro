@@ -30,6 +30,14 @@ namespace StarkAgroAPI.Services.Ndvi
             DateTime from,
             DateTime to,
             CancellationToken cancellationToken);
+
+        /// <summary>GeoTIFF de zonas (classe por pixel, 8 bits, georreferenciado). <c>null</c> em falha.</summary>
+        Task<byte[]?> GetNdviZonesTiffAsync(
+            string token,
+            GeoJsonPolygon<GeoJson2DGeographicCoordinates> geometry,
+            DateTime from,
+            DateTime to,
+            CancellationToken cancellationToken);
     }
 
     public class CdseProcessService : ICdseProcessService
@@ -60,6 +68,29 @@ namespace StarkAgroAPI.Services.Ndvi
               let ndvi = (s.B08 - s.B04) / (s.B08 + s.B04);
               let c = ramp(ndvi);
               return [c[0], c[1], c[2], 1];
+            }
+            """;
+
+        /// <summary>
+        /// Evalscript v3 de <b>zonas</b>: cada pixel vira o índice inteiro da classe (0..N-1) num
+        /// GeoTIFF de 8 bits, 1 banda — mapa de prescrição que trator/pulverizador lê. Nuvem/no-data
+        /// viram <b>255</b> (nodata). O <c>classIndex()</c> é gerado de <see cref="NdviClassification"/>,
+        /// então as zonas do TIFF são exatamente as classes do PNG e da legenda.
+        /// </summary>
+        public static readonly string ZonesEvalscript = $$"""
+            //VERSION=3
+            function setup() {
+              return {
+                input: [{ bands: ["B04", "B08", "SCL", "dataMask"] }],
+                output: { bands: 1, sampleType: "UINT8" }
+              };
+            }
+            {{NdviClassification.BuildClassIndexFunction()}}
+            function evaluatePixel(s) {
+              let cloud = (s.SCL === 3 || s.SCL === 8 || s.SCL === 9 || s.SCL === 10);
+              if (s.dataMask === 0 || cloud) return [255];
+              let ndvi = (s.B08 - s.B04) / (s.B08 + s.B04);
+              return [classIndex(ndvi)];
             }
             """;
 
@@ -109,6 +140,43 @@ namespace StarkAgroAPI.Services.Ndvi
             }
         }
 
+        public async Task<byte[]?> GetNdviZonesTiffAsync(
+            string token,
+            GeoJsonPolygon<GeoJson2DGeographicCoordinates> geometry,
+            DateTime from,
+            DateTime to,
+            CancellationToken cancellationToken)
+        {
+            try
+            {
+                var bbox = ComputeBbox(geometry);
+                var (width, height) = ResolveDimensions(bbox);
+                var body = BuildZonesRequestBody(geometry, from, to, width, height);
+
+                using var request = new HttpRequestMessage(HttpMethod.Post, Endpoint)
+                {
+                    Content = new StringContent(body, Encoding.UTF8, "application/json")
+                };
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("image/tiff"));
+
+                using var response = await _httpClient.SendAsync(request, cancellationToken);
+                if (!response.IsSuccessStatusCode)
+                {
+                    var err = await response.Content.ReadAsStringAsync(cancellationToken);
+                    _logger.LogWarning("CDSE zones: HTTP {Status} — {Body}", (int)response.StatusCode, Truncate(err));
+                    return null;
+                }
+
+                return await response.Content.ReadAsByteArrayAsync(cancellationToken);
+            }
+            catch (Exception ex) when (ex is not OperationCanceledException)
+            {
+                _logger.LogError(ex, "CDSE zones request failed");
+                return null;
+            }
+        }
+
         /// <summary>Bbox do anel exterior do polígono (ordem <c>[lng,lat]</c> do GeoJSON).</summary>
         public static NdviBbox ComputeBbox(GeoJsonPolygon<GeoJson2DGeographicCoordinates> geometry)
         {
@@ -142,6 +210,16 @@ namespace StarkAgroAPI.Services.Ndvi
 
         public static string BuildRequestBody(
             GeoJsonPolygon<GeoJson2DGeographicCoordinates> geometry, DateTime from, DateTime to, int width, int height)
+            => BuildBody(geometry, from, to, width, height, "image/png", Evalscript);
+
+        /// <summary>Corpo do request de zonas — TIFF + o evalscript de índice de classe.</summary>
+        public static string BuildZonesRequestBody(
+            GeoJsonPolygon<GeoJson2DGeographicCoordinates> geometry, DateTime from, DateTime to, int width, int height)
+            => BuildBody(geometry, from, to, width, height, "image/tiff", ZonesEvalscript);
+
+        private static string BuildBody(
+            GeoJsonPolygon<GeoJson2DGeographicCoordinates> geometry, DateTime from, DateTime to,
+            int width, int height, string formatType, string evalscript)
         {
             var ring = geometry.Coordinates.Exterior.Positions
                 .Select(p => new[] { p.Longitude, p.Latitude })
@@ -179,10 +257,10 @@ namespace StarkAgroAPI.Services.Ndvi
                     height,
                     responses = new[]
                     {
-                        new { identifier = "default", format = new { type = "image/png" } }
+                        new { identifier = "default", format = new { type = formatType } }
                     }
                 },
-                evalscript = Evalscript
+                evalscript
             };
 
             return JsonSerializer.Serialize(payload);

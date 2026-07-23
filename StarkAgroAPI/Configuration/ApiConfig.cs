@@ -89,6 +89,7 @@ namespace StarkAgroAPI.Configuration
             services.AddScoped<INdviOverlayStore, Services.Ndvi.GridFsNdviOverlayStore>();
             services.AddScoped<Services.Ndvi.INdviCostService, Services.Ndvi.NdviCostService>();
             services.AddScoped<Services.Ndvi.INdviFetchService, Services.Ndvi.NdviFetchService>();
+            services.AddScoped<Services.Ndvi.INdviZoneService, Services.Ndvi.NdviZoneService>();
 
             // NASA FIRMS (focos de calor) — API gratuita, zero PU.
             services.AddHttpClient<Services.Fire.FirmsHotspotService>(client =>

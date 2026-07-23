@@ -64,6 +64,7 @@ namespace StarkAgroAPI.Models
             NdviReadings = database.GetCollection<NdviReading>("ndvi_readings");
             FireHotspots = database.GetCollection<FireHotspot>("fire_hotspots");
             ClimateAlerts = database.GetCollection<ClimateAlert>("climate_alerts");
+            FertilizationProfiles = database.GetCollection<FertilizationProfile>("fertilization_profiles");
             _counters = database.GetCollection<CounterDocument>("counters");
 
             // Fotos dos laudos ficam no GridFS: o driver já traz o suporte (nenhum pacote novo),
@@ -234,6 +235,10 @@ namespace StarkAgroAPI.Models
                             .Ascending(c => c.AlertType)
                             .Ascending(c => c.ForecastDate),
                         new CreateIndexOptions { Unique = true }));
+
+                    // Perfil de adubação por cultura (lookup/listagem no admin).
+                    await FertilizationProfiles.Indexes.CreateOneAsync(new CreateIndexModel<FertilizationProfile>(
+                        Builders<FertilizationProfile>.IndexKeys.Ascending(p => p.Culture)));
                 }
                 catch
                 {
@@ -260,6 +265,7 @@ namespace StarkAgroAPI.Models
         public virtual IMongoCollection<NdviReading> NdviReadings { get; }
         public virtual IMongoCollection<FireHotspot> FireHotspots { get; }
         public virtual IMongoCollection<ClimateAlert> ClimateAlerts { get; }
+        public virtual IMongoCollection<FertilizationProfile> FertilizationProfiles { get; }
         public virtual IGridFSBucket DiagnosisImages { get; }
         public virtual IGridFSBucket NdviOverlays { get; }
 

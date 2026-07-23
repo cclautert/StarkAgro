@@ -1,0 +1,70 @@
+<div class="container">
+  <div class="page-header">
+    <h1 class="page-title">🌱 Perfis de adubação (NPK por zona)</h1>
+    <button class="btn-add" (click)="novo()" *ngIf="!editing">+ Novo perfil</button>
+  </div>
+
+  <p class="section-hint">
+    Dose de NPK (kg/ha) por classe de biomassa, por cultura. É o que transforma o mapa de zonas
+    (GeoTIFF) numa prescrição. As doses são definidas pelo agrônomo — o sistema só guarda.
+  </p>
+
+  <p class="error" *ngIf="error">{{ error }}</p>
+  <p class="loading-text" *ngIf="loading">Carregando...</p>
+
+  <!-- Form de criação/edição -->
+  <div class="card edit-card" *ngIf="editing">
+    <div class="form-group">
+      <label>Cultura</label>
+      <input type="text" [(ngModel)]="editing.culture" placeholder="Ex.: Café, Soja, Milho" />
+    </div>
+
+    <table class="dose-table">
+      <thead>
+        <tr>
+          <th>Zona (classe)</th>
+          <th>N (kg/ha)</th>
+          <th>P (kg/ha)</th>
+          <th>K (kg/ha)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let d of editing.doses">
+          <td>{{ classLabel(d.classKey) }}</td>
+          <td><input type="number" min="0" [(ngModel)]="d.nitrogenKgHa" /></td>
+          <td><input type="number" min="0" [(ngModel)]="d.phosphorusKgHa" /></td>
+          <td><input type="number" min="0" [(ngModel)]="d.potassiumKgHa" /></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="form-actions">
+      <button class="btn btn-primary" (click)="salvar()" [disabled]="saving">
+        {{ saving ? 'Salvando...' : 'Salvar' }}
+      </button>
+      <button class="btn btn-secondary" (click)="cancelar()">Cancelar</button>
+    </div>
+  </div>
+
+  <!-- Lista -->
+  <div class="profiles" *ngIf="!loading && !editing">
+    <div class="profile-card" *ngFor="let p of profiles">
+      <div class="profile-head">
+        <span class="profile-culture">{{ p.culture }}</span>
+        <div class="profile-actions">
+          <button class="btn-link" (click)="editar(p)">Editar</button>
+          <button class="btn-link danger" (click)="excluir(p)">Excluir</button>
+        </div>
+      </div>
+      <div class="profile-doses">
+        <span *ngFor="let d of p.doses" class="dose-chip">
+          {{ classLabel(d.classKey) }}: {{ d.nitrogenKgHa }}-{{ d.phosphorusKgHa }}-{{ d.potassiumKgHa }}
+        </span>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="profiles.length === 0">
+      Nenhum perfil cadastrado. Use “+ Novo perfil” para definir as doses por zona de uma cultura.
+    </div>
+  </div>
+</div>

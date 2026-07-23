@@ -139,6 +139,50 @@ namespace StarkAgroAPI.Controllers
             return CustomResponse(null, HttpStatusCode.NoContent);
         }
 
+        [HttpGet("fertilization-profiles")]
+        public async Task<ActionResult<List<FertilizationProfileResponse>>> GetFertilizationProfiles(
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken)
+        {
+            if (!GetCurrentUserIsAdmin()) return StatusCode(403, new { errors = new[] { "Acesso negado." } });
+            return CustomResponse(await mediator.Send(new GetFertilizationProfilesRequest(), cancellationToken));
+        }
+
+        [HttpPost("fertilization-profiles")]
+        public async Task<ActionResult<FertilizationProfileResponse>> CreateFertilizationProfile(
+            [FromServices] IMediator mediator,
+            [FromBody] CreateFertilizationProfileRequest command,
+            CancellationToken cancellationToken)
+        {
+            if (!GetCurrentUserIsAdmin()) return StatusCode(403, new { errors = new[] { "Acesso negado." } });
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
+            return CustomResponse(await mediator.Send(command, cancellationToken), HttpStatusCode.Created);
+        }
+
+        [HttpPut("fertilization-profiles/{id}")]
+        public async Task<ActionResult<FertilizationProfileResponse>> UpdateFertilizationProfile(
+            [FromServices] IMediator mediator,
+            [FromRoute] int id,
+            [FromBody] UpdateFertilizationProfileRequest command,
+            CancellationToken cancellationToken)
+        {
+            if (!GetCurrentUserIsAdmin()) return StatusCode(403, new { errors = new[] { "Acesso negado." } });
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
+            command.Id = id;
+            return CustomResponse(await mediator.Send(command, cancellationToken));
+        }
+
+        [HttpDelete("fertilization-profiles/{id}")]
+        public async Task<ActionResult> DeleteFertilizationProfile(
+            [FromServices] IMediator mediator,
+            [FromRoute] int id,
+            CancellationToken cancellationToken)
+        {
+            if (!GetCurrentUserIsAdmin()) return StatusCode(403, new { errors = new[] { "Acesso negado." } });
+            await mediator.Send(new DeleteFertilizationProfileRequest { Id = id }, cancellationToken);
+            return CustomResponse(null, HttpStatusCode.NoContent);
+        }
+
         [HttpGet("revendas")]
         public async Task<ActionResult<List<RevendaResponse>>> GetRevendas(
             [FromServices] IMediator mediator,

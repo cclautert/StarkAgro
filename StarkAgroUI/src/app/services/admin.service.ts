@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { AdminUser } from '../models/admin-user.model';
 import { PlatformAiSettings } from '../models/platform-ai-settings.model';
 import { DiagnosisPlan } from '../models/diagnosis-plan.model';
+import { FertilizationProfile } from '../models/fertilization-profile.model';
 import { Revenda, RevendaBilling } from '../models/revenda.model';
 
 @Injectable({ providedIn: 'root' })
@@ -53,6 +54,22 @@ export class AdminService {
 
   deleteDiagnosisPlan(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}diagnosis-plans/${id}`);
+  }
+
+  getFertilizationProfiles(): Observable<FertilizationProfile[]> {
+    return this.http.get<FertilizationProfile[]>(`${this.baseUrl}fertilization-profiles`);
+  }
+
+  createFertilizationProfile(data: Partial<FertilizationProfile>): Observable<FertilizationProfile> {
+    return this.http.post<FertilizationProfile>(`${this.baseUrl}fertilization-profiles`, data);
+  }
+
+  updateFertilizationProfile(id: number, data: Partial<FertilizationProfile>): Observable<FertilizationProfile> {
+    return this.http.put<FertilizationProfile>(`${this.baseUrl}fertilization-profiles/${id}`, data);
+  }
+
+  deleteFertilizationProfile(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}fertilization-profiles/${id}`);
   }
 
   // ── Revendas ────────────────────────────────────────────────────────────
