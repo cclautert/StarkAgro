@@ -1,11 +1,12 @@
 import { Component, ElementRef, Inject, OnDestroy, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { ChartConfiguration } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { firstValueFrom } from 'rxjs';
 import { AreaService } from '../../services/area.service';
-import { MonitoredArea, NdviClassShare, NdviTrendPoint, Sentinel1TrendPoint } from '../../models/monitored-area.model';
+import { FetchNdviHistoryResponse, MonitoredArea, NdviClassShare, NdviTrendPoint, Sentinel1TrendPoint } from '../../models/monitored-area.model';
 import { addBaseLayers, applyDefaultMarkerIcon } from '../../utils/leaflet-basemaps';
 
 @Component({
@@ -13,7 +14,7 @@ import { addBaseLayers, applyDefaultMarkerIcon } from '../../utils/leaflet-basem
   templateUrl: './area-detail.component.html',
   styleUrls: ['./area-detail.component.css'],
   standalone: true,
-  imports: [CommonModule, RouterModule, BaseChartDirective]
+  imports: [CommonModule, FormsModule, RouterModule, BaseChartDirective]
 })
 export class AreaDetailComponent implements OnInit, OnDestroy {
   // O #mapContainer vive dentro do *ngIf="area && !error": quando o ngAfterViewInit roda, a
@@ -33,8 +34,22 @@ export class AreaDetailComponent implements OnInit, OnDestroy {
   area?: MonitoredArea;
   points: NdviTrendPoint[] = [];
   latest?: NdviTrendPoint;
+  /** Passagem sendo exibida no mapa/cards. Default = a mais recente; muda ao navegar o histórico. */
+  selected?: NdviTrendPoint;
   loading = true;
   error = false;
+
+  // ── Histórico (navegação + busca retroativa) ──
+  /** Data digitada no seletor de histórico (yyyy-MM-dd). */
+  historyDate = '';
+  /** Data fora do range armazenado, aguardando confirmação de busca paga. */
+  pendingFetchDate: string | null = null;
+  fetchingHistory = false;
+  historyError = '';
+  /** Aviso quando a passagem exibida não tem imagem (nublada / sem PNG). */
+  get selectedHasImage(): boolean { return this.selected?.overlayReadingId != null; }
+  /** Tolerância (dias) para casar a data pedida com uma passagem já armazenada. */
+  private static readonly MatchToleranceDays = 5;
 
   /** Classes do PNG que está no mapa — é a legenda. Ver renderOverlay() para o porquê. */
   legendClasses: NdviClassShare[] = [];
@@ -60,6 +75,8 @@ export class AreaDetailComponent implements OnInit, OnDestroy {
   private mapReady = false;
   private mapInit: Promise<void> | null = null;
   private overlayUrl?: string;
+  /** Camada de overlay atual — removida antes de desenhar outra ao trocar de passagem. */
+  private overlayLayer: any | null = null;
 
   chartData: ChartConfiguration<'line'>['data'] = { labels: [], datasets: [] };
   // O padrão do Chart.js é texto #666 e grade quase preta — some sobre o painel escuro (#1a2540).
@@ -138,6 +155,15 @@ export class AreaDetailComponent implements OnInit, OnDestroy {
       error: () => { this.error = true; this.loading = false; }
     });
 
+    this.loadTrend();
+  }
+
+  /**
+   * Carrega a série e escolhe a passagem exibida. `selectDate` (yyyy-MM-dd) força a seleção da
+   * passagem mais próxima daquela data — usado após uma busca retroativa, para já mostrar o que
+   * o usuário pediu. Sem ela, seleciona a mais recente com pixel válido (comportamento de sempre).
+   */
+  private loadTrend(selectDate?: string): void {
     this.areaService.trend(this.id).subscribe({
       next: trend => {
         this.points = trend.points ?? [];
@@ -145,7 +171,9 @@ export class AreaDetailComponent implements OnInit, OnDestroy {
         this.latest = [...this.points].reverse().find(p => !p.cloudRejected) ?? this.points[this.points.length - 1];
         this.buildChart();
         this.buildClassChart();
-        this.renderOverlay();
+
+        const target = selectDate ? this.nearestPoint(selectDate) : this.latest;
+        this.select(target, /* skipUnavailableNotice */ true);
         this.loading = false;
       },
       error: () => { this.error = true; this.loading = false; }
@@ -301,32 +329,117 @@ export class AreaDetailComponent implements OnInit, OnDestroy {
     this.map.fitBounds(L.latLngBounds(ring), { padding: [20, 20] });
   }
 
-  /** Sobrepõe o PNG NDVI da passagem mais nova que tem overlay, alinhado ao bbox. */
+  /** Sobrepõe o PNG NDVI da passagem SELECIONADA, alinhado ao bbox. Remove o overlay anterior. */
   private async renderOverlay(): Promise<void> {
-    if (!this.mapReady || !this.leaflet || !this.points.length) return;
+    if (!this.mapReady || !this.leaflet) return;
     const L = this.leaflet;
 
-    const withOverlay = [...this.points].reverse().find(p => p.overlayReadingId != null && p.bbox && p.bbox.length === 4);
-    if (!withOverlay) return;
+    // Troca de passagem: tira o PNG e a legenda antigos antes de qualquer coisa.
+    if (this.overlayLayer) { this.map.removeLayer(this.overlayLayer); this.overlayLayer = null; }
+    if (this.overlayUrl) { URL.revokeObjectURL(this.overlayUrl); this.overlayUrl = undefined; }
+    this.legendClasses = [];
+    this.zoneReadingId = undefined;
+
+    const point = this.selected;
+    if (!point || point.overlayReadingId == null || !point.bbox || point.bbox.length !== 4) return;
 
     // A passagem com overlay é a que tem GeoTIFF de zonas disponível para download.
-    this.zoneReadingId = withOverlay.overlayReadingId ?? undefined;
+    this.zoneReadingId = point.overlayReadingId ?? undefined;
 
     try {
-      const blob = await firstValueFrom(this.areaService.overlay(this.id, withOverlay.overlayReadingId!));
+      const blob = await firstValueFrom(this.areaService.overlay(this.id, point.overlayReadingId));
+      // A passagem pode ter mudado enquanto o blob vinha (clique rápido) — se mudou, descarta.
+      if (this.selected !== point) return;
       this.overlayUrl = URL.createObjectURL(blob);
       // bbox = [minLng, minLat, maxLng, maxLat] → Leaflet quer [[minLat,minLng],[maxLat,maxLng]].
-      const [minLng, minLat, maxLng, maxLat] = withOverlay.bbox!;
+      const [minLng, minLat, maxLng, maxLat] = point.bbox;
       const bounds = L.latLngBounds([[minLat, minLng], [maxLat, maxLng]]);
-      L.imageOverlay(this.overlayUrl, bounds, { opacity: 0.7 }).addTo(this.map);
+      this.overlayLayer = L.imageOverlay(this.overlayUrl, bounds, { opacity: 0.7 }).addTo(this.map);
 
       // A legenda descreve ESTE PNG, então sai das classes desta passagem. PNG gravado antes
       // da classificação foi colorido com o ramp antigo e vem sem `classes` — nesse caso a
       // legenda não aparece, em vez de anunciar cortes que a imagem não usou.
-      this.legendClasses = [...(withOverlay.classes ?? [])].reverse();
+      this.legendClasses = [...(point.classes ?? [])].reverse();
     } catch {
       // Overlay é acessório — sem PNG, o mapa mostra só o contorno.
     }
+  }
+
+  // ── Seleção e navegação de passagens ──
+
+  /** Índice da passagem exibida dentro de `points` (cronológico). -1 se nada selecionado. */
+  get selectedIdx(): number {
+    return this.selected ? this.points.indexOf(this.selected) : -1;
+  }
+  get canPrev(): boolean { return this.selectedIdx > 0; }
+  get canNext(): boolean { return this.selectedIdx >= 0 && this.selectedIdx < this.points.length - 1; }
+
+  /** Passagem anterior/seguinte na série armazenada. */
+  prevPassage(): void { const i = this.selectedIdx; if (i > 0) this.select(this.points[i - 1]); }
+  nextPassage(): void { const i = this.selectedIdx; if (i >= 0 && i < this.points.length - 1) this.select(this.points[i + 1]); }
+
+  /** Troca a passagem exibida: redesenha overlay/legenda/cards. */
+  select(point: NdviTrendPoint | undefined, skipUnavailableNotice = false): void {
+    if (!point) return;
+    this.selected = point;
+    this.historyDate = point.acquisitionDate.substring(0, 10);
+    this.historyError = '';
+    if (!skipUnavailableNotice) this.pendingFetchDate = null;
+    void this.renderOverlay();
+  }
+
+  /** Passagem armazenada mais próxima de uma data (yyyy-MM-dd). undefined se a série está vazia. */
+  private nearestPoint(date: string): NdviTrendPoint | undefined {
+    const target = new Date(date).getTime();
+    if (!this.points.length || isNaN(target)) return this.latest;
+    return this.points.reduce((best, p) =>
+      Math.abs(new Date(p.acquisitionDate).getTime() - target) <
+      Math.abs(new Date(best.acquisitionDate).getTime() - target) ? p : best);
+  }
+
+  /**
+   * Fluxo híbrido do seletor de data. Se houver passagem armazenada perto (≤ tolerância), só
+   * seleciona — de graça. Senão, arma a confirmação de busca retroativa (que consome cota).
+   */
+  goToDate(): void {
+    this.historyError = '';
+    this.pendingFetchDate = null;
+    if (!this.historyDate) return;
+
+    const target = new Date(this.historyDate).getTime();
+    const near = this.nearestPoint(this.historyDate);
+    if (near && Math.abs(new Date(near.acquisitionDate).getTime() - target)
+        <= AreaDetailComponent.MatchToleranceDays * 86_400_000) {
+      this.select(near);
+      return;
+    }
+    // Fora do histórico armazenado: pede confirmação antes de gastar cota de satélite.
+    this.pendingFetchDate = this.historyDate;
+  }
+
+  cancelFetch(): void { this.pendingFetchDate = null; }
+
+  /** Confirmação da busca retroativa paga: chama a CDSE, recarrega a série e seleciona a passagem. */
+  confirmFetch(): void {
+    if (!this.pendingFetchDate || this.fetchingHistory) return;
+    const date = this.pendingFetchDate;
+    this.fetchingHistory = true;
+    this.historyError = '';
+
+    this.areaService.history(this.id, date).subscribe({
+      next: (res: FetchNdviHistoryResponse) => {
+        this.fetchingHistory = false;
+        this.pendingFetchDate = null;
+        // A passagem agora está armazenada — recarrega a série e já seleciona a data devolvida.
+        this.loadTrend(res.nearestDate ?? date);
+      },
+      error: err => {
+        this.fetchingHistory = false;
+        // O back devolve { errors: [...] } — mostra a mensagem específica (cota, kill-switch, etc.).
+        this.historyError = err?.error?.errors?.[0]
+          ?? 'Não foi possível buscar essa data agora.';
+      }
+    });
   }
 
   // Reading do overlay mais recente — o mesmo que tem GeoTIFF de zonas disponível.
@@ -356,7 +469,7 @@ export class AreaDetailComponent implements OnInit, OnDestroy {
 
   /** Nível que ocupa a maior fatia da passagem exibida — a leitura rápida do card. */
   get dominantClass(): NdviClassShare | undefined {
-    const classes = this.latest?.classes;
+    const classes = this.selected?.classes;
     if (!classes?.length) return undefined;
     return classes.reduce((a, b) => (b.percent > a.percent ? b : a));
   }

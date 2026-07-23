@@ -16,23 +16,51 @@
       </span>
     </div>
 
-    <!-- Valor mais recente -->
-    <div class="latest-card" *ngIf="latest">
-      <div class="latest-value">{{ ndvi(latest.ndviMean) }}</div>
+    <!-- Passagem exibida (a mais recente por padrão; muda ao navegar o histórico) -->
+    <div class="latest-card" *ngIf="selected">
+      <div class="latest-value">{{ ndvi(selected.ndviMean) }}</div>
       <div class="latest-meta">
         <span class="latest-label">NDVI médio</span>
         <span class="dominant" *ngIf="dominantClass as dom">
           <i class="swatch" [style.background]="dom.color"></i>
           {{ dom.label }} em {{ dom.percent.toFixed(0) }}% da área
         </span>
-        <span class="latest-date">{{ shortDate(latest.acquisitionDate) }}</span>
-        <span class="cloud-badge" *ngIf="latest.cloudRejected">☁️ Nublada</span>
-        <span class="cloud-badge cloud-ok" *ngIf="!latest.cloudRejected">☀️ {{ latest.cloudCoveragePct.toFixed(0) }}% nuvem</span>
+        <span class="latest-date">{{ shortDate(selected.acquisitionDate) }}</span>
+        <span class="cloud-badge" *ngIf="selected.cloudRejected">☁️ Nublada</span>
+        <span class="cloud-badge cloud-ok" *ngIf="!selected.cloudRejected">☀️ {{ selected.cloudCoveragePct.toFixed(0) }}% nuvem</span>
       </div>
     </div>
-    <div class="latest-card latest-empty" *ngIf="!latest && !loading">
+    <div class="latest-card latest-empty" *ngIf="!selected && !loading">
       Ainda sem passagem de satélite para esta área.
     </div>
+
+    <!-- Histórico: navegar passagens e "voltar no tempo" numa data -->
+    <div class="history-bar" *ngIf="points.length">
+      <div class="history-nav">
+        <button class="hist-arrow" (click)="prevPassage()" [disabled]="!canPrev" title="Passagem anterior">◀</button>
+        <span class="hist-pos">{{ selectedIdx + 1 }} / {{ points.length }}</span>
+        <button class="hist-arrow" (click)="nextPassage()" [disabled]="!canNext" title="Próxima passagem">▶</button>
+      </div>
+      <div class="history-date">
+        <label for="histDate">Ver data</label>
+        <input id="histDate" type="date" [(ngModel)]="historyDate" (change)="goToDate()" />
+      </div>
+    </div>
+
+    <!-- Confirmação de busca retroativa (fora do histórico armazenado → consome cota) -->
+    <div class="fetch-confirm" *ngIf="pendingFetchDate">
+      <p>
+        Não temos imagem armazenada perto de <strong>{{ pendingFetchDate }}</strong>.
+        Buscar no satélite? <span class="cost-note">Consome cota de sensoriamento.</span>
+      </p>
+      <div class="fetch-actions">
+        <button class="btn-fetch" (click)="confirmFetch()" [disabled]="fetchingHistory">
+          {{ fetchingHistory ? 'Buscando…' : 'Buscar esta data' }}
+        </button>
+        <button class="btn-cancel" (click)="cancelFetch()" [disabled]="fetchingHistory">Cancelar</button>
+      </div>
+    </div>
+    <p class="error-text" *ngIf="historyError">{{ historyError }}</p>
 
     <!-- Gráfico de tendência -->
     <div class="panel">
@@ -96,7 +124,12 @@
         </ul>
       </div>
 
-      <p class="muted map-hint">O overlay colorido mostra o NDVI da passagem mais recente sobre o talhão.</p>
+      <p class="muted map-hint" *ngIf="selectedHasImage">
+        O overlay colorido mostra o NDVI da passagem de {{ selected ? shortDate(selected.acquisitionDate) : '' }} sobre o talhão.
+      </p>
+      <p class="muted map-hint" *ngIf="selected && !selectedHasImage">
+        Esta passagem não tem imagem{{ selected.cloudRejected ? ' (nublada)' : '' }} — os números acima vêm da estatística, mas não há mapa colorido para ela.
+      </p>
 
       <!-- Download do mapa de zonas (GeoTIFF) para o maquinário. -->
       <div class="zones-download" *ngIf="zoneReadingId">

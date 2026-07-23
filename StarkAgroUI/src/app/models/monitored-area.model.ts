@@ -90,3 +90,13 @@ export interface NdviTrendResponse {
   /** Série de radar (RVI). Vazia se o S1 nunca rodou para a área. */
   radar?: Sentinel1TrendPoint[];
 }
+
+/** Resposta da busca retroativa sob demanda (histórico). */
+export interface FetchNdviHistoryResponse {
+  /** Datas (yyyy-MM-dd) das passagens da janela — gravadas agora ou já existentes. */
+  acquisitionDates: string[];
+  /** true quando foi preciso chamar a CDSE (gastou PU); false = já estava no banco. */
+  fetchedFromCdse: boolean;
+  /** Data (yyyy-MM-dd) da passagem mais próxima da pedida — a que a tela deve selecionar. */
+  nearestDate?: string | null;
+}

@@ -401,5 +401,94 @@ namespace StarkAgroAPI.Tests.Services.Ndvi
                 It.IsAny<MongoDB.Driver.GeoJsonObjectModel.GeoJsonPolygon<MongoDB.Driver.GeoJsonObjectModel.GeoJson2DGeographicCoordinates>>(),
                 It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), Times.Never);
         }
+
+        // ── FetchHistoricalAsync (busca retroativa) ──
+
+        [Fact]
+        public async Task Historical_KillSwitchOff_Disabled()
+        {
+            var d = Build(settings: new PlatformAiSettings { Id = 1, Sentinel2Enabled = false }, token: "t", stats: []);
+
+            var outcome = await d.Svc.FetchHistoricalAsync(Area(), new DateTime(2026, 6, 8), CancellationToken.None);
+
+            Assert.Equal(NdviFetchStatus.Disabled, outcome.Status);
+            d.Readings.Verify(c => c.InsertOneAsync(It.IsAny<NdviReading>(), It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task Historical_InserePassagemAntiga_MesmoComLastAcqMaisNovo()
+        {
+            // A DIFERENÇA da FetchAsync: a passagem retroativa é mais antiga que LastAcquisitionDate,
+            // e MESMO ASSIM entra — senão o histórico nunca back-fillaria o passado. O dedup fica só
+            // por conta do índice único {AreaId, AcquisitionDate}.
+            var stats = new List<NdviStat>
+            {
+                new(new DateTime(2026, 6, 8, 0, 0, 0, DateTimeKind.Utc), 0.6, 0.2, 0.9, 0.1, 900, 5)
+            };
+            var d = Build(Enabled(), token: "t", stats: stats);
+
+            var outcome = await d.Svc.FetchHistoricalAsync(
+                Area(lastAcq: "2026-12-31"), new DateTime(2026, 6, 8), CancellationToken.None);
+
+            Assert.Equal(NdviFetchStatus.Success, outcome.Status);
+            Assert.Contains("2026-06-08", outcome.AcquisitionDates!);
+            d.Readings.Verify(c => c.InsertOneAsync(
+                It.Is<NdviReading>(r => r.AcquisitionDate == new DateTime(2026, 6, 8, 0, 0, 0, DateTimeKind.Utc)),
+                It.IsAny<InsertOneOptions>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task Historical_UsaJanelaCentradaNaData()
+        {
+            var target = new DateTime(2026, 6, 8);
+            var (from, to) = NdviFetchService.HistoryWindow(target);
+            var stats = new List<NdviStat> { new(new DateTime(2026, 6, 8, 0, 0, 0, DateTimeKind.Utc), 0.6, 0.2, 0.9, 0.1, 900, 5) };
+            var d = Build(Enabled(), token: "t", stats: stats);
+
+            await d.Svc.FetchHistoricalAsync(Area(), target, CancellationToken.None);
+
+            d.StatService.Verify(s => s.GetStatisticsAsync(It.IsAny<string>(),
+                It.IsAny<MongoDB.Driver.GeoJsonObjectModel.GeoJsonPolygon<MongoDB.Driver.GeoJsonObjectModel.GeoJson2DGeographicCoordinates>>(),
+                from, to, It.IsAny<bool>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task Historical_GeraOverlayDaPassagemMaisProximaDaData()
+        {
+            // Duas passagens na janela; o overlay tem que sair da MAIS PRÓXIMA da data pedida
+            // (é dela que o usuário quer ver a imagem), não da mais nova.
+            var target = new DateTime(2026, 6, 8);
+            var stats = new List<NdviStat>
+            {
+                new(new DateTime(2026, 6, 6, 0, 0, 0, DateTimeKind.Utc), 0.6, 0.2, 0.9, 0.1, 900, 5),   // delta 2
+                new(new DateTime(2026, 6, 11, 0, 0, 0, DateTimeKind.Utc), 0.7, 0.3, 0.95, 0.1, 900, 5)  // delta 3
+            };
+            var d = Build(Enabled(), token: "t", stats: stats, overlayPng: [1, 2, 3, 4]);
+
+            await d.Svc.FetchHistoricalAsync(Area(), target, CancellationToken.None);
+
+            d.Process.Verify(p => p.GetNdviOverlayPngAsync(It.IsAny<string>(),
+                It.IsAny<MongoDB.Driver.GeoJsonObjectModel.GeoJsonPolygon<MongoDB.Driver.GeoJsonObjectModel.GeoJson2DGeographicCoordinates>>(),
+                new DateTime(2026, 6, 6, 0, 0, 0, DateTimeKind.Utc), new DateTime(2026, 6, 7, 0, 0, 0, DateTimeKind.Utc),
+                It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task Historical_StatisticalFails_Failed()
+        {
+            var d = Build(Enabled(), token: "t", stats: null);
+
+            var outcome = await d.Svc.FetchHistoricalAsync(Area(), new DateTime(2026, 6, 8), CancellationToken.None);
+
+            Assert.Equal(NdviFetchStatus.Failed, outcome.Status);
+        }
+
+        [Fact]
+        public void HistoryWindow_NaoUltrapassaAgora()
+        {
+            // Data muito recente: a borda superior da janela não pode cair no futuro (não há passagem lá).
+            var (_, to) = NdviFetchService.HistoryWindow(DateTime.UtcNow.AddDays(-1));
+            Assert.True(to <= DateTime.UtcNow);
+        }
     }
 }

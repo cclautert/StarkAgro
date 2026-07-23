@@ -212,3 +212,69 @@
 .legend-pct { color: #cbd5e1; font-weight: 600; font-variant-numeric: tabular-nums; min-width: 3.2rem; text-align: right; }
 .loading-text, .error-text { color: var(--text-muted); }
 .error-text { color: #fca5a5; }
+
+/* ── Histórico: navegação + busca retroativa ── */
+.history-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+.history-nav { display: flex; align-items: center; gap: 0.5rem; }
+.hist-arrow {
+  background: #253152;
+  color: #e2e8f0;
+  border: 1px solid #3a4f75;
+  border-radius: 6px;
+  padding: 0.35rem 0.7rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.hist-arrow:hover:not(:disabled) { background: #2d3f5e; }
+.hist-arrow:disabled { opacity: 0.4; cursor: default; }
+.hist-pos { color: var(--text-muted); font-size: 0.9rem; font-variant-numeric: tabular-nums; min-width: 4rem; text-align: center; }
+.history-date { display: flex; align-items: center; gap: 0.5rem; }
+.history-date label { color: var(--text-muted); font-size: 0.9rem; }
+.history-date input[type="date"] {
+  background: #253152;
+  color: #e2e8f0;
+  border: 1px solid #3a4f75;
+  border-radius: 6px;
+  padding: 0.3rem 0.5rem;
+  font-size: 0.9rem;
+  color-scheme: dark;
+}
+
+.fetch-confirm {
+  background: #1a2540;
+  border: 1px solid #a16207;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+}
+.fetch-confirm p { color: #e2e8f0; margin: 0 0 0.6rem; font-size: 0.92rem; }
+.cost-note { color: #fbbf24; }
+.fetch-actions { display: flex; gap: 0.5rem; }
+.btn-fetch {
+  background: #14532d;
+  color: #86efac;
+  border: 1px solid #16a34a;
+  border-radius: 6px;
+  padding: 0.4rem 0.9rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.btn-fetch:hover:not(:disabled) { opacity: 0.9; }
+.btn-fetch:disabled { opacity: 0.6; cursor: default; }
+.btn-cancel {
+  background: #253152;
+  color: #94a3b8;
+  border: 1px solid #3a4f75;
+  border-radius: 6px;
+  padding: 0.4rem 0.9rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.btn-cancel:hover:not(:disabled) { color: #e2e8f0; }
