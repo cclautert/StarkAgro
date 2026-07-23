@@ -270,6 +270,33 @@
       </p>
     </div>
 
+    <!-- Sentinel-1 (radar) -->
+    <hr class="section-divider" />
+    <p class="section-title">Sentinel-1 (radar · enxerga através da nuvem)</p>
+    <p class="section-hint">
+      Série de RVI por radar, na mesma Sentinel Hub API do NDVI. Vê justamente nas datas em que o
+      NDVI tem buraco de nuvem. Custa PU (fator 1,0). Órbita fixa (descendente).
+    </p>
+
+    <div class="form-group">
+      <label class="checkbox-label">
+        <input type="checkbox" formControlName="sentinel1Enabled" />
+        Habilitar a busca de radar Sentinel-1 (kill-switch)
+      </label>
+    </div>
+
+    <div class="form-group">
+      <label for="sentinel1CostCents">Custo por busca S1 (centavos)</label>
+      <input id="sentinel1CostCents" type="number" min="0" formControlName="sentinel1CostCents" />
+      <p class="section-hint" style="margin-top:6px">Proxy do custo de PU, congelado em cada leitura.</p>
+    </div>
+
+    <div class="cost-panel">
+      <span class="cost-label">Gasto de radar neste mês</span>
+      <span class="cost-value">{{ (currentMonthSentinel1CostCents / 100) | currency:'EUR':'symbol':'1.2-2' }}</span>
+      <span class="cost-sub">{{ currentMonthSentinel1CostCents }} centavos em Processing Units</span>
+    </div>
+
     <div class="form-actions">
       <button type="submit" class="btn btn-primary" [disabled]="isSaving">
         {{ isSaving ? 'Salvando...' : 'Salvar Configurações' }}

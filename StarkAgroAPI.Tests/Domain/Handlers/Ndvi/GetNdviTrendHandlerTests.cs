@@ -14,16 +14,20 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Ndvi
 {
     public class GetNdviTrendHandlerTests
     {
-        private static Mock<agpDBContext> Db(List<MonitoredArea>? areas = null, List<NdviReading>? readings = null)
+        private static Mock<agpDBContext> Db(
+            List<MonitoredArea>? areas = null, List<NdviReading>? readings = null, List<Sentinel1Reading>? radar = null)
         {
             var areasCol = new Mock<IMongoCollection<MonitoredArea>>();
             MongoMockHelper.SetupFindList(areasCol, areas ?? []);
             var readingsCol = new Mock<IMongoCollection<NdviReading>>();
             MongoMockHelper.SetupFindList(readingsCol, readings ?? []);
+            var radarCol = new Mock<IMongoCollection<Sentinel1Reading>>();
+            MongoMockHelper.SetupFindList(radarCol, radar ?? []);
 
             var db = new Mock<agpDBContext>();
             db.Setup(d => d.MonitoredAreas).Returns(areasCol.Object);
             db.Setup(d => d.NdviReadings).Returns(readingsCol.Object);
+            db.Setup(d => d.Sentinel1Readings).Returns(radarCol.Object);
             return db;
         }
 
@@ -159,6 +163,33 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Ndvi
             Assert.Equal(10, point.Classes[2].PixelCount);
             Assert.Equal(100.0, point.Classes[2].Percent, 2); // 999 órfão não entra no denominador
             Assert.DoesNotContain(point.Classes, c => c.PixelCount == 999);
+        }
+
+        [Fact]
+        public async Task Trend_ProjetaSerieRadar_FiltradaPorTenant()
+        {
+            var db = Db(
+                areas: [new MonitoredArea { Id = 5, UserId = 42 }],
+                radar: [new Sentinel1Reading { Id = 1, AreaId = 5, UserId = 42,
+                    AcquisitionDate = new DateTime(2026, 7, 20), RviMean = 0.51, VvMean = 0.14, VhMean = 0.021 }]);
+            var handler = new GetNdviTrendHandler(db.Object, User(42), new Notificator());
+
+            var result = await handler.Handle(new GetNdviTrendRequest { AreaId = 5 }, CancellationToken.None);
+
+            var radar = Assert.Single(result!.Radar);
+            Assert.Equal(0.51, radar.RviMean, 2);
+            Assert.Equal(0.14, radar.VvMean, 2);
+        }
+
+        [Fact]
+        public async Task Trend_SemRadar_ListaVazia()
+        {
+            var db = Db(areas: [new MonitoredArea { Id = 5, UserId = 42 }]);
+            var handler = new GetNdviTrendHandler(db.Object, User(42), new Notificator());
+
+            var result = await handler.Handle(new GetNdviTrendRequest { AreaId = 5 }, CancellationToken.None);
+
+            Assert.Empty(result!.Radar);
         }
 
         [Fact]

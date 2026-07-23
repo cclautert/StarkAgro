@@ -126,6 +126,17 @@ var builder = Host.CreateDefaultBuilder(args)
         services.AddScoped<StarkAgroAPI.Services.Fire.IFirmsHotspotService>(sp =>
             sp.GetRequiredService<StarkAgroAPI.Services.Fire.FirmsHotspotService>());
 
+        services.AddHttpClient<StarkAgroAPI.Services.Sentinel1.CdseSentinel1Service>(client =>
+        {
+            client.BaseAddress = new Uri("https://sh.dataspace.copernicus.eu/");
+        });
+        services.AddScoped<StarkAgroAPI.Services.Sentinel1.ICdseSentinel1Service>(sp =>
+            sp.GetRequiredService<StarkAgroAPI.Services.Sentinel1.CdseSentinel1Service>());
+        services.AddScoped<StarkAgroAPI.Services.Sentinel1.ISentinel1FetchService,
+            StarkAgroAPI.Services.Sentinel1.Sentinel1FetchService>();
+        services.AddScoped<StarkAgroAPI.Services.Sentinel1.ISentinel1CostService,
+            StarkAgroAPI.Services.Sentinel1.Sentinel1CostService>();
+
         services.AddScoped<StarkAgroAPI.Services.Ndvi.INdviFetchService,
             StarkAgroAPI.Services.Ndvi.NdviFetchService>();
 
@@ -149,6 +160,7 @@ var builder = Host.CreateDefaultBuilder(args)
         services.AddHostedService<NdviProcessor>();
         services.AddHostedService<FireWatchProcessor>();
         services.AddHostedService<ClimateWatchProcessor>();
+        services.AddHostedService<Sentinel1Processor>();
     });
 
 var host = builder.Build();

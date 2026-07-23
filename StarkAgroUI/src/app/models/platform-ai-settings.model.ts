@@ -35,6 +35,9 @@ export interface PlatformAiSettings {
   climateAlertsEnabled?: boolean;
   frostAlertTempC?: number;
   heatAlertTempC?: number;
+  sentinel1Enabled?: boolean;
+  sentinel1CostCents?: number;
+  currentMonthSentinel1CostCents?: number;
 
   /** Custo de uma busca NDVI (Processing Units), em centavos — congelado por leitura. */
   ndviCostCents?: number;

@@ -129,6 +129,20 @@ namespace StarkAgroAPI.Tests.Services.Ndvi
         }
 
         [Fact]
+        public void BuildRequestBody_CaminhoS2Intocado_ContinuaSentinel2L2a()
+        {
+            // Regressão da F5: o serviço S1 é separado; o NDVI NÃO pode ter mudado de coleção.
+            var body = CdseStatisticalService.BuildRequestBody(Geo(),
+                new DateTime(2026, 6, 1, 0, 0, 0, DateTimeKind.Utc),
+                new DateTime(2026, 7, 1, 0, 0, 0, DateTimeKind.Utc), false);
+
+            using var doc = JsonDocument.Parse(body);
+            var data = doc.RootElement.GetProperty("input").GetProperty("data")[0];
+            Assert.Equal("sentinel-2-l2a", data.GetProperty("type").GetString());
+            Assert.DoesNotContain("sentinel-1-grd", body);
+        }
+
+        [Fact]
         public void BuildRequestBody_ExtraIndicesOff_PedeSo4BandasESoNdvi()
         {
             var body = CdseStatisticalService.BuildRequestBody(Geo(),

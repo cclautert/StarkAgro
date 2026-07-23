@@ -5,7 +5,7 @@ import { ChartConfiguration } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { firstValueFrom } from 'rxjs';
 import { AreaService } from '../../services/area.service';
-import { MonitoredArea, NdviClassShare, NdviTrendPoint } from '../../models/monitored-area.model';
+import { MonitoredArea, NdviClassShare, NdviTrendPoint, Sentinel1TrendPoint } from '../../models/monitored-area.model';
 import { addBaseLayers, applyDefaultMarkerIcon } from '../../utils/leaflet-basemaps';
 
 @Component({
@@ -46,9 +46,13 @@ export class AreaDetailComponent implements OnInit, OnDestroy {
   readonly indices = [
     { key: 'ndvi' as const, label: 'NDVI', hint: 'Vigor geral da vegetação. Satura em dossel denso.' },
     { key: 'ndre' as const, label: 'NDRE', hint: 'Red-edge: clorofila e nitrogênio. Não satura onde o NDVI para.' },
-    { key: 'ndmi' as const, label: 'NDMI', hint: 'Umidade do dossel: estresse hídrico antes do sintoma visível.' }
+    { key: 'ndmi' as const, label: 'NDMI', hint: 'Umidade do dossel: estresse hídrico antes do sintoma visível.' },
+    { key: 'rvi' as const, label: 'RVI (radar)', hint: 'Radar (Sentinel-1): atravessa nuvem. Existe justamente nas datas em que o NDVI tem buraco — não é um "NDVI que funciona na chuva", é outra medida.' }
   ];
-  selectedIndex: 'ndvi' | 'ndre' | 'ndmi' = 'ndvi';
+  selectedIndex: 'ndvi' | 'ndre' | 'ndmi' | 'rvi' = 'ndvi';
+
+  /** Série de radar (S1) — datas próprias, separada dos pontos de NDVI. */
+  radar: Sentinel1TrendPoint[] = [];
 
   // Leaflet (carregado sob demanda no browser).
   private map: any | null = null;
@@ -137,6 +141,7 @@ export class AreaDetailComponent implements OnInit, OnDestroy {
     this.areaService.trend(this.id).subscribe({
       next: trend => {
         this.points = trend.points ?? [];
+        this.radar = trend.radar ?? [];
         this.latest = [...this.points].reverse().find(p => !p.cloudRejected) ?? this.points[this.points.length - 1];
         this.buildChart();
         this.buildClassChart();
@@ -152,34 +157,46 @@ export class AreaDetailComponent implements OnInit, OnDestroy {
   }
 
   /** Troca do índice no seletor: só reconstrói a série de tendência (composição/mapa não mudam). */
-  selectIndex(key: 'ndvi' | 'ndre' | 'ndmi'): void {
+  selectIndex(key: 'ndvi' | 'ndre' | 'ndmi' | 'rvi'): void {
     this.selectedIndex = key;
     this.buildChart();
   }
 
-  /** true se algum ponto tem NDRE/NDMI não-zero — senão a série é toda zero (legado) e o
-   *  seletor esconde a opção, em vez de oferecer uma linha reta que finge ser dado. */
-  hasIndex(key: 'ndre' | 'ndmi'): boolean {
+  /** Opção disponível no seletor: NDVI sempre; NDRE/NDMI se houver valor; RVI se houver série S1. */
+  hasIndex(key: 'ndvi' | 'ndre' | 'ndmi' | 'rvi'): boolean {
+    if (key === 'ndvi') return true;
+    if (key === 'rvi') return this.radar.length > 0;
     const pick = key === 'ndre' ? (p: NdviTrendPoint) => p.ndreMean : (p: NdviTrendPoint) => p.ndmiMean;
     return this.points.some(p => !p.cloudRejected && pick(p) !== 0);
   }
 
   private buildChart(): void {
-    const labels = this.points.map(p => this.shortDate(p.acquisitionDate));
     const meta = this.indices.find(i => i.key === this.selectedIndex)!;
+
+    // RVI é uma série SEPARADA (radar tem datas próprias, cadência diferente do NDVI).
+    if (this.selectedIndex === 'rvi') {
+      this.setYAxis(false, meta.label);
+      this.chartData = {
+        labels: this.radar.map(p => this.shortDate(p.acquisitionDate)),
+        datasets: [{
+          data: this.radar.map(p => round2(p.rviMean)),
+          label: 'RVI (radar)',
+          borderColor: '#a78bfa',
+          backgroundColor: 'rgba(167,139,250,0.15)',
+          fill: true, tension: 0.35, spanGaps: true, pointRadius: 4
+        }]
+      };
+      return;
+    }
+
+    const labels = this.points.map(p => this.shortDate(p.acquisitionDate));
     const value = (p: NdviTrendPoint) =>
       this.selectedIndex === 'ndre' ? p.ndreMean : this.selectedIndex === 'ndmi' ? p.ndmiMean : p.ndviMean;
     // Passagem nublada vira buraco honesto na série (null) — não uma queda falsa.
     const series = this.points.map(p => (p.cloudRejected ? null : round2(value(p))));
 
-    // NDVI vive em [0,1]; NDMI pode ser negativo. Fixar o eixo só faz sentido no NDVI —
-    // nos outros, deixar o Chart.js auto-escalar para o range real da série.
-    if (this.chartOptions?.scales?.['y']) {
-      const y = this.chartOptions.scales['y'] as Record<string, unknown>;
-      y['min'] = this.selectedIndex === 'ndvi' ? 0 : undefined;
-      y['max'] = this.selectedIndex === 'ndvi' ? 1 : undefined;
-      (y['title'] as { text: string }).text = meta.label;
-    }
+    // NDVI vive em [0,1]; os demais podem sair disso — só fixa o eixo no NDVI.
+    this.setYAxis(this.selectedIndex === 'ndvi', meta.label);
 
     this.chartData = {
       labels,
@@ -196,6 +213,14 @@ export class AreaDetailComponent implements OnInit, OnDestroy {
         }
       ]
     };
+  }
+
+  private setYAxis(fixedZeroToOne: boolean, title: string): void {
+    if (!this.chartOptions?.scales?.['y']) return;
+    const y = this.chartOptions.scales['y'] as Record<string, unknown>;
+    y['min'] = fixedZeroToOne ? 0 : undefined;
+    y['max'] = fixedZeroToOne ? 1 : undefined;
+    (y['title'] as { text: string }).text = title;
   }
 
   /**

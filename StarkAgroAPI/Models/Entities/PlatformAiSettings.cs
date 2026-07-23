@@ -100,5 +100,13 @@ namespace StarkAgroAPI.Models.Entities
 
         /// <summary>Limiar de calor extremo (°C): temperatura máxima prevista &gt;= este valor dispara alerta. Default 35.</summary>
         public int HeatAlertTempC { get; set; } = 35;
+
+        // ── Sentinel-1 (radar) ──
+
+        /// <summary>Kill-switch do radar. Desligado, o worker não busca S1 na CDSE.</summary>
+        public bool Sentinel1Enabled { get; set; } = false;
+
+        /// <summary>Custo de uma busca S1 (Processing Units), em <b>centavos</b> — congelado por reading.</summary>
+        public int Sentinel1CostCents { get; set; } = 1;
     }
 }

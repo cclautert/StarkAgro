@@ -26,6 +26,7 @@ export class AdminAiSettingsComponent implements OnInit {
 
   /** Gasto de NDVI (PU) no mês corrente, em centavos (só leitura). */
   currentMonthNdviCostCents = 0;
+  currentMonthSentinel1CostCents = 0;
 
   showGeminiKey = false;
   showOpenAiKey = false;
@@ -60,6 +61,8 @@ export class AdminAiSettingsComponent implements OnInit {
       climateAlertsEnabled: [false],
       frostAlertTempC: [3],
       heatAlertTempC: [35],
+      sentinel1Enabled: [false],
+      sentinel1CostCents: [1, [Validators.min(0)]],
       ndviCostCents: [1, [Validators.min(0)]],
       ndviMonthlyBudgetCents: [0, [Validators.min(0)]],
       ndviMaxAreasPerUser: [0, [Validators.min(0)]]
@@ -89,12 +92,15 @@ export class AdminAiSettingsComponent implements OnInit {
           climateAlertsEnabled: settings.climateAlertsEnabled ?? false,
           frostAlertTempC: settings.frostAlertTempC ?? 3,
           heatAlertTempC: settings.heatAlertTempC ?? 35,
+          sentinel1Enabled: settings.sentinel1Enabled ?? false,
+          sentinel1CostCents: settings.sentinel1CostCents ?? 1,
           ndviCostCents: settings.ndviCostCents ?? 1,
           ndviMonthlyBudgetCents: settings.ndviMonthlyBudgetCents ?? 0,
           ndviMaxAreasPerUser: settings.ndviMaxAreasPerUser ?? 0
         });
         this.currentMonthAiCostCents = settings.currentMonthAiCostCents ?? 0;
         this.currentMonthNdviCostCents = settings.currentMonthNdviCostCents ?? 0;
+        this.currentMonthSentinel1CostCents = settings.currentMonthSentinel1CostCents ?? 0;
         this.isLoading = false;
       },
       error: () => {
@@ -130,6 +136,8 @@ export class AdminAiSettingsComponent implements OnInit {
       climateAlertsEnabled: !!this.form.value.climateAlertsEnabled,
       frostAlertTempC: Number(this.form.value.frostAlertTempC) || 3,
       heatAlertTempC: Number(this.form.value.heatAlertTempC) || 35,
+      sentinel1Enabled: !!this.form.value.sentinel1Enabled,
+      sentinel1CostCents: Number(this.form.value.sentinel1CostCents) || 1,
       ndviCostCents: Number(this.form.value.ndviCostCents) || 0,
       ndviMonthlyBudgetCents: Number(this.form.value.ndviMonthlyBudgetCents) || 0,
       ndviMaxAreasPerUser: Number(this.form.value.ndviMaxAreasPerUser) || 0

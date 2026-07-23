@@ -65,6 +65,7 @@ namespace StarkAgroAPI.Models
             FireHotspots = database.GetCollection<FireHotspot>("fire_hotspots");
             ClimateAlerts = database.GetCollection<ClimateAlert>("climate_alerts");
             FertilizationProfiles = database.GetCollection<FertilizationProfile>("fertilization_profiles");
+            Sentinel1Readings = database.GetCollection<Sentinel1Reading>("sentinel1_readings");
             _counters = database.GetCollection<CounterDocument>("counters");
 
             // Fotos dos laudos ficam no GridFS: o driver já traz o suporte (nenhum pacote novo),
@@ -239,6 +240,20 @@ namespace StarkAgroAPI.Models
                     // Perfil de adubação por cultura (lookup/listagem no admin).
                     await FertilizationProfiles.Indexes.CreateOneAsync(new CreateIndexModel<FertilizationProfile>(
                         Builders<FertilizationProfile>.IndexKeys.Ascending(p => p.Culture)));
+
+                    // Série de radar por área.
+                    await Sentinel1Readings.Indexes.CreateOneAsync(new CreateIndexModel<Sentinel1Reading>(
+                        Builders<Sentinel1Reading>.IndexKeys
+                            .Ascending(r => r.UserId)
+                            .Descending(r => r.AcquisitionDate)));
+                    // Único: uma passagem por (área, data, órbita) — a órbita entra na chave porque
+                    // a série não mistura asc/desc. Idempotência de refetch, como no NDVI.
+                    await Sentinel1Readings.Indexes.CreateOneAsync(new CreateIndexModel<Sentinel1Reading>(
+                        Builders<Sentinel1Reading>.IndexKeys
+                            .Ascending(r => r.AreaId)
+                            .Ascending(r => r.AcquisitionDate)
+                            .Ascending(r => r.OrbitDirection),
+                        new CreateIndexOptions { Unique = true }));
                 }
                 catch
                 {
@@ -266,6 +281,7 @@ namespace StarkAgroAPI.Models
         public virtual IMongoCollection<FireHotspot> FireHotspots { get; }
         public virtual IMongoCollection<ClimateAlert> ClimateAlerts { get; }
         public virtual IMongoCollection<FertilizationProfile> FertilizationProfiles { get; }
+        public virtual IMongoCollection<Sentinel1Reading> Sentinel1Readings { get; }
         public virtual IGridFSBucket DiagnosisImages { get; }
         public virtual IGridFSBucket NdviOverlays { get; }
 

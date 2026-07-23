@@ -3,6 +3,7 @@ using StarkAgroAPI.Domain.Commands.Responses.Admin;
 using StarkAgroAPI.Models;
 using StarkAgroAPI.Services.Diagnosis;
 using StarkAgroAPI.Services.Ndvi;
+using StarkAgroAPI.Services.Sentinel1;
 using MediatR;
 using MongoDB.Driver;
 
@@ -13,19 +14,23 @@ namespace StarkAgroAPI.Domain.Handlers.Admin
         private readonly agpDBContext _dbContext;
         private readonly IDiagnosisCostService _costService;
         private readonly INdviCostService _ndviCostService;
+        private readonly ISentinel1CostService _s1CostService;
 
         public GetPlatformAiSettingsHandler(
-            agpDBContext dbContext, IDiagnosisCostService costService, INdviCostService ndviCostService)
+            agpDBContext dbContext, IDiagnosisCostService costService,
+            INdviCostService ndviCostService, ISentinel1CostService s1CostService)
         {
             _dbContext = dbContext;
             _costService = costService;
             _ndviCostService = ndviCostService;
+            _s1CostService = s1CostService;
         }
 
         public async Task<AdminAiSettingsResponse> Handle(GetPlatformAiSettingsRequest request, CancellationToken cancellationToken)
         {
             var monthCost = await _costService.GetCurrentMonthCostCentsAsync(cancellationToken);
             var ndviMonthCost = await _ndviCostService.GetCurrentMonthCostCentsAsync(cancellationToken);
+            var s1MonthCost = await _s1CostService.GetCurrentMonthCostCentsAsync(cancellationToken);
 
             var settings = await _dbContext.PlatformAiSettings.Find(x => x.Id == 1).FirstOrDefaultAsync(cancellationToken);
 
@@ -34,7 +39,8 @@ namespace StarkAgroAPI.Domain.Handlers.Admin
                 {
                     ActiveProvider = "gemini",
                     CurrentMonthAiCostCents = monthCost,
-                    CurrentMonthNdviCostCents = ndviMonthCost
+                    CurrentMonthNdviCostCents = ndviMonthCost,
+                    CurrentMonthSentinel1CostCents = s1MonthCost
                 };
 
             return new AdminAiSettingsResponse
@@ -61,6 +67,9 @@ namespace StarkAgroAPI.Domain.Handlers.Admin
                 ClimateAlertsEnabled = settings.ClimateAlertsEnabled,
                 FrostAlertTempC = settings.FrostAlertTempC,
                 HeatAlertTempC = settings.HeatAlertTempC,
+                Sentinel1Enabled = settings.Sentinel1Enabled,
+                Sentinel1CostCents = settings.Sentinel1CostCents,
+                CurrentMonthSentinel1CostCents = s1MonthCost,
                 NdviCostCents = settings.NdviCostCents,
                 NdviMonthlyBudgetCents = settings.NdviMonthlyBudgetCents,
                 NdviMaxAreasPerUser = settings.NdviMaxAreasPerUser,
