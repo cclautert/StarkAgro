@@ -89,5 +89,16 @@ namespace StarkAgroAPI.Models.Entities
         /// Raio (km) ao redor da área em que um foco vira alerta. Default 10; o deck oferece 0,5–20.
         /// </summary>
         public int FireAlertRadiusKm { get; set; } = 10;
+
+        // ── Alertas climáticos (geada / calor extremo) ──
+
+        /// <summary>Kill-switch dos alertas de geada/calor. Desligado, o worker não busca previsão.</summary>
+        public bool ClimateAlertsEnabled { get; set; } = false;
+
+        /// <summary>Limiar de geada (°C): temperatura mínima prevista &lt;= este valor dispara alerta. Default 3.</summary>
+        public int FrostAlertTempC { get; set; } = 3;
+
+        /// <summary>Limiar de calor extremo (°C): temperatura máxima prevista &gt;= este valor dispara alerta. Default 35.</summary>
+        public int HeatAlertTempC { get; set; } = 35;
     }
 }

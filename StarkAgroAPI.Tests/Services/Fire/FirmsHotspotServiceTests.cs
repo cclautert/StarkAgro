@@ -30,6 +30,29 @@ namespace StarkAgroAPI.Tests.Services.Fire
         }
 
         [Fact]
+        public void ParseCsv_DadoRealDoFirms_Parseia()
+        {
+            // Linhas VERBATIM da resposta real do FIRMS (VIIRS_SNPP_NRT, 2026-07-22), incluindo o
+            // acq_time de 3 dígitos ("306" = 03:06) e confidence em letra minúscula ("n"/"h") — os
+            // dois detalhes que só o dado real revela. Cabeçalho é a ordem oficial de 14 colunas.
+            var csv =
+                "latitude,longitude,bright_ti4,scan,track,acq_date,acq_time,satellite,instrument,confidence,version,bright_ti5,frp,daynight\n" +
+                "-20.24594,-40.24869,301.32,0.69,0.74,2026-07-22,306,N,VIIRS,n,2.0NRT,287.19,2.47,N\n" +
+                "-20.23912,-40.24675,315.51,0.69,0.74,2026-07-22,306,N,VIIRS,h,2.0NRT,287.6,2.47,N";
+
+            var r = FirmsHotspotService.ParseCsv(csv);
+
+            Assert.Equal(2, r.Count);
+            Assert.Equal(new DateTime(2026, 7, 22, 3, 6, 0, DateTimeKind.Utc), r[0].AcquiredAt); // "306" → 03:06
+            Assert.Equal(-20.24594, r[0].Latitude, 5);
+            Assert.Equal(-40.24869, r[0].Longitude, 5);
+            Assert.Equal("N", r[0].Satellite);
+            Assert.Equal("n", r[0].Confidence);   // letra minúscula, guardada crua
+            Assert.Equal("h", r[1].Confidence);
+            Assert.Equal(2.47, r[0].Frp, 2);
+        }
+
+        [Fact]
         public void ParseCsv_ColunasReordenadas_AindaLeCerto()
         {
             // Parse é por NOME de coluna: reordenar não pode desalinhar o resultado.

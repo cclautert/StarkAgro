@@ -35,6 +35,9 @@ namespace StarkAgroAPI.Domain.Commands.Requests.Admin
         public string? FirmsMapKey { get; set; }
         public bool FireAlertsEnabled { get; set; }
         public int FireAlertRadiusKm { get; set; }
+        public bool ClimateAlertsEnabled { get; set; }
+        public int FrostAlertTempC { get; set; }
+        public int HeatAlertTempC { get; set; }
 
         [Range(0, 100000, ErrorMessage = "NdviCostCents deve estar entre 0 e 100000.")]
         public int NdviCostCents { get; set; } = 1;

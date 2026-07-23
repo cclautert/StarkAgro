@@ -148,6 +148,7 @@ var builder = Host.CreateDefaultBuilder(args)
         services.AddHostedService<PlantDiagnosisProcessor>();
         services.AddHostedService<NdviProcessor>();
         services.AddHostedService<FireWatchProcessor>();
+        services.AddHostedService<ClimateWatchProcessor>();
     });
 
 var host = builder.Build();

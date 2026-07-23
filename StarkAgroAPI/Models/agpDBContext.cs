@@ -63,6 +63,7 @@ namespace StarkAgroAPI.Models
             MonitoredAreas = database.GetCollection<MonitoredArea>("monitored_areas");
             NdviReadings = database.GetCollection<NdviReading>("ndvi_readings");
             FireHotspots = database.GetCollection<FireHotspot>("fire_hotspots");
+            ClimateAlerts = database.GetCollection<ClimateAlert>("climate_alerts");
             _counters = database.GetCollection<CounterDocument>("counters");
 
             // Fotos dos laudos ficam no GridFS: o driver já traz o suporte (nenhum pacote novo),
@@ -219,6 +220,20 @@ namespace StarkAgroAPI.Models
                             .Ascending(f => f.AcquiredAt)
                             .Ascending(f => f.Satellite),
                         new CreateIndexOptions { Unique = true }));
+
+                    // Sino: alertas climáticos do tenant na janela recente.
+                    await ClimateAlerts.Indexes.CreateOneAsync(new CreateIndexModel<ClimateAlert>(
+                        Builders<ClimateAlert>.IndexKeys
+                            .Ascending(c => c.UserId)
+                            .Descending(c => c.CreatedAt)));
+                    // Único: um alerta por (área, tipo, dia previsto) — a previsão é reavaliada a
+                    // cada tick e não pode disparar o mesmo risco repetido.
+                    await ClimateAlerts.Indexes.CreateOneAsync(new CreateIndexModel<ClimateAlert>(
+                        Builders<ClimateAlert>.IndexKeys
+                            .Ascending(c => c.AreaId)
+                            .Ascending(c => c.AlertType)
+                            .Ascending(c => c.ForecastDate),
+                        new CreateIndexOptions { Unique = true }));
                 }
                 catch
                 {
@@ -244,6 +259,7 @@ namespace StarkAgroAPI.Models
         public virtual IMongoCollection<MonitoredArea> MonitoredAreas { get; }
         public virtual IMongoCollection<NdviReading> NdviReadings { get; }
         public virtual IMongoCollection<FireHotspot> FireHotspots { get; }
+        public virtual IMongoCollection<ClimateAlert> ClimateAlerts { get; }
         public virtual IGridFSBucket DiagnosisImages { get; }
         public virtual IGridFSBucket NdviOverlays { get; }
 

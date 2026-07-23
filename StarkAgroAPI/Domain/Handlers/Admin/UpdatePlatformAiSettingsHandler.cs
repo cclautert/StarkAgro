@@ -38,6 +38,9 @@ namespace StarkAgroAPI.Domain.Handlers.Admin
                 FirmsMapKey = request.FirmsMapKey,
                 FireAlertsEnabled = request.FireAlertsEnabled,
                 FireAlertRadiusKm = request.FireAlertRadiusKm,
+                ClimateAlertsEnabled = request.ClimateAlertsEnabled,
+                FrostAlertTempC = request.FrostAlertTempC,
+                HeatAlertTempC = request.HeatAlertTempC,
                 NdviCostCents = request.NdviCostCents,
                 NdviMonthlyBudgetCents = request.NdviMonthlyBudgetCents,
                 NdviMaxAreasPerUser = request.NdviMaxAreasPerUser

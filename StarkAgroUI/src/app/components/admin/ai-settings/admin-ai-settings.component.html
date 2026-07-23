@@ -239,6 +239,37 @@
       </p>
     </div>
 
+    <!-- Alertas climáticos (geada / calor extremo) -->
+    <hr class="section-divider" />
+    <p class="section-title">Alertas climáticos (geada · calor extremo)</p>
+    <p class="section-hint">
+      Alerta de risco de geada e calor extremo nos próximos dias, por área. Previsão
+      <strong>gratuita</strong> (Open-Meteo, zero custo). Limiares globais, em °C.
+    </p>
+
+    <div class="form-group">
+      <label class="checkbox-label">
+        <input type="checkbox" formControlName="climateAlertsEnabled" />
+        Habilitar alertas de geada e calor (kill-switch)
+      </label>
+    </div>
+
+    <div class="form-group">
+      <label for="frostAlertTempC">Limiar de geada (°C)</label>
+      <input id="frostAlertTempC" type="number" formControlName="frostAlertTempC" />
+      <p class="section-hint" style="margin-top:6px">
+        Mínima prevista <strong>≤</strong> este valor dispara alerta. Café sofre a partir de ~3–4 °C.
+      </p>
+    </div>
+
+    <div class="form-group">
+      <label for="heatAlertTempC">Limiar de calor extremo (°C)</label>
+      <input id="heatAlertTempC" type="number" formControlName="heatAlertTempC" />
+      <p class="section-hint" style="margin-top:6px">
+        Máxima prevista <strong>≥</strong> este valor dispara alerta. Recomendado 35 °C.
+      </p>
+    </div>
+
     <div class="form-actions">
       <button type="submit" class="btn btn-primary" [disabled]="isSaving">
         {{ isSaving ? 'Salvando...' : 'Salvar Configurações' }}

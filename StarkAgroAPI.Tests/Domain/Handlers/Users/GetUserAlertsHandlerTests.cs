@@ -24,7 +24,8 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Users
             List<RevendaMembership>? revendaInvites = null,
             List<RevendaEntity>? revendas = null,
             List<FireHotspot>? fireHotspots = null,
-            List<MonitoredArea>? monitoredAreas = null)
+            List<MonitoredArea>? monitoredAreas = null,
+            List<ClimateAlert>? climateAlerts = null)
         {
             var db = new Mock<agpDBContext>();
 
@@ -74,6 +75,10 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Users
             MongoMockHelper.SetupFindList(areasCol, monitoredAreas ?? new List<MonitoredArea>());
             db.Setup(d => d.MonitoredAreas).Returns(areasCol.Object);
 
+            var climateCol = new Mock<IMongoCollection<ClimateAlert>>();
+            MongoMockHelper.SetupFindList(climateCol, climateAlerts ?? new List<ClimateAlert>());
+            db.Setup(d => d.ClimateAlerts).Returns(climateCol.Object);
+
             var currentUser = new Mock<ICurrentUserContext>();
             currentUser.Setup(c => c.UserId).Returns(userId);
 
@@ -90,6 +95,33 @@ namespace StarkAgroAPI.Tests.Domain.Handlers.Users
             InvitedAt = DateTime.UtcNow.AddMinutes(-5),
             InviteExpiresAt = DateTime.UtcNow.AddDays(7)
         };
+
+        [Fact]
+        public async Task Handle_AlertasClimaticos_EntramNoSinoComTipoEArea()
+        {
+            var day = new DateTime(2026, 7, 22, 0, 0, 0, DateTimeKind.Utc);
+            var climate = new List<ClimateAlert>
+            {
+                new() { Id = 1, UserId = 1, AreaId = 5, AlertType = ClimateAlertType.Frost, ForecastDate = day.AddDays(1), TemperatureC = 1.5, ThresholdC = 3, CreatedAt = day },
+                new() { Id = 2, UserId = 1, AreaId = 6, AlertType = ClimateAlertType.Heat, ForecastDate = day.AddDays(2), TemperatureC = 38, ThresholdC = 35, CreatedAt = day }
+            };
+            var areas = new List<MonitoredArea>
+            {
+                new() { Id = 5, UserId = 1, Name = "Talhão Norte" },
+                new() { Id = 6, UserId = 1, Name = "Talhão Sul" }
+            };
+            var (db, currentUser) = BuildMocks(user: new User { Id = 1 }, monitoredAreas: areas, climateAlerts: climate);
+            var handler = new GetUserAlertsHandler(db.Object, currentUser.Object);
+
+            var result = await handler.Handle(new GetUserAlertsRequest(), CancellationToken.None);
+
+            var frost = result.Single(a => a.AlertType == "FrostRisk");
+            Assert.Equal("climate-5-1", frost.Id); // areaId no id para o clique abrir a área
+            Assert.Contains("Talhão Norte", frost.Title);
+            Assert.Contains("geada", frost.Title);
+            var heat = result.Single(a => a.AlertType == "HeatRisk");
+            Assert.Contains("Talhão Sul", heat.Title);
+        }
 
         [Fact]
         public async Task Handle_AgrupaFocosDeCalorPorAreaEDia_NumAlertaSo()

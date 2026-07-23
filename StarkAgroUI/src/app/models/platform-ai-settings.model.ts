@@ -32,6 +32,9 @@ export interface PlatformAiSettings {
   firmsMapKey?: string | null;
   fireAlertsEnabled?: boolean;
   fireAlertRadiusKm?: number;
+  climateAlertsEnabled?: boolean;
+  frostAlertTempC?: number;
+  heatAlertTempC?: number;
 
   /** Custo de uma busca NDVI (Processing Units), em centavos — congelado por leitura. */
   ndviCostCents?: number;

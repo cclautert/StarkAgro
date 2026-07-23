@@ -57,6 +57,9 @@ export class AdminAiSettingsComponent implements OnInit {
       firmsMapKey: [''],
       fireAlertsEnabled: [false],
       fireAlertRadiusKm: [10, [Validators.min(1)]],
+      climateAlertsEnabled: [false],
+      frostAlertTempC: [3],
+      heatAlertTempC: [35],
       ndviCostCents: [1, [Validators.min(0)]],
       ndviMonthlyBudgetCents: [0, [Validators.min(0)]],
       ndviMaxAreasPerUser: [0, [Validators.min(0)]]
@@ -83,6 +86,9 @@ export class AdminAiSettingsComponent implements OnInit {
           firmsMapKey: settings.firmsMapKey ?? '',
           fireAlertsEnabled: settings.fireAlertsEnabled ?? false,
           fireAlertRadiusKm: settings.fireAlertRadiusKm ?? 10,
+          climateAlertsEnabled: settings.climateAlertsEnabled ?? false,
+          frostAlertTempC: settings.frostAlertTempC ?? 3,
+          heatAlertTempC: settings.heatAlertTempC ?? 35,
           ndviCostCents: settings.ndviCostCents ?? 1,
           ndviMonthlyBudgetCents: settings.ndviMonthlyBudgetCents ?? 0,
           ndviMaxAreasPerUser: settings.ndviMaxAreasPerUser ?? 0
@@ -121,6 +127,9 @@ export class AdminAiSettingsComponent implements OnInit {
       firmsMapKey: this.form.value.firmsMapKey || null,
       fireAlertsEnabled: !!this.form.value.fireAlertsEnabled,
       fireAlertRadiusKm: Number(this.form.value.fireAlertRadiusKm) || 10,
+      climateAlertsEnabled: !!this.form.value.climateAlertsEnabled,
+      frostAlertTempC: Number(this.form.value.frostAlertTempC) || 3,
+      heatAlertTempC: Number(this.form.value.heatAlertTempC) || 35,
       ndviCostCents: Number(this.form.value.ndviCostCents) || 0,
       ndviMonthlyBudgetCents: Number(this.form.value.ndviMonthlyBudgetCents) || 0,
       ndviMaxAreasPerUser: Number(this.form.value.ndviMaxAreasPerUser) || 0
