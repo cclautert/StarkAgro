@@ -12,6 +12,12 @@ namespace StarkAgroAPI.Services.Ndvi
     /// <param name="MaxAcquisitionDate">Data (yyyy-MM-dd) da passagem mais nova gravada, para avançar a área.</param>
     public record NdviFetchOutcome(NdviFetchStatus Status, string? Reason = null, string? MaxAcquisitionDate = null);
 
+    /// <param name="AcquisitionDates">Datas (yyyy-MM-dd) das passagens gravadas ou já existentes na janela.</param>
+    public record NdviHistoryOutcome(
+        NdviFetchStatus Status,
+        string? Reason = null,
+        List<string>? AcquisitionDates = null);
+
     /// <summary>
     /// Busca o NDVI de uma área na CDSE e grava as passagens novas. <b>Serviço puro injetado</b>
     /// (não handler MediatR) — o assembly scan exporia como request handler, e o tenant vem do
@@ -20,6 +26,17 @@ namespace StarkAgroAPI.Services.Ndvi
     public interface INdviFetchService
     {
         Task<NdviFetchOutcome> FetchAsync(MonitoredArea area, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Busca <b>retroativa sob demanda</b> de uma janela em torno de <paramref name="targetDate"/>,
+        /// para o usuário "voltar no tempo" numa data fora do histórico já armazenado. Ao contrário de
+        /// <see cref="FetchAsync"/>: usa janela explícita (não <c>ResolveFrom</c>), deduplica <b>só</b>
+        /// pelo índice único <c>{AreaId, AcquisitionDate}</c> (nunca contra <c>LastAcquisitionDate</c>,
+        /// senão descartaria justamente as passagens antigas) e <b>não</b> mexe na cadência da área
+        /// (<c>LastAcquisitionDate</c>/<c>NextFetchAt</c>). Custo de PU é gravado por leitura como sempre.
+        /// </summary>
+        Task<NdviHistoryOutcome> FetchHistoricalAsync(
+            MonitoredArea area, DateTime targetDate, CancellationToken cancellationToken);
     }
 
     public class NdviFetchService : INdviFetchService
@@ -84,49 +101,10 @@ namespace StarkAgroAPI.Services.Ndvi
                     continue;
                 }
 
-                var cloudRejected = s.ValidSampleCount == 0;
-                var reading = new NdviReading
-                {
-                    Id = await _dbContext.GetNextIdAsync(nameof(NdviReading), cancellationToken),
-                    AreaId = area.Id,
-                    UserId = area.UserId,
-                    AcquisitionDate = s.AcquisitionDate,
-                    NdviMean = s.Mean,
-                    NdviMin = s.Min,
-                    NdviMax = s.Max,
-                    NdviStdev = s.Stdev,
-                    // Zero quando a passagem foi buscada sem ExtraIndicesEnabled — não é "sem vigor",
-                    // é "não medido". Nublada zera as três junto com o NDVI (máscara compartilhada).
-                    NdreMean = s.NdreMean,
-                    NdreMin = s.NdreMin,
-                    NdreMax = s.NdreMax,
-                    NdreStdev = s.NdreStdev,
-                    NdmiMean = s.NdmiMean,
-                    NdmiMin = s.NdmiMin,
-                    NdmiMax = s.NdmiMax,
-                    NdmiStdev = s.NdmiStdev,
-                    CloudCoveragePct = s.CloudPct,
-                    CloudRejected = cloudRejected,
-                    // Passagem nublada não tem distribuição: o histograma vem com as seis classes
-                    // zeradas. Gravar isso faria o gráfico despencar a 0% em vez de abrir um
-                    // buraco — o talhão pareceria ter virado solo exposto de um dia para o outro.
-                    ClassCounts = cloudRejected ? [] : ToClassCounts(s.ClassCounts),
-                    NdviCostCents = settings.NdviCostCents,
-                    CreatedAt = now
-                };
+                var reading = await PersistPassageAsync(area, settings, s, now, cancellationToken);
 
-                try
-                {
-                    await _dbContext.NdviReadings.InsertOneAsync(reading, null, cancellationToken);
-
-                    // Overlay só para a passagem mais nova com pixel válido (nublada não rende imagem).
-                    if (!cloudRejected) overlayCandidate = reading;
-                }
-                catch (MongoWriteException ex) when (ex.WriteError?.Category == ServerErrorCategory.DuplicateKey)
-                {
-                    // Índice único {AreaId, AcquisitionDate}: outra corrida já gravou esta passagem — no-op.
-                    _logger.LogDebug("NDVI: passagem {Date} da área {AreaId} já existia (dedup).", dateKey, area.Id);
-                }
+                // Overlay só para a passagem mais nova com pixel válido (nublada não rende imagem).
+                if (reading is not null && !reading.CloudRejected) overlayCandidate = reading;
 
                 if (maxDate is null || string.CompareOrdinal(dateKey, maxDate) > 0) maxDate = dateKey;
             }
@@ -137,6 +115,124 @@ namespace StarkAgroAPI.Services.Ndvi
                 await TryAttachOverlayAsync(area, overlayCandidate, token, cancellationToken);
 
             return new NdviFetchOutcome(NdviFetchStatus.Success, MaxAcquisitionDate: maxDate);
+        }
+
+        public async Task<NdviHistoryOutcome> FetchHistoricalAsync(
+            MonitoredArea area, DateTime targetDate, CancellationToken cancellationToken)
+        {
+            var settings = await _dbContext.PlatformAiSettings.Find(_ => true).FirstOrDefaultAsync(cancellationToken);
+            if (settings is null || !settings.Sentinel2Enabled
+                || string.IsNullOrWhiteSpace(settings.CdseClientId)
+                || string.IsNullOrWhiteSpace(settings.CdseClientSecret))
+            {
+                return new NdviHistoryOutcome(NdviFetchStatus.Disabled, "NDVI desligado ou sem credenciais CDSE.");
+            }
+
+            var token = await _tokenProvider.GetTokenAsync(settings.CdseClientId!, settings.CdseClientSecret!, cancellationToken);
+            if (string.IsNullOrEmpty(token))
+                return new NdviHistoryOutcome(NdviFetchStatus.Failed, "Falha ao obter token da CDSE.");
+
+            var (from, to) = HistoryWindow(targetDate);
+
+            var stats = await _statisticalService.GetStatisticsAsync(
+                token, area.Geometry, from, to, settings.ExtraIndicesEnabled, cancellationToken);
+            if (stats is null)
+                return new NdviHistoryOutcome(NdviFetchStatus.Failed, "Falha na Statistical API da CDSE.");
+
+            var now = DateTime.UtcNow;
+            var dates = new List<string>();
+            NdviReading? overlayTarget = null;
+            var bestDelta = double.MaxValue;
+
+            // Sem dedup contra LastAcquisitionDate: a passagem retroativa é justamente mais antiga.
+            // O índice único {AreaId, AcquisitionDate} (catch em PersistPassageAsync) cobre corrida
+            // e re-consulta da mesma data.
+            foreach (var s in stats.OrderBy(x => x.AcquisitionDate))
+            {
+                var reading = await PersistPassageAsync(area, settings, s, now, cancellationToken);
+                dates.Add(s.AcquisitionDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+
+                // Overlay para a passagem com pixel válido MAIS PRÓXIMA da data pedida (não a mais nova):
+                // o usuário escolheu aquela data, é dela que ele quer ver a imagem.
+                if (reading is not null && !reading.CloudRejected)
+                {
+                    var delta = Math.Abs((reading.AcquisitionDate - targetDate).TotalDays);
+                    if (delta < bestDelta) { bestDelta = delta; overlayTarget = reading; }
+                }
+            }
+
+            // NÃO toca em LastAcquisitionDate/NextFetchAt: retroativo não pode perturbar a cadência do worker.
+            if (overlayTarget is not null)
+                await TryAttachOverlayAsync(area, overlayTarget, token, cancellationToken);
+
+            return new NdviHistoryOutcome(NdviFetchStatus.Success, AcquisitionDates: dates);
+        }
+
+        /// <summary>
+        /// Janela retroativa: ~1 revisita centrada na data pedida, para pegar a passagem mais próxima
+        /// dos dois lados sem inflar PU. <c>to</c> nunca no futuro (não há passagem para buscar lá).
+        /// </summary>
+        public static (DateTime from, DateTime to) HistoryWindow(DateTime targetDate)
+        {
+            var day = targetDate.Date;
+            var from = day.AddDays(-3);
+            var to = day.AddDays(4);
+            var now = DateTime.UtcNow;
+            return (from, to < now ? to : now);
+        }
+
+        /// <summary>
+        /// Grava uma passagem (mapeamento de campos + insert + dedup por índice único). Compartilhado
+        /// por <see cref="FetchAsync"/> e <see cref="FetchHistoricalAsync"/> para o formato do
+        /// documento não divergir entre os dois caminhos. Retorna a leitura gravada, ou <c>null</c>
+        /// se a passagem já existia (<c>DuplicateKey</c>) — nesse caso é no-op.
+        /// </summary>
+        private async Task<NdviReading?> PersistPassageAsync(
+            MonitoredArea area, PlatformAiSettings settings, NdviStat s, DateTime now, CancellationToken cancellationToken)
+        {
+            var cloudRejected = s.ValidSampleCount == 0;
+            var reading = new NdviReading
+            {
+                Id = await _dbContext.GetNextIdAsync(nameof(NdviReading), cancellationToken),
+                AreaId = area.Id,
+                UserId = area.UserId,
+                AcquisitionDate = s.AcquisitionDate,
+                NdviMean = s.Mean,
+                NdviMin = s.Min,
+                NdviMax = s.Max,
+                NdviStdev = s.Stdev,
+                // Zero quando a passagem foi buscada sem ExtraIndicesEnabled — não é "sem vigor",
+                // é "não medido". Nublada zera as três junto com o NDVI (máscara compartilhada).
+                NdreMean = s.NdreMean,
+                NdreMin = s.NdreMin,
+                NdreMax = s.NdreMax,
+                NdreStdev = s.NdreStdev,
+                NdmiMean = s.NdmiMean,
+                NdmiMin = s.NdmiMin,
+                NdmiMax = s.NdmiMax,
+                NdmiStdev = s.NdmiStdev,
+                CloudCoveragePct = s.CloudPct,
+                CloudRejected = cloudRejected,
+                // Passagem nublada não tem distribuição: o histograma vem com as seis classes
+                // zeradas. Gravar isso faria o gráfico despencar a 0% em vez de abrir um
+                // buraco — o talhão pareceria ter virado solo exposto de um dia para o outro.
+                ClassCounts = cloudRejected ? [] : ToClassCounts(s.ClassCounts),
+                NdviCostCents = settings.NdviCostCents,
+                CreatedAt = now
+            };
+
+            try
+            {
+                await _dbContext.NdviReadings.InsertOneAsync(reading, null, cancellationToken);
+                return reading;
+            }
+            catch (MongoWriteException ex) when (ex.WriteError?.Category == ServerErrorCategory.DuplicateKey)
+            {
+                // Índice único {AreaId, AcquisitionDate}: outra corrida já gravou esta passagem — no-op.
+                var dateKey = s.AcquisitionDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+                _logger.LogDebug("NDVI: passagem {Date} da área {AreaId} já existia (dedup).", dateKey, area.Id);
+                return null;
+            }
         }
 
         private async Task TryAttachOverlayAsync(

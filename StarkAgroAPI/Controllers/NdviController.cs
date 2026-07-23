@@ -75,6 +75,21 @@ namespace StarkAgroAPI.Controllers
             return File(result.Content, result.ContentType, $"zonas-{id}-{readingId}.tiff");
         }
 
+        /// <summary>
+        /// Busca retroativa sob demanda: "voltar no tempo" a uma data fora do histórico armazenado.
+        /// Grátis se a passagem já existe; consome cota de PU da CDSE se precisar buscar.
+        /// </summary>
+        [HttpGet("{id:int}/history")]
+        public async Task<ActionResult<FetchNdviHistoryResponse>> History(
+            [FromServices] IMediator mediator,
+            [FromRoute] int id,
+            [FromQuery] DateTime date,
+            CancellationToken cancellationToken)
+        {
+            return CustomResponse(await mediator.Send(
+                new FetchNdviHistoryRequest { AreaId = id, Date = date }, cancellationToken));
+        }
+
         [HttpPost]
         public async Task<ActionResult<MonitoredAreaResponse>> Create(
             [FromServices] IMediator mediator,

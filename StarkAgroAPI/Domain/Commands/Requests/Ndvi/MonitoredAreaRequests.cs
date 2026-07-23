@@ -32,6 +32,18 @@ namespace StarkAgroAPI.Domain.Commands.Requests.Ndvi
         public int ReadingId { get; set; }
     }
 
+    /// <summary>
+    /// Busca retroativa sob demanda: o usuário escolhe uma data para "voltar no tempo" numa
+    /// passagem fora do histórico já armazenado. Consome cota de PU se precisar chamar a CDSE.
+    /// </summary>
+    public class FetchNdviHistoryRequest : IRequest<FetchNdviHistoryResponse?>
+    {
+        public int AreaId { get; set; }
+
+        /// <summary>Data-alvo (a janela é centrada nela). Deve estar no passado.</summary>
+        public DateTime Date { get; set; }
+    }
+
     public class DeleteMonitoredAreaRequest : IRequest<bool>
     {
         public int Id { get; set; }

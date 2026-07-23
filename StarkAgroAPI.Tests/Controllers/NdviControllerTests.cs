@@ -39,6 +39,19 @@ namespace StarkAgroAPI.Tests.Controllers
         }
 
         [Fact]
+        public async Task History_ReturnsOk()
+        {
+            var mediator = new Mock<IMediator>();
+            mediator.Setup(m => m.Send(It.IsAny<FetchNdviHistoryRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new FetchNdviHistoryResponse { FetchedFromCdse = true, NearestDate = "2026-06-06" });
+
+            var result = await CreateController().History(mediator.Object, 5, new DateTime(2026, 6, 8), default);
+
+            var obj = Assert.IsType<ObjectResult>(result.Result);
+            Assert.Equal(200, obj.StatusCode);
+        }
+
+        [Fact]
         public async Task Overlay_Found_ReturnsFile()
         {
             var mediator = new Mock<IMediator>();
