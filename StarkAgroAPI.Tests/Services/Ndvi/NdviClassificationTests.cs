@@ -116,6 +116,18 @@ namespace StarkAgroAPI.Tests.Services.Ndvi
         }
 
         [Fact]
+        public void BuildClassIndexFunction_EmiteUmCortePorClasse_RetornandoOIndice()
+        {
+            var js = NdviClassification.BuildClassIndexFunction();
+
+            Assert.StartsWith("function classIndex(ndvi) {", js);
+            Assert.Equal(NdviClassification.Classes.Count - 1, Count(js, "if (ndvi <"));
+            // O índice da última classe é o return final; os demais são "return {i}".
+            Assert.Contains($"return {NdviClassification.Classes.Count - 1};", js);
+            Assert.Contains("return 0;", js);
+        }
+
+        [Fact]
         public void BuildRampFunction_UsesInvariantDecimalPoint()
         {
             var ramp = NdviClassification.BuildRampFunction();

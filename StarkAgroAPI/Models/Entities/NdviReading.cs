@@ -65,6 +65,12 @@ namespace StarkAgroAPI.Models.Entities
         /// <summary>Overlay PNG no GridFS (fase posterior). Nulo até lá.</summary>
         public ObjectId? OverlayImageFileId { get; set; }
 
+        /// <summary>
+        /// GeoTIFF de zonas (classe por pixel) no GridFS. Gerado <b>sob demanda</b> no 1º download
+        /// e cacheado — o worker de fetch não toca nisto. Nulo até alguém baixar.
+        /// </summary>
+        public ObjectId? ZoneImageFileId { get; set; }
+
         /// <summary>Custo desta busca (Processing Units), em centavos, congelado no momento.</summary>
         public int NdviCostCents { get; set; }
 

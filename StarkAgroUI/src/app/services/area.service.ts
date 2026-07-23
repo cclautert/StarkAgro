@@ -40,4 +40,9 @@ export class AreaService {
   overlay(areaId: number, readingId: number): Observable<Blob> {
     return this.http.get(`${this.baseUrl}/${areaId}/overlay/${readingId}`, { responseType: 'blob' });
   }
+
+  /** GeoTIFF de zonas: gerado sob demanda no servidor, baixado como blob (Bearer via interceptor). */
+  zones(areaId: number, readingId: number): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/${areaId}/zones/${readingId}`, { responseType: 'blob' });
+  }
 }

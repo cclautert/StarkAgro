@@ -25,6 +25,13 @@ namespace StarkAgroAPI.Domain.Commands.Requests.Ndvi
         public int ReadingId { get; set; }
     }
 
+    /// <summary>Download do GeoTIFF de zonas de uma passagem (gerado sob demanda + cacheado).</summary>
+    public class GetNdviZonesRequest : IRequest<NdviOverlayImageResponse?>
+    {
+        public int AreaId { get; set; }
+        public int ReadingId { get; set; }
+    }
+
     public class DeleteMonitoredAreaRequest : IRequest<bool>
     {
         public int Id { get; set; }

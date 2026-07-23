@@ -97,6 +97,17 @@
       </div>
 
       <p class="muted map-hint">O overlay colorido mostra o NDVI da passagem mais recente sobre o talhão.</p>
+
+      <!-- Download do mapa de zonas (GeoTIFF) para o maquinário. -->
+      <div class="zones-download" *ngIf="zoneReadingId">
+        <button class="btn-zones" (click)="downloadZones()" [disabled]="downloadingZones">
+          {{ downloadingZones ? 'Gerando...' : '⬇ Baixar mapa de zonas (GeoTIFF)' }}
+        </button>
+        <p class="muted zones-hint">
+          Mapa de prescrição por zona (classe por pixel), para trator/pulverizador. Gerado sob demanda.
+        </p>
+        <p class="error-text" *ngIf="zonesError">Não foi possível gerar o mapa de zonas agora.</p>
+      </div>
     </div>
   </ng-container>
 </div>

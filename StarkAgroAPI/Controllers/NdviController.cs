@@ -59,6 +59,22 @@ namespace StarkAgroAPI.Controllers
             return File(result.Content, result.ContentType);
         }
 
+        /// <summary>GeoTIFF de zonas (classe por pixel) — download privado, gerado sob demanda.</summary>
+        [HttpGet("{id:int}/zones/{readingId:int}")]
+        public async Task<IActionResult> Zones(
+            [FromServices] IMediator mediator,
+            [FromRoute] int id,
+            [FromRoute] int readingId,
+            CancellationToken cancellationToken)
+        {
+            var result = await mediator.Send(
+                new GetNdviZonesRequest { AreaId = id, ReadingId = readingId }, cancellationToken);
+            if (result is null) return NotFound();
+
+            Response.Headers.CacheControl = "private, max-age=3600";
+            return File(result.Content, result.ContentType, $"zonas-{id}-{readingId}.tiff");
+        }
+
         [HttpPost]
         public async Task<ActionResult<MonitoredAreaResponse>> Create(
             [FromServices] IMediator mediator,

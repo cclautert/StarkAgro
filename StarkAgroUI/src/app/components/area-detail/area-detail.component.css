@@ -138,6 +138,20 @@
 
 .muted { color: var(--text-muted); font-size: 0.9rem; }
 .map-hint { margin-top: 0.5rem; }
+
+.zones-download { margin-top: 0.85rem; }
+.btn-zones {
+  background: #14532d;
+  color: #86efac;
+  border: 1px solid #16a34a;
+  border-radius: 6px;
+  padding: 0.5rem 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-zones:hover:not(:disabled) { opacity: 0.9; }
+.btn-zones:disabled { opacity: 0.6; cursor: default; }
+.zones-hint { margin-top: 0.4rem; }
 .chart-hint { margin: 0.75rem 0 0; }
 
 /* Quadradinho de cor — o mesmo hex que o servidor usou para colorir o PNG. */

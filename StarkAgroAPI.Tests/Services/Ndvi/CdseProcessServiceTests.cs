@@ -59,6 +59,34 @@ namespace StarkAgroAPI.Tests.Services.Ndvi
         }
 
         [Fact]
+        public async Task GetZones_Success_ReturnsTiffBytes()
+        {
+            var tiff = new byte[] { 0x4D, 0x4D, 0x00, 0x2A }; // magic de TIFF big-endian
+            var svc = Service(HttpStatusCode.OK, tiff);
+
+            var bytes = await svc.GetNdviZonesTiffAsync("tok", Geo(), DateTime.UtcNow.AddDays(-1), DateTime.UtcNow, CancellationToken.None);
+
+            Assert.NotNull(bytes);
+            Assert.Equal(tiff, bytes);
+        }
+
+        [Fact]
+        public async Task GetZones_HttpError_ReturnsNull()
+        {
+            var svc = Service(HttpStatusCode.BadRequest, System.Text.Encoding.UTF8.GetBytes("bad"));
+
+            Assert.Null(await svc.GetNdviZonesTiffAsync("tok", Geo(), DateTime.UtcNow.AddDays(-1), DateTime.UtcNow, CancellationToken.None));
+        }
+
+        [Fact]
+        public async Task GetZones_TransportThrows_ReturnsNull()
+        {
+            var svc = Service(HttpStatusCode.OK, [], throws: new HttpRequestException("down"));
+
+            Assert.Null(await svc.GetNdviZonesTiffAsync("tok", Geo(), DateTime.UtcNow.AddDays(-1), DateTime.UtcNow, CancellationToken.None));
+        }
+
+        [Fact]
         public void ComputeBbox_ReturnsMinMaxOfRing()
         {
             var bbox = CdseProcessService.ComputeBbox(Geo());
@@ -124,6 +152,33 @@ namespace StarkAgroAPI.Tests.Services.Ndvi
             Assert.Contains("evaluatePixel", script);
             Assert.Contains("s.SCL === 3", script);   // máscara de nuvem preservada
             Assert.Contains("dataMask === 0", script);
+        }
+
+        [Fact]
+        public void BuildZonesRequestBody_PedeTiffComEvalscriptDeZonas()
+        {
+            var body = CdseProcessService.BuildZonesRequestBody(
+                Geo(), new DateTime(2026, 7, 18, 0, 0, 0, DateTimeKind.Utc), new DateTime(2026, 7, 19, 0, 0, 0, DateTimeKind.Utc), 512, 512);
+
+            using var doc = System.Text.Json.JsonDocument.Parse(body);
+            var fmt = doc.RootElement.GetProperty("output").GetProperty("responses")[0]
+                .GetProperty("format").GetProperty("type").GetString();
+            var evalscript = doc.RootElement.GetProperty("evalscript").GetString()!;
+
+            Assert.Equal("image/tiff", fmt);
+            Assert.Contains("sampleType: \"UINT8\"", evalscript);
+            Assert.Contains("classIndex(ndvi)", evalscript);
+            Assert.Contains("return [255]", evalscript); // nodata
+        }
+
+        [Fact]
+        public void ZonesEvalscript_UsaOClassIndexDaClassificacao()
+        {
+            var script = CdseProcessService.ZonesEvalscript;
+
+            // As zonas do TIFF têm de sair dos MESMOS cortes do PNG/legenda.
+            Assert.Contains(NdviClassification.BuildClassIndexFunction(), script);
+            Assert.Contains("output: { bands: 1, sampleType: \"UINT8\" }", script);
         }
 
         [Fact]
