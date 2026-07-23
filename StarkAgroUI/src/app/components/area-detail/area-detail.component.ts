@@ -46,8 +46,11 @@ export class AreaDetailComponent implements OnInit, OnDestroy {
   pendingFetchDate: string | null = null;
   fetchingHistory = false;
   historyError = '';
-  /** Aviso quando a passagem exibida não tem imagem (nublada / sem PNG). */
-  get selectedHasImage(): boolean { return this.selected?.overlayReadingId != null; }
+  /** true quando a passagem exibida rende um mapa colorido (céu limpo, com bbox). Nublada não. */
+  get selectedRendersImage(): boolean {
+    const p = this.selected;
+    return !!p && !p.cloudRejected && !!p.bbox && p.bbox.length === 4;
+  }
   /** Tolerância (dias) para casar a data pedida com uma passagem já armazenada. */
   private static readonly MatchToleranceDays = 5;
 
@@ -329,7 +332,16 @@ export class AreaDetailComponent implements OnInit, OnDestroy {
     this.map.fitBounds(L.latLngBounds(ring), { padding: [20, 20] });
   }
 
-  /** Sobrepõe o PNG NDVI da passagem SELECIONADA, alinhado ao bbox. Remove o overlay anterior. */
+  /** true enquanto o PNG da passagem selecionada está sendo gerado/baixado. */
+  overlayLoading = false;
+  /** true quando a passagem tem pixel válido mas o servidor não devolveu imagem (kill-switch/erro). */
+  overlayUnavailable = false;
+
+  /**
+   * Sobrepõe o PNG NDVI da passagem SELECIONADA, alinhado ao bbox. Remove o overlay anterior.
+   * Pede a imagem para QUALQUER passagem de céu limpo (bbox presente) — o servidor gera sob
+   * demanda e cacheia, então navegar o histórico mostra o mapa colorido, não só o contorno.
+   */
   private async renderOverlay(): Promise<void> {
     if (!this.mapReady || !this.leaflet) return;
     const L = this.leaflet;
@@ -339,15 +351,19 @@ export class AreaDetailComponent implements OnInit, OnDestroy {
     if (this.overlayUrl) { URL.revokeObjectURL(this.overlayUrl); this.overlayUrl = undefined; }
     this.legendClasses = [];
     this.zoneReadingId = undefined;
+    this.overlayUnavailable = false;
 
     const point = this.selected;
-    if (!point || point.overlayReadingId == null || !point.bbox || point.bbox.length !== 4) return;
+    // Nublada (sem bbox) não rende imagem; passagem com pixel válido sempre tenta.
+    if (!point || point.cloudRejected || !point.bbox || point.bbox.length !== 4) return;
 
-    // A passagem com overlay é a que tem GeoTIFF de zonas disponível para download.
-    this.zoneReadingId = point.overlayReadingId ?? undefined;
+    // Zonas dependem do overlay existir — como ele é gerado sob demanda aqui, a mesma passagem
+    // fica com GeoTIFF de zonas disponível logo em seguida.
+    this.zoneReadingId = point.readingId;
+    this.overlayLoading = true;
 
     try {
-      const blob = await firstValueFrom(this.areaService.overlay(this.id, point.overlayReadingId));
+      const blob = await firstValueFrom(this.areaService.overlay(this.id, point.readingId));
       // A passagem pode ter mudado enquanto o blob vinha (clique rápido) — se mudou, descarta.
       if (this.selected !== point) return;
       this.overlayUrl = URL.createObjectURL(blob);
@@ -356,12 +372,14 @@ export class AreaDetailComponent implements OnInit, OnDestroy {
       const bounds = L.latLngBounds([[minLat, minLng], [maxLat, maxLng]]);
       this.overlayLayer = L.imageOverlay(this.overlayUrl, bounds, { opacity: 0.7 }).addTo(this.map);
 
-      // A legenda descreve ESTE PNG, então sai das classes desta passagem. PNG gravado antes
-      // da classificação foi colorido com o ramp antigo e vem sem `classes` — nesse caso a
-      // legenda não aparece, em vez de anunciar cortes que a imagem não usou.
+      // A legenda descreve ESTE PNG, então sai das classes desta passagem. Passagem sem
+      // classificação (legado) vem sem `classes` — nesse caso a legenda não aparece.
       this.legendClasses = [...(point.classes ?? [])].reverse();
     } catch {
-      // Overlay é acessório — sem PNG, o mapa mostra só o contorno.
+      // 404 = servidor não gerou (kill-switch/erro na CDSE). Mapa fica só com o contorno + aviso.
+      if (this.selected === point) this.overlayUnavailable = true;
+    } finally {
+      if (this.selected === point) this.overlayLoading = false;
     }
   }
 

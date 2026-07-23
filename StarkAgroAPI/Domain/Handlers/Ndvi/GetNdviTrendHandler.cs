@@ -74,9 +74,12 @@ namespace StarkAgroAPI.Domain.Handlers.Ndvi
                     CloudCoveragePct = r.CloudCoveragePct,
                     CloudRejected = r.CloudRejected,
                     Classes = BuildClasses(r.ClassCounts),
-                    // Só aponta overlay quando o PNG realmente existe; o bbox é o da área.
+                    // Aponta se o PNG JÁ está pronto (para o front distinguir "cacheado" de "vai gerar").
                     OverlayReadingId = r.OverlayImageFileId.HasValue ? r.Id : null,
-                    Bbox = r.OverlayImageFileId.HasValue ? bbox : null
+                    // Bbox vai em TODA passagem com pixel válido (não só as que já têm PNG): o overlay
+                    // é gerado sob demanda ao abrir a passagem, então o front precisa do bbox mesmo
+                    // quando a imagem ainda não existe. Nublada não rende imagem → sem bbox.
+                    Bbox = (!r.CloudRejected && bbox is not null) ? bbox : null
                 }).ToList()
             };
         }
