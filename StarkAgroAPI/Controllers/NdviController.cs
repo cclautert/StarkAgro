@@ -90,6 +90,23 @@ namespace StarkAgroAPI.Controllers
                 new FetchNdviHistoryRequest { AreaId = id, Date = date }, cancellationToken));
         }
 
+        /// <summary>
+        /// Prescrição de adubação de uma passagem: cruza o perfil NPK da cultura com as zonas do
+        /// NDVI e a área do talhão. Custo zero de CDSE (só dado já armazenado).
+        /// </summary>
+        [HttpGet("{id:int}/prescription/{readingId:int}")]
+        public async Task<ActionResult<FertilizationPrescriptionResponse>> Prescription(
+            [FromServices] IMediator mediator,
+            [FromRoute] int id,
+            [FromRoute] int readingId,
+            [FromQuery] int? profileId,
+            CancellationToken cancellationToken)
+        {
+            return CustomResponse(await mediator.Send(
+                new GetFertilizationPrescriptionRequest { AreaId = id, ReadingId = readingId, ProfileId = profileId },
+                cancellationToken));
+        }
+
         [HttpPost]
         public async Task<ActionResult<MonitoredAreaResponse>> Create(
             [FromServices] IMediator mediator,

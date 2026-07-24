@@ -148,5 +148,72 @@
         <p class="error-text" *ngIf="zonesError">Não foi possível gerar o mapa de zonas agora.</p>
       </div>
     </div>
+
+    <!-- Prescrição de adubação: doses por zona + total do talhão -->
+    <div class="panel" *ngIf="selected && !selected.cloudRejected && selected.classes?.length" id="prescription-panel">
+      <div class="panel-head">
+        <h2 class="panel-title">Prescrição de adubação</h2>
+        <div class="presc-actions" *ngIf="prescription">
+          <button class="btn-presc" (click)="exportPrescriptionCsv()">⬇ CSV</button>
+          <button class="btn-presc" (click)="printPrescription()">🖨 Imprimir</button>
+        </div>
+      </div>
+
+      <p class="muted" *ngIf="prescriptionLoading">Calculando prescrição…</p>
+
+      <p class="muted presc-empty" *ngIf="!prescriptionLoading && prescriptionError">
+        {{ prescriptionError }}
+        <a *ngIf="prescriptionError.includes('/admin/adubacao')" [routerLink]="['/admin/adubacao']">Abrir cadastro de adubação</a>
+      </p>
+
+      <ng-container *ngIf="!prescriptionLoading && prescription as p">
+        <p class="muted presc-sub">
+          Cultura <strong>{{ p.culture }}</strong> · talhão <strong>{{ p.totalHectares.toFixed(2) }} ha</strong>
+          · passagem de {{ shortDate(p.acquisitionDate) }}
+          <span class="cloud-badge" *ngIf="p.cloudCoveragePct > 20">☁️ {{ p.cloudCoveragePct.toFixed(0) }}% nuvem — área aproximada</span>
+        </p>
+
+        <div class="presc-table-wrap">
+          <table class="presc-table">
+            <thead>
+              <tr>
+                <th>Zona</th><th>% área</th><th>ha</th>
+                <th>N kg/ha</th><th>P kg/ha</th><th>K kg/ha</th>
+                <th>N kg</th><th>P kg</th><th>K kg</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let z of p.zones">
+                <td class="presc-zone">
+                  <i class="swatch" [style.background]="z.color"></i>{{ z.label }}
+                  <span class="no-dose" *ngIf="!z.hasDose">sem dose</span>
+                </td>
+                <td>{{ z.percent.toFixed(1) }}%</td>
+                <td>{{ z.hectares.toFixed(2) }}</td>
+                <td>{{ z.nitrogenKgHa }}</td>
+                <td>{{ z.phosphorusKgHa }}</td>
+                <td>{{ z.potassiumKgHa }}</td>
+                <td>{{ z.nitrogenKg.toFixed(0) }}</td>
+                <td>{{ z.phosphorusKg.toFixed(0) }}</td>
+                <td>{{ z.potassiumKg.toFixed(0) }}</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td>TOTAL</td><td></td><td>{{ p.totalHectares.toFixed(2) }}</td>
+                <td></td><td></td><td></td>
+                <td>{{ p.totalNitrogenKg.toFixed(0) }}</td>
+                <td>{{ p.totalPhosphorusKg.toFixed(0) }}</td>
+                <td>{{ p.totalPotassiumKg.toFixed(0) }}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+
+        <p class="muted presc-note">
+          Doses do perfil cadastrado em <a [routerLink]="['/admin/adubacao']">/admin/adubacao</a> aplicadas às zonas desta passagem. Confira com o agrônomo antes de aplicar.
+        </p>
+      </ng-container>
+    </div>
   </ng-container>
 </div>

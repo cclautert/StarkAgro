@@ -6,7 +6,7 @@ import { ChartConfiguration } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { firstValueFrom } from 'rxjs';
 import { AreaService } from '../../services/area.service';
-import { FetchNdviHistoryResponse, MonitoredArea, NdviClassShare, NdviTrendPoint, Sentinel1TrendPoint } from '../../models/monitored-area.model';
+import { FertilizationPrescriptionResponse, FetchNdviHistoryResponse, MonitoredArea, NdviClassShare, NdviTrendPoint, Sentinel1TrendPoint } from '../../models/monitored-area.model';
 import { addBaseLayers, applyDefaultMarkerIcon } from '../../utils/leaflet-basemaps';
 
 @Component({
@@ -396,7 +396,7 @@ export class AreaDetailComponent implements OnInit, OnDestroy {
   prevPassage(): void { const i = this.selectedIdx; if (i > 0) this.select(this.points[i - 1]); }
   nextPassage(): void { const i = this.selectedIdx; if (i >= 0 && i < this.points.length - 1) this.select(this.points[i + 1]); }
 
-  /** Troca a passagem exibida: redesenha overlay/legenda/cards. */
+  /** Troca a passagem exibida: redesenha overlay/legenda/cards e recarrega a prescrição. */
   select(point: NdviTrendPoint | undefined, skipUnavailableNotice = false): void {
     if (!point) return;
     this.selected = point;
@@ -404,6 +404,64 @@ export class AreaDetailComponent implements OnInit, OnDestroy {
     this.historyError = '';
     if (!skipUnavailableNotice) this.pendingFetchDate = null;
     void this.renderOverlay();
+    this.loadPrescription();
+  }
+
+  // ── Prescrição de adubação ──
+  prescription?: FertilizationPrescriptionResponse;
+  prescriptionError = '';
+  prescriptionLoading = false;
+
+  /** Carrega a prescrição da passagem selecionada (só faz sentido em passagem classificada). */
+  private loadPrescription(): void {
+    this.prescription = undefined;
+    this.prescriptionError = '';
+    const point = this.selected;
+    if (!point || point.cloudRejected || !point.classes?.length) return;
+
+    this.prescriptionLoading = true;
+    this.areaService.prescription(this.id, point.readingId).subscribe({
+      next: res => {
+        if (this.selected !== point) return; // navegou enquanto vinha
+        this.prescription = res;
+        this.prescriptionLoading = false;
+      },
+      error: err => {
+        if (this.selected !== point) return;
+        // O back devolve { errors: [...] } — ex.: "cadastre o perfil da cultura em /admin/adubacao".
+        this.prescriptionError = err?.error?.errors?.[0] ?? 'Não foi possível montar a prescrição.';
+        this.prescriptionLoading = false;
+      }
+    });
+  }
+
+  /** Exporta a prescrição como CSV (client-side, sem endpoint novo). */
+  exportPrescriptionCsv(): void {
+    const p = this.prescription;
+    if (!p) return;
+    const rows: string[] = [
+      'Zona;% area;Hectares;N kg/ha;P kg/ha;K kg/ha;N kg;P kg;K kg'
+    ];
+    for (const z of p.zones) {
+      rows.push([
+        z.label, z.percent, z.hectares,
+        z.nitrogenKgHa, z.phosphorusKgHa, z.potassiumKgHa,
+        z.nitrogenKg, z.phosphorusKg, z.potassiumKg
+      ].join(';'));
+    }
+    rows.push(['TOTAL', '', p.totalHectares, '', '', '', p.totalNitrogenKg, p.totalPhosphorusKg, p.totalPotassiumKg].join(';'));
+
+    const blob = new Blob([rows.join('\n')], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `prescricao-${p.areaId}-${p.readingId}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  printPrescription(): void {
+    if (typeof window !== 'undefined') window.print();
   }
 
   /** Passagem armazenada mais próxima de uma data (yyyy-MM-dd). undefined se a série está vazia. */
