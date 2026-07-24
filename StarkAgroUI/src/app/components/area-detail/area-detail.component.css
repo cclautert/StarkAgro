@@ -323,3 +323,5 @@
 }
 .presc-table tfoot td { font-weight: 700; color: #4ade80; border-top: 2px solid #2d3f5e; border-bottom: none; }
 .presc-note { margin: 0.75rem 0 0; font-size: 0.82rem; }
+
+.presc-geotiff { margin-top: 1rem; }

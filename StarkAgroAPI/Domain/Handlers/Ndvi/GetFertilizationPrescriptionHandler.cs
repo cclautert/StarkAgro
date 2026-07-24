@@ -72,33 +72,14 @@ namespace StarkAgroAPI.Domain.Handlers.Ndvi
                 return null;
             }
 
-            // 5) Perfil: explícito (override) ou automático pela cultura da área.
+            // 5) Perfil: explícito (override) ou automático pela cultura da área. Regra compartilhada
+            //    com o GeoTIFF de doses — não pode divergir.
             var profiles = await _dbContext.FertilizationProfiles.Find(_ => true).ToListAsync(cancellationToken);
-            FertilizationProfile? profile;
-            if (request.ProfileId is int pid)
+            var (profile, profileError) = FertilizationProfileResolver.Resolve(profiles, area, request.ProfileId);
+            if (profile is null)
             {
-                profile = profiles.FirstOrDefault(p => p.Id == pid);
-                if (profile is null)
-                {
-                    _notifier.Handle(new Notification("Perfil de adubação não encontrado."));
-                    return null;
-                }
-            }
-            else if (string.IsNullOrWhiteSpace(area.Crop))
-            {
-                _notifier.Handle(new Notification("A área não tem cultura definida — edite a área ou escolha um perfil de adubação."));
+                _notifier.Handle(new Notification(profileError!));
                 return null;
-            }
-            else
-            {
-                profile = profiles.FirstOrDefault(p =>
-                    string.Equals(p.Culture.Trim(), area.Crop!.Trim(), StringComparison.OrdinalIgnoreCase));
-                if (profile is null)
-                {
-                    _notifier.Handle(new Notification(
-                        $"Nenhum perfil de adubação para a cultura \"{area.Crop}\" — cadastre em /admin/adubacao."));
-                    return null;
-                }
             }
 
             // 6) Monta as zonas na ordem da classificação; percentuais pela mesma base do gráfico.

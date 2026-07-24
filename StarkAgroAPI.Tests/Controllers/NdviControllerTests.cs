@@ -65,6 +65,37 @@ namespace StarkAgroAPI.Tests.Controllers
         }
 
         [Fact]
+        public async Task PrescriptionGeotiff_Found_ReturnsFile()
+        {
+            var mediator = new Mock<IMediator>();
+            mediator.Setup(m => m.Send(It.IsAny<GetFertilizationPrescriptionTiffRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new NdviOverlayImageResponse { Content = [1, 2, 3], ContentType = "image/tiff" });
+
+            var controller = CreateController();
+            controller.ControllerContext = new Microsoft.AspNetCore.Mvc.ControllerContext
+            {
+                HttpContext = new Microsoft.AspNetCore.Http.DefaultHttpContext()
+            };
+
+            var result = await controller.PrescriptionGeotiff(mediator.Object, 5, 3, null, null, default);
+
+            var file = Assert.IsType<FileContentResult>(result);
+            Assert.Equal("image/tiff", file.ContentType);
+        }
+
+        [Fact]
+        public async Task PrescriptionGeotiff_NotFound_Returns404()
+        {
+            var mediator = new Mock<IMediator>();
+            mediator.Setup(m => m.Send(It.IsAny<GetFertilizationPrescriptionTiffRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync((NdviOverlayImageResponse?)null);
+
+            var result = await CreateController().PrescriptionGeotiff(mediator.Object, 5, 3, null, null, default);
+
+            Assert.IsType<NotFoundResult>(result);
+        }
+
+        [Fact]
         public async Task Overlay_Found_ReturnsFile()
         {
             var mediator = new Mock<IMediator>();

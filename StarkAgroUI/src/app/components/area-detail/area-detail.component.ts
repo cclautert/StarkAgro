@@ -464,6 +464,30 @@ export class AreaDetailComponent implements OnInit, OnDestroy {
     if (typeof window !== 'undefined') window.print();
   }
 
+  // Download do GeoTIFF de doses (taxa variável). Gerado sob demanda na CDSE.
+  downloadingGeotiff = false;
+  geotiffError = false;
+
+  async downloadPrescriptionGeotiff(): Promise<void> {
+    const p = this.prescription;
+    if (!p || this.downloadingGeotiff) return;
+    this.downloadingGeotiff = true;
+    this.geotiffError = false;
+    try {
+      const blob = await firstValueFrom(this.areaService.prescriptionGeotiff(p.areaId, p.readingId));
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `prescricao-${p.areaId}-${p.readingId}.tiff`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      this.geotiffError = true; // 404 = kill-switch / erro na CDSE
+    } finally {
+      this.downloadingGeotiff = false;
+    }
+  }
+
   /** Passagem armazenada mais próxima de uma data (yyyy-MM-dd). undefined se a série está vazia. */
   private nearestPoint(date: string): NdviTrendPoint | undefined {
     const target = new Date(date).getTime();

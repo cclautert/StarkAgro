@@ -38,6 +38,19 @@ namespace StarkAgroAPI.Services.Ndvi
             DateTime from,
             DateTime to,
             CancellationToken cancellationToken);
+
+        /// <summary>
+        /// GeoTIFF de doses (FLOAT32, valor do pixel = kg/ha) para taxa variável. Recebe o
+        /// <paramref name="evalscript"/> pronto — é gerado dinamicamente a partir do perfil da cultura
+        /// (<see cref="DoseEvalscript"/>), não é fixo como o de zonas. <c>null</c> em falha.
+        /// </summary>
+        Task<byte[]?> GetPrescriptionTiffAsync(
+            string token,
+            GeoJsonPolygon<GeoJson2DGeographicCoordinates> geometry,
+            DateTime from,
+            DateTime to,
+            string evalscript,
+            CancellationToken cancellationToken);
     }
 
     public class CdseProcessService : ICdseProcessService
@@ -177,6 +190,44 @@ namespace StarkAgroAPI.Services.Ndvi
             }
         }
 
+        public async Task<byte[]?> GetPrescriptionTiffAsync(
+            string token,
+            GeoJsonPolygon<GeoJson2DGeographicCoordinates> geometry,
+            DateTime from,
+            DateTime to,
+            string evalscript,
+            CancellationToken cancellationToken)
+        {
+            try
+            {
+                var bbox = ComputeBbox(geometry);
+                var (width, height) = ResolveDimensions(bbox);
+                var body = BuildPrescriptionRequestBody(geometry, from, to, width, height, evalscript);
+
+                using var request = new HttpRequestMessage(HttpMethod.Post, Endpoint)
+                {
+                    Content = new StringContent(body, Encoding.UTF8, "application/json")
+                };
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("image/tiff"));
+
+                using var response = await _httpClient.SendAsync(request, cancellationToken);
+                if (!response.IsSuccessStatusCode)
+                {
+                    var err = await response.Content.ReadAsStringAsync(cancellationToken);
+                    _logger.LogWarning("CDSE prescription: HTTP {Status} — {Body}", (int)response.StatusCode, Truncate(err));
+                    return null;
+                }
+
+                return await response.Content.ReadAsByteArrayAsync(cancellationToken);
+            }
+            catch (Exception ex) when (ex is not OperationCanceledException)
+            {
+                _logger.LogError(ex, "CDSE prescription request failed");
+                return null;
+            }
+        }
+
         /// <summary>Bbox do anel exterior do polígono (ordem <c>[lng,lat]</c> do GeoJSON).</summary>
         public static NdviBbox ComputeBbox(GeoJsonPolygon<GeoJson2DGeographicCoordinates> geometry)
         {
@@ -216,6 +267,12 @@ namespace StarkAgroAPI.Services.Ndvi
         public static string BuildZonesRequestBody(
             GeoJsonPolygon<GeoJson2DGeographicCoordinates> geometry, DateTime from, DateTime to, int width, int height)
             => BuildBody(geometry, from, to, width, height, "image/tiff", ZonesEvalscript);
+
+        /// <summary>Corpo do request de doses — TIFF + o evalscript FLOAT32 gerado do perfil.</summary>
+        public static string BuildPrescriptionRequestBody(
+            GeoJsonPolygon<GeoJson2DGeographicCoordinates> geometry, DateTime from, DateTime to,
+            int width, int height, string evalscript)
+            => BuildBody(geometry, from, to, width, height, "image/tiff", evalscript);
 
         private static string BuildBody(
             GeoJsonPolygon<GeoJson2DGeographicCoordinates> geometry, DateTime from, DateTime to,

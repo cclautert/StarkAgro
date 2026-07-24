@@ -60,4 +60,12 @@ export class AreaService {
     return this.http.get<FertilizationPrescriptionResponse>(
       `${this.baseUrl}/${areaId}/prescription/${readingId}`);
   }
+
+  /** GeoTIFF de doses (taxa variável): gerado sob demanda na CDSE, baixado como blob. nutrient opcional (N/P/K). */
+  prescriptionGeotiff(areaId: number, readingId: number, nutrient?: string): Observable<Blob> {
+    const params: Record<string, string> = nutrient ? { nutrient } : {};
+    return this.http.get(
+      `${this.baseUrl}/${areaId}/prescription/${readingId}/geotiff`,
+      { params, responseType: 'blob' as const });
+  }
 }

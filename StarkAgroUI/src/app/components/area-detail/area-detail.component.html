@@ -210,6 +210,16 @@
           </table>
         </div>
 
+        <div class="presc-geotiff">
+          <button class="btn-zones" (click)="downloadPrescriptionGeotiff()" [disabled]="downloadingGeotiff">
+            {{ downloadingGeotiff ? 'Gerando…' : '⬇ Baixar prescrição (GeoTIFF de doses)' }}
+          </button>
+          <p class="muted zones-hint">
+            GeoTIFF com o valor do pixel = dose kg/ha (3 bandas N/P/K), para taxa variável no trator. Gerado sob demanda; confira as unidades no seu controlador.
+          </p>
+          <p class="error-text" *ngIf="geotiffError">Não foi possível gerar a prescrição agora (sensoriamento desligado ou indisponível).</p>
+        </div>
+
         <p class="muted presc-note">
           Doses do perfil cadastrado em <a [routerLink]="['/admin/adubacao']">/admin/adubacao</a> aplicadas às zonas desta passagem. Confira com o agrônomo antes de aplicar.
         </p>
