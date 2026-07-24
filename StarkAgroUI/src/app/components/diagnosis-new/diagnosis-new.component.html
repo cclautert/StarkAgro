@@ -37,7 +37,10 @@
 
     <div class="field">
       <label for="crop">Cultura (opcional)</label>
-      <input id="crop" type="text" [(ngModel)]="cropName" name="cropName" placeholder="Ex.: soja, milho, café" />
+      <select id="crop" [(ngModel)]="cropName" name="cropName">
+        <option value="">(nenhuma)</option>
+        <option *ngFor="let c of cropOptions" [ngValue]="c">{{ c }}</option>
+      </select>
     </div>
 
     <div class="field">

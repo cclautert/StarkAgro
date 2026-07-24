@@ -5,6 +5,7 @@ import { AdminUser } from '../models/admin-user.model';
 import { PlatformAiSettings } from '../models/platform-ai-settings.model';
 import { DiagnosisPlan } from '../models/diagnosis-plan.model';
 import { FertilizationProfile } from '../models/fertilization-profile.model';
+import { Culture } from '../models/culture.model';
 import { Revenda, RevendaBilling } from '../models/revenda.model';
 
 @Injectable({ providedIn: 'root' })
@@ -70,6 +71,23 @@ export class AdminService {
 
   deleteFertilizationProfile(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}fertilization-profiles/${id}`);
+  }
+
+  // ── Culturas ────────────────────────────────────────────────────────────
+  getCultures(): Observable<Culture[]> {
+    return this.http.get<Culture[]>(`${this.baseUrl}cultures`);
+  }
+
+  createCulture(name: string): Observable<Culture> {
+    return this.http.post<Culture>(`${this.baseUrl}cultures`, { name });
+  }
+
+  renameCulture(id: number, name: string): Observable<Culture> {
+    return this.http.put<Culture>(`${this.baseUrl}cultures/${id}`, { name });
+  }
+
+  deleteCulture(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}cultures/${id}`);
   }
 
   // ── Revendas ────────────────────────────────────────────────────────────

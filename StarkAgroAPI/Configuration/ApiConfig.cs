@@ -301,6 +301,66 @@ namespace StarkAgroAPI.Configuration
                 await SeedAdminUserAsync(app.ApplicationServices);
             });
             _ = Task.Run(() => SeedPlatformAiSettingsAsync(app.ApplicationServices));
+            _ = Task.Run(() => SeedCulturesAsync(app.ApplicationServices));
+        }
+
+        /// <summary>
+        /// A lista de culturas nasce com as mais comuns do Brasil (<see cref="Services.Platform.CultureSeed"/>).
+        /// Na 1ª vez (coleção vazia) semeia a canônica + os valores já em uso (áreas/perfis/diagnósticos),
+        /// para nada existente ficar órfão. Depois, só garante que culturas <b>em uso</b> continuem
+        /// selecionáveis — <b>não ressuscita</b> canônicas que o admin apagou. Idempotente.
+        /// </summary>
+        private static async Task SeedCulturesAsync(IServiceProvider serviceProvider)
+        {
+            try
+            {
+                using var scope = serviceProvider.CreateScope();
+                var db = scope.ServiceProvider.GetRequiredService<agpDBContext>();
+
+                var existing = await db.Cultures.Find(_ => true).ToListAsync();
+                var have = new HashSet<string>(existing.Select(c => c.Name), StringComparer.OrdinalIgnoreCase);
+
+                // Valores de cultura já usados nos dados — precisam ser selecionáveis sempre.
+                var inUse = new List<string?>();
+                inUse.AddRange(await db.MonitoredAreas.Find(_ => true).Project(a => a.Crop).ToListAsync());
+                inUse.AddRange(await db.FertilizationProfiles.Find(_ => true).Project(p => p.Culture).ToListAsync());
+                inUse.AddRange(await db.PlantDiagnoses.Find(_ => true).Project(d => d.CropName).ToListAsync());
+
+                // Coleção vazia = 1ª vez: canônica + em-uso. Já semeada: só os em-uso (não recria removidas).
+                var desired = existing.Count == 0
+                    ? Services.Platform.CultureSeed.Merge(Services.Platform.CultureSeed.Canonical, inUse)
+                    : Services.Platform.CultureSeed.Merge([], inUse);
+
+                var now = DateTime.UtcNow;
+                var added = 0;
+                foreach (var name in desired)
+                {
+                    if (have.Contains(name)) continue;
+                    try
+                    {
+                        await db.Cultures.InsertOneAsync(new Models.Entities.Culture
+                        {
+                            Id = await db.GetNextIdAsync(nameof(Models.Entities.Culture), CancellationToken.None),
+                            Name = name,
+                            CreatedAt = now,
+                            UpdatedAt = now
+                        });
+                        have.Add(name);
+                        added++;
+                    }
+                    catch (MongoDB.Driver.MongoWriteException ex)
+                        when (ex.WriteError?.Category == MongoDB.Driver.ServerErrorCategory.DuplicateKey)
+                    {
+                        // Corrida com outra instância no boot — já foi inserida, segue.
+                    }
+                }
+
+                if (added > 0) Console.WriteLine($"[Seed] {added} cultura(s) adicionada(s) à lista.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[Seed] SeedCulturesAsync ignorado: {ex.Message}");
+            }
         }
 
         /// <summary>

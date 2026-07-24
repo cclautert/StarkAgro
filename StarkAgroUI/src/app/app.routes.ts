@@ -87,6 +87,7 @@ export const routes: Routes = [
       { path: 'admin/ia', component: AdminAiSettingsComponent, canActivate: [AuthGuard, AdminGuard] },
       { path: 'admin/planos', component: AdminPlansComponent, canActivate: [AuthGuard, AdminGuard] },
       { path: 'admin/adubacao', loadComponent: () => import('./components/admin/fertilization/admin-fertilization.component').then(m => m.AdminFertilizationComponent), canActivate: [AuthGuard, AdminGuard] },
+      { path: 'admin/culturas', loadComponent: () => import('./components/admin/cultures/admin-cultures.component').then(m => m.AdminCulturesComponent), canActivate: [AuthGuard, AdminGuard] },
       { path: 'admin/revendas', component: AdminRevendasComponent, canActivate: [AuthGuard, AdminGuard] },
       { path: 'admin/revendas/nova', loadComponent: () => import('./components/admin/revenda-form/admin-revenda-form.component').then(m => m.AdminRevendaFormComponent), canActivate: [AuthGuard, AdminGuard] },
       { path: 'admin/revendas/editar/:id', loadComponent: () => import('./components/admin/revenda-form/admin-revenda-form.component').then(m => m.AdminRevendaFormComponent), canActivate: [AuthGuard, AdminGuard] },

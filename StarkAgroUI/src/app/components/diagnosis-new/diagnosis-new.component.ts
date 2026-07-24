@@ -5,6 +5,7 @@ import { Router, RouterModule } from '@angular/router';
 import { HttpEventType } from '@angular/common/http';
 import { DiagnosisService } from '../../services/diagnosis.service';
 import { PivotService } from '../../services/pivot.service';
+import { CultureService } from '../../services/culture.service';
 import { Pivot } from '../../models/pivot.model';
 
 /** Foto de celular vem com 2–8 MB; reduzir antes de subir corta upload, custo de IA e latência. */
@@ -25,6 +26,12 @@ export class DiagnosisNewComponent implements OnInit, OnDestroy {
   cropName = '';
   notes = '';
 
+  /** Culturas do seletor (lista gerida pelo admin). Opcional aqui — dica pro classificador. */
+  cultures: string[] = [];
+  get cropOptions(): string[] {
+    return this.cropName && !this.cultures.includes(this.cropName) ? [this.cropName, ...this.cultures] : this.cultures;
+  }
+
   previewUrl?: string;
   uploading = false;
   progress = 0;
@@ -35,6 +42,7 @@ export class DiagnosisNewComponent implements OnInit, OnDestroy {
   constructor(
     private diagnosisService: DiagnosisService,
     private pivotService: PivotService,
+    private cultureService: CultureService,
     private router: Router
   ) { }
 
@@ -43,6 +51,7 @@ export class DiagnosisNewComponent implements OnInit, OnDestroy {
       next: pivots => this.pivots = pivots,
       error: () => { /* o pivô é opcional: sem a lista, o laudo ainda pode ser enviado */ }
     });
+    this.cultureService.list().subscribe({ next: c => this.cultures = c, error: () => {} });
   }
 
   ngOnDestroy(): void {

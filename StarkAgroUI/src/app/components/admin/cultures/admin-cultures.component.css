@@ -1,0 +1,29 @@
+.container { padding: 1.5rem; max-width: 720px; margin: 0 auto; }
+.page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; }
+.page-title { font-size: 1.5rem; color: #e2e8f0; margin: 0; }
+.section-hint { color: #94a3b8; font-size: 0.9rem; margin: 0.25rem 0 1.25rem; }
+.error { color: #fca5a5; }
+.loading-text { color: #94a3b8; }
+
+.card {
+  background: #1a2540; border: 1px solid #2d3f5e; border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 1.25rem;
+}
+.add-row { display: flex; gap: 0.75rem; align-items: center; }
+.add-row input, .culture-row input {
+  flex: 1; background: #0f1729; color: #e2e8f0; border: 1px solid #3a4f75;
+  border-radius: 6px; padding: 0.45rem 0.6rem;
+}
+
+.culture-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
+  background: #1a2540; border: 1px solid #2d3f5e; border-radius: 8px;
+  padding: 0.6rem 1rem; margin-bottom: 0.5rem;
+}
+.culture-name { color: #e2e8f0; font-size: 1rem; }
+.culture-actions { display: flex; gap: 0.5rem; flex: none; }
+
+.btn { border-radius: 6px; padding: 0.4rem 0.85rem; font-weight: 600; cursor: pointer; border: 1px solid transparent; font-size: 0.9rem; }
+.btn:disabled { opacity: 0.6; cursor: default; }
+.btn-primary { background: #14532d; color: #86efac; border-color: #16a34a; }
+.btn-secondary { background: #253152; color: #cbd5e1; border-color: #3a4f75; }
+.btn-danger { background: #3f1d1d; color: #fca5a5; border-color: #7f1d1d; }
