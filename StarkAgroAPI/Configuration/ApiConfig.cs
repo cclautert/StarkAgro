@@ -91,6 +91,7 @@ namespace StarkAgroAPI.Configuration
             services.AddScoped<Services.Ndvi.INdviFetchService, Services.Ndvi.NdviFetchService>();
             services.AddScoped<Services.Ndvi.INdviZoneService, Services.Ndvi.NdviZoneService>();
             services.AddScoped<Services.Ndvi.INdviOverlayImageService, Services.Ndvi.NdviOverlayImageService>();
+            services.AddScoped<Services.Ndvi.INdviPrescriptionRasterService, Services.Ndvi.NdviPrescriptionRasterService>();
 
             // Sentinel-1 (radar) — mesma Sentinel Hub API do NDVI, host e OAuth compartilhados.
             services.AddHttpClient<Services.Sentinel1.CdseSentinel1Service>(client =>

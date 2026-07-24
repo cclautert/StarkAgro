@@ -57,6 +57,20 @@ namespace StarkAgroAPI.Domain.Commands.Requests.Ndvi
         public int? ProfileId { get; set; }
     }
 
+    /// <summary>
+    /// GeoTIFF de doses (FLOAT32, kg/ha por pixel) para taxa variável. Gerado sob demanda na CDSE
+    /// (custo de PU); reusa o wrapper de bytes do overlay.
+    /// </summary>
+    public class GetFertilizationPrescriptionTiffRequest : IRequest<NdviOverlayImageResponse?>
+    {
+        public int AreaId { get; set; }
+        public int ReadingId { get; set; }
+        public int? ProfileId { get; set; }
+
+        /// <summary>"N"/"P"/"K" → 1 banda; nulo → 3 bandas [N, P, K].</summary>
+        public string? Nutrient { get; set; }
+    }
+
     public class DeleteMonitoredAreaRequest : IRequest<bool>
     {
         public int Id { get; set; }

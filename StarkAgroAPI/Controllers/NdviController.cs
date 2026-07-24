@@ -107,6 +107,31 @@ namespace StarkAgroAPI.Controllers
                 cancellationToken));
         }
 
+        /// <summary>
+        /// GeoTIFF de doses (FLOAT32, kg/ha por pixel) para taxa variável — download privado, gerado
+        /// sob demanda na CDSE. 3 bandas [N,P,K] por padrão; <c>?nutrient=N|P|K</c> dá banda única.
+        /// </summary>
+        [HttpGet("{id:int}/prescription/{readingId:int}/geotiff")]
+        public async Task<IActionResult> PrescriptionGeotiff(
+            [FromServices] IMediator mediator,
+            [FromRoute] int id,
+            [FromRoute] int readingId,
+            [FromQuery] int? profileId,
+            [FromQuery] string? nutrient,
+            CancellationToken cancellationToken)
+        {
+            var result = await mediator.Send(
+                new GetFertilizationPrescriptionTiffRequest
+                {
+                    AreaId = id, ReadingId = readingId, ProfileId = profileId, Nutrient = nutrient
+                }, cancellationToken);
+            if (result is null) return NotFound();
+
+            var suffix = string.IsNullOrWhiteSpace(nutrient) ? "" : $"-{nutrient.Trim().ToUpperInvariant()}";
+            Response.Headers.CacheControl = "private, no-store";
+            return File(result.Content, result.ContentType, $"prescricao-{id}-{readingId}{suffix}.tiff");
+        }
+
         [HttpPost]
         public async Task<ActionResult<MonitoredAreaResponse>> Create(
             [FromServices] IMediator mediator,
