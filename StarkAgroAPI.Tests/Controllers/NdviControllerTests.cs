@@ -52,6 +52,19 @@ namespace StarkAgroAPI.Tests.Controllers
         }
 
         [Fact]
+        public async Task Prescription_ReturnsOk()
+        {
+            var mediator = new Mock<IMediator>();
+            mediator.Setup(m => m.Send(It.IsAny<GetFertilizationPrescriptionRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new FertilizationPrescriptionResponse { AreaId = 5, ReadingId = 3, Culture = "Café" });
+
+            var result = await CreateController().Prescription(mediator.Object, 5, 3, null, default);
+
+            var obj = Assert.IsType<ObjectResult>(result.Result);
+            Assert.Equal(200, obj.StatusCode);
+        }
+
+        [Fact]
         public async Task Overlay_Found_ReturnsFile()
         {
             var mediator = new Mock<IMediator>();

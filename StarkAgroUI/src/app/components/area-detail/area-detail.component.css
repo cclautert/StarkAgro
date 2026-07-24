@@ -278,3 +278,48 @@
   font-size: 0.9rem;
 }
 .btn-cancel:hover:not(:disabled) { color: #e2e8f0; }
+
+/* ── Prescrição de adubação ── */
+.presc-actions { display: flex; gap: 0.5rem; }
+.btn-presc {
+  background: #253152;
+  color: #e2e8f0;
+  border: 1px solid #3a4f75;
+  border-radius: 6px;
+  padding: 0.3rem 0.7rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+.btn-presc:hover { background: #2d3f5e; }
+.presc-sub { margin: 0 0 0.75rem; }
+.presc-empty { color: #cbd5e1; }
+.presc-empty a, .presc-note a { color: #93c5fd; }
+.presc-table-wrap { overflow-x: auto; }
+.presc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+  font-variant-numeric: tabular-nums;
+  min-width: 640px;
+}
+.presc-table th, .presc-table td {
+  padding: 0.4rem 0.5rem;
+  text-align: right;
+  border-bottom: 1px solid #2d3f5e;
+  white-space: nowrap;
+}
+.presc-table th { color: #a0aec0; font-weight: 600; }
+.presc-table td { color: #e2e8f0; }
+.presc-table th:first-child, .presc-table td:first-child { text-align: left; }
+.presc-zone { display: flex; align-items: center; gap: 0.4rem; }
+.presc-table .swatch { width: 12px; height: 12px; border-radius: 2px; flex: none; }
+.no-dose {
+  font-size: 0.72rem;
+  color: #fbbf24;
+  background: #422006;
+  border: 1px solid #a16207;
+  border-radius: 4px;
+  padding: 0 0.35rem;
+}
+.presc-table tfoot td { font-weight: 700; color: #4ade80; border-top: 2px solid #2d3f5e; border-bottom: none; }
+.presc-note { margin: 0.75rem 0 0; font-size: 0.82rem; }

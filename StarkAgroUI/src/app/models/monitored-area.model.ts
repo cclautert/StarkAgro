@@ -91,6 +91,39 @@ export interface NdviTrendResponse {
   radar?: Sentinel1TrendPoint[];
 }
 
+/** Uma zona (classe de biomassa) da prescrição de adubação. */
+export interface PrescriptionZone {
+  classKey: string;
+  label: string;
+  color: string;
+  pixelCount: number;
+  percent: number;
+  hectares: number;
+  nitrogenKgHa: number;
+  phosphorusKgHa: number;
+  potassiumKgHa: number;
+  nitrogenKg: number;
+  phosphorusKg: number;
+  potassiumKg: number;
+  /** false quando o perfil não tem dose para esta classe — a tela marca "sem dose". */
+  hasDose: boolean;
+}
+
+/** Prescrição de adubação de uma passagem: doses por zona + total do talhão. */
+export interface FertilizationPrescriptionResponse {
+  areaId: number;
+  readingId: number;
+  acquisitionDate: string;
+  culture: string;
+  profileId: number;
+  totalHectares: number;
+  cloudCoveragePct: number;
+  zones: PrescriptionZone[];
+  totalNitrogenKg: number;
+  totalPhosphorusKg: number;
+  totalPotassiumKg: number;
+}
+
 /** Resposta da busca retroativa sob demanda (histórico). */
 export interface FetchNdviHistoryResponse {
   /** Datas (yyyy-MM-dd) das passagens da janela — gravadas agora ou já existentes. */

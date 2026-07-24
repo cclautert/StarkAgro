@@ -44,6 +44,19 @@ namespace StarkAgroAPI.Domain.Commands.Requests.Ndvi
         public DateTime Date { get; set; }
     }
 
+    /// <summary>
+    /// Prescrição de adubação de uma passagem: cruza o perfil NPK da cultura com a distribuição de
+    /// classes da passagem. Custo zero de CDSE (só dado já armazenado).
+    /// </summary>
+    public class GetFertilizationPrescriptionRequest : IRequest<FertilizationPrescriptionResponse?>
+    {
+        public int AreaId { get; set; }
+        public int ReadingId { get; set; }
+
+        /// <summary>Perfil explícito (override). Se nulo, casa pela cultura da área (<c>Crop</c>).</summary>
+        public int? ProfileId { get; set; }
+    }
+
     public class DeleteMonitoredAreaRequest : IRequest<bool>
     {
         public int Id { get; set; }

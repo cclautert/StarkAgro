@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { AreaRequest, FetchNdviHistoryResponse, MonitoredArea, NdviTrendResponse } from '../models/monitored-area.model';
+import { AreaRequest, FertilizationPrescriptionResponse, FetchNdviHistoryResponse, MonitoredArea, NdviTrendResponse } from '../models/monitored-area.model';
 
 @Injectable({
   providedIn: 'root'
@@ -53,5 +53,11 @@ export class AreaService {
   history(areaId: number, date: string): Observable<FetchNdviHistoryResponse> {
     return this.http.get<FetchNdviHistoryResponse>(
       `${this.baseUrl}/${areaId}/history`, { params: { date } });
+  }
+
+  /** Prescrição de adubação de uma passagem (cruza o perfil NPK da cultura com as zonas). Custo zero. */
+  prescription(areaId: number, readingId: number): Observable<FertilizationPrescriptionResponse> {
+    return this.http.get<FertilizationPrescriptionResponse>(
+      `${this.baseUrl}/${areaId}/prescription/${readingId}`);
   }
 }
