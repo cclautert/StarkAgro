@@ -1,0 +1,41 @@
+<div class="container">
+  <div class="page-header">
+    <h1 class="page-title">🌾 Culturas</h1>
+  </div>
+
+  <p class="section-hint">
+    Lista de culturas usada nos seletores de área, perfil de adubação e diagnóstico. Já vem com as
+    culturas mais comuns do Brasil — ajuste como precisar. É o que faz a cultura da área casar
+    exatamente com o perfil de adubação.
+  </p>
+
+  <p class="error" *ngIf="error">{{ error }}</p>
+  <p class="loading-text" *ngIf="loading">Carregando...</p>
+
+  <!-- Adicionar -->
+  <div class="card add-row">
+    <input type="text" [(ngModel)]="newName" placeholder="Nova cultura (ex.: Tomate)"
+           (keyup.enter)="adicionar()" [disabled]="saving" />
+    <button class="btn btn-primary" (click)="adicionar()" [disabled]="saving">+ Adicionar</button>
+  </div>
+
+  <!-- Lista -->
+  <div class="culture-row" *ngFor="let c of cultures">
+    <ng-container *ngIf="editingId === c.id; else viewRow">
+      <input type="text" [(ngModel)]="editingName" (keyup.enter)="salvar(c)" [disabled]="saving" />
+      <div class="culture-actions">
+        <button class="btn btn-primary" (click)="salvar(c)" [disabled]="saving">Salvar</button>
+        <button class="btn btn-secondary" (click)="cancelar()" [disabled]="saving">Cancelar</button>
+      </div>
+    </ng-container>
+    <ng-template #viewRow>
+      <span class="culture-name">{{ c.name }}</span>
+      <div class="culture-actions">
+        <button class="btn btn-secondary" (click)="editar(c)">Renomear</button>
+        <button class="btn btn-danger" (click)="excluir(c)">Excluir</button>
+      </div>
+    </ng-template>
+  </div>
+
+  <p class="section-hint" *ngIf="!loading && !cultures.length">Nenhuma cultura cadastrada.</p>
+</div>

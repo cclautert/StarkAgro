@@ -6,6 +6,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { firstValueFrom } from 'rxjs';
 import { AreaService } from '../../services/area.service';
+import { CultureService } from '../../services/culture.service';
 import { AreaRequest, GeoCoordinate } from '../../models/monitored-area.model';
 import { PivotLocationMapComponent } from '../pivot-location-map/pivot-location-map.component';
 import { PivotLocation } from '../../models/pivot.model';
@@ -25,6 +26,7 @@ export class AreaFormComponent implements OnInit, AfterViewInit, OnDestroy {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private areaService = inject(AreaService);
+  private cultureService = inject(CultureService);
   private snackBar = inject(MatSnackBar);
   private dialog = inject(MatDialog);
   private zone = inject(NgZone);
@@ -37,6 +39,14 @@ export class AreaFormComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /** Anel do polígono desenhado (ou carregado na edição). */
   polygonRing: GeoCoordinate[] = [];
+
+  /** Culturas do seletor (lista gerida pelo admin). */
+  cultures: string[] = [];
+  /** Opções do seletor de cultura — inclui o valor salvo mesmo se saiu da lista (segurança de edição). */
+  get cropOptions(): string[] {
+    const cur = this.form?.get('crop')?.value as string | null;
+    return cur && !this.cultures.includes(cur) ? [cur, ...this.cultures] : this.cultures;
+  }
 
   // Leaflet + geoman (carregados sob demanda no browser).
   private map: any | null = null;
@@ -61,6 +71,8 @@ export class AreaFormComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.cultureService.list().subscribe({ next: c => this.cultures = c, error: () => {} });
+
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
       this.isEditMode = true;

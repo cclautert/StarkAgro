@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminService } from '../../../services/admin.service';
+import { CultureService } from '../../../services/culture.service';
 import { FertilizationProfile, ZoneDose, NDVI_CLASSES } from '../../../models/fertilization-profile.model';
 
 @Component({
@@ -22,10 +23,19 @@ export class AdminFertilizationComponent implements OnInit {
   // Edição inline: null = nenhum form aberto; id undefined = novo.
   editing: { id?: number; culture: string; doses: ZoneDose[] } | null = null;
 
-  constructor(private admin: AdminService) {}
+  /** Culturas do seletor (lista gerida pelo admin). */
+  cultures: string[] = [];
+  /** Inclui a cultura em edição mesmo se saiu da lista (segurança de edição). */
+  get cultureOptions(): string[] {
+    const cur = this.editing?.culture;
+    return cur && !this.cultures.includes(cur) ? [cur, ...this.cultures] : this.cultures;
+  }
+
+  constructor(private admin: AdminService, private cultureService: CultureService) {}
 
   ngOnInit(): void {
     this.load();
+    this.cultureService.list().subscribe({ next: c => this.cultures = c, error: () => {} });
   }
 
   private load(): void {

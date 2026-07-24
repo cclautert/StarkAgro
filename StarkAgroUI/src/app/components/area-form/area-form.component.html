@@ -12,7 +12,10 @@
 
     <div class="field">
       <label>Cultura</label>
-      <input type="text" formControlName="crop" placeholder="Ex.: Soja" />
+      <select formControlName="crop">
+        <option [ngValue]="null">(sem cultura)</option>
+        <option *ngFor="let c of cropOptions" [ngValue]="c">{{ c }}</option>
+      </select>
     </div>
 
     <div class="field">

@@ -183,6 +183,50 @@ namespace StarkAgroAPI.Controllers
             return CustomResponse(null, HttpStatusCode.NoContent);
         }
 
+        [HttpGet("cultures")]
+        public async Task<ActionResult<List<CultureResponse>>> GetCultures(
+            [FromServices] IMediator mediator,
+            CancellationToken cancellationToken)
+        {
+            if (!GetCurrentUserIsAdmin()) return StatusCode(403, new { errors = new[] { "Acesso negado." } });
+            return CustomResponse(await mediator.Send(new GetAdminCulturesRequest(), cancellationToken));
+        }
+
+        [HttpPost("cultures")]
+        public async Task<ActionResult<CultureResponse>> CreateCulture(
+            [FromServices] IMediator mediator,
+            [FromBody] CreateCultureRequest command,
+            CancellationToken cancellationToken)
+        {
+            if (!GetCurrentUserIsAdmin()) return StatusCode(403, new { errors = new[] { "Acesso negado." } });
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
+            return CustomResponse(await mediator.Send(command, cancellationToken), HttpStatusCode.Created);
+        }
+
+        [HttpPut("cultures/{id}")]
+        public async Task<ActionResult<CultureResponse>> UpdateCulture(
+            [FromServices] IMediator mediator,
+            [FromRoute] int id,
+            [FromBody] UpdateCultureRequest command,
+            CancellationToken cancellationToken)
+        {
+            if (!GetCurrentUserIsAdmin()) return StatusCode(403, new { errors = new[] { "Acesso negado." } });
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
+            command.Id = id;
+            return CustomResponse(await mediator.Send(command, cancellationToken));
+        }
+
+        [HttpDelete("cultures/{id}")]
+        public async Task<ActionResult> DeleteCulture(
+            [FromServices] IMediator mediator,
+            [FromRoute] int id,
+            CancellationToken cancellationToken)
+        {
+            if (!GetCurrentUserIsAdmin()) return StatusCode(403, new { errors = new[] { "Acesso negado." } });
+            await mediator.Send(new DeleteCultureRequest { Id = id }, cancellationToken);
+            return CustomResponse(null, HttpStatusCode.NoContent);
+        }
+
         [HttpGet("revendas")]
         public async Task<ActionResult<List<RevendaResponse>>> GetRevendas(
             [FromServices] IMediator mediator,

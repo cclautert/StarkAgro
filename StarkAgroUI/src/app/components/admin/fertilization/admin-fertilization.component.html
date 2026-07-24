@@ -16,7 +16,10 @@
   <div class="card edit-card" *ngIf="editing">
     <div class="form-group">
       <label>Cultura</label>
-      <input type="text" [(ngModel)]="editing.culture" placeholder="Ex.: Café, Soja, Milho" />
+      <select [(ngModel)]="editing.culture">
+        <option value="" disabled>Selecione a cultura…</option>
+        <option *ngFor="let c of cultureOptions" [ngValue]="c">{{ c }}</option>
+      </select>
     </div>
 
     <table class="dose-table">

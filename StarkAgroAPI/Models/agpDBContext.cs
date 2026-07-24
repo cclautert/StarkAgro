@@ -65,6 +65,7 @@ namespace StarkAgroAPI.Models
             FireHotspots = database.GetCollection<FireHotspot>("fire_hotspots");
             ClimateAlerts = database.GetCollection<ClimateAlert>("climate_alerts");
             FertilizationProfiles = database.GetCollection<FertilizationProfile>("fertilization_profiles");
+            Cultures = database.GetCollection<Culture>("cultures");
             Sentinel1Readings = database.GetCollection<Sentinel1Reading>("sentinel1_readings");
             _counters = database.GetCollection<CounterDocument>("counters");
 
@@ -241,6 +242,16 @@ namespace StarkAgroAPI.Models
                     await FertilizationProfiles.Indexes.CreateOneAsync(new CreateIndexModel<FertilizationProfile>(
                         Builders<FertilizationProfile>.IndexKeys.Ascending(p => p.Culture)));
 
+                    // Cultura: nome único e case-insensitive (collation strength 2) — impede "Café" e
+                    // "café" coexistirem na lista; o create-handler trata DuplicateKey como "já existe".
+                    await Cultures.Indexes.CreateOneAsync(new CreateIndexModel<Culture>(
+                        Builders<Culture>.IndexKeys.Ascending(c => c.Name),
+                        new CreateIndexOptions
+                        {
+                            Unique = true,
+                            Collation = new Collation("pt", strength: CollationStrength.Secondary)
+                        }));
+
                     // Série de radar por área.
                     await Sentinel1Readings.Indexes.CreateOneAsync(new CreateIndexModel<Sentinel1Reading>(
                         Builders<Sentinel1Reading>.IndexKeys
@@ -281,6 +292,7 @@ namespace StarkAgroAPI.Models
         public virtual IMongoCollection<FireHotspot> FireHotspots { get; }
         public virtual IMongoCollection<ClimateAlert> ClimateAlerts { get; }
         public virtual IMongoCollection<FertilizationProfile> FertilizationProfiles { get; }
+        public virtual IMongoCollection<Culture> Cultures { get; }
         public virtual IMongoCollection<Sentinel1Reading> Sentinel1Readings { get; }
         public virtual IGridFSBucket DiagnosisImages { get; }
         public virtual IGridFSBucket NdviOverlays { get; }
